@@ -14,24 +14,28 @@ class VeloryzFrameCut extends HTMLElement {
     const events = new AbortController();
     const listen = (target, type, fn) => target.addEventListener(type, fn, {signal: events.signal, passive:true});
     let visible = false, full = false, held = false, pending = 0, wanted = 0, playPending = false;
-    let previousTime=0, position=0;
+    let previousTime=0, position=0, measuredProgress=0, measureNeeded=true;
     function seek() {
       if (reveal.readyState && !reveal.seeking && Math.abs(reveal.currentTime - wanted) > 0.016)
         reveal.currentTime = wanted;
     }
     const update = (time=0) => {
       pending = 0;
-      const bounds = this.getBoundingClientRect();
-      const distance = Math.max(1, bounds.height - this.firstElementChild.clientHeight);
-      const progress = Math.max(0, Math.min(1, -bounds.top / distance));
-      // First ~62% is a reversible, 3-second reveal. Remaining scroll gives
-      // the 7.4-second scarf loop genuine viewing room without replacing the UI.
-      const focused=full && visible && bounds.top<=1 && bounds.top+bounds.height>=this.firstElementChild.clientHeight-1;
-      this.toggleAttribute('data-focus',focused);
+      if(measureNeeded){
+        const bounds = this.getBoundingClientRect();
+        const distance = Math.max(1, bounds.height - this.firstElementChild.clientHeight);
+        measuredProgress = Math.max(0, Math.min(1, -bounds.top / distance));
+        // First ~62% is a reversible, 3-second reveal. Remaining scroll gives
+        // the 7.4-second scarf loop genuine viewing room without replacing the UI.
+        const focused=full && visible && bounds.top<=1 && bounds.top+bounds.height>=this.firstElementChild.clientHeight-1;
+        this.toggleAttribute('data-focus',focused);
+        measureNeeded=false;
+      }
+      const progress=measuredProgress;
       const elapsed=previousTime?Math.min(64,Math.max(1,time-previousTime)):16;
       previousTime=time;
       if(!visible || !full || document.hidden)position=progress;
-      else position+=(progress-position)*(1-Math.exp(-elapsed/78));
+      else position+=(progress-position)*(1-Math.exp(-elapsed/112));
       if(Math.abs(progress-position)<.001)position=progress;
       const revealProgress = Math.min(1, position / .62);
       const loop = full && position >= .62 && scarf.readyState>=2;
@@ -55,9 +59,10 @@ class VeloryzFrameCut extends HTMLElement {
         scarf.pause();
         if (!loop && scarf.readyState && scarf.currentTime > 0) scarf.currentTime = 0;
       }
-      if(full && visible && !document.hidden && position!==progress)schedule();
+      if(full && visible && !document.hidden && position!==progress && !pending)pending=requestAnimationFrame(update);
+      else previousTime=0;
     };
-    const schedule = () => { if (!pending) pending = requestAnimationFrame(update); };
+    const schedule = () => { measureNeeded=true; if (!pending) pending = requestAnimationFrame(update); };
     const preference = () => {
       full = window.StudioMotion ? window.StudioMotion.level === 'full' : !reduced.matches;
       this.toggleAttribute('data-full', full);

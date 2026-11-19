@@ -12,13 +12,12 @@
  const effective=()=>preference==='auto'?(media?.matches?'reduced':'full'):preference;
  const seen=()=>{try{return sessionStorage.getItem(seenKey)==='1';}catch{return false;}};
  const markSeen=()=>{try{sessionStorage.setItem(seenKey,'1');}catch{}};
- // Full is shown once per tab session; off/auto/reduced/paused is shown on each full reload.
- // Setting the attribute before deferred app scripts paint prevents a flash of unlocked content.
- const needsIntro=root.dataset.guidedMotionIntro==='true'&&(!media?.matches||preference==='full')&&(preference!=='full'||!seen());
+ // Guide the first opening in this tab and respect an existing quiet preference.
+ const needsIntro=root.dataset.guidedMotionIntro==='true' && !seen() && effective()==='full';
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
  function lockPage(){
-  const rootNodes=['#main','#footer','#modal-root','#expert-launcher','#offer-dock','#site-pin','.whatsapp-float','.skip-link','#site-progress','.site-header .brand','.site-header .desktop-nav','.site-header .header-status','.site-header .button.small','.site-header .menu-toggle','#mobile-nav'];
+  const rootNodes=['#ad-slider','#main','#footer','#modal-root','#expert-launcher','#offer-dock','#site-pin','.whatsapp-float','.skip-link','#site-progress','.site-header .brand','.site-header .desktop-nav','.site-header .header-status','.site-header .button.small','.site-header .menu-toggle','#mobile-nav'];
   rootNodes.forEach(sel=>document.querySelectorAll(sel).forEach(el=>{
    if(el.dataset.motionInert!=='1'){
     el.dataset.motionInert='1';el.dataset.motionWasInert=String(el.inert);
@@ -43,7 +42,7 @@
   });
   const hint=dialog.querySelector('.motion-gate-hint');
   if(hint)hint.hidden=!gateActive;
-  const accessibleExit=dialog.querySelector('[data-motion-accessible-exit]');if(accessibleExit)accessibleExit.hidden=!gateActive;
+  const accessibleExit=dialog.querySelector('[data-motion-accessible-exit]');if(accessibleExit)accessibleExit.hidden=true;
  }
  function createOverlay(){
   if(gateOverlay)return;
@@ -55,7 +54,7 @@
   if(gateInitialized||!needsIntro)return;
   const button=document.querySelector('.site-header .header-motion');
   if(!button){if(++gateAttempts<120)requestAnimationFrame(activateGate);else root.removeAttribute('data-motion-gate');return;}
-  gateInitialized=true;gateActive=true;gateStage=1;
+  markSeen();gateInitialized=true;gateActive=true;gateStage=1;
   originalOverflow=document.body.style.overflow;
   document.body.classList.add('motion-focus-active');
   root.dataset.motionGate='icon';
@@ -110,10 +109,10 @@
   let dialog=document.querySelector('#motion-preferences');
   if(!dialog){
    dialog=document.createElement('dialog');dialog.id='motion-preferences';dialog.className='motion-dialog';dialog.setAttribute('aria-labelledby','motion-title');
-   dialog.innerHTML=`<form method="dialog"><button class="motion-close" aria-label="Close motion settings">×</button></form><div class="motion-panel-icon" aria-hidden="true"><i></i><i></i><i></i></div><span class="motion-eyebrow">MAKE YOURSELF COMFORTABLE</span><h2 id="motion-title">A little movement.<br>At your pace.</h2><p>Choose how the studio moves. Your preference stays with this browser across pages and refreshes.</p><div class="motion-choices">${[['auto','Automatic','Follow this device'],['full','Full motion','Bring the studio to life'],['reduced','Reduced','A quieter experience'],['paused','Pause','Keep everything still']].map(([id,name,note])=>`<button type="button" data-motion-choice="${id}" aria-pressed="false"><span>${name}</span><small>${note}</small><i aria-hidden="true">↗</i></button>`).join('')}</div><p class="motion-gate-hint" role="note" hidden>Start with <strong>Full motion</strong>. If movement causes discomfort, you can continue without it.</p><button type="button" class="motion-accessible-exit" data-motion-accessible-exit hidden>Continue with reduced motion</button><p id="motion-status" role="status"></p><p class="motion-panel-note">Films have a separate play control if your browser limits autoplay.</p>`;
+   dialog.innerHTML=`<form method="dialog"><button class="motion-close" aria-label="Close motion settings">×</button></form><div class="motion-panel-icon" aria-hidden="true"><i></i><i></i><i></i></div><span class="motion-eyebrow">MAKE YOURSELF COMFORTABLE</span><h2 id="motion-title">A little movement.<br>At your pace.</h2><p>Choose how the studio moves. Your preference stays with this browser across pages and refreshes.</p><div class="motion-choices">${[['auto','Automatic','Follow this device'],['full','Full motion','Bring the studio to life'],['reduced','Reduced','A quieter experience'],['paused','Pause','Keep everything still']].map(([id,name,note])=>`<button type="button" data-motion-choice="${id}" aria-pressed="false"><span>${name}</span><small>${note}</small><i aria-hidden="true">↗</i></button>`).join('')}</div><p class="motion-gate-hint" role="note" hidden>Select Full motion, or press Escape to keep your current preference.</p><button type="button" class="motion-accessible-exit" data-motion-accessible-exit hidden>Continue with reduced motion</button><p id="motion-status" role="status"></p><p class="motion-panel-note">Films have a separate play control if your browser limits autoplay.</p>`;
    document.body.append(dialog);
    dialog.addEventListener('click',e=>{if(e.target===dialog&&!gateActive)dialog.close();});
-   dialog.addEventListener('cancel',e=>{if(gateActive)e.preventDefault();});
+   dialog.addEventListener('cancel',e=>{if(gateActive){e.preventDefault();endGate();}});
   }
   if(gateActive){gateStage=2;root.dataset.motionGate='panel';}
   gateControls(dialog);sync();
@@ -134,7 +133,7 @@
  },true);
  document.addEventListener('keydown',event=>{
   if(!gateActive)return;
-  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();return;}
+  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();endGate();return;}
   if(event.key==='Tab'&&gateStage===1){event.preventDefault();document.querySelector('.site-header .header-motion')?.focus();}
  },true);
  document.addEventListener('visibilitychange',()=>{root.toggleAttribute('data-motion-suspended',document.hidden);if(!document.hidden){sync();observe();}});
@@ -143,5 +142,5 @@
  window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(progress);}},{passive:true});
  const changed=()=>{if(preference==='auto')sync();};if(media?.addEventListener)media.addEventListener('change',changed);else media?.addListener?.(changed);
  document.addEventListener('DOMContentLoaded',()=>{sync();observe();progress();activateGate();});
- document.addEventListener('studio:route',()=>{if(gateActive){lockPage();document.querySelector('.site-header .header-motion')?.classList.add('motion-gate-target');}});
+ document.addEventListener('studio:route',()=>{if(gateActive){lockPage();const target=document.querySelector('.site-header .header-motion');target?.classList.add('motion-gate-target');if(gateStage===1)target?.focus({preventScroll:true});}});
 })();

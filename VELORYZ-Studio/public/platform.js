@@ -121,19 +121,22 @@ function openExpert(id=''){
  chatAgent=a.id;chatMessages=chatHistories[a.id]||(chatHistories[a.id]=[]);chatBusy=false;
  clearTimeout(campaignTimer);
  openModal(`<div class="expert-chat ai-conversation" data-persona="${a.id}">
- <div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ · STUDIO AI</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Page-aware help · Multilingual · Contextual next steps</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
+ <div class="chat-scroll-area"><div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ · STUDIO AI</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Page-aware help · Multilingual · Contextual next steps</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
  <div class="chat-personas" role="group" aria-label="Choose AI personality">${advisers.map(p=>`<button type="button" class="${p.id===a.id?'selected':''} ${p.id==='aryan'?'executive-agent':''}" data-chat-agent="${p.id}" aria-pressed="${p.id===a.id}" title="${p.id==='aryan'?'Executive escalation':p.role}">${avatar(p,true)}<span>${p.name}</span></button>`).join('')}</div>
  <div class="chat-conversation-meta"><span><span class="chat-live-dot" aria-hidden="true"></span> ${a.name} · <span data-chat-mode>Connecting…</span></span><button type="button" data-chat-clear>New chat ↺</button></div>
  <div class="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat with ${a.name}"></div>
  <div class="chat-suggestions" ${chatMessages.length?'hidden':''}>${['Help me with this page','What can VELORYZ build for me?','हिंदी में बात करें'].map(t=>`<button type="button" data-chat-prompt="${esc(t)}">${esc(t)}</button>`).join('')}</div>
  <div class="chat-connection" role="status">Checking VELORYZ AI connection…</div>
- <form id="expert-chat-form"><label class="sr-only" for="expert-question">Message ${a.name}</label><textarea id="expert-question" name="question" maxlength="1200" required rows="2" placeholder="Talk to ${a.name} in any language…"></textarea><button type="submit" class="button" aria-label="Send message to ${a.name}"><span>Send</span><span aria-hidden="true">↗</span></button></form>
+
  <div class="chat-footer"><span>Fictional AI persona · Responses can be mistaken. Avoid private details. Chats stay in this browser tab.</span><a href="${wa('Hi VELORYZ! I would like to speak with the studio.')}" target="_blank" rel="noopener">Human studio ↗</a></div>
+ </div>
+ <form id="expert-chat-form"><label class="sr-only" for="expert-question">Message ${a.name}</label><textarea id="expert-question" name="question" maxlength="1200" required rows="2" placeholder="Talk to ${a.name} in any language…"></textarea><button type="submit" class="button" aria-label="Send message to ${a.name}"><span>Send</span><span aria-hidden="true">↗</span></button></form>
  </div>`,'expert-modal');
+ sizeChatViewport();
  const log=$('.chat-log');
  if(chatMessages.length){for(const message of chatMessages)log.append(chatBubble(message,a));}
  else{const intro=chatBubble({role:'assistant',content:adviserIntros[a.id]},a);intro.classList.add('intro');log.append(intro);}
- log.scrollTop=log.scrollHeight;
+ log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
  fetch('/api/platform',{cache:'no-store'}).then(r=>r.json()).then(d=>{
   if(chatAgent!==a.id||chatSession!==connectionSession)return;
   const configured=Boolean(d.aiConfigured);
@@ -151,7 +154,7 @@ async function sendChat(form){
  const history=[...chatMessages.slice(-30),turn];
  const userBubble=chatBubble({role:'user',content:question},a);log.append(userBubble);
  const typing=document.createElement('div');typing.className='chat-typing';typing.innerHTML=avatar(a,true)+'<i></i><i></i><i></i><span>'+esc(name)+' is thinking…</span>';log.append(typing);
- log.scrollTop=log.scrollHeight;$('.chat-suggestions').hidden=true;
+ log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;$('.chat-suggestions').hidden=true;
  chatStatus(name+' is responding using the live model…');
  try{
   const r=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,messages:history.map(({role,content})=>({role,content})),page:currentRoute}),signal:AbortSignal.timeout(36000)});
@@ -171,12 +174,12 @@ async function sendChat(form){
    chatStatus(data.notice||'Live AI answer',false);
    const mode=$('[data-chat-mode]');if(mode)mode.textContent='VELORYZ AI · Live';
   }
-  log.scrollTop=log.scrollHeight;
+  log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
  }catch{
   if(chatSession!==session||!form.isConnected)return;
   typing.remove();userBubble.remove();input.value=question;
   const error=document.createElement('div');error.className='chat-error';error.setAttribute('role','alert');error.textContent='The live connection timed out or was interrupted. Your message is ready to retry.';log.append(error);
-  chatStatus('Live AI connection interrupted. Please retry.',true);log.scrollTop=log.scrollHeight;
+  chatStatus('Live AI connection interrupted. Please retry.',true);log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
  }finally{if(chatSession===session&&chatAgent===agent&&form.isConnected){chatBusy=false;form.removeAttribute('aria-busy');$('button[type="submit"]',form).disabled=false;input.focus();}}
 }
 
@@ -208,4 +211,21 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
 });
 document.addEventListener('input',e=>{if(e.target.matches('.catalogue-search input')){designQuery=e.target.value.toLowerCase().trim();filterDesigns();}});
 document.addEventListener('change',e=>{const t=e.target;if(t.hasAttribute('data-brief-pages'))projectBrief.pages=t.value;if(t.hasAttribute('data-brief-timeline'))projectBrief.timeline=t.value;if(t.hasAttribute('data-brief-feature'))projectBrief.features=[...$$('[data-brief-feature]:checked')].map(x=>x.dataset.briefFeature);updateBrief();});
+// Keep the composer inside the usable screen when a mobile keyboard appears.
+function sizeChatViewport(){
+ const viewport=window.visualViewport;
+ if(!viewport)return;
+ const root=document.querySelector('#modal-root');
+ if(!root)return;
+ root.style.setProperty('--chat-height',viewport.height+'px');
+ root.style.setProperty('--chat-top',viewport.offsetTop+'px');
+}
+window.visualViewport?.addEventListener('resize',sizeChatViewport);
+window.visualViewport?.addEventListener('scroll',sizeChatViewport);
+document.addEventListener('keydown',event=>{
+ if(event.target.id==='expert-question' && event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode!==229){
+  event.preventDefault();
+  event.target.form.requestSubmit();
+ }
+});
 document.addEventListener('submit',e=>{if(e.target.id==='expert-chat-form'){e.preventDefault();sendChat(e.target);}});
