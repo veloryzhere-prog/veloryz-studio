@@ -4,6 +4,7 @@ function fallback(){
  document.querySelectorAll('[data-logo-scene]:not(:has(canvas))').forEach(node=>{node.dataset.webgl='fallback';});
 }
 function mountWhenNeeded(){
+ if(window.StudioMotion?.onboardingActive)return;
  if(!document.querySelector('[data-logo-scene]'))return;
  if(window.StudioMotion&&window.StudioMotion.level!=='full'&&!requested){fallback();return;}
  if(!loading)loading=import('/motion-3d.js'+new URL(import.meta.url).search).catch(()=>{loading=null;fallback();});
@@ -15,3 +16,5 @@ document.addEventListener('studio:route',mountWhenNeeded);
 window.addEventListener('pageshow',mountWhenNeeded);
 window.StudioMotion?.addEventListener('change',mountWhenNeeded);
 mountWhenNeeded();
+
+document.addEventListener('studio:motion-intro-complete',mountWhenNeeded);

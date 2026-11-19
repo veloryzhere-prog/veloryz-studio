@@ -24,6 +24,7 @@
   let previousTime = 0;
   let cameraY = window.scrollY;
 
+  let backdrop;
   function atmosphere() {
     if (document.querySelector('.vz-atmosphere')) return;
     const layer = document.createElement('div');
@@ -31,6 +32,7 @@
     layer.setAttribute('aria-hidden', 'true');
     layer.innerHTML = '<div class="vz-atmosphere-grid"></div><div class="vz-orbit vz-orbit-one"><i></i></div><div class="vz-orbit vz-orbit-two"><i></i></div><div class="vz-orbit vz-orbit-three"><i></i></div><div class="vz-atmosphere-ray"></div>';
     document.body.prepend(layer);
+    backdrop=layer;
   }
 
   // Both optical planes use the same source and crop, so the magnifier follows the sculpture.
@@ -70,8 +72,8 @@
       values.push([el, progress, assembly]);
     }
 
-    root.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
-    root.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
+    backdrop?.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
+    backdrop?.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
     for (const [el, progress, assembly] of values) {
       if (assembly!==null && assembly!==el.assemblyProgress) {
         el.assemblyProgress=assembly;
@@ -139,8 +141,8 @@
     cameraY = window.scrollY;
     if (full()) { schedule(); return; }
     if (document.hidden) return;
-    root.style.removeProperty('--vz-flow-y');
-    root.style.removeProperty('--vz-flow-reverse');
+    backdrop?.style.removeProperty('--vz-flow-y');
+    backdrop?.style.removeProperty('--vz-flow-reverse');
     for (const el of tracked) {
       if(el.classList.contains('assembly-sequence')){
         delete el.assemblyProgress;delete el.dataset.chapter;el.style.removeProperty('--assembly-progress');

@@ -15,6 +15,45 @@ class VeloryzFrameCut extends HTMLElement {
     const listen = (target, type, fn) => target.addEventListener(type, fn, {signal: events.signal, passive:true});
     let visible = false, full = false, held = false, pending = 0, wanted = 0, playPending = false;
     let previousTime=0, position=0, measuredProgress=0, measureNeeded=true;
+    // Decode nine frames together and draw the requested frame directly. Keep
+    // only nearby sheets in memory, including when scrolling backwards.
+    const canvas = document.createElement?.('canvas');
+    const context = canvas?.getContext('2d', {alpha:false});
+    const sheets = new Map();
+    let useSheets = Boolean(context), lastFrame = -1, requestedSheet = -1;
+    if (useSheets) {
+      canvas.width=768; canvas.height=432;
+      canvas.className='frame-canvas'; canvas.hidden=true;
+      canvas.setAttribute('aria-hidden','true');
+      reveal.after(canvas);
+    }
+    function loadSheet(index) {
+      if (index<0 || index>=10 || sheets.has(index)) return;
+      const image=new Image();
+      const entry={image,ready:false};
+      sheets.set(index,entry);
+      image.src='/assets/frame-cut/frames/sheet-'+index+'.webp';
+      image.decode().then(()=>{
+        if (events.signal.aborted || sheets.get(index)!==entry) return;
+        entry.ready=true;
+        if (visible && full && index===requestedSheet) schedule();
+      }).catch(()=>{
+        if (events.signal.aborted || sheets.get(index)!==entry) return;
+        useSheets=false; canvas.hidden=true; schedule();
+      });
+    }
+    function drawFrame(frame) {
+      const index=Math.floor(frame/9);
+      if (requestedSheet!==index) {
+        requestedSheet=index;
+        for (const key of sheets.keys()) if (Math.abs(key-index)>1) sheets.delete(key);
+        loadSheet(index); loadSheet(index+1); loadSheet(index-1);
+      }
+      if (!sheets.get(index)?.ready || lastFrame===frame) return;
+      const cell=frame%9;
+      context.drawImage(sheets.get(index).image,(cell%3)*768,Math.floor(cell/3)*432,768,432,0,0,768,432);
+      lastFrame=frame; canvas.hidden=false;
+    }
     function seek() {
       if (reveal.readyState && !reveal.seeking && Math.abs(reveal.currentTime - wanted) > 0.016)
         reveal.currentTime = wanted;
@@ -42,13 +81,14 @@ class VeloryzFrameCut extends HTMLElement {
       this.toggleAttribute('data-scarf', loop);
       button.hidden = !loop;
       if (visible && full && !document.hidden) {
-        if (!reveal.hasAttribute('src')) {
+        if (!useSheets && !reveal.hasAttribute('src')) {
           reveal.preload = 'auto';
           reveal.src = '/assets/frame-cut/reveal.mp4';
         }
         if (progress > .20 && !scarf.hasAttribute('src')) { scarf.preload='auto'; scarf.src='/assets/frame-cut/scarf.mp4'; }
         wanted = revealProgress * (3 - 1/30);
-        seek();
+        if (useSheets) drawFrame(Math.round(revealProgress*89));
+        else seek();
       }
       if (loop && visible && !held && !document.hidden) {
         if (scarf.paused && !playPending) {
@@ -66,12 +106,13 @@ class VeloryzFrameCut extends HTMLElement {
     const preference = () => {
       full = window.StudioMotion ? window.StudioMotion.level === 'full' : !reduced.matches;
       this.toggleAttribute('data-full', full);
+      if (!full && canvas) {canvas.hidden=true;lastFrame=-1;requestedSheet=-1;sheets.clear();}
       if (!full && reveal.hasAttribute('src')) {reveal.removeAttribute('src'); reveal.load();}
       schedule();
     };
     const observer = new IntersectionObserver(([entry]) => {visible=entry.isIntersecting; schedule();});
     observer.observe(this);
-    listen(window,'scroll',schedule); listen(window,'resize',schedule);
+    listen(window,'scroll',()=>{if(visible)schedule();}); listen(window,'resize',schedule);
     listen(document,'visibilitychange',schedule); listen(reduced,'change',preference);
     listen(reveal,'loadeddata',schedule); listen(reveal,'seeked',seek);
     listen(scarf,'loadeddata',schedule);
@@ -81,7 +122,7 @@ class VeloryzFrameCut extends HTMLElement {
     window.StudioMotion?.addEventListener('change',preference);
     preference();
     this.cleanup = () => {
-      events.abort(); observer.disconnect(); cancelAnimationFrame(pending);
+      events.abort(); sheets.clear(); canvas?.remove(); observer.disconnect(); cancelAnimationFrame(pending);
       window.StudioMotion?.removeEventListener('change',preference);
       for(const video of [reveal,scarf]) {video.pause();video.removeAttribute('src');video.load();}
     };

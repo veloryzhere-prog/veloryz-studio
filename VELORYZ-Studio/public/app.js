@@ -92,7 +92,7 @@ function projectArt(id){
 
  const p=projects.find(p=>p.id===id);
  if(p?.cover)return `<div class="project-art media-project" data-depth><div class="depth-plane"><img src="${esc(p.cover)}" alt="${esc(p.name)} project preview" loading="lazy" decoding="async"></div><span class="project-arrow" aria-hidden="true">↗</span>${p.video?'<span class="video-project-badge">▶ Project film</span>':''}</div>`;
- if(p?.video)return `<div class="project-art media-project"><video class="ambient-video" muted playsinline loop autoplay preload="metadata" aria-label="${esc(p.name)} film preview"><source src="${esc(p.video)}"></video><span class="project-arrow" aria-hidden="true">↗</span><span class="video-project-badge">▶ Project film</span></div>`;
+ if(p?.video)return `<div class="project-art media-project"><video class="ambient-video" muted playsinline loop preload="none" aria-label="${esc(p.name)} film preview"><source src="${esc(p.video)}"></video><span class="project-arrow" aria-hidden="true">↗</span><span class="video-project-badge">▶ Project film</span></div>`;
  if(id==='identity')return `<div class="project-art identity-motion-art"><img src="/assets/brand/veloryz-mark.svg" alt="" width="680" height="620"><span class="identity-caption">VELORYZ / A STUDY IN MOTION</span><span class="project-arrow" aria-hidden="true">↗</span></div>`;
  const art=studioArtwork[id];
  if(art&&id!=='hero')return `<div class="project-art render-art render-${id}" data-depth><div class="depth-plane"><div class="render-drift">${renderPicture(id)}</div></div><span class="render-cover-wash" aria-hidden="true"></span><div class="render-cover-label"><strong>${esc(art.label)}</strong><span>${esc(art.detail)}</span></div><span class="render-cover-bottom">${esc(p?.category||'Studio exploration')}</span><span class="render-glint" aria-hidden="true"></span><span class="project-arrow" aria-hidden="true">↗</span></div>`;
@@ -134,7 +134,7 @@ function deliveryPage(){return `${intro('From first conversation to handover','G
 
 function cta(){return `<section class="cta-section"><img class="cta-mark" src="/assets/brand/veloryz-mark.svg" alt="" width="360" height="360"><div class="container"><div class="cta-top"><div><div class="eyebrow" style="--accent:#20211f">Your next chapter</div><h2>Good things start<br>with a conversation.</h2></div><button class="cta-orb" data-book aria-label="Book a consultation">↗</button></div><div class="cta-bottom"><p>A new idea, a fresh perspective, or a platform ready for its next step. Let’s make it happen.</p><a href="mailto:${CONTACT.email}" class="text-link">${CONTACT.email} ${arrow}</a></div></div></section>`;}
 function intro(label,title,description,index){return `<section class="page-intro container">${motionGlyph()}<div class="eyebrow intro-animate">${label}</div><h1 class="intro-animate delay-1">${title}</h1><div class="page-intro-bottom intro-animate delay-2"><p>${description}</p><span class="page-index">VELORYZ STUDIO / ${index}</span></div></section>`;}
-function reelStrip(){return `<div class="reel-strip reveal"><video class="ambient-video" autoplay loop muted playsinline preload="metadata" poster="/assets/studio-poster.jpg" aria-label="VELORYZ animated studio film"><source src="${esc(studioCMS?.branding?.showreel||'/assets/studio-film.mp4')}" type="video/mp4"></video><div class="reel-overlay"><div><h3>A studio in motion.</h3><p>THE VELORYZ FILM · 16 SECONDS</p></div><button class="reel-play" data-reel aria-label="Watch the VELORYZ studio film">▶</button></div></div>`;}
+function reelStrip(){return `<div class="reel-strip reveal"><video class="ambient-video" loop muted playsinline preload="none" poster="/assets/studio-poster.jpg" aria-label="VELORYZ animated studio film"><source src="${esc(studioCMS?.branding?.showreel||'/assets/studio-film.mp4')}" type="video/mp4"></video><div class="reel-overlay"><div><h3>A studio in motion.</h3><p>THE VELORYZ FILM · 16 SECONDS</p></div><button class="reel-play" data-reel aria-label="Watch the VELORYZ studio film">▶</button></div></div>`;}
 function logoStage(variant='hero'){return `<div class="logo-stage logo-stage-${variant}">${variant==='lab'?`<div class="logo-object-controls" role="group" aria-label="Choose a 3D sculpture"><button data-logo-object="logo" aria-pressed="true">V mark</button><button data-logo-object="ribbon" aria-pressed="false">Ribbon</button><button data-logo-object="orbit" aria-pressed="false">Orbital</button></div>`:''}<div class="logo-grid" aria-hidden="true"></div><div class="logo-scene" data-logo-scene role="img" aria-label="Interactive three-dimensional sculpture of the pink and blue VELORYZ logo"><img class="logo-fallback" src="/assets/brand/veloryz-mark.svg" alt="" width="680" height="620"></div><span class="scene-coordinate scene-coordinate-top">V / 01 &nbsp; BRAND IN MOTION</span><span class="scene-coordinate scene-coordinate-bottom"><span class="rotation-hint">Drag to rotate · Arrow keys to turn</span><button type="button" data-inspect-logo>Inspect in 3D</button></span><div class="logo-view-controls" role="group" aria-label="3D logo camera"><button data-logo-view="front" aria-pressed="true">Front</button><button data-logo-view="orbit" aria-pressed="false">Orbit</button><button data-logo-view="explode" aria-pressed="false">Explode</button></div><label class="logo-speed">3D speed<input type="range" min="0.25" max="1.75" step="0.25" value="1" data-logo-speed aria-label="3D animation speed"></label><div class="logo-controls" role="group" aria-label="Logo material"><button data-logo-material="solid" aria-pressed="true">Solid</button><button data-logo-material="glass" aria-pressed="false">Glass</button><button data-logo-material="wire" aria-pressed="false">Wire</button><button data-logo-replay aria-label="Replay logo assembly">↻</button></div></div>`;}
 function creatorSection(){return `<section class="creator-section container"><div class="creator-visual reveal"><div class="creator-orbit" aria-hidden="true"><i></i><i></i><img src="/assets/brand/veloryz-mark.svg" alt="" width="300" height="300"></div><span class="creator-visual-note">AN IDEA. A VISION. A VELORYZ CREATION.</span></div><div class="creator-copy reveal"><span class="eyebrow">A personal point of view</span><h2>Made with intent.<br><span class="gradient-text">Built by Aryan.</span></h2><p>Design, code and a little different thinking. I’m Aryan Raj Singh, founder of VELORYZ Studio. I bring the vision together, from the first idea to the details you can experience.</p><div class="creator-signature"><span>Designed & built by</span><strong>Aryan Raj Singh<span class="signature-line" aria-hidden="true"></span></strong></div><a href="/studio/" class="text-link">Meet the studio ${arrow}</a></div></section>`;}
 function motionManifesto(){return `<section class="motion-manifesto container"><span class="eyebrow reveal">An independent creative practice</span><h2 class="manifesto-words"><span class="reveal">DESIGN.</span><span class="reveal">DEVELOP.</span><span class="reveal gradient-text">MOVE.</span></h2><div class="manifesto-bottom"><p>Purpose in every pixel.<br>Personality in every interaction.</p><a href="/services/" class="text-link">Explore our capabilities ${arrow}</a></div></section>`;}
@@ -254,7 +254,7 @@ function initMotion(){
   try{observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in-view');observer.unobserve(entry.target);}}),{threshold:.06,rootMargin:'0px 0px -20px 0px'});$$('.reveal').forEach(el=>{el.classList.remove('in-view');observer.observe(el);});}catch{$$('.reveal').forEach(el=>el.classList.add('in-view'));}
  }else $$('.reveal').forEach(el=>el.classList.add('in-view'));
  window.StudioMotion?.observe();
- $$('.ambient-video').forEach(video=>{video.muted=true;video.defaultMuted=true;video.playsInline=true;if(reduced.matches||document.hidden){video.autoplay=false;video.pause();}else{video.autoplay=true;video.play()?.catch(()=>video.dataset.autoplay='blocked');}});
+ observeAmbientFilms();
 }
 function showToast(message){const el=$('#toast');el.textContent=message;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),4500);}
 function openModal(content,className='',returnFocus=null){
@@ -366,9 +366,22 @@ document.addEventListener('keydown',event=>{
  }
 });
 window.addEventListener('popstate',()=>{if(normalise(location.pathname)===currentRoute)return;while(modalOpen)closeModal();renderRoute(location.pathname);});
-document.addEventListener('visibilitychange',()=>{
- $$('.ambient-video').forEach(video=>{if(document.hidden)video.pause();else if(!reduced.matches&&!document.body.classList.contains('motion-paused'))video.play().catch(()=>{});});
-});
+let ambientObserver;
+function observeAmbientFilms(){
+ ambientObserver?.disconnect();
+ const films=$$('video.ambient-video');
+ const allowed=!document.hidden && !reduced.matches && !window.StudioMotion?.onboardingActive;
+ if(!allowed || !window.IntersectionObserver){films.forEach(video=>video.pause());return;}
+ ambientObserver=new IntersectionObserver(entries=>{
+  for(const {target,isIntersecting} of entries){
+   if(isIntersecting && !document.hidden && !reduced.matches && !window.StudioMotion?.onboardingActive){
+    target.play()?.catch(()=>{});
+   }else target.pause();
+  }
+ });
+ films.forEach(video=>ambientObserver.observe(video));
+}
+document.addEventListener('visibilitychange',observeAmbientFilms);
 reduced.addEventListener('change',()=>{resetDepth();initMotion();});
 
 

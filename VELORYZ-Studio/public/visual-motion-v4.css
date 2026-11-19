@@ -6,7 +6,7 @@ body.motion-edition{
   --pad:clamp(20px,4.2vw,78px);
   color:#231d19;background-color:#f7f0e4;
   background-image:radial-gradient(ellipse at 8% 4%,#fffaf0 0%,transparent 32%),radial-gradient(ellipse at 95% 25%,rgba(234,205,148,.32),transparent 31%),linear-gradient(165deg,#fffdf9 0%,#f7eee0 34%,#f0e3d3 74%,#eae0d5 100%);
-  background-attachment:fixed;background-size:100% 100%;
+  background-attachment:scroll;background-size:100% 100%;
   isolation:isolate;font-size:16px;line-height:1.6;
 }
 body.motion-edition #main,body.motion-edition #footer{position:relative;z-index:1}

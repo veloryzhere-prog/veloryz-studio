@@ -3,17 +3,19 @@
    Source of truth for movement remains data-motion and veloryz.motion.v2. */
 (()=>{
  const root=document.documentElement;
- const key='veloryz.motion.v2', seenKey='veloryz.motion.introDone.v3';
+ const key='veloryz.motion.v2';
  const valid=new Set(['auto','full','reduced','paused']);
  const media=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
  const listeners=new Set();
  let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='';
  try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;}catch{}
  const effective=()=>preference==='auto'?(media?.matches?'reduced':'full'):preference;
- const seen=()=>{try{return sessionStorage.getItem(seenKey)==='1';}catch{return false;}};
- const markSeen=()=>{try{sessionStorage.setItem(seenKey,'1');}catch{}};
- // Guide the first opening in this tab and respect an existing quiet preference.
- const needsIntro=root.dataset.guidedMotionIntro==='true' && !seen() && effective()==='full';
+ const nav=window.performance?.getEntriesByType('navigation')[0];
+ const internal=document.referrer && new URL(document.referrer).origin===window.location.origin;
+ // A direct opening can reuse an existing tab. Only reload/history and internal
+ // navigation inherit the previous visit, including a refresh during the guide.
+ const needsIntro=root.dataset.guidedMotionIntro==='true' &&
+   nav?.type!=='reload' && nav?.type!=='back_forward' && !internal;
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
  function lockPage(){
@@ -54,7 +56,7 @@
   if(gateInitialized||!needsIntro)return;
   const button=document.querySelector('.site-header .header-motion');
   if(!button){if(++gateAttempts<120)requestAnimationFrame(activateGate);else root.removeAttribute('data-motion-gate');return;}
-  markSeen();gateInitialized=true;gateActive=true;gateStage=1;
+  gateInitialized=true;gateActive=true;gateStage=1;
   originalOverflow=document.body.style.overflow;
   document.body.classList.add('motion-focus-active');
   root.dataset.motionGate='icon';
@@ -77,7 +79,7 @@
   const dialog=document.querySelector('#motion-preferences');
   gateControls(dialog);
   if(dialog?.open){if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');}
-  markSeen();
+  sync();
   document.dispatchEvent(new CustomEvent('studio:motion-intro-complete'));
  }
  function sync(){
@@ -89,7 +91,7 @@
   const status=document.querySelector('#motion-status');
   if(status)status.textContent=gateActive?'Choose Full motion to enter the studio. Other settings unlock immediately afterward.':preference==='auto'?`Automatic is using ${level==='full'?'full':'reduced'} motion, following your device preference.`:level==='full'?'Full motion is on. Graphics move automatically. You can reduce or pause them at any time.':level==='paused'?'Motion is paused. All content and controls remain available.':'Reduced motion is on. The experience stays clear, with a still presentation.';
   for(const callback of listeners){try{callback({type:'change',matches:level!=='full'});}catch{console.warn('A motion view could not refresh.');}}
-  document.querySelectorAll('video.ambient-video').forEach(video=>{video.muted=true;video.defaultMuted=true;video.playsInline=true;if(level!=='full'||document.hidden)video.pause();else video.play()?.catch(()=>video.dataset.autoplay='blocked');});
+
  }
  function choose(value){
   if(!valid.has(value)||(gateActive&&!['full','reduced'].includes(value)))return;
@@ -142,5 +144,6 @@
  window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(progress);}},{passive:true});
  const changed=()=>{if(preference==='auto')sync();};if(media?.addEventListener)media.addEventListener('change',changed);else media?.addListener?.(changed);
  document.addEventListener('DOMContentLoaded',()=>{sync();observe();progress();activateGate();});
- document.addEventListener('studio:route',()=>{if(gateActive){lockPage();const target=document.querySelector('.site-header .header-motion');target?.classList.add('motion-gate-target');if(gateStage===1)target?.focus({preventScroll:true});}});
+ document.addEventListener('studio:route',()=>{if(!gateInitialized && needsIntro)activateGate();
+  if(gateActive){lockPage();const target=document.querySelector('.site-header .header-motion');target?.classList.add('motion-gate-target');if(gateStage===1)target?.focus({preventScroll:true});}});
 })();
