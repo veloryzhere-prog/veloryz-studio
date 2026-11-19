@@ -1,0 +1,29 @@
+.type-study{padding-block:clamp(3rem,7vw,7rem);--scene-progress:.5;--tracking:-.02em}
+.type-heading{display:flex;gap:1rem;align-items:end;justify-content:space-between;flex-wrap:wrap;margin-bottom:1.5rem}
+.type-heading h2{font-size:clamp(2.4rem,5vw,5rem);letter-spacing:-.06em}
+.type-heading label{display:grid;gap:.4rem}.type-heading input{width:12rem;accent-color:#7c3c65}
+.type-window{background:#321728;color:#f6ddc7;overflow:hidden;border-radius:1rem;padding:4% 0;text-align:center}
+.type-window span{display:block;color:inherit;font:900 clamp(4rem,13vw,13rem)/.86 system-ui;letter-spacing:var(--tracking);white-space:nowrap}
+.type-window span:nth-child(2){font-family:Georgia,serif;font-style:italic;color:#efab97}
+@media(prefers-reduced-motion:no-preference){
+ html[data-motion=full] .type-window span{transform:translateX(calc((var(--scene-progress) - .5)*33%))}
+ html[data-motion=full] .type-window span:nth-child(2){transform:translateX(calc((.5 - var(--scene-progress))*33%))}
+}
+@media(max-width:600px){.type-window{padding-block:12%}}
+.folio-stack{max-width:72rem;margin:auto}
+.folio-shot{--scene-progress:.5;display:grid;grid-template-columns:minmax(200px,.9fr) minmax(280px,1fr);align-items:center;gap:clamp(1.5rem,4vw,4.2rem);padding:clamp(1.25rem,2.6vw,2.6rem) 0;border-top:1px solid #cfc1b5}
+.folio-stage{border-radius:.75rem;background:#352a2f;overflow:hidden;aspect-ratio:1.72;max-height:330px}
+.folio-image,.folio-image>img,.folio-image>.project-art{width:100%;height:100%;object-fit:cover;display:block}
+.folio-copy{min-width:0;overflow-wrap:anywhere}
+.folio-copy h3{font:normal clamp(1.9rem,3.5vw,3.7rem)/1.04 Georgia,serif;letter-spacing:-.055em;margin:.55rem 0 .75rem}
+.folio-meta{font-size:.86rem;line-height:1.4;color:#6a5056}
+.folio-copy p:not(.folio-meta){line-height:1.55;max-width:65ch}
+.folio-copy ul{padding:0;list-style:none;display:flex;gap:.35rem .8rem;flex-wrap:wrap;margin:.75rem 0;font-size:.85rem}
+.folio-copy button{background:transparent;padding:.5rem 0;border-bottom:1px solid currentColor;font-weight:600}
+@media(min-width:680px) and (prefers-reduced-motion:no-preference){
+ html[data-motion=full] .folio-image{transform:scale(1.10) translateY(calc((var(--scene-progress) - .5)*8%))}
+ html[data-motion=full] .folio-copy{transform:translateY(calc((.5 - var(--scene-progress))*24px))}
+}
+@media(max-width:679px){.folio-shot{grid-template-columns:1fr;gap:.8rem}.folio-stage{height:auto;max-height:210px}.folio-copy ul{margin-block:.5rem}}
+
+.folio-details{margin:.5rem 0}.folio-details summary{cursor:pointer;font-weight:600}.folio-details p{margin:.6rem 0}

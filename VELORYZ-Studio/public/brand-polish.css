@@ -1,0 +1,98 @@
+/* VELORYZ official wordmark — scoped header enhancement only.
+   The original interactive 3D V, its WebGL models and Motion Playground are untouched. */
+body.motion-edition .site-header .brand--official {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: clamp(166px, 15.4vw, 224px);
+  max-width: 30vw;
+  min-width: 0;
+  line-height: 1;
+  overflow: visible;
+  isolation: isolate;
+  animation: vz-wordmark-appear 1050ms cubic-bezier(.17,.8,.2,1) both;
+}
+body.motion-edition .site-header .brand--official .brand-official-wordmark {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 880 / 263;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  transform: perspective(900px) rotateX(var(--brand-tilt-y,0deg)) rotateY(var(--brand-tilt-x,0deg));
+  translate: 0 0;
+  animation: vz-wordmark-drift 6.5s ease-in-out 1s infinite;
+  transition: transform 480ms cubic-bezier(.2,.75,.2,1), filter 400ms ease;
+  will-change: auto;
+}
+body.motion-edition .site-header .brand--official::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 8%; bottom: 8%;
+  left: -28%;
+  width: 35%;
+  transform: skewX(-19deg) translateX(-150%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+body.motion-edition .site-header .brand--official:hover .brand-official-wordmark,
+body.motion-edition .site-header .brand--official:focus-visible .brand-official-wordmark {
+  filter: drop-shadow(0 4px 11px rgba(91,68,140,.18));
+}
+body.motion-edition .site-header .brand--official:hover::after,
+body.motion-edition .site-header .brand--official:focus-visible::after {
+  opacity: .65;
+  animation: vz-wordmark-light-sweep 1000ms ease-out both;
+}
+@keyframes vz-wordmark-appear {
+  from {opacity:0; translate: 0 8px; filter:blur(3px)}
+  to {opacity:1; translate:0 0; filter:blur(0)}
+}
+@keyframes vz-wordmark-drift {
+  0%,100% { translate:0 0 }
+  50% { translate:0 -2.5px }
+}
+@keyframes vz-wordmark-light-sweep {
+  from { transform: skewX(-19deg) translateX(-180%) }
+  to { transform: skewX(-19deg) translateX(800%) }
+}
+/* Keep the homepage studio descriptor, but remove its marker and softly erase
+   only the letters closest to the cursor, rather than hiding the whole line. */
+body.motion-edition .hero-topline .hero-studio-tagline {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  -webkit-mask-image: radial-gradient(circle 53px at var(--tagline-fade-x,-250px) var(--tagline-fade-y,50%), transparent 0%, rgba(0,0,0,.32) 55%, #000 100%);
+  mask-image: radial-gradient(circle 53px at var(--tagline-fade-x,-250px) var(--tagline-fade-y,50%), transparent 0%, rgba(0,0,0,.32) 55%, #000 100%);
+  transition: opacity .3s ease;
+}
+body.motion-edition .hero-topline .hero-studio-tagline:hover { opacity: .92 }
+body.motion-edition .hero-topline .hero-studio-tagline::before,
+body.motion-edition .hero-topline .hero-studio-tagline::after { display:none!important }
+@media (max-width: 1080px) {
+  body.motion-edition .site-header .brand--official { width: clamp(153px, 15vw, 190px); max-width: 29vw }
+}
+@media (max-width: 760px) {
+  body.motion-edition .site-header .brand--official { width: clamp(149px, 38vw, 185px); max-width: 47vw }
+}
+@media (max-width: 380px) {
+  body.motion-edition .site-header .brand--official { width: 145px; max-width: 45vw }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.motion-edition .site-header .brand--official,
+  body.motion-edition .site-header .brand--official .brand-official-wordmark {animation:none!important; transition:none!important; transform:none!important; translate:none!important}
+  body.motion-edition .site-header .brand--official::after {display:none!important}
+  body.motion-edition .hero-topline .hero-studio-tagline {mask-image:none!important;-webkit-mask-image:none!important;opacity:1!important}
+}
+html[data-motion="reduced"] body.motion-edition .site-header .brand--official,
+html[data-motion="paused"] body.motion-edition .site-header .brand--official,
+html[data-motion="reduced"] body.motion-edition .site-header .brand-official-wordmark,
+html[data-motion="paused"] body.motion-edition .site-header .brand-official-wordmark {animation:none!important;transition:none!important;transform:none!important;translate:none!important}
+html[data-motion="reduced"] body.motion-edition .site-header .brand--official::after,
+html[data-motion="paused"] body.motion-edition .site-header .brand--official::after {display:none!important}
+html[data-motion="reduced"] body.motion-edition .hero-topline .hero-studio-tagline,
+html[data-motion="paused"] body.motion-edition .hero-topline .hero-studio-tagline {mask-image:none!important;-webkit-mask-image:none!important;opacity:1!important}

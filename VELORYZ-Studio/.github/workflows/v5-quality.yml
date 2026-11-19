@@ -1,0 +1,28 @@
+name: VELORYZ V5 source quality
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+      - name: Source and integration contracts
+        run: corepack pnpm test:all
+      - name: Typecheck
+        run: corepack pnpm exec tsc --noEmit
+      - name: Lint
+        run: corepack pnpm lint
+      - name: Production build
+        run: corepack pnpm build
+      - name: Source completeness
+        run: node verify-project.mjs

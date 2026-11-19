@@ -1,0 +1,71 @@
+import { env } from 'cloudflare:workers';
+import siteShell from './site-shell';
+import adminShell from './admin-shell';
+import { secureHtml,pageMetadata } from './response-security';
+import { publicOrigin,canonicalPath } from './site-origin.mjs';
+import { getPublished, handleApi } from './cms-api.mjs';
+export const dynamic = 'force-dynamic';
+const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+export async function GET(request: Request) {
+ const path=new URL(request.url).pathname;
+ if(import.meta.env.DEV&&path==='/_studio_preview/production'){
+  const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
+  const views:Record<string,string>={home:'/',work:'/work/',design:'/design/',studio:'/studio/',book:'/book/',create:'/create/',pricing:'/pricing/',developers:'/developers/'};
+  const route=views[view]||'/';
+  const html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};window.STUDIO_PREVIEW_ROUTE=${serialise(route)};</script><script src="/app.js" defer></script>`);
+  return secureHtml(html,200,true,true);
+ }
+
+ if(import.meta.env.DEV&&path==='/_studio_preview/mobile'){
+  const params=new URL(request.url).searchParams,width=params.get('width')==='320'?320:390;
+  const pages:Record<string,string>={home:'/',work:'/work/',live:'/_studio_preview/production',design:'/design/',create:'/create/',book:'/book/',pricing:'/pricing/',payments:'/payments/',developers:'/developers/',admin:'/_studio_preview/admin'};
+  const src=pages[params.get('page')||'design']||pages.design;
+  return secureHtml(`<!doctype html><html><head><title>Responsive studio preview</title><style>body{margin:0;background:#ddd8cd;display:grid;place-items:center;padding:25px;font-family:system-ui}p{font-size:12px}iframe{width:${width}px;height:780px;border:1px solid #bbb3a4;background:#faf9f6;box-shadow:0 12px 50px #6b5d3833}</style></head><body><p>LOCAL RESPONSIVE QA / ${width}px / ${src}</p><iframe id="responsive-preview" title="Responsive site preview" src="${src}"></iframe></body></html>`,200,true);
+ }
+ if(import.meta.env.DEV&&path==='/_studio_preview/unlock')return secureHtml(adminShell.replace('<script src="/admin.js" defer></script>','<script>window.ADMIN_UNLOCK_PREVIEW=true;</script><script src="/admin.js" defer></script>'),200,true);
+ if(path==='/admin/preview'){
+  const apiRequest=new Request(new URL('/api/admin/state',request.url),{headers:request.headers});
+  const result=await handleApi(apiRequest,env);
+  if(!result.ok)return secureHtml(adminShell,200,true);
+  const data=await result.json() as {state:unknown};
+  return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({state:data.state,version:-1,preview:true})};</script><script src="/app.js" defer></script>`).replace(/<body[^>]*>/,match=>match+'<a href="/admin" class="draft-preview-note">DRAFT PREVIEW · Return to Studio Control ↗</a>'),200,true);
+ }
+ if(path==='/admin'||path.startsWith('/admin/'))return secureHtml(adminShell,200,true);
+ if(import.meta.env.DEV&&path==='/_studio_preview/admin'){
+  const data=await getPublished(env);
+  return secureHtml(adminShell.replace('<script src="/admin.js" defer></script>',()=>`<script>window.ADMIN_VISUAL_PREVIEW=true;window.ADMIN_INITIAL_STATE=${serialise({state:data.state,draftVersion:0,publishedVersion:0,user:{name:'Aryan Raj Singh'},hasDraft:false})};</script><script src="/admin.js" defer></script>`),200,true);
+ }
+ if(import.meta.env.DEV&&path==='/_studio_preview/campaign'){
+  const data=await getPublished(env);
+  data.state.offers=[{id:'visual-preview',title:'Your next idea deserves a good beginning.',eyebrow:'STUDIO CAMPAIGN PREVIEW',body:'A clean introduction for your next launch, announcement or offer. This campaign is a local design preview.',kind:'announcement',media:'',mediaType:'none',buttonLabel:'Talk to the studio',buttonUrl:'/contact/',enabled:true,startAt:'',endAt:'',priority:50}];
+  data.state.offers.push({...data.state.offers[0],id:'preview-pin',title:'A new chapter, pinned above everything.',body:'This is a local preview of a site-wide message.',placement:'pinned',logo:'/assets/favicon.svg',logoLink:'/',theme:'gold',priority:100,buttonLabel:'Explore designs',buttonUrl:'/design/'},{...data.state.offers[0],id:'preview-ad',title:'Consider your next direction.',body:'A composed advertisement with original motion, your logo and two destinations. Local design preview.',kind:'ad',placement:'inline',theme:'dark',animation:'ribbon',logo:'/assets/favicon.svg',buttonLabel:'Discover the designs',buttonUrl:'/design/',secondaryLabel:'Book a conversation',secondaryUrl:'/book/'});
+  data.state.offers.push({...data.state.offers[0],id:'preview-slider',kind:'ad',placement:'slider',title:'Explore the studio’s design directions',buttonLabel:'Browse designs',buttonUrl:'/design/'},{...data.state.offers[0],id:'preview-slider-two',kind:'ad',placement:'slider',title:'Meet the people behind the work',buttonLabel:'Meet the team',buttonUrl:'/teamjob/'});
+  return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};</script><script src="/app.js" defer></script>`),200,true);
+ }
+ const data=await getPublished(env);
+ const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
+ const slug=(value:string)=>value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+ const people=[{name:data.state.site.founderName,slug:slug(data.state.site.founderName)},...data.state.team];
+ const pages:Record<string,string>={'/':'Built to be remembered.','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
+ for(const person of people)pages['/teamjob/'+(person.slug||slug(person.name))]=person.name+' — Studio profile';
+ if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
+ if(normal==='/sitemap.xml'){const urls=Object.keys(pages).map(p=>`<url><loc>${base}${p==='/'?'/':p}</loc></url>`).join('');return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});}
+ const routeDescriptions:Record<string,string>={
+  '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from Bokaro, India.',
+  '/work':'Explore VELORYZ Studio original products, work in progress and clearly identified visual concept studies, with transparent project status.',
+  '/services':'Explore VELORYZ Studio services across custom websites, product interfaces, brand identity, backend systems and motion design.',
+  '/design':'Browse curated website design references and transparent adaptation estimates. Source attribution is shown for third-party references.',
+  '/pricing':'Review VELORYZ Studio starting prices, project-scope assumptions and a pathway to a tailored written proposal.',
+  '/create':'Plan your next website or digital product, review an illustrative budget range and prepare a project brief.',
+  '/book':'Request a VELORYZ Studio discovery conversation. Preferred dates are requests until the studio confirms availability.',
+  '/contact':'Contact VELORYZ Studio in Bokaro, Jharkhand, about websites, design, software and digital projects.',
+  '/developers':'Explore practical web development, APIs, integration design, protected systems and backend delivery approaches.',
+  '/studio':'Meet VELORYZ Studio and explore its design, development and creative direction team.'
+ };
+ const known=Object.hasOwn(pages,normal);
+ let html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise(data)};</script><script src="/app.js" defer></script>`);
+ html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description:(routeDescriptions[normal]||data.state.site.description).slice(0,300),url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ const response=secureHtml(html,known?200:404);
+ if(!import.meta.env.DEV&&base!==new URL(request.url).origin)response.headers.set('X-Robots-Tag','noindex, nofollow');
+ return response;
+}

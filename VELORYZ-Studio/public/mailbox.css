@@ -1,0 +1,66 @@
+/* A small, handmade surprise at the end of every public page. */
+.mailbox-button{border-radius:12px;transition:transform .3s var(--ease)}
+.mailbox-button:focus-visible{outline:2px solid #a5b391;outline-offset:5px}
+.mailbox-illustration{position:absolute;inset:0;transform-origin:50% 85%;animation:mailbox-hello 7s ease-in-out infinite}
+.postbox-inside{position:absolute;inset:1px auto 1px 0;width:27px;border-radius:22px 22px 3px 3px;background:linear-gradient(135deg,#7e8c72,#a2b092);box-shadow:inset 2px 3px 8px #44543830}
+.postbox-door{z-index:2;transition:transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .5s;backface-visibility:visible}
+.mailbox-peek{z-index:1;bottom:6px;left:5px;box-shadow:0 1px 3px #48513b18;transition:transform .6s var(--ease),opacity .4s}
+.mailbox-peek::after{content:'';position:absolute;left:3px;right:3px;top:4px;height:1px;background:#d9dccc;box-shadow:0 3px #e4e6dc}
+.mailbox-spark{position:absolute;right:-3px;top:-7px;font-size:17px;color:#b3a275;animation:mailbox-sparkle 4s ease-in-out infinite;pointer-events:none}
+.mailbox-caption small>span{display:inline-block;animation:mailbox-arrow 3s ease-in-out infinite}
+.founder-mailbox.opened .mailbox-illustration{animation:none}
+.founder-mailbox.opened .postbox-door{transform:perspective(110px) rotateX(-105deg);box-shadow:0 -3px 6px #46583c18}
+.founder-mailbox.opened .mailbox-peek{transform:translate(25px,-45px) rotate(20deg);opacity:0}
+.founder-mailbox.opened .mailbox-spark{opacity:0;animation:none}
+.founder-letter{width:360px;padding:0;max-height:min(640px,calc(100svh - 180px));overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#c6cbb8 transparent;border-radius:1px;outline:none;background:linear-gradient(172deg,#fffef8,#fbfaf0);transform:translate(-76px,28px) scale(.22) rotate(-14deg);transition:opacity .35s,transform .65s cubic-bezier(.16,1,.3,1);box-shadow:0 17px 40px #3033201a,3px 3px 0 #efeedf,4px 4px 0 #dcdcca}
+.founder-mailbox.opened .founder-letter{transform:translate(0,0) scale(1) rotate(-1.5deg)}
+.letter-paper{padding:28px 28px 20px;background:linear-gradient(180deg,transparent 59%,#c9c5a91a 59.2%,#fff9 59.5%,transparent 60%);position:relative}
+.letter-paper::after{content:'';width:24px;height:24px;position:absolute;right:0;bottom:0;background:linear-gradient(135deg,transparent 50%,#e9e7d6 51%,#fffef8);pointer-events:none}
+.letter-close{z-index:2;right:7px;top:7px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;transition:background .2s,transform .3s;font-size:20px}
+.letter-close:hover{background:#e9ecdf;transform:rotate(90deg)}
+.letter-close:focus-visible{outline:2px solid #a5b391;outline-offset:1px}
+.letter-topline{margin-bottom:23px;padding-right:14px}
+.founder-letter h3{font-size:30px;line-height:1.06;margin-bottom:20px;max-width:260px}
+.letter-stamp{position:relative;transform:rotate(9deg)}
+.letter-stamp::after{content:'';position:absolute;height:16px;width:33px;border-block:1px solid #aab39666;right:12px;top:7px;transform:rotate(-15deg)}
+.letter-message{font-size:12px;line-height:1.7;color:#6e7561}
+.letter-message p{font-size:inherit;line-height:inherit;color:inherit;margin:0 0 14px}
+.letter-message p:last-child{margin-bottom:0}
+.founder-mailbox.opened .letter-topline,.founder-mailbox.opened .founder-letter h3{animation:letter-ink .5s .12s both}
+.founder-mailbox.opened .letter-message p{animation:letter-ink .5s both;animation-delay:calc(140ms + var(--paragraph)*65ms)}
+.founder-mailbox.opened .letter-doodles,.founder-mailbox.opened .letter-postscript{animation:letter-ink .6s .55s both}
+.letter-doodles{margin-top:20px;padding-top:24px;align-items:center}
+.coffee-doodle{display:flex;flex-direction:column;gap:11px}
+.coffee-doodle small{font:italic 9px Georgia,serif;color:#9a9e87}
+.coffee-cup{animation:coffee-sway 5s ease-in-out infinite;transform-origin:center bottom;margin-left:3px}
+.coffee-cup b{box-shadow:0 3px 0 #dce1cb}
+.letter-404{font-size:9px;line-height:1.9}
+.letter-404 .letter-loading{display:flex;align-items:center;gap:3px;color:#989f88}
+.letter-loading i{width:2px;height:2px;border-radius:50%;background:currentColor;animation:letter-loading 1.8s ease-in-out infinite}
+.letter-loading i:nth-of-type(2){animation-delay:.2s}
+.letter-loading i:nth-of-type(3){animation-delay:.4s}
+.error-code{font-weight:400;display:inline-block;animation:letter-glitch 6s steps(1) infinite}
+.letter-postscript{display:flex;justify-content:space-between;align-items:center;font-size:6px;letter-spacing:1.35px;margin-top:21px;color:#a1a68f}
+.letter-postscript>span{font-size:14px;letter-spacing:0}
+@keyframes mailbox-hello{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-4deg)}87%{transform:rotate(4deg)}92%{transform:rotate(-2deg)}}
+@keyframes mailbox-sparkle{0%,55%,100%{opacity:.3;transform:scale(.7) rotate(0)}75%{opacity:1;transform:scale(1.1) rotate(45deg)}}
+@keyframes mailbox-arrow{50%{transform:translate(2px,-2px)}}
+@keyframes letter-ink{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes coffee-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes letter-loading{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+@keyframes letter-glitch{0%,89%,94%,100%{transform:translate(0);text-shadow:none}90%,93%{transform:translate(1px,-1px);text-shadow:-1px 0 #b4bf9e}91%{transform:translate(-1px,1px);text-shadow:1px 0 #dfa58a}}
+@media(max-width:600px){
+ .founder-letter{left:68px;bottom:16px;width:calc(100vw - 118px);max-width:300px;padding:0;max-height:calc(100svh - 210px)}
+ .letter-paper{padding:26px 20px 18px}
+ .founder-letter h3{font-size:25px;line-height:1.08;margin-bottom:18px}
+ .letter-message{font-size:11px;line-height:1.7}
+ .letter-message p{margin-bottom:12px}
+ .letter-topline>span:first-child{font-size:6px;letter-spacing:1.1px}
+ .letter-topline{margin-bottom:20px}
+ .letter-doodles{gap:15px;padding-top:22px;margin-top:18px}
+ .letter-404{font-size:8px}
+ .letter-postscript{font-size:5px;letter-spacing:.9px;margin-top:18px}
+ .letter-close{right:5px;top:5px}
+}
+
+.motion-paused .founder-mailbox *,.motion-paused .founder-mailbox *::before,.motion-paused .founder-mailbox *::after{animation:none!important;transition:none!important}

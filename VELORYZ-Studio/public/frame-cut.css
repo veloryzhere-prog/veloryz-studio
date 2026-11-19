@@ -1,0 +1,24 @@
+/* VELORYZ MOTION ONLY — scoped cinematic insert; no changes to original site UI. */
+veloryz-frame-cut{display:block;position:relative;background:#070a1b;isolation:isolate;contain:layout style}
+veloryz-frame-cut .frame-stage{position:relative;height:clamp(290px,56.25vw,90svh);overflow:hidden;background:#070a1b}
+veloryz-frame-cut video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#070a1b;display:block}
+veloryz-frame-cut .frame-scarf{visibility:hidden}
+veloryz-frame-cut[data-scarf] .frame-scarf{visibility:visible}
+veloryz-frame-cut[data-full]{height:350svh}
+veloryz-frame-cut[data-full] .frame-stage{height:100svh;position:sticky;top:0}
+veloryz-frame-cut .frame-toggle{position:absolute;z-index:3;bottom:clamp(20px,4svh,46px);left:clamp(20px,4vw,64px);border:1px solid #c2b7cb80;color:#fff9f0;background:#111229e5;border-radius:40px;padding:12px 21px;min-height:44px;letter-spacing:.02em;backdrop-filter:blur(14px)}
+veloryz-frame-cut .frame-toggle:hover{background:#282544}
+veloryz-frame-cut .frame-toggle:focus-visible{outline:2px solid #fff;outline-offset:4px}
+@media(max-width:600px) and (orientation:portrait){
+ veloryz-frame-cut[data-full] .frame-stage{height:64svh;top:16svh}
+ veloryz-frame-cut:not([data-full]) .frame-stage{height:64svh}
+}
+@media(prefers-reduced-motion:reduce){veloryz-frame-cut .frame-stage{position:relative}}
+/* Avoid native CSS smoothing fighting Lenis when optional full-motion scroll is active. */
+html[data-veloryz-smooth="active"]{scroll-behavior:auto!important}
+veloryz-frame-cut[data-full] .frame-stage{height:100svh;top:0}
+veloryz-frame-cut[data-full] video{object-fit:contain}
+veloryz-frame-cut .frame-scarf{visibility:visible;opacity:0;transition:opacity 240ms ease-out}
+veloryz-frame-cut[data-scarf] .frame-scarf{opacity:1}
+body:has(veloryz-frame-cut[data-focus]) :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
+@media(prefers-reduced-motion:reduce){veloryz-frame-cut .frame-scarf{transition:none}}

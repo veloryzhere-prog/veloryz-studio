@@ -1,0 +1,24 @@
+'use strict';
+// Shared, safe campaign artwork for the public site and the owner preview.
+window.CampaignDesign=(()=>{
+ const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const link=s=>{s=String(s||'');if(s.startsWith('/')&&!s.startsWith('//')&&!s.includes('\\'))return escape(s);try{const u=new URL(s);return /^https?:$/.test(u.protocol)&&!u.username&&!u.password?escape(u.href):'';}catch{return '';}};
+ const defaults={entrance:'rise',pace:'standard',placement:'popup',theme:'ivory',animation:'orbit',frequency:'refresh',delay:4.7,ribbon:true,dismissible:true,logo:'',logoLink:'',secondaryLabel:'',secondaryUrl:''};
+ const normal=o=>({...defaults,...o});
+ function mark(o,fallback=''){
+  const logo=link(o.logo||fallback||'/assets/brand/veloryz-mark.svg');return logo?`<img class="campaign-logo" src="${logo}" alt="${escape(o.eyebrow||'Studio update')}" loading="lazy">`:'<span class="campaign-brand-mark" aria-hidden="true">V<span></span></span>';
+ }
+ function art(o){return `<div class="campaign-art art-${['orbit','ribbon','pulse'].includes(o.animation)?o.animation:'orbit'}" aria-hidden="true"><span class="campaign-orbit orbit-one"><i></i></span><span class="campaign-orbit orbit-two"><i></i></span><span class="campaign-orbit orbit-three"><i></i></span><span class="campaign-art-core">${o.kind==='ad'?'↗':o.kind==='offer'?'%':'V'}</span><span class="campaign-art-card art-card-one"><b></b><i></i><i></i></span><span class="campaign-art-card art-card-two"><b></b><i></i><i></i></span><span class="campaign-art-dot"></span><span class="campaign-art-line"></span></div>`;}
+ function card(value,options={}){
+  const o=normal(value),theme=['ivory','dark','gold'].includes(o.theme)?o.theme:'ivory';
+  const media=link(o.media),type=o.mediaType;
+  const visual=media&&(type==='image'||type==='video')?`<div class="campaign-picture">${type==='video'?`<video controls playsinline preload="metadata" aria-label="${escape(o.title)}"><source src="${media}"></video>`:`<img src="${media}" alt="${escape(o.title)}" loading="lazy">`}</div>`:art(o);
+  const primary=link(o.buttonUrl),secondary=link(o.secondaryUrl),logoUrl=link(o.logoLink);
+  const brand=mark(o,options.brandLogo),placement=o.placement==='pinned'?'PINNED UPDATE':o.kind==='ad'?'ADVERTISEMENT':o.kind==='offer'?'STUDIO OFFER':'STUDIO ANNOUNCEMENT';
+  return `<article data-entrance="${['rise','slide','unfold','fade'].includes(o.entrance)?o.entrance:'rise'}" data-pace="${['quick','standard','slow'].includes(o.pace)?o.pace:'standard'}" class="campaign-design campaign-theme-${theme} ${options.compact?'campaign-compact':''}"><div class="campaign-grain" aria-hidden="true"></div><div class="campaign-design-head">${logoUrl?`<a href="${logoUrl}" aria-label="Open campaign brand link"${logoUrl.startsWith('/')?'':' target="_blank" rel="noopener"'}>${brand}</a>`:brand}<span>${placement}</span><span class="campaign-live-dot" aria-hidden="true"></span></div><div class="campaign-design-body"><div class="campaign-design-copy"><div class="campaign-kicker">${escape(o.eyebrow||'A LITTLE MOMENTUM')}</div><${options.titleId?'h2':'h3'}${options.titleId?` id="${escape(options.titleId)}"`:''}>${escape(o.title||'Your next announcement starts here.')}</${options.titleId?'h2':'h3'}><p>${escape(o.body||'Create a thoughtful introduction for your next studio update.').replace(/\n/g,'<br>')}</p><div class="campaign-links">${primary&&o.buttonLabel?`<a class="campaign-primary" href="${primary}"${primary.startsWith('/')?'':' target="_blank" rel="noopener"'}>${escape(o.buttonLabel)} <span aria-hidden="true">↗</span></a>`:'<button class="campaign-primary" data-book>Talk to the studio <span aria-hidden="true">↗</span></button>'}${secondary&&o.secondaryLabel?`<a class="campaign-secondary" href="${secondary}"${secondary.startsWith('/')?'':' target="_blank" rel="noopener"'}>${escape(o.secondaryLabel)} ↗</a>`:''}</div></div>${visual}</div><div class="campaign-design-foot"><span>${o.placement==='pinned'?'A NOTE, ABOVE EVERYTHING.':'MADE TO MOVE THINGS FORWARD.'}</span><span class="campaign-mini-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div></article>`;
+ }
+ function signature(o){return JSON.stringify([o.id,o.title,o.body,o.startAt,o.endAt,o.logo,o.media,o.buttonUrl,o.secondaryUrl,o.frequency,o.placement,o.eyebrow,o.buttonLabel,o.secondaryLabel,o.logoLink,o.theme,o.animation,o.entrance,o.pace,o.mediaType,o.dismissible]);}
+ function seen(o,storage){try{const area=typeof storage==='string'?(storage==='local'?window.localStorage:window.sessionStorage):storage;return area.getItem('vz-campaign:'+signature(o));}catch{return null;}}
+ function remember(o,storage,value){try{const area=typeof storage==='string'?(storage==='local'?window.localStorage:window.sessionStorage):storage;area.setItem('vz-campaign:'+signature(o),value);}catch{}}
+ return {normal,mark,art,card,signature,seen,remember,escape};
+})();

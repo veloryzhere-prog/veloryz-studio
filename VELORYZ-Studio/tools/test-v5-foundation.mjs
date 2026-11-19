@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+import {publicOrigin,canonicalPath} from '../lib/site-origin.mjs';
+assert.equal(publicOrigin('https://veloryz.online','http://localhost:5173'), 'https://veloryz.online');
+assert.equal(publicOrigin(null,'http://localhost:5173',true), 'http://localhost:5173');
+for(const bad of ['http://evil.example','https://user:pass@example.com','https://example.com/path','javascript:alert(1)']) assert.throws(()=>publicOrigin(bad,'http://localhost'));
+assert.equal(canonicalPath('/pricing'),'/pricing/');assert.equal(canonicalPath('/'),'/');
+const page=readFileSync('lib/page-handler.ts','utf8'),motion=readFileSync('public/motion.js','utf8'),css=readFileSync('public/visual-motion-v4.css','utf8');
+assert.match(page,/publicOrigin\(/);assert.match(page,/sitemap\.xml/);assert.match(motion,/data-motion-accessible-exit/);assert.match(css,/--vz-surface/);
+assert.ok(!readFileSync('lib/site-shell.ts','utf8').includes('sweetriver32.chatgpt.site'));
+assert.equal(existsSync('.dev.vars'),false,'Secrets must never be packed in the deliverable');
+console.log('V5 foundation checks passed');

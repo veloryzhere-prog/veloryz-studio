@@ -1,0 +1,164 @@
+/* VELORYZ material studies — original CGI artwork with a light motion layer. */
+[data-depth]{--studio-rx:0deg;--studio-ry:0deg;--studio-shine-x:50%;--studio-shine-y:40%;isolation:isolate}
+.depth-plane{width:100%;height:100%;transform:perspective(1100px) rotateX(var(--studio-rx)) rotateY(var(--studio-ry));transition:transform .65s cubic-bezier(.2,.8,.2,1);transform-origin:center;position:relative}
+.render-picture{display:block;width:100%;height:100%;overflow:hidden}
+.render-picture>img{display:block;width:100%;height:100%;object-fit:cover;max-width:none}
+.render-drift{width:100%;height:100%;animation:render-breathe 14s ease-in-out infinite alternate;animation-play-state:running;transform-origin:50% 55%}
+.visual-in-view .render-drift{animation-play-state:running}
+.render-glint{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at var(--studio-shine-x) var(--studio-shine-y),#fff6,transparent 62%);mix-blend-mode:soft-light;opacity:0;transition:opacity .5s;z-index:2}
+[data-depth]:hover>.render-glint{opacity:1}
+.project-art.render-art,.work-full .project-art.render-art,.project-large .project-art.render-art{height:auto;aspect-ratio:3/2;background:#eeeae2;border:1px solid #d6d2c733;overflow:hidden;border-radius:3px;transition:box-shadow .5s,border-radius .5s}
+.project-link{min-width:0}
+.project-link:last-child:nth-child(odd) .project-art.render-art{aspect-ratio:2.2}
+.project-link:hover .render-art,.project-link:focus-visible .render-art{border-radius:8px;box-shadow:0 18px 40px -28px #4e463359}
+.project-link:focus-visible{outline:2px solid #a99675;outline-offset:7px}
+.render-art .depth-plane{transition:transform .65s cubic-bezier(.2,.8,.2,1),filter .5s}
+.project-link:hover .render-art .depth-plane,.project-link:focus-visible .render-art .depth-plane{filter:saturate(1.04);transform:perspective(1100px) rotateX(var(--studio-rx)) rotateY(var(--studio-ry)) scale(1.025)}
+.render-cover-wash{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#faf9f633,transparent 38%,transparent 70%,#33302718)}
+.render-cover-label{position:absolute;left:22px;top:21px;z-index:3;text-align:left;background:#faf9f6d9;border:1px solid #fff9;backdrop-filter:blur(10px);padding:12px 15px 11px;border-radius:3px;box-shadow:0 3px 12px #554d3505}
+.render-cover-label strong{display:block;font-size:24px;line-height:1;letter-spacing:-1px;font-weight:400;color:#36352f}
+.render-cover-label>span{display:block;font-size:6px;letter-spacing:1.55px;margin-top:9px;color:#797465}
+.render-cover-bottom{position:absolute;left:24px;bottom:21px;font-size:8px;letter-spacing:.3px;background:#faf9f6d6;border:1px solid #fff8;backdrop-filter:blur(7px);padding:8px 10px;border-radius:2px;color:#6c6658;z-index:3}
+.render-art .project-arrow{z-index:4;background:#faf9f6d9;border-color:#fff9;backdrop-filter:blur(10px);color:#625e51}
+.project-caption h3{transition:color .3s}
+.project-link:hover .project-caption h3{color:#8c7156}
+.media-project>.depth-plane>img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.project-link:hover .media-project>.depth-plane>img{transform:scale(1.025)}
+.case-modal .project-art.render-art{height:auto;aspect-ratio:16/9;border-radius:0;border:0}
+.case-modal .render-cover-label{top:25px;left:28px}
+.case-modal .render-cover-bottom{bottom:22px;left:28px}
+/* The homepage sculpture has space to breathe around the original typography. */
+.hero-art{margin-left:-15px;perspective:1200px}
+.hero-art .studio-render{height:100%;width:100%;position:relative;animation:none;filter:none;overflow:visible}
+.studio-render>.depth-plane{height:100%;width:112%;left:-6%;overflow:hidden;mix-blend-mode:multiply}
+.studio-render .render-picture{mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.studio-render .render-picture>img{object-fit:contain}
+.studio-render .render-drift{animation-name:sculpture-drift;animation-duration:8s}
+.hero-art .art-note.top{top:8%;left:4%;z-index:4}
+.hero-art .art-note.bottom{bottom:8%;left:10%;z-index:4}
+.hero-art .art-badge{z-index:5;box-shadow:inset 0 1px 0 #ffffff9c,0 10px 25px #70432914;right:0;bottom:14%;border:1px solid #eeb59988}
+.render-pearl{position:absolute;border-radius:50%;pointer-events:none;animation:pearl-float 7s ease-in-out infinite;box-shadow:inset 0 1px 2px #fff9,3px 8px 14px #5b493518;z-index:3}
+.pearl-silver{width:24px;height:24px;top:17%;left:12%;background:radial-gradient(circle at 28% 23%,#fff 2%,#e6e5dd 24%,#acafa5 63%,#777d6e)}
+.pearl-clay{width:12px;height:12px;bottom:22%;right:10%;background:radial-gradient(circle at 30% 25%,#ffd5b6,#c87e57 58%,#9d5835);animation-delay:-3s}
+.studio-render-orbit{position:absolute;width:65%;height:35%;left:17%;top:31%;border:1px solid #c9c5b547;border-radius:50%;transform:rotate(-23deg);pointer-events:none;z-index:-1}
+/* Product and concept pages share the same crafted artwork as the portfolio. */
+.render-feature{width:100%;height:100%;position:relative;overflow:hidden;background:#f2eee5;border-radius:3px;border:1px solid #c6bfa922}
+.velori-product-art{height:460px;display:block;padding:0;perspective:1100px}
+.velori-product-art .product-render{height:100%;box-shadow:0 20px 45px -30px #443b2c33}
+.velori-product-art .render-picture>img{object-position:54% 50%}
+.product-art-note{position:absolute;right:18px;bottom:18px;left:18px;display:flex;justify-content:space-between;padding:11px 14px;background:#faf9f6d9;backdrop-filter:blur(10px);border:1px solid #fff9;border-radius:2px;font-size:7px;letter-spacing:1.5px;color:#847968;z-index:3}
+.product-art-note>span{font-size:14px;line-height:7px}
+.aurel-hero>.render-building{height:440px;left:0;width:100%;margin:25px 0;border:1px solid #d0c5ad55;border-radius:3px;overflow:hidden;background:#eee6d7;box-shadow:0 25px 50px -35px #7b674c4a}
+.render-building .render-picture>img{object-position:56% center;transition:filter .8s}
+.architecture-light{position:absolute;inset:0;background:linear-gradient(115deg,#ffedbd22,transparent 45%);pointer-events:none;animation:architecture-light 10s ease-in-out infinite alternate;mix-blend-mode:soft-light}
+.architecture-material-note{position:absolute;bottom:18px;right:18px;background:#fff8;backdrop-filter:blur(8px);padding:9px 12px;border:1px solid #fff7;font-size:6px;letter-spacing:1.5px;color:#7b705b}
+.aurel-world[data-material=clay] .render-building .render-picture>img{filter:sepia(.3) saturate(1.22) hue-rotate(-13deg)}
+.aurel-world[data-material=chalk] .render-building .render-picture>img{filter:saturate(.38) brightness(1.09)}
+.orbit-showcase{height:380px;align-self:center;width:100%;box-shadow:0 25px 45px -35px #4351393b}
+.orbit-showcase .render-picture>img{object-position:center;transition:filter .8s}
+.orbit-world[data-mode=flow] .orbit-showcase .render-picture>img{filter:sepia(.15) saturate(1.15)}
+.orbit-world[data-mode=clarity] .orbit-showcase .render-picture>img{filter:saturate(.45) brightness(1.05)}
+.forme-hero-sculpture{height:370px;margin:18px 0;overflow:visible}
+.forme-collection-render{height:100%;border-color:#bda68a22}
+.forme-collection-render .render-picture>img{object-fit:contain}
+.forme-hero-caption{bottom:10px;left:15px;z-index:3;padding:8px 10px;background:#faf9f6c7;border:1px solid #fff7;font-size:6px}
+.forme-product>.object-scene.rendered-object{height:auto;aspect-ratio:4/5;background:#eee8dc;overflow:hidden;border-radius:3px;border:1px solid #cfbba033}
+.rendered-object .render-picture>img{object-fit:cover;transition:filter .7s}
+.rendered-object .render-drift{animation-name:object-drift;animation-duration:9s}
+.forme-product:nth-child(2) .render-drift{animation-delay:-3s}
+.forme-product:nth-child(3) .render-drift{animation-delay:-6s}
+.object-finish-glaze{position:absolute;inset:0;pointer-events:none;mix-blend-mode:color;background:#bd7b53;opacity:0;transition:opacity .65s,background .65s}
+.forme-world[data-finish=terracotta] .object-finish-glaze{opacity:.25;background:#b06640}
+.forme-world[data-finish=olive] .object-finish-glaze{opacity:.3;background:#7d8a58}
+/* Dimensional identity cards retain real initials and any owner-uploaded portraits. */
+.team-art,.people-portrait,.profile-portrait,.founder-art{background:radial-gradient(ellipse at 28% 20%,#fafaf3,#e7e6d9 65%,#d3d8c5);border:1px solid #d4d9ca88;box-shadow:inset 0 1px 0 #fff9}
+.team-art>span:first-child,.people-portrait>span:first-child{height:115px;width:115px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 28% 20%,#fffffa,#e8ebdf 45%,#bcc6aa);border:1px solid #fffff999;box-shadow:inset -8px -10px 18px #737e6320,inset 4px 5px 12px #fff9,7px 15px 23px #505b3d1c;color:#738565;text-shadow:0 1px #fff9,1px 2px #b6c1a655;letter-spacing:-3px;font-size:43px;transform:rotate(-7deg);transition:transform .6s,box-shadow .6s}
+.people-portrait>span:first-child{height:155px;width:155px;font-size:58px;letter-spacing:-4px}
+.people-card:hover .people-portrait>span:first-child,.team-card:hover .team-art>span:first-child{transform:translateY(-7px) rotate(3deg);box-shadow:inset -8px -10px 18px #737e6320,inset 4px 5px 12px #fff9,10px 23px 28px #505b3d26}
+.shade-1>span:first-child,.team-card:nth-child(3n+2) .team-art>span:first-child{background:radial-gradient(circle at 28% 20%,#fff9ed,#e8ddd0 45%,#c6b49d);color:#927b5c}
+.shade-2>span:first-child,.team-card:nth-child(3n) .team-art>span:first-child{background:radial-gradient(circle at 28% 20%,#fff,#e1e7e7 45%,#abbec0);color:#6c8587}
+.profile-portrait>span:first-child{height:230px;width:230px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#fffffa,#e6eadb 47%,#b3c09c);box-shadow:inset -10px -15px 30px #73836022,inset 4px 4px 12px #fff9,13px 23px 37px #5e6c451c;font-size:88px;letter-spacing:-6px;transform:rotate(-8deg);text-shadow:0 2px #fff9}
+.founder-initials{text-shadow:0 1px #fff,-1px -1px #9eaa8d44,2px 3px #c0c8b655,4px 7px 12px #5a70462b;filter:drop-shadow(5px 8px 7px #6a775123)}
+.team-art::after,.founder-dot{background:radial-gradient(circle at 30% 20%,#ffdfbf,#d8966d 55%,#9e623a);box-shadow:3px 7px 10px #9e623a22}
+.feature-card .feature-icon{background:radial-gradient(circle at 28% 20%,#fff,#eaeadd 68%,#d4d9c6);border:1px solid #fff9;box-shadow:inset 1px 2px 4px #fff9,3px 7px 12px #4853330c;color:#7c866b}
+.cta-section{background:#e9e5d8;border-block:1px solid #dad4c5}
+.cta-orb{background:radial-gradient(circle at 25% 20%,#faf9f1,#e1d9c6);border-color:#c5baa3;box-shadow:inset 1px 2px 4px #fff9,6px 12px 20px #74644812}
+@keyframes render-breathe{0%{transform:scale(1.025) translate3d(-.25%,0,0)}100%{transform:scale(1.065) translate3d(.45%,-.5%,0)}}
+@keyframes sculpture-drift{0%{transform:translateY(5px) rotate(-1deg) scale(1.025)}100%{transform:translateY(-8px) rotate(1deg) scale(1.045)}}
+@keyframes pearl-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes object-drift{0%{transform:translateY(2px) scale(1.02)}100%{transform:translateY(-3px) scale(1.045)}}
+@keyframes architecture-light{to{opacity:.3;transform:translateX(3%)}}
+@media(max-width:900px){
+ .velori-product-art{height:380px}
+ .orbit-showcase{height:310px}
+ .render-cover-label{left:17px;top:17px;padding:11px 13px}
+ .render-cover-label strong{font-size:21px}
+ .render-cover-label>span{font-size:5px;letter-spacing:1.2px}
+ .render-cover-bottom{left:18px;bottom:16px;font-size:7px}
+}
+@media(max-width:600px){
+ .hero-art{height:330px;margin:6px 0 0;width:100%;max-width:430px;justify-self:center}
+ .studio-render>.depth-plane{width:114%;left:-7%}
+ .hero-art .art-note.top{top:4%;left:2%}
+ .hero-art .art-note.bottom{bottom:4%;left:4%;font-size:5px;letter-spacing:1.2px}
+ .hero-art .art-badge{right:0;bottom:12%;transform:scale(.88);transform-origin:right bottom}
+ .pearl-silver{width:17px;height:17px;left:10%;top:19%}
+ .pearl-clay{right:9%;bottom:24%;width:9px;height:9px}
+ .render-cover-label{left:15px;top:15px;padding:11px 12px 10px}
+ .render-cover-label strong{font-size:22px}
+ .render-cover-bottom{left:16px;bottom:15px;font-size:7px;padding:7px 9px}
+ .project-art.render-art,.work-full .project-art.render-art,.project-link:last-child:nth-child(odd) .project-art.render-art{height:auto;aspect-ratio:3/2}
+ .render-art .project-arrow{right:15px;top:15px;width:31px;height:31px;font-size:18px}
+ .case-modal .project-art.render-art{aspect-ratio:3/2}
+ .case-modal .render-cover-label{left:18px;top:18px}
+ .case-modal .render-cover-bottom{left:18px;bottom:18px}
+ .velori-product-art{height:auto;width:100%;aspect-ratio:4/3;margin:20px 0 0}
+ .product-art-note{left:12px;right:12px;bottom:12px;padding:10px;font-size:5px;letter-spacing:1px}
+ .aurel-hero>.render-building{height:auto;aspect-ratio:4/3;left:0;width:100%;margin:28px 0 20px}
+ .architecture-material-note{right:12px;bottom:12px;font-size:5px;letter-spacing:1px}
+ .orbit-showcase{height:auto;aspect-ratio:4/3;margin-top:30px}
+ .forme-hero-sculpture{height:auto;aspect-ratio:3/2;margin:0}
+ .forme-collection-render{position:absolute;inset:0}
+ .forme-product>.object-scene.rendered-object{height:auto;aspect-ratio:4/5}
+ .profile-portrait>span:first-child{height:180px;width:180px;font-size:72px;letter-spacing:-5px}
+ .people-portrait>span:first-child{height:140px;width:140px;font-size:53px}
+ .team-art>span:first-child{height:95px;width:95px;font-size:35px}
+ .cta-top{position:relative;min-width:0}
+ .cta-top>div{min-width:0}
+ .cta-orb{position:absolute;right:0;top:0;margin:0;width:45px;height:45px;font-size:22px;transform:none}
+ .cta-top h2{padding-right:35px}
+}
+@media(hover:none){.depth-plane{transform:none!important}.render-glint{display:none}}
+
+.motion-paused .render-drift,.motion-paused .render-pearl,.motion-paused .architecture-light{animation:none!important;transform:none!important}
+.motion-paused .depth-plane{transform:none!important;transition:none!important}
+/* Compact, continuously moving portfolio cards. */
+.work-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 22px}
+.work-grid .project-link:last-child:nth-child(odd){grid-column:auto}
+.work-grid .project-link .project-art.render-art,.work-full .project-link .project-art.render-art{aspect-ratio:3/2;height:auto;max-height:none}
+.work-grid .project-caption{padding-top:15px}
+.work-grid .project-caption h3{font-size:20px;letter-spacing:-.6px}
+.work-grid .project-caption p{font-size:9px;line-height:1.6;margin-top:7px}
+.work-grid .project-caption>span{font-size:7px;max-width:75px;text-align:right;line-height:1.5}
+.work-grid .render-cover-label{left:14px;top:14px;padding:9px 11px}
+.work-grid .render-cover-label strong{font-size:20px}
+.work-grid .render-cover-label>span{font-size:5px;letter-spacing:1px;margin-top:7px}
+.work-grid .render-cover-bottom{left:15px;bottom:14px;font-size:6px;padding:6px 8px}
+.work-grid .project-arrow{height:28px;width:28px;font-size:17px;top:14px;right:14px}
+.work-grid .render-drift{animation-duration:9s}
+.work-grid .project-link:nth-child(3n+2) .render-drift{animation-delay:-3s}
+.work-grid .project-link:nth-child(3n) .render-drift{animation-delay:-6s}
+.media-project .depth-plane>img{animation:render-breathe 11s ease-in-out infinite alternate;animation-play-state:running}
+.media-project.visual-in-view .depth-plane>img{animation-play-state:running}
+.custom-project-art.visual-in-view>span:first-child{animation:pearl-float 7s ease-in-out infinite}
+.form-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.enquiry-error{padding:14px 16px;margin-bottom:20px;border:1px solid #d7ad98;background:#f7ede6;color:#78452b;font-size:12px;line-height:1.7}
+.enquiry-error[hidden]{display:none}
+.book-preview>button{display:block;margin-top:18px;background:none;border:0;padding:0;font-size:11px;color:var(--ink)}
+.consultation-form[aria-busy=true]{cursor:progress}
+.consultation-form [type=submit]:disabled{opacity:.65;cursor:default}
+@media(max-width:1050px){.work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.work-grid{grid-template-columns:1fr;gap:26px}.work-grid .project-link{width:100%;max-width:360px;justify-self:center}.work-grid .project-caption h3{font-size:21px}.work-grid .project-caption p{font-size:10px}.consultation-form .form-actions{align-items:flex-start;flex-direction:column;gap:18px}.consultation-form .form-actions .button{font-size:11px}}
+
+.motion-paused .media-project .depth-plane>img,.motion-paused .custom-project-art>span:first-child{animation:none!important}
+.work-grid .project-link:last-child:nth-child(odd) .project-art.render-art{aspect-ratio:3/2;height:auto}

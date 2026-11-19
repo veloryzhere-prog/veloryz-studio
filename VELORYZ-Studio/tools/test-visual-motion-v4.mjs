@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {dirname,resolve} from 'node:path';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+const file=p=>readFileSync(resolve(root,p),'utf8');
+const shell=JSON.parse(file('lib/site-shell.ts').trim().replace(/^export default /,'').replace(/;$/,''));
+const css=file('public/visual-motion-v4.css'),js=file('public/visual-motion-v4.js');
+assert(shell.includes('/visual-motion-v4.css')&&shell.includes('/visual-motion-v4.js'));
+assert(shell.indexOf('studio-warm-v3.css')<shell.indexOf('visual-motion-v4.css'),'The V4 layer must load last');
+assert(shell.includes('content=\\"#f7f0e4\\"')||shell.includes('content="#f7f0e4"'),'Theme-color should match the warm site');
+assert(css.includes('.guided-summary h2')&&css.includes('.comparison-after p'),'Known dark/light contrast regressions must remain covered');
+assert(css.includes('.heading-word')&&css.includes('.project-art.render-art'),'Gradient headline and mobile overflow regressions must remain covered');
+assert(css.includes('html[data-motion=reduced]')&&css.includes('html[data-motion=paused]'));
+assert(js.includes("document.addEventListener('studio:route'")&&js.includes('requestAnimationFrame(tick)'));
+assert(js.includes("root.dataset.motion==='full'"),'Decorative motion must obey shared preference');
+console.log('PASS: warm final CSS precedence, motion assets, known contrast/overflow fixes, route refresh, reduced/pause respect.');

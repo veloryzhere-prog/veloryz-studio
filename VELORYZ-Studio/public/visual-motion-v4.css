@@ -1,0 +1,304 @@
+/* VELORYZ / Readable Editorial Motion V4
+   Single final cascade for the public site. Unrelated admin UI and original concept previews remain intact. */
+body.motion-edition{
+  --paper:#f7f0e4;--white:#fffdf8;--ink:#231d19;--muted:#5e5349;
+  --line:#cfbda8;--soft:#efe2d1;--accent:#b85e42;--pink:#ba4579;--blue:#5268b1;
+  --pad:clamp(20px,4.2vw,78px);
+  color:#231d19;background-color:#f7f0e4;
+  background-image:radial-gradient(ellipse at 8% 4%,#fffaf0 0%,transparent 32%),radial-gradient(ellipse at 95% 25%,rgba(234,205,148,.32),transparent 31%),linear-gradient(165deg,#fffdf9 0%,#f7eee0 34%,#f0e3d3 74%,#eae0d5 100%);
+  background-attachment:fixed;background-size:100% 100%;
+  isolation:isolate;font-size:16px;line-height:1.6;
+}
+body.motion-edition #main,body.motion-edition #footer{position:relative;z-index:1}
+body.motion-edition #main{background:transparent}
+/* A visible background scene, which also responds gently to scrolling. */
+.vz-atmosphere{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:paint;opacity:.83}
+.vz-atmosphere-grid{position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(160,126,84,.065) 1px,transparent 1px),linear-gradient(0deg,rgba(160,126,84,.065) 1px,transparent 1px);background-size:84px 84px;mask-image:linear-gradient(120deg,transparent,#000 40%,transparent 92%);transform:translate3d(0,calc(var(--vz-flow-y,0px)*.32),0)}
+.vz-orbit{position:absolute;aspect-ratio:1;border-radius:48%;border:1px solid rgba(144,107,73,.24);box-shadow:inset 0 0 90px rgba(255,251,238,.44),0 0 85px rgba(164,118,91,.07);transform:translate3d(0,var(--vz-flow-y,0px),0)}
+.vz-orbit i{display:block;position:absolute;inset:12%;border-radius:50%;border:1px solid rgba(129,96,102,.18);background:radial-gradient(circle at 38% 29%,rgba(255,253,244,.32),transparent 69%)}
+.vz-orbit-one{width:clamp(320px,35vw,710px);right:-13vw;top:14vh;background:radial-gradient(circle at 30% 35%,rgba(255,224,175,.3),rgba(226,169,139,.17) 47%,transparent 72%)}
+.vz-orbit-two{width:clamp(230px,27vw,540px);left:-11vw;top:57vh;border-color:rgba(116,100,156,.18);background:radial-gradient(circle at 50% 40%,rgba(210,192,236,.26),transparent 69%);transform:translate3d(0,var(--vz-flow-reverse,0px),0)}
+.vz-orbit-three{width:clamp(170px,21vw,380px);right:13vw;bottom:-19vh;border-color:rgba(159,120,76,.12);background:radial-gradient(circle,rgba(250,231,177,.35),transparent 70%)}
+.vz-atmosphere-ray{position:absolute;left:-12%;top:-15%;width:125%;height:60%;transform:rotate(-17deg) translateY(var(--vz-flow-reverse,0px));background:linear-gradient(180deg,rgba(255,251,244,.0),rgba(255,250,231,.28),rgba(255,251,244,0));filter:blur(38px)}
+html[data-motion=full] .vz-orbit-one i{animation:vz-slow-orbit 19s linear infinite}
+html[data-motion=full] .vz-orbit-two i{animation:vz-slow-orbit 24s linear infinite reverse}
+html[data-motion=full] .vz-orbit-three i{animation:vz-slow-orbit 17s linear infinite}
+html[data-motion=full] .vz-orbit-one{animation:vz-ambient-breathe 10s ease-in-out infinite alternate}
+html[data-motion=full] .vz-orbit-two{animation:vz-ambient-breathe 13s ease-in-out infinite alternate-reverse}
+@keyframes vz-slow-orbit{to{rotate:360deg}}
+@keyframes vz-ambient-breathe{from{opacity:.58;scale:.965}to{opacity:.95;scale:1.04}}
+/* Meaningful type sizes instead of the inherited 8–12px microtype. */
+body.motion-edition .brand-name{font-size:clamp(24px,1.75vw,29px);letter-spacing:.035em}
+body.motion-edition .brand-name small{font-size:11px;letter-spacing:.14em;margin-top:5px}
+body.motion-edition .site-header{min-height:94px;height:auto;padding-block:12px}
+body.motion-edition .veloryz-brand-icon{width:42px;height:45px}
+body.motion-edition .desktop-nav{gap:clamp(15px,1.7vw,27px)}
+body.motion-edition .desktop-nav a{font-size:14px;font-weight:500;color:#43352c}
+body.motion-edition .header-status{font-size:12px;color:#57473d}
+body.motion-edition .header-motion{min-width:45px;min-height:45px;display:grid;place-items:center}
+body.motion-edition .site-header .button.small{font-size:14px;padding:15px 20px;min-height:46px}
+body.motion-edition :is(.eyebrow,.hero-chapter,.small-index,.label,.page-index,.section-index,.scene-coordinate,.platform-index){font-size:clamp(11px,.86vw,13px);letter-spacing:.10em;color:#695244}
+body.motion-edition #main p{font-size:clamp(15px,1.08vw,18px);line-height:1.75;color:#554a40}
+body.motion-edition :is(#main,.modal,#footer) :is(button,a.button,.button,.text-link){font-size:clamp(13px,1vw,16px)}
+body.motion-edition :is(.button,.round-button,.text-link,button){font-weight:500}
+body.motion-edition #main :is(small,.tag,.note-symbol,.design-meta,.design-preview-label,.project-caption>span,.timeline-label,.price-meta,.platform-index,.footer-bottom,.source-credit){font-size:clamp(12px,.82vw,14px);line-height:1.5}
+body.motion-edition .tag{padding:9px 13px;background:#f6eadb;color:#47382e;border:1px solid #d2bba4}
+body.motion-edition .hero{padding-top:44px}
+body.motion-edition .hero h1{font-size:clamp(58px,7.35vw,118px);line-height:.98;letter-spacing:-.062em}
+body.motion-edition .hero-desc{max-width:530px!important;font-size:clamp(17px,1.22vw,20px)!important;line-height:1.72}
+body.motion-edition .hero-actions{gap:23px;margin-top:33px}
+body.motion-edition .hero-meta{font-size:14px;gap:24px}
+body.motion-edition .hero-meta span{font-size:12px;color:#695447}
+body.motion-edition .hero-maker strong{font-size:15px;color:#241a15}
+body.motion-edition .motion-secondary{font-size:15px;color:#493b31}
+body.motion-edition .section{padding-block:clamp(75px,7vw,120px)}
+body.motion-edition .section-head h2{font-size:clamp(39px,4.6vw,74px);line-height:1.07}
+body.motion-edition :is(.page-intro h1,.platform-intro h1){font-size:clamp(49px,6.25vw,103px);line-height:1.02;color:#231813}
+body.motion-edition :is(.section-head p,.platform-intro>p,.page-intro-bottom p){font-size:clamp(16px,1.12vw,19px);line-height:1.8;max-width:720px}
+body.motion-edition .section-head p{max-width:510px}
+body.motion-edition .service-title{font-size:clamp(25px,2.2vw,34px);color:#281c16}
+body.motion-edition .service-details p{font-size:16px;max-width:860px}
+body.motion-edition :is(.process-card h3,.feature-card h3,.team-card h3,.value h3,.design-card h2,.project-caption h3){font-size:clamp(21px,1.7vw,28px);line-height:1.23;color:#281c17}
+body.motion-edition :is(.process-card p,.feature-card p,.team-card p,.value p,.design-card-body>p,.project-caption p){font-size:clamp(15px,1.05vw,17px);line-height:1.75;color:#55463c}
+body.motion-edition .design-card-body{padding-top:25px}
+body.motion-edition .work-grid{gap:clamp(20px,2.5vw,38px)}
+body.motion-edition .project-art{min-height:350px}
+body.motion-edition .platform-intro{padding-top:clamp(60px,8vw,145px);padding-bottom:60px}
+body.motion-edition .form-panel,body.motion-edition .booking-main,body.motion-edition .design-detail-copy{padding:clamp(26px,3vw,54px)}
+body.motion-edition :is(.field,.admin-field,.planner-fields)>label,body.motion-edition :is(.form-panel,.booking-main,.guided-planner) label{font-size:14px;color:#47382d;line-height:1.5}
+body.motion-edition :is(input,select,textarea){font-size:16px;color:#261b14;background:#fffdf8;border-color:#c5b09a}
+body.motion-edition input::placeholder,body.motion-edition textarea::placeholder{color:#77695d}
+body.motion-edition #main .form-note{font-size:14px;line-height:1.65}
+body.motion-edition .consultation-form :is(input,select,textarea){min-height:47px;padding:12px 14px}
+body.motion-edition .consultation-form textarea{min-height:115px}
+body.motion-edition .footer{padding-top:60px}
+body.motion-edition #footer{background:linear-gradient(160deg,rgba(250,239,222,.94),rgba(233,213,192,.98) 55%,rgba(238,228,215,.97));color:#2a211a}
+body.motion-edition .footer-word{color:#ae8f73}
+body.motion-edition .footer-intro p,body.motion-edition .footer-links a,body.motion-edition .footer-links button{font-size:15px;color:#44352b}
+body.motion-edition .footer-links .label{font-size:12px;color:#5c4536}
+body.motion-edition .footer-bottom,body.motion-edition .footer-bottom span{font-size:12px;color:#554337}
+body.motion-edition .studio-platform-links{background:linear-gradient(110deg,#fffaf0,#f1dcc3);border:1px solid #cbb196;border-radius:18px;padding:22px 25px;gap:15px;box-shadow:0 10px 34px rgba(73,49,30,.09)}
+body.motion-edition .studio-platform-links a,body.motion-edition .studio-platform-links span{font-size:14px;color:#3f2d22}
+/* Uniform readable surfaces for common site modules, preserving authored visual demonstrations. */
+body.motion-edition :is(.platform-teaser,.process-card,.price-card,.pricing-card,.call-card,.payment-info-card,.hub-card,.delivery-card,.value,.feature-card,.purpose-card,.profile-highlight,.studio-ai-help,.form-panel,.glass-panel,.brief-summary,.team-card,.consultation-panel,.editorial-card){color:#2d211b;background:linear-gradient(145deg,rgba(255,253,247,.95),rgba(243,229,210,.94));border-color:#d6bfa7;box-shadow:0 16px 42px rgba(96,66,39,.075)}
+body.motion-edition :is(.purpose-card,.hub-card,.price-card,.payment-info-card,.delivery-card,.feature-card,.process-card) :is(h2,h3,strong){color:#2b1e18}
+body.motion-edition :is(.platform-teaser,.process-card,.price-card,.pricing-card,.call-card,.payment-info-card,.hub-card,.delivery-card,.value,.feature-card,.purpose-card,.profile-highlight,.studio-ai-help,.form-panel,.glass-panel,.brief-summary) :is(p,small,li){color:#55483d}
+body.motion-edition :is(.studio-band,.cta-section){background:radial-gradient(ellipse at 85% 30%,rgba(255,245,212,.62),transparent 53%),linear-gradient(130deg,#f4e4cb,#f9f0e0 50%,#e6cbb1);border-color:#d5bea4;color:#2d1f17}
+body.motion-edition :is(.studio-band,.cta-section) :is(h2,h3,strong,p,a,.eyebrow){color:#35241d}
+body.motion-edition .ticker{background:#eed8b8;color:#403026;border-color:#ceb393}
+body.motion-edition .identity-motion-art{background:radial-gradient(ellipse,#fff7ed,#ead6c4 76%)}
+body.motion-edition .logo-stage{background:radial-gradient(circle at 44% 38%,#fffdfa,#f4e4d4 66%,#ecd5c0 100%);border:1px solid #d4bfa8;box-shadow:0 28px 65px rgba(95,64,39,.14)}
+body.motion-edition .logo-grid,body.motion-edition .logo-grid::before,body.motion-edition .logo-grid::after{border-color:rgba(136,90,82,.23)}
+body.motion-edition .logo-controls{background:rgba(255,250,238,.93);border-color:#cbb59d}
+body.motion-edition .logo-controls button{font-size:12px;color:#614938}
+body.motion-edition .logo-controls button[aria-pressed=true]{background:#e4ccaf;color:#2e2118}
+body.motion-edition .logo-stage .scene-coordinate{font-size:11px;color:#654b3f}
+body.motion-edition .chat-log{background:#f4e5d2;color:#261b15}
+body.motion-edition .chat-message p{font-size:15px!important;line-height:1.7;color:#281e18}
+body.motion-edition .chat-header h2{font-size:clamp(26px,2.4vw,35px);color:#281c15}
+body.motion-edition .chat-header p,body.motion-edition .chat-footer,body.motion-edition .chat-connection{font-size:13px!important;color:#57473b}
+body.motion-edition .chat-personas button{font-size:13px!important;min-height:47px}
+body.motion-edition .chat-next-prompts button,body.motion-edition .chat-relevant-links a{font-size:13px!important;padding:11px 14px}
+body.motion-edition .chat-recommend-label{font-size:12px;color:#5b4535}
+body.motion-edition .expert-chat textarea{font-size:16px!important;min-height:66px}
+body.motion-edition .studio-ai-help-copy p{font-size:16px!important}
+body.motion-edition .studio-ai-help-link{font-size:14px;color:#4e3426}
+body.motion-edition .motion-dialog{max-width:610px;width:calc(100% - 28px);padding:clamp(25px,3vw,44px);background:linear-gradient(155deg,#fffdf8,#f2e4d3)}
+body.motion-edition .motion-dialog h2{font-size:clamp(33px,3vw,43px)}
+body.motion-edition .motion-dialog p{font-size:14px;color:#59483c}
+body.motion-edition .motion-dialog .motion-choices span{font-size:16px}
+body.motion-edition .motion-dialog .motion-choices small{font-size:12px;opacity:.86}
+body.motion-edition .motion-dialog .motion-panel-note,body.motion-edition .motion-dialog .motion-eyebrow{font-size:12px!important;color:#594338}
+/* Scroll reveal: calm, consistent, self-contained. No double transforms on 3D artwork. */
+html[data-motion=full] body.motion-edition .vz-enter:not(.vz-entered){opacity:.55;filter:blur(2px);translate:0 17px}
+html[data-motion=full] body.motion-edition .vz-enter.vz-entered{opacity:1;filter:blur(0);translate:0 0}
+html[data-motion=full] body.motion-edition .vz-enter{transition:opacity .76s cubic-bezier(.2,.75,.25,1),filter .76s,translate .76s cubic-bezier(.2,.75,.25,1);transition-delay:60ms}
+html[data-motion=reduced] body.motion-edition .vz-enter,html[data-motion=paused] body.motion-edition .vz-enter{opacity:1!important;filter:none!important;translate:none!important}
+/* The old reveal system hides elements and imposes inconsistent per-element timing. */
+html[data-motion=full] body.motion-edition.js-motion .reveal:not(.in-view){opacity:.98;transform:none}
+html[data-motion=full] body.motion-edition .reveal{transition-duration:.74s!important}
+/* Tiny repeated elements and interactive controls need enough room. */
+body.motion-edition :is(.catalogue-filters button,.planner-step-nav button,.brief-features label,.chat-suggestions button,.faq summary){font-size:14px;line-height:1.5}
+body.motion-edition :is(.catalogue-search input,.planner-fields select){font-size:15px}
+body.motion-edition .service-item>button,body.motion-edition .faq summary{min-height:62px}
+body.motion-edition :is(.guided-step-heading h2,.form-panel h2,.expert-section h2){font-size:clamp(29px,3.4vw,47px)}
+/* Mobile: comfortable text without impossible two-column arrangements. */
+@media(max-width:1080px){body.motion-edition .desktop-nav{gap:12px}body.motion-edition .header-status{display:none}body.motion-edition .desktop-nav a{font-size:12px}body.motion-edition .site-header{min-height:78px}body.motion-edition .hero h1{font-size:clamp(58px,8.5vw,91px)}}
+@media(max-width:700px){
+ body.motion-edition{--pad:clamp(19px,5.2vw,28px);background-attachment:scroll}
+ body.motion-edition .site-header{min-height:74px;padding-block:9px}
+ body.motion-edition .brand-name{font-size:22px}
+ body.motion-edition .brand-name small{font-size:10px}
+ body.motion-edition .hero{padding-top:22px}
+ body.motion-edition .hero h1{font-size:clamp(53px,12vw,80px)}
+ body.motion-edition #main p{font-size:15px}
+ body.motion-edition .hero-desc{font-size:16px!important}
+ body.motion-edition .hero-art{height:350px}
+ body.motion-edition .logo-stage{min-height:290px}
+ body.motion-edition .section{padding-block:66px}
+ body.motion-edition .section-head h2{font-size:clamp(34px,9.3vw,50px)}
+ body.motion-edition .project-art{min-height:300px}
+ body.motion-edition .footer-links{gap:18px}
+ body.motion-edition .studio-platform-links{padding:19px 15px;border-radius:13px}
+ body.motion-edition .studio-platform-links a,body.motion-edition .studio-platform-links span{font-size:13px}
+ body.motion-edition .motion-dialog .motion-choices{gap:10px}
+ body.motion-edition .motion-dialog .motion-choices button{padding:13px}
+ .vz-orbit-one{right:-45vw}.vz-orbit-two{left:-43vw}
+}
+@media(max-width:430px){
+ body.motion-edition .button{padding:14px 18px;gap:13px}
+ body.motion-edition .brand-name{font-size:21px}
+ body.motion-edition .site-header .header-motion{min-width:42px;min-height:42px}
+ body.motion-edition .motion-dialog{padding:25px 19px}
+ body.motion-edition .motion-dialog .motion-choices span{font-size:14px}
+ body.motion-edition .motion-dialog .motion-choices small{font-size:11px}
+ body.motion-edition .studio-ai-help{padding:22px}
+}
+/* Browser fix: gradient text on a parent does not paint when children each animate separately. */
+body.motion-edition .hero h1 .serif .heading-word,
+body.motion-edition .gradient-text .heading-word{
+ color:transparent!important;
+ background-image:linear-gradient(100deg,#c95663 0%,#bd4089 48%,#7758ae 78%,#536cc5 100%);
+ -webkit-background-clip:text;background-clip:text;
+}
+body.motion-edition .work-grid .project-link .project-art.render-art,
+body.motion-edition .work-full .project-link .project-art.render-art{
+ width:100%;max-width:100%;min-width:0;
+}
+body.motion-edition .work-grid .project-link{min-width:0;max-width:100%}
+body.motion-edition .render-art>.depth-plane{min-width:0;max-width:100%}
+body.motion-edition #main .work-grid{min-width:0;max-width:100%}
+html,body.motion-edition{overflow-x:clip}
+/* Complete project planner recolor: the original plum template mixed dark ink with a dark panel. */
+body.motion-edition .guided-planner{color:#2b201a}
+body.motion-edition .planner-step-nav{border-bottom:1px solid #cdb69c}
+body.motion-edition .planner-step-nav button{font-size:15px;color:#5b4839}
+body.motion-edition .planner-step-nav button[aria-current=step]{color:#452b25;font-weight:700}
+body.motion-edition .planner-step-nav button>span{width:33px;height:33px;font-size:12px;border-color:#c5a78d;color:#5e4639}
+body.motion-edition .planner-step-nav button[aria-current=step]>span{background:#824a70;color:#fff;border-color:#824a70}
+body.motion-edition .planner-progress{background:#d8c4ae;height:3px}
+body.motion-edition .planner-step-status{font-size:13px;color:#644d40}
+body.motion-edition .guided-step-heading>p{color:#55483f;font-size:17px}
+body.motion-edition .guided-planner .purpose-card,
+body.motion-edition .guided-planner .brief-features label{background:linear-gradient(145deg,#fffdf9,#f2e3d2);border:1px solid #d4baa2;color:#2b2019;box-shadow:0 7px 20px rgba(93,66,40,.055)}
+body.motion-edition .guided-planner .purpose-card.selected,
+body.motion-edition .guided-planner .brief-features label:has(input:checked){background:linear-gradient(125deg,#f4d9dd,#ead4e8);border-color:#bc7daa;box-shadow:0 8px 25px rgba(154,74,136,.12)}
+body.motion-edition .guided-planner .purpose-card>strong,
+body.motion-edition .guided-planner .brief-features span{color:#30231b;font-size:17px}
+body.motion-edition .guided-planner .purpose-card small,
+body.motion-edition .guided-planner .brief-features small{color:#5d4c42;font-size:13px}
+body.motion-edition .guided-planner .purpose-card>span{color:#945f7a}
+body.motion-edition .guided-page-control>label,
+body.motion-edition .guided-page-control p,
+body.motion-edition .guided-timeline,
+body.motion-edition .guided-assets h3,
+body.motion-edition .guided-assets p,
+body.motion-edition .guided-assets label,
+body.motion-edition .guided-local-note,
+body.motion-edition .guided-local-note button{color:#514034;font-size:14px}
+body.motion-edition .guided-assets{border-color:#d5bea9}
+body.motion-edition .guided-assets label{background:#fff9f0;border-color:#d5bba2}
+body.motion-edition .guided-actions{border-color:#d2bba2}
+body.motion-edition .guided-planner select{background:#fffcf6;color:#2f211b;border:1px solid #c8ab91;font-size:16px;min-height:47px}
+body.motion-edition .guided-summary{background:radial-gradient(ellipse at 95% 0,rgba(223,186,213,.38),transparent 62%),linear-gradient(150deg,#fffbf4,#f0dfc9);color:#2c2019;border:1px solid #cfae93;border-radius:20px;box-shadow:0 18px 46px rgba(89,59,35,.12);padding:clamp(24px,2.5vw,40px)}
+body.motion-edition .guided-summary h2{color:#2c1e18;font-size:clamp(29px,2.6vw,42px);line-height:1.12}
+body.motion-edition .guided-summary .eyebrow{color:#604337}
+body.motion-edition .guided-summary .summary-lines>div{border-color:#d9bea7}
+body.motion-edition .guided-summary .summary-lines span,
+body.motion-edition .guided-summary .summary-estimate>span{color:#5c4a3e;font-size:13px}
+body.motion-edition .guided-summary .summary-lines strong{color:#30221a;font-size:14px}
+body.motion-edition .guided-summary .summary-estimate>strong{color:#523226;font-size:clamp(28px,2.3vw,36px)}
+body.motion-edition .guided-summary .summary-estimate>strong>span{color:#81546c;font-size:clamp(23px,2vw,30px)}
+body.motion-edition .guided-summary .summary-estimate>small{color:#55453a;font-size:13px}
+body.motion-edition .guided-summary .estimate-assumptions{border-color:#d7baa3;color:#534238}
+body.motion-edition .guided-summary .estimate-assumptions summary,
+body.motion-edition .guided-summary .estimate-assumptions p,
+body.motion-edition .guided-summary .estimate-assumptions li{color:#534238;font-size:13px}
+body.motion-edition .guided-summary>.text-link{font-size:14px;color:#543e33}
+/* Footer founder note and other overlooked light-on-light microcopy. */
+body.motion-edition #footer .mailbox-caption>span,
+body.motion-edition #footer .mailbox-caption .label{color:#614636;font-size:12px;letter-spacing:.09em}
+body.motion-edition #footer .mailbox-caption small{color:#574238!important;font-size:13px;line-height:1.5}
+body.motion-edition #footer .mailbox-caption small span{color:#7b4862}
+body.motion-edition #footer .founder-mailbox{color:#402d22}
+body.motion-edition #footer .founder-letter{color:#2e221a}
+body.motion-edition #footer .letter-message,body.motion-edition #footer .letter-message p{color:#534338;font-size:14px}
+body.motion-edition #footer .letter-postscript{color:#614737}
+body.motion-edition .eyebrow{font-size:clamp(12px,.96vw,14px);font-weight:650}
+body.motion-edition #main :is(.project-caption>span,.source-credit,.design-meta){font-size:13px}
+/* Gentle scroll-linked displacement for decorative detail, not legibility-critical text. */
+html[data-motion=full] body.motion-edition .logo-stage .logo-grid{translate:0 calc(var(--vz-in-view,0px) * .48)}
+html[data-motion=full] body.motion-edition .platform-intro .motion-glyph,
+html[data-motion=full] body.motion-edition .page-intro .motion-glyph{translate:0 calc(var(--vz-in-view,0px) * -.45)}
+html[data-motion=full] body.motion-edition .studio-ai-help::after{translate:0 var(--vz-in-view,0px)}
+@media(max-width:700px){body.motion-edition .guided-planner .purpose-card{min-height:150px;padding:15px}body.motion-edition .guided-planner .purpose-card>strong{font-size:15px}body.motion-edition .guided-summary{margin-top:20px}body.motion-edition #footer .mailbox-caption small{font-size:12px}}
+/* Motion playground is part of the public theme, not a dark-themed exception. */
+body.motion-edition .lab-swatch-card,
+body.motion-edition .lab-swatch-card[data-mood],
+body.motion-edition .lab-tab-card{background:linear-gradient(145deg,#fffaf2,#edddca);border:1px solid #d4bba1;color:#2f221b;box-shadow:0 12px 32px rgba(87,55,29,.07)}
+body.motion-edition .lab-swatch-card h3,body.motion-edition .lab-tab-card h3{color:#31241a;font-size:clamp(26px,2.4vw,37px)}
+body.motion-edition .lab-swatch-card p,body.motion-edition .lab-tab-card p{color:#59473b;font-size:16px}
+body.motion-edition .mood-controls button,
+body.motion-edition .lab-tabs button{background:#f9f0e6;color:#4e3a30;border:1px solid #d6baa2;font-size:14px;min-height:42px}
+body.motion-edition .mood-controls button[aria-pressed=true]{background:linear-gradient(120deg,var(--mood-a),var(--mood-b));color:#1e1318;border-color:#c69bb5}
+body.motion-edition .lab-tabs button[aria-selected=true]{background:#4c324c;color:#fffaf5}
+body.motion-edition .comparison-tools,body.motion-edition .comparison-tools output{color:#543b30;font-size:14px}
+body.motion-edition .study-note>span{color:#655244;font-size:12px}
+body.motion-edition .study-note .text-link{color:#5b3042;border-color:#9f6a7b;font-size:15px}
+/* The dark half of the interactive before/after demo deliberately remains dark: ensure legible pale copy. */
+body.motion-edition #main .comparison-after,
+body.motion-edition #main .comparison-after :is(.comparison-browser,.comparison-designed>span:first-child){color:#f6ebf5}
+body.motion-edition #main .comparison-after h3{color:#fff6f8}
+body.motion-edition #main .comparison-after p{color:#f0dceb!important}
+body.motion-edition #main .comparison-before p{color:#425063!important}
+body.motion-edition .comparison-labels>span{font-size:12px;color:#fffaf9}
+body.motion-edition .comparison-browser{font-size:12px}
+body.motion-edition .basic-demo-button,body.motion-edition .designed-demo-button{font-size:14px}
+/* Keep the visual studies' mock-device microcopy decorative, but make all actual explanatory links readable. */
+body.motion-edition .ui-study-copy p{color:#5c493e;font-size:15px}
+body.motion-edition .ui-study-copy h3{color:#30211b}
+body.motion-edition .studio-platform-links a:focus-visible,body.motion-edition .footer-links a:focus-visible{outline:3px solid #a24d72;outline-offset:4px}
+/* Final cascade audit: legacy platform.css used !important to shrink navigation to 11px.
+   Keep it legible after the warm-theme overrides. */
+@media(min-width:1100px){
+ body.motion-edition .desktop-nav{gap:clamp(18px,1.55vw,27px)!important}
+ body.motion-edition .desktop-nav a{font-size:14px!important;line-height:1.4}
+}
+/* The demonstration comparison's Reset text inherited pale text intended for a plum theme. */
+body.motion-edition .comparison-tools [data-comparison-reset]{
+ color:#38271f!important;background:#f6e8d5!important;border:1px solid #c6a88c;
+ border-radius:8px;padding:11px 16px;font-size:15px!important;font-weight:600;
+ min-height:44px;box-shadow:0 5px 17px rgba(70,46,26,.08)
+}
+body.motion-edition .comparison-tools [data-comparison-reset]:hover{background:#eed6bd!important;color:#291911!important}
+body.motion-edition .comparison-tools [data-comparison-reset]:focus-visible{outline:3px solid #b65382;outline-offset:3px}
+
+/* V5 design-system tokens and mobile/accessibility refinements. */
+body.motion-edition{--vz-surface:#fffdf8;--vz-surface-soft:#f6e9d7;--vz-text:#231d19;--vz-text-muted:#54463b;--vz-border:#c6ad94;--vz-focus:#9951b6;--vz-radius:18px;--vz-hit:44px;--vz-content-width:1440px}
+body.motion-edition :where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--vz-focus);outline-offset:4px}
+body.motion-edition :where(input,select,textarea){accent-color:#885fb8}
+body.motion-edition :is(.desktop-nav a,.footer-links a,.footer-links button){text-underline-offset:5px}
+body.motion-edition :is(.catalogue-filters button,.chat-personas button,.motion-choices button,.planner-step-nav button){min-height:var(--vz-hit)}
+body.motion-edition :is(.consultation-form input,.consultation-form select,.consultation-form textarea){max-width:100%}
+body.motion-edition [hidden]{display:none!important}
+body.motion-edition .motion-accessible-exit{display:block;margin:8px 0 16px;padding:12px 16px;border:2px solid #a59280;background:#fff8ee;color:#30231c;border-radius:8px;font-size:14px;min-height:44px;width:100%;font-weight:600}
+body.motion-edition .motion-accessible-exit:focus-visible{outline:3px solid #804db5}
+@media(max-width:600px){body.motion-edition .button,body.motion-edition .header-motion,body.motion-edition .menu-toggle{min-height:44px}body.motion-edition .chat-personas button{padding:10px!important}body.motion-edition input,body.motion-edition select,body.motion-edition textarea{font-size:16px!important}}
+@media(prefers-reduced-motion:reduce){html:not([data-motion=full]) .vz-atmosphere{opacity:.20}}
+
+/* Private, browser-only measurement controls. */
+body.motion-edition .studio-measure-entry{color:#382d23;background:#fff8eb;border:1px solid #ac9981;padding:11px 15px;border-radius:999px;font-size:13px;min-height:44px;cursor:pointer}
+.studio-measure-dialog{color:#211b17;background:#fffaf2;border:1px solid #c6ae91;max-width:510px;width:calc(100% - 24px);padding:clamp(22px,3vw,36px);border-radius:20px;box-shadow:0 30px 80px #3a2f2750;font-family:system-ui,sans-serif}
+.studio-measure-dialog::backdrop{background:#251c17ab;backdrop-filter:blur(7px)}
+.studio-measure-dialog h2{font-size:clamp(24px,2.8vw,36px);margin:0 0 12px}.studio-measure-dialog p{color:#4d4138;font-size:14px;line-height:1.65}
+.studio-measure-close{float:right;background:#eee0d0;border-radius:50%;width:40px;height:40px;font-size:25px;cursor:pointer}
+.studio-measure-toggle{display:flex;align-items:center;gap:10px;padding:20px 0;font-size:15px;color:#261b13}.studio-measure-toggle input{width:20px;height:20px}
+.studio-measure-dialog .studio-measure-stats{font-size:12px}.studio-measure-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.studio-measure-actions button{padding:12px;border:1px solid #c5a88c;border-radius:10px;background:#f4e7d8;color:#231913;min-height:44px;font-size:13px}
+
+body.motion-edition .case-evidence-note{font-size:14px!important;line-height:1.65;color:#514239;background:#fff8ed;border-left:4px solid #a96843;padding:14px 18px;margin:18px 0;border-radius:4px 12px 12px 4px}
+body.motion-edition .case-evidence-note strong{color:#2b1b14}
+/* AA-oriented CTA contrast: darker gradients preserve identity without washing out white text. */
+body.motion-edition .button:not(.light):not(.outline){background:linear-gradient(105deg,#b62c73 0%,#704ab4 100%);color:#fff;border-color:transparent}
+body.motion-edition .button:not(.light):not(.outline):hover{background:linear-gradient(105deg,#9d2256,#563a99)}
+body.motion-edition .button.light{background:#fffdf8;color:#231d19;border:1px solid #c6ad94}
+body.motion-edition .button.outline{background:transparent;color:#231d19;border:1px solid #aa9480}

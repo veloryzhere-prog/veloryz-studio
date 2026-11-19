@@ -1,0 +1,1 @@
+window.studioSignOut=async()=>{if(!(await fetch("/api/admin/lock",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"})).ok)throw new Error("Sign-out failed. Please try again.");location.assign("/admin")};

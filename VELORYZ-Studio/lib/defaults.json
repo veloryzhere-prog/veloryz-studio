@@ -1,0 +1,432 @@
+{
+  "site": {
+    "name": "VELORYZ",
+    "tagline": "Independent Studio",
+    "heroEyebrow": "Independent creative & technology studio",
+    "headline": "Built to be",
+    "headlineAccent": "remembered.",
+    "description": "Distinctive brands, considered websites and useful business platforms. VELORYZ Studio brings strategy, interface design, development and launch support together around a clear, agreed scope.",
+    "studioTitle": "Different minds.\nOne shared ambition.\nMake something that matters.",
+    "studioDescription": "Founded by Aryan Raj Singh in 2025, VELORYZ brings designers, developers and creative thinkers together. We believe thoughtful design and solid technology work best side by side.",
+    "founderName": "Aryan Raj Singh",
+    "founderRole": "Founder · CEO & Executive Manager",
+    "founderBio": "Aryan Raj Singh founded VELORYZ Studio in 2025, bringing together his interests in digital development, design and building original products. As Founder, CEO and Executive Manager, he leads the studio’s direction and brings the team together across design, development and creative delivery.",
+    "location": "Bokaro, Jharkhand, India",
+    "email": "veloryz.here@gmail.com",
+    "phone": "919955326740",
+    "productUrl": "https://talk.veloryz.online",
+    "accent": "#fa7348",
+    "ctaHeadline": "Good things start\nwith a conversation.",
+    "ctaDescription": "A new idea, a fresh perspective, or a platform ready for its next step. Let’s make it happen.",
+    "consultationEnabled": true,
+    "consultationDelay": 11,
+    "mailboxEnabled": true,
+    "mailboxTitle": "A little note from Aryan.",
+    "mailboxMessage": "Hey everyone,\n\nThis site was built with a lot of coffee and a whole lot of passion.\n\nI’m Aryan, an 18-year-old student. My future is still loading, and my present occasionally returns a 404. But passion never asks your age — so I keep learning, creating and figuring it out, one coffee at a time.\n\nThanks for stopping by my little corner of the internet.\n\nByeee,\nAryan",
+    "designTitle": "A starting point.\nMade your own.",
+    "designDescription": "Explore carefully sourced interface directions for commerce, gaming, personal brands and editorial projects. Choose a reference, then shape it around your own story.",
+    "bookingDescription": "A focused, complimentary 30-minute discovery conversation to understand your goals, choose a direction and define the next step. Your preferred time is a request until confirmed by the studio.",
+    "paymentNote": "Payments follow an agreed written scope and an individual studio payment request. Ask us for an invoice before sending money.",
+    "apiDescription": "We design integrations around the work your business actually does: enquiry capture, protected admin tools, structured content, inventory connections and reliable handoffs between services. Database access, permissions, error handling and operational documentation are part of the technical scope.",
+    "showWork": true,
+    "showScarf": true,
+    "showManifesto": true,
+    "showStudies": true,
+    "showJourney": true,
+    "showFounder": true,
+    "showFilm": true,
+    "happyBrief": "",
+    "nikhilBrief": "",
+    "milkyBrief": "",
+    "ritikBrief": "",
+    "aryanBrief": "",
+    "showcaseTitle": "Ideas, made tangible.",
+    "adInterval": 8
+  },
+  "branding": {
+    "headerLogo": "",
+    "footerLogo": "",
+    "favicon": "",
+    "productLogo": "",
+    "heroLogo": "",
+    "showreel": "/assets/studio-film.mp4"
+  },
+  "services": [
+    {
+      "name": "Websites & development",
+      "short": "A digital home with a point of view.",
+      "description": "Custom websites that balance a distinctive first impression with clear navigation, responsive layouts and a smooth experience. From a founder’s first website to a growing business platform, we shape the experience around what your visitors need to do. We begin with the audience, page priorities and a content plan. Responsive layouts, clear calls to action, accessible interactions and loading performance are reviewed before handover.",
+      "tags": [
+        "Custom websites",
+        "React & frontend",
+        "Responsive development",
+        "Performance",
+        "Website redesign"
+      ],
+      "deliverables": "Page structure, responsive interface, development, quality checks and an agreed handover. Revision checkpoints, source-file handover and support coverage are confirmed in the written scope."
+    },
+    {
+      "name": "UI/UX & product design",
+      "short": "Make the complex feel effortless.",
+      "description": "We turn ideas into user journeys, wireframes and polished interfaces. The focus is on useful decisions: what belongs on a screen, how people move through it and what makes the next step obvious. We map the key tasks before drawing screens. Design reviews cover empty states, validation, navigation, mobile behavior and the reusable components that keep the product consistent.",
+      "tags": [
+        "User journeys",
+        "Wireframes",
+        "Interactive prototypes",
+        "Design systems",
+        "Mobile interfaces"
+      ],
+      "deliverables": "User flows, wireframes, polished screen designs and an organised component system. Revision checkpoints, source-file handover and support coverage are confirmed in the written scope."
+    },
+    {
+      "name": "Brand identity & direction",
+      "short": "More than a logo. A recognisable world.",
+      "description": "Build a visual language that feels like your business. We bring typography, colour, composition and digital expression together so your identity stays consistent across websites, campaigns and social content. Direction starts with positioning and reference exploration. The agreed identity is developed into practical assets with clear typography, colour, spacing and export guidance.",
+      "tags": [
+        "Visual identity",
+        "Art direction",
+        "Brand guidelines",
+        "Digital assets"
+      ],
+      "deliverables": "An agreed identity direction, core visual assets and practical usage guidelines. Revision checkpoints, source-file handover and support coverage are confirmed in the written scope."
+    },
+    {
+      "name": "Backend & platform support",
+      "short": "Good experiences need solid foundations.",
+      "description": "The systems behind the interface matter just as much. We help plan and develop backend workflows, integrations and management tools, then define a support scope that fits how your platform operates. We define the data model, access boundaries and integration contracts before implementation. The delivery scope identifies migrations, configuration, testing, error states and the ongoing ownership of each external service.",
+      "tags": [
+        "Backend development",
+        "API integrations",
+        "Admin tools",
+        "Database workflows",
+        "Maintenance"
+      ],
+      "deliverables": "An agreed technical scope, implemented workflows, integration checks and support documentation. Revision checkpoints, source-file handover and support coverage are confirmed in the written scope."
+    },
+    {
+      "name": "Content & motion",
+      "short": "Stories that move people.",
+      "description": "Visual content and considered motion help your ideas travel. From social media creatives to edited video, we build a consistent visual presence with a clear message and a reason to keep watching. We agree on the audience, channels, creative direction and formats before production. Motion respects readability and reduced-motion preferences; export sizes and revision rounds are defined in the brief.",
+      "tags": [
+        "Social creatives",
+        "Video editing",
+        "Motion graphics",
+        "Campaign visuals"
+      ],
+      "deliverables": "An agreed creative direction, platform-ready assets and edited exports. Revision checkpoints, source-file handover and support coverage are confirmed in the written scope."
+    }
+  ],
+  "team": [
+    {
+      "name": "Shivam Singh",
+      "initials": "SS",
+      "role": "Co-founder · Executive Developer & Task Manager",
+      "description": "Development execution, task planning and keeping the work moving from idea to implementation.",
+      "slug": "shivam-singh",
+      "specialties": [
+        "Frontend development",
+        "Backend workflows",
+        "Release planning"
+      ],
+      "experience": [
+        "Responsive interface prototypes and reusable UI components.",
+        "Sample release plans that turn a product brief into clear development milestones."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    },
+    {
+      "name": "Ayush Kumar",
+      "initials": "AK",
+      "role": "Co-founder · Prime Designer & Social Media Manager",
+      "description": "Design direction and a consistent visual presence across digital experiences and social media.",
+      "slug": "ayush-kumar",
+      "specialties": [
+        "UI direction",
+        "Social media design",
+        "Creative planning"
+      ],
+      "experience": [
+        "Visual directions for sample social campaigns.",
+        "Interface and identity explorations for fictional product briefs."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    },
+    {
+      "name": "Nikhil Singh",
+      "initials": "NS",
+      "role": "Accounts Manager · Happy",
+      "description": "Accounts coordination and the financial organisation behind the studio’s work.",
+      "slug": "nikhil-singh",
+      "specialties": [
+        "Accounts coordination",
+        "Budget organisation",
+        "Financial records"
+      ],
+      "experience": [
+        "Sample project budgets and expense tracking exercises.",
+        "Invoice organisation and account categorisation practice."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    },
+    {
+      "name": "Tripti Singh",
+      "initials": "TS",
+      "role": "Marketing & Sales",
+      "description": "Business conversations, marketing and helping new collaborations find the right starting point.",
+      "slug": "tripti-singh",
+      "specialties": [
+        "Marketing strategy",
+        "Client discovery",
+        "Sales communication"
+      ],
+      "experience": [
+        "Example launch positioning and campaign planning briefs.",
+        "Discovery conversations and messaging exercises for fictional brands."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    },
+    {
+      "name": "Vivek Kushwaha",
+      "initials": "VK",
+      "role": "Visual Designer & Video Editor",
+      "description": "Visual storytelling, creative assets and video editing that bring ideas into motion.",
+      "slug": "vivek-kushwaha",
+      "specialties": [
+        "Visual design",
+        "Video editing",
+        "Motion storytelling"
+      ],
+      "experience": [
+        "Short-form film editing and brand motion studies.",
+        "Storyboards and creative asset explorations for sample briefs."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    },
+    {
+      "name": "Nitin Singh",
+      "initials": "NS",
+      "role": "Product Designer",
+      "description": "Product interfaces and thoughtful details that connect user needs with design decisions.",
+      "slug": "nitin-singh",
+      "specialties": [
+        "Product design",
+        "User journeys",
+        "Interaction prototyping"
+      ],
+      "experience": [
+        "Concept product journeys and interactive prototypes.",
+        "Design system and responsive interface exercises."
+      ],
+      "experienceIsSample": true,
+      "avatar": "",
+      "projects": []
+    }
+  ],
+  "projects": [
+    {
+      "id": "velori",
+      "name": "VELORI",
+      "category": "Digital product",
+      "type": "product",
+      "status": "In development",
+      "year": "A VELORYZ Product",
+      "description": "A social platform being built around people, self-expression and creative communities. An ongoing VELORYZ product bringing product thinking, interface design and platform development together.",
+      "scope": [
+        "Product strategy & user experience",
+        "Social interface design",
+        "Frontend and backend development",
+        "Creator experience"
+      ],
+      "approach": "Start with the people using the platform. Make discovery, expression and connection feel coherent, then build the systems that support them. The visual direction shown here is a studio presentation of the product.",
+      "note": "An ongoing product in development. Interface visuals are illustrative; individual features and availability may change.",
+      "published": true,
+      "featured": true,
+      "order": 0,
+      "cover": "",
+      "video": "",
+      "website": ""
+    },
+    {
+      "id": "identity",
+      "name": "The VELORYZ identity",
+      "category": "Studio identity",
+      "type": "brand",
+      "status": "Studio exploration",
+      "year": "Ongoing",
+      "description": "Our own identity is a canvas for the ideas we bring to client work: precision, expression and the space to do something different. A restrained wordmark, sculptural V and warm accents build a recognisable studio language.",
+      "scope": [
+        "Visual direction",
+        "Typography & colour",
+        "Motion language",
+        "Digital brand system"
+      ],
+      "approach": "Let the essentials carry the identity. Use strong type, generous white space and a sculptural mark, then add movement with purpose.",
+      "note": "An in-house studio identity exploration created for this website.",
+      "published": true,
+      "featured": true,
+      "order": 1,
+      "cover": "",
+      "video": "",
+      "website": ""
+    },
+    {
+      "id": "aurel",
+      "name": "AUREL Atelier",
+      "category": "Architecture & interiors",
+      "type": "brand",
+      "status": "Self-initiated concept",
+      "year": "Studio exploration",
+      "description": "A considered digital world for a fictional architecture atelier. Warm materials, precise type and an interactive material selector.",
+      "scope": [
+        "Art direction",
+        "Editorial web design",
+        "Interactive material studies"
+      ],
+      "approach": "Give space to the work. Architectural linework, calm motion and a restrained palette create a design-led experience.",
+      "note": "Fictional brand and self-initiated studio concept. This is an interactive design demonstration, not paid client work or a live business.",
+      "published": true,
+      "featured": true,
+      "order": 2,
+      "cover": "",
+      "video": "",
+      "website": "/concepts/aurel/"
+    },
+    {
+      "id": "orbit",
+      "name": "ORBIT Workspace",
+      "category": "Digital product concept",
+      "type": "product",
+      "status": "Self-initiated concept",
+      "year": "Studio exploration",
+      "description": "A fictional productivity platform explored through a cinematic dark interface, orbital motion and a hands-on focus demo.",
+      "scope": [
+        "Product UI/UX",
+        "Motion design",
+        "Interactive prototype"
+      ],
+      "approach": "Bring a complex product into focus with clear hierarchy, controlled glow and useful interactions.",
+      "note": "Fictional brand and self-initiated studio concept. This is an interactive design demonstration, not paid client work or a live business.",
+      "published": true,
+      "featured": true,
+      "order": 3,
+      "cover": "",
+      "video": "",
+      "website": "/concepts/orbit/"
+    },
+    {
+      "id": "forme",
+      "name": "FORME Objects",
+      "category": "Concept commerce",
+      "type": "web",
+      "status": "Self-initiated concept",
+      "year": "Studio exploration",
+      "description": "A fictional objects store with sculptural product illustrations, finish selectors and a working demo basket.",
+      "scope": [
+        "Commerce design",
+        "Product interaction",
+        "Responsive development"
+      ],
+      "approach": "Make every object feel considered. Simple product controls and a quiet visual language put the collection first.",
+      "note": "Fictional brand and self-initiated studio concept. This is an interactive design demonstration, not paid client work or a live business.",
+      "published": true,
+      "featured": true,
+      "order": 4,
+      "cover": "",
+      "video": "",
+      "website": "/concepts/forme/"
+    }
+  ],
+  "offers": [],
+  "catalogue": [
+    {
+      "id": "gaming",
+      "name": "Gamics / Play without limits",
+      "category": "Gaming",
+      "description": "A cinematic gaming direction with a bold hero, tournament sections, release cards and community calls to action.",
+      "image": "/assets/designs/gaming.webp",
+      "source": "https://github.com/codewithsadee/gamics",
+      "demo": "https://codewithsadee.github.io/gamics/",
+      "author": "codewithsadee",
+      "license": "Creator permits free use in the project README. Artwork and brand assets are references; client assets replace them.",
+      "price": 17999,
+      "timeline": "2–3 weeks",
+      "scope": [
+        "Up to 5 responsive pages",
+        "Game or tournament showcase",
+        "Community and enquiry links",
+        "Two design review rounds"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "commerce",
+      "name": "Anon / Everyday commerce",
+      "category": "Ecommerce",
+      "description": "An airy shop interface with product collections, category navigation and clear promotional space. A useful reference for a considered storefront.",
+      "image": "/assets/designs/commerce.webp",
+      "source": "https://github.com/codewithsadee/anon-ecommerce-website",
+      "demo": "https://codewithsadee.github.io/anon-ecommerce-website/",
+      "author": "codewithsadee",
+      "license": "Creator permits free use in the project README. Product imagery and third-party marks are references and replaced for delivery.",
+      "price": 24999,
+      "timeline": "3–5 weeks",
+      "scope": [
+        "Up to 6 storefront page layouts",
+        "Product and collection interface",
+        "Cart and provider checkout integration scope",
+        "Two design review rounds"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "portfolio",
+      "name": "Personal / A distinct point of view",
+      "category": "Portfolio",
+      "description": "A personal portfolio direction built around a strong introduction, capabilities, selected work and an easy way to connect.",
+      "image": "/assets/designs/portfolio.webp",
+      "source": "https://github.com/codewithsadee/portfolio",
+      "demo": "https://codewithsadee.github.io/portfolio/",
+      "author": "codewithsadee",
+      "license": "Creator permits free use in the project README. Replace the example identity, copy and photography with your own.",
+      "price": 9999,
+      "timeline": "1–2 weeks",
+      "scope": [
+        "Up to 4 responsive pages",
+        "Project or case-study sections",
+        "Contact enquiry workflow",
+        "Two design review rounds"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "editorial",
+      "name": "Wren / Stories with presence",
+      "category": "Editorial",
+      "description": "A rich editorial interface for independent publications, creators and content-led businesses, with clear article hierarchy and discovery.",
+      "image": "/assets/designs/editorial.webp",
+      "source": "https://github.com/codewithsadee/wren",
+      "demo": "https://codewithsadee.github.io/wren/",
+      "author": "codewithsadee",
+      "license": "MIT · Copyright (c) 2022 Sadee. License included with the preview assets. Client imagery is supplied separately.",
+      "price": 14999,
+      "timeline": "2–3 weeks",
+      "scope": [
+        "Up to 5 responsive page layouts",
+        "Article and category templates",
+        "Content management scope",
+        "Two design review rounds"
+      ],
+      "enabled": true
+    }
+  ]
+}

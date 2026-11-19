@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync(new URL('../public/motion.js',import.meta.url),'utf8');
+function runtime({systemReduced=false,saved,blockedStorage=false,storage=new Map()}={}){
+ if(saved)storage.set('veloryz.motion.v2',saved);
+ const classes=new Set(),events={},windowEvents={},mediaEvents={},root={dataset:{},scrollHeight:2000,setAttribute(k,v){this[k]=v;},toggleAttribute(k,on){if(on)this[k]=true;else delete this[k];},removeAttribute(k){delete this[k];}};
+ const document={documentElement:root,body:{classList:{toggle(k,on){on?classes.add(k):classes.delete(k);}}},hidden:false,querySelectorAll(){return[];},querySelector(){return null;},addEventListener(k,fn){events[k]=fn;}};
+ const media={matches:systemReduced,addEventListener(k,fn){mediaEvents[k]=fn;}};
+ const window={addEventListener(k,fn){windowEvents[k]=fn;}};
+ const localStorage={getItem(k){if(blockedStorage)throw Error('Storage blocked');return storage.get(k)||null;},setItem(k,v){if(blockedStorage)throw Error('Storage blocked');storage.set(k,v);}};
+ const sessionStorage={getItem(){return null;},setItem(){} };
+ vm.runInNewContext(source,{window,document,matchMedia:()=>media,localStorage,sessionStorage,requestAnimationFrame:fn=>fn(),innerHeight:800,scrollY:0,console});
+ return {motion:window.StudioMotion,root,document,classes,events,windowEvents,media,mediaEvents,storage};
+}
+const normal=runtime();assert.equal(normal.motion.level,'full');
+const accessible=runtime({systemReduced:true});assert.equal(accessible.motion.level,'reduced','Automatic respects device accessibility');
+accessible.motion.choose('full');assert.equal(accessible.motion.level,'full');assert.equal(accessible.root.dataset.motion,'full','An explicit full choice overrides the system preference');
+const refreshed=runtime({systemReduced:true,storage:accessible.storage});assert.equal(refreshed.motion.level,'full','Full preference survives refresh on a reduced-motion device');
+refreshed.motion.choose('paused');assert.equal(refreshed.motion.matches,true);assert(refreshed.classes.has('motion-paused'));
+refreshed.motion.choose('full');assert(!refreshed.classes.has('motion-paused'));
+refreshed.motion.choose('invalid');assert.equal(refreshed.motion.preference,'full');
+refreshed.motion.choose('auto');assert.equal(refreshed.motion.level,'reduced');refreshed.media.matches=false;refreshed.mediaEvents.change();assert.equal(refreshed.root.dataset.motion,'full');
+let updates=0;refreshed.motion.addEventListener('change',()=>updates++);refreshed.motion.choose('reduced');assert(updates>0);
+refreshed.document.hidden=true;refreshed.events.visibilitychange();assert.equal(refreshed.root['data-motion-suspended'],true);
+refreshed.document.hidden=false;refreshed.windowEvents.pageshow();assert.equal(refreshed.root['data-motion-suspended'],undefined,'Back-forward cache restoration resumes visibility');
+const privateBrowser=runtime({blockedStorage:true});assert.doesNotThrow(()=>privateBrowser.motion.choose('full'));assert.equal(privateBrowser.motion.level,'full');assert.doesNotThrow(()=>privateBrowser.motion.observe(),'Missing IntersectionObserver cannot stop motion or page rendering');
+const css=fs.readFileSync(new URL('../public/motion-system.css',import.meta.url),'utf8');assert(css.includes('html:not([data-motion=full])'));assert(css.includes('html[data-motion=reduced]'));assert(css.includes('html[data-motion=paused]'));
+for(const file of ['style.css','cms-public.css','studio-extras.css','visual-upgrade.css','platform.css','mailbox.css','admin.css'])assert(!fs.readFileSync(new URL('../public/'+file,import.meta.url),'utf8').includes('prefers-reduced-motion'),'Old independent motion policies must not disable Full mode: '+file);
+const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');assert(!app.includes('new IntersectionObserver(entries=>entries.forEach(entry=>entry.target.classList.toggle'),'Artwork must run without waiting for observer permission');
+console.log('PASS: device preference, explicit full override, persistence, pause/resume, system changes, visibility/BFCache recovery, blocked storage, missing observer fallback and one coherent CSS motion policy.');

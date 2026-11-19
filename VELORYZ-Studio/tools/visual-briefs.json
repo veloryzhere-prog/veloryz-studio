@@ -1,0 +1,61 @@
+{
+  "generator": "Built-in Image Generation",
+  "style": "Clean physically based 3D, ivory / porcelain / brushed silver / warm stone, editorial composition.",
+  "motion": "CSS image drift, layered highlights and floating accents; pointer-controlled perspective on fine pointers. Reduced-motion and pause controls supported.",
+  "assets": [
+    {
+      "key": "hero",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. A monumental abstract sculptural V made from two broad, folded ribbons of satin silver and milky porcelain, thick rounded bevels and elegant sculptural depth, floating a little above an ivory seamless floor. Three-quarter product view, beautiful reflections and a small warm terracotta sphere near the base for scale. A single sophisticated physical object, not a flat letter or a graphic logo. Subject occupies 70% of the frame, centered. Background nearly white #faf9f6. Extremely polished editorial art direction.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/hero-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/hero-3d-sm.webp"
+    },
+    {
+      "key": "velori",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. Two premium unbranded smartphones in a floating sculptural product arrangement, one front-on showing an elegant social app with white interface, circular profile thumbnails, large editorial architecture photo, neat rows of small icons; second slightly behind showing a grid of art and photography. Screens contain UI geometry and tiny unreadable gray lines, no letters or numbers. A few minimal floating frosted glass conversation cards and a porcelain sphere. Warm off-white seamless setting and silver devices, tiny sage and warm coral UI accents. Beautiful believable glass and metal. Phones upright diagonally at gentle angles, fill central 75%, keep top-left and bottom-left quieter for HTML captions.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/velori-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/velori-3d-sm.webp"
+    },
+    {
+      "key": "identity",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. An immaculate physical brand identity still life: thick white embossed stationery cards with an abstract geometric V-shaped indentation but NO lettering, a charcoal folded paper brochure, silver foil edge details, slim metal pen, a curved polished chrome ribbon sculpture and one terracotta paper swatch. Styled on an ivory architectural plinth and neutral warm floor. Three-quarter overhead camera. Rich paper grain, emboss depth, immaculate craftsmanship, soft daylight, luxury editorial branding portfolio cover. Main composition centered with quiet top-left margin.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/identity-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/identity-3d-sm.webp"
+    },
+    {
+      "key": "aurel",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. A beautifully detailed contemporary architectural villa model made of warm limestone and pale travertine: staggered cubic volumes, an elegant archway, floor-to-ceiling dark glass, deep recessed courtyard and a tiny reflecting pool. One sparse olive tree and sculptural stairs on a minimal ivory landscape plinth. Three-quarter axonometric architectural photography, soft morning sun, realistic shadows, fine material detail, warm off-white seamless background, refined architectural magazine aesthetic. Building fills center-right, quiet top-left for HTML title. No people or cars.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/aurel-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/aurel-3d-sm.webp"
+    },
+    {
+      "key": "orbit",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. A premium conceptual productivity workspace sculpture: an open slim silver laptop on an ivory desk plinth showing a minimal white dashboard made of rounded cards and thin gray lines with pale sage highlights, no readable text. Beside it, a large sculptural brushed silver orbital ring around a frosted milky glass sphere, two smaller hovering spheres and one warm ochre sphere. Clean physical realism, thoughtful geometry, quiet design-product advertisement. Centered well-spaced arrangement on warm gray seamless background, quiet top-left for HTML title.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/orbit-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/orbit-3d-sm.webp"
+    },
+    {
+      "key": "forme",
+      "prompt": "Use case: product-mockup. Asset type: high-end 3D website artwork for VELORYZ Studio, a premium independent digital design studio. Render as an exceptionally clean, detailed, physically based CGI studio photograph with realistic global illumination, crisp bevels, refined material roughness and soft contact shadows. Restrained warm white, porcelain, brushed silver, graphite, pale sage, subtle terracotta accents. No people, no watermarks, no unrelated objects. No text or lettering anywhere; all typography will be added in HTML. Landscape 3:2 composition, clear subject, generous clean edges, no collage borders. A luxury collection of three designed objects on a simple ivory floor: on the LEFT a sand ceramic sculptural loop vase with a large oval opening, in the CENTER a minimal mushroom table lamp with a warm glowing ivory dome and brushed bronze slender stem, on the RIGHT a beautifully designed rounded light oak lounge chair with woven pale linen seat. Individual objects clearly separated, full silhouettes visible without overlap, roughly equal heights and equal horizontal space in a single row. Real ceramic microtexture, linen weave, wood grain and soft contact shadows. Gallery-quality ecommerce still life on warm beige-white seamless background. No tables or other objects.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/forme-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/forme-3d-sm.webp"
+    },
+    {
+      "key": "vase",
+      "prompt": "Use case: product-mockup. Asset type: FORME Objects fictional ecommerce product image for VELORYZ Studio website. Extremely clean high detail physically based 3D studio rendering. Portrait 4:5, warm ivory seamless backdrop and floor, subtle realistic grounding shadow, soft natural side lighting, refined luxury design catalog. No text, no logo, no extra objects or plinths, no people, no borders. A single elegant sand ceramic sculptural loop vase, tall and organic, with a large oval opening through the middle and a small narrow neck. Beautiful matte porous ceramic microtexture, subtle warm ivory finish. Full object silhouette, centered, height 65% of frame.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/vase-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/vase-3d-sm.webp"
+    },
+    {
+      "key": "lamp",
+      "prompt": "Use case: product-mockup. Asset type: FORME Objects fictional ecommerce product image for VELORYZ Studio website. Extremely clean high detail physically based 3D studio rendering. Portrait 4:5, warm ivory seamless backdrop and floor, subtle realistic grounding shadow, soft natural side lighting, refined luxury design catalog. No text, no logo, no extra objects or plinths, no people, no borders. A single beautifully made mushroom table lamp: softly glowing ivory hemispherical dome shade, thin brushed bronze stem tapering into a round base. Warm light beneath shade. Full object silhouette, centered, height 65% of frame.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/lamp-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/lamp-3d-sm.webp"
+    },
+    {
+      "key": "chair",
+      "prompt": "Use case: product-mockup. Asset type: FORME Objects fictional ecommerce product image for VELORYZ Studio website. Extremely clean high detail physically based 3D studio rendering. Portrait 4:5, warm ivory seamless backdrop and floor, subtle realistic grounding shadow, soft natural side lighting, refined luxury design catalog. No text, no logo, no extra objects or plinths, no people, no borders. A single beautifully designed sculptural rounded light oak lounge chair, curved oak wraparound back and open sides, pale natural woven linen upholstered seat. Impeccable wood grain and tactile linen. Full object silhouette in three-quarter view, centered, height 65% of frame.",
+      "path": "/workspace/sites/veloryz-studio/public/assets/renders/chair-3d.webp",
+      "mobilePath": "/workspace/sites/veloryz-studio/public/assets/renders/chair-3d-sm.webp"
+    }
+  ]
+}

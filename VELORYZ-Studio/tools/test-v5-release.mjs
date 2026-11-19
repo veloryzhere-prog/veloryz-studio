@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFileSync,statSync,readdirSync} from 'node:fs';
+import {join} from 'node:path';
+const source=f=>readFileSync(f,'utf8');
+for(const name of ['studio-insights.js','visual-motion-v4.js','motion.js','platform.js','admin.js'])assert.ok(statSync('public/'+name).size>300,name);
+assert.ok(source('lib/site-shell.ts').includes('/studio-insights.js'));
+assert.ok(source('lib/page-handler.ts').includes('publicOrigin('));
+assert.ok(source('lib/cms-api.mjs').includes("/api/admin/quality"));
+assert.ok(source('public/platform.js').includes('data-proposal-draft'));
+assert.ok(source('public/motion-boot.js').includes("level!=='full'"),'3D engine must be deferred for paused or reduced motion');
+assert.ok(source('public/admin.js').includes('data-action=\"content-audit'));
+assert.ok(statSync('public/motion-3d.js').size<900*1024,'The 3D runtime exceeded the V5 review threshold');
+const assets=readdirSync('public/assets/ai-avatars');assert.ok(assets.filter(x=>x.endsWith('.webp')).length>=5);
+for(const forbidden of ['SUPABASE_SERVICE_ROLE_KEY=ey','ADMIN_SESSION_SECRET=ey','OPENAI_API_KEY=sk-'])for(const file of ['lib/site-shell.ts','public/app.js','public/platform.js'])assert.ok(!source(file).includes(forbidden),'Possible secret exposure in '+file);
+console.log('V5 release safety, budget, integration and source checks passed. NOT a verified production build.');

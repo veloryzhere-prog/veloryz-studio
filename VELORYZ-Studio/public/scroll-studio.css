@@ -1,0 +1,212 @@
+/* Editorial scale and optical studies for the public shell. */
+body.motion-edition {
+  --studio-reading: clamp(1.0625rem, .98rem + .21vw, 1.25rem);
+  --studio-caption: clamp(.875rem, .82rem + .2vw, 1rem);
+  --studio-rule: #b69782;
+}
+body.motion-edition #main :is(.section-head p, .page-intro-bottom p, .platform-intro > p,
+  .split-intro p, .creator-copy p, .journey-chapter p, .ui-study-copy p,
+  .service-details p, .process-card p, .feature-card p, .design-card-body > p,
+  .project-caption p, .faq details p, .cta-bottom p, .platform-teaser p) {
+  font-size: var(--studio-reading);
+  line-height: 1.63;
+  max-inline-size: 64ch;
+}
+body.motion-edition #main .hero-desc {
+  font-size: clamp(1.125rem, 1rem + .32vw, 1.41rem) !important;
+  max-width: 51ch !important;
+  line-height: 1.58;
+}
+body.motion-edition #main :is(.project-caption h3, .design-card-body h2, .feature-card h3,
+  .process-card h3, .ui-study-copy h3) {font-size: clamp(1.55rem, 1.22rem + .8vw, 2.28rem); line-height: 1.13}
+body.motion-edition #main :is(.design-meta, .project-caption > span, .source-credit,
+  .journey-outcome, .hero-meta span, .journey-stage-nav button) {font-size: var(--studio-caption)}
+body.motion-edition #main :is(.hero-actions .button, .hero-actions .motion-secondary,
+  .text-link, .filter-bar .filter) {font-size: clamp(.97rem, .9rem + .17vw, 1.08rem)}
+body.motion-edition #main :is(.logo-view-controls button, .logo-controls button) {font-size: .825rem; min-height: 34px}
+body.motion-edition #main .section-head h2 {font-size: clamp(2.45rem, 2rem + 2.85vw, 5.4rem)}
+body.motion-edition .work-grid {gap: clamp(2rem, 3.75vw, 4.8rem) clamp(1.35rem, 3vw, 3.8rem)}
+body.motion-edition .work-grid > *, body.motion-edition .hero-layout > * {min-width: 0}
+body.motion-edition .ui-study-copy {padding: clamp(1.15rem, 2vw, 2rem)}
+body.motion-edition #main .section-head {position: relative}
+body.motion-edition #main .section-head::after {
+  content: ''; position: absolute; inset: auto 0 0; height: 1px;
+  background: linear-gradient(90deg, #b04f7e, #a18bba 60%, transparent);
+  transform-origin: left;
+}
+
+/* Existing manifesto copy is paired with a photographic close-up of the studio mark. */
+body.motion-edition .motion-manifesto {
+  display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+  grid-template-areas: "label label" "words study" "foot foot";
+  align-items: center; gap: clamp(1.6rem, 3vw, 3.2rem);
+  padding-block: clamp(4rem, 7vw, 8rem);
+}
+.motion-manifesto > .eyebrow {grid-area: label}
+body.motion-edition .manifesto-words {
+  grid-area: words; margin: 0; font-size: clamp(3.6rem, 7.55vw, 10.2rem); line-height: .95;
+}
+body.motion-edition .manifesto-words > span:nth-child(2) {padding-left: 3%}
+body.motion-edition .manifesto-words > span:nth-child(3) {padding-left: 12%}
+.motion-manifesto .manifesto-bottom {grid-area: foot; width: 100%}
+body.motion-edition #main .manifesto-bottom p {font-size: var(--studio-reading)}
+.sculpture-study {
+  grid-area: study; position: relative; overflow: hidden; isolation: isolate;
+  aspect-ratio: 1.55; border-radius: clamp(12px, 1.1vw, 22px);
+  border: 1px solid #d7c3b3; background: #f4e9de;
+  --lens-x: 55%; --lens-y: 46%; --lens-radius: clamp(40px, 6.8vw, 112px);
+}
+.sculpture-study img {display: block; width: 100%; height: 100%; object-fit: cover}
+.study-lens {position: absolute; inset: 0; clip-path: circle(var(--lens-radius) at var(--lens-x) var(--lens-y))}
+.study-lens img {transform: scale(1.48); transform-origin: var(--lens-x) var(--lens-y)}
+.sculpture-study::after {
+  content: ''; position: absolute; left: var(--lens-x); top: var(--lens-y);
+  width: calc(2 * var(--lens-radius)); aspect-ratio: 1; translate: -50% -50%;
+  border-radius: 50%; border: 1px solid rgba(89, 53, 44, .75);
+  box-shadow: 0 0 0 3px #fff7e92e, 0 3px 14px #4e331515; pointer-events: none;
+}
+.study-crosshair {position: absolute; top: var(--lens-y); left: var(--lens-x); width: 10px; height: 10px; translate: -50% -50%; background: linear-gradient(#785149,#785149) center / 1px 100% no-repeat, linear-gradient(#785149,#785149) center / 100% 1px no-repeat}
+.study-scale {position: absolute; bottom: 5%; inset-inline: 6%; height: 6px; border-bottom: 1px solid #947b6988; background: repeating-linear-gradient(90deg,#947b6988 0 1px,transparent 1px 4%)}
+.study-scale::after {content: ''; position: absolute; bottom: -1px; left: var(--lens-x); width: 2px; height: 10px; background: #924066}
+
+/* Transform decorative planes independently of text, links and pointer tilt. */
+html[data-motion=full] .motion-manifesto {
+  --type-shift: calc((var(--scene-progress, .5) - .5) * clamp(32px, 6vw, 108px));
+}
+html[data-motion=full] .manifesto-words > span:first-child {translate: var(--type-shift) 0}
+html[data-motion=full] .manifesto-words > span:nth-child(2) {translate: calc(var(--type-shift) * -.7) 0}
+html[data-motion=full] .manifesto-words > span:nth-child(3) {translate: calc(var(--type-shift) * 1.15) 0}
+html[data-motion=full] .sculpture-study {--lens-x: calc(19% + var(--scene-progress, .5) * 60%); --lens-y: calc(60% - var(--scene-progress, .5) * 30%)}
+html[data-motion=full] body.motion-edition #main .section-head::after {scale: clamp(.08, calc(var(--scene-progress, 1) * 1.9), 1) 1}
+html[data-motion=full] .project-art .render-drift img, html[data-motion=full] .design-image-wrap img {
+  translate: 0 calc((var(--scene-progress, .5) - .5) * 7%); scale: 1.08;
+}
+html[data-motion=full] .ui-study-card .spectra-orb, html[data-motion=full] .ui-study-card .muse-object {
+  rotate: calc((var(--scene-progress, .5) - .5) * 26deg);
+  translate: 0 calc((var(--scene-progress, .5) - .5) * -30px);
+}
+html[data-motion=full] .ui-study-card .nova-chart i {transform-origin: center bottom; scale: 1 clamp(.4, calc(.45 + var(--scene-progress, 1) * .9), 1.15)}
+html[data-motion=full] .creator-visual .creator-orbit, html[data-motion=full] .cta-section .cta-mark {rotate: calc((var(--scene-progress, .5) - .5) * 24deg)}
+html[data-motion=full] .logo-stage-hero .logo-scene {translate: 0 calc((var(--scene-progress, .5) - .5) * -30px)}
+html[data-motion=full] .page-intro .glyph-ring.two, html[data-motion=full] .platform-intro .glyph-ring.two {rotate: calc(var(--scene-progress, .5) * 67deg)}
+html[data-motion=full] .journey-chapter .journey-outcome > span {display: inline-block; translate: calc((var(--scene-progress, .5) - .5) * 16px) 0}
+html[data-motion=full] body.motion-edition .vz-enter:not(.vz-entered) {opacity: .9; filter: none; translate: 0 12px}
+@media (min-width: 860px) {
+  body.motion-edition .hero-layout {gap: clamp(1.75rem, 3.5vw, 4.75rem)}
+  body.motion-edition .motion-hero .hero-art {height: clamp(440px, 35vw, 650px)}
+}
+@media (max-width: 740px) {
+  body.motion-edition .motion-manifesto {grid-template-columns: minmax(0,1fr); grid-template-areas: "label" "words" "study" "foot"; gap: 1.55rem}
+  body.motion-edition .manifesto-words {font-size: clamp(3.6rem, 13.4vw, 6.6rem)}
+  .sculpture-study {aspect-ratio: 1.82; --lens-radius: clamp(40px, 12vw, 76px)}
+  body.motion-edition .hero-actions {gap: .85rem 1.2rem; flex-wrap: wrap}
+  body.motion-edition .motion-hero .hero-copy h1 {font-size: clamp(2.8rem, 12vw, 5.1rem)}
+  body.motion-edition .section {padding-block: clamp(3.25rem, 12vw, 5rem)}
+  body.motion-edition .hero-meta {row-gap: 1rem}
+  body.motion-edition #main .journey-stage-nav {display: flex; flex-wrap: wrap; gap: .35rem}
+  body.motion-edition #main .journey-stage-nav button {flex: 1 1 5rem; min-height: 40px}
+}
+@media (max-width: 420px) {
+  body.motion-edition .manifesto-bottom {align-items: start; flex-direction: column; gap: .8rem}
+}
+body.motion-edition #main .manifesto-bottom .text-link {color: #503629}
+body.motion-edition #main .hero-maker > span:last-child {font-size: .875rem}
+body.motion-edition .button .arrow, body.motion-edition .text-link .arrow,
+body.motion-edition .motion-secondary .arrow {
+  position: relative; display: inline-block; flex: 0 0 auto; width: .75rem; height: .75rem;
+  font-size: 0; color: inherit; vertical-align: middle;
+  background: linear-gradient(135deg, transparent 43%, currentColor 45% 55%, transparent 57%) center / 100% 100%;
+}
+body.motion-edition .button .arrow::after, body.motion-edition .text-link .arrow::after,
+body.motion-edition .motion-secondary .arrow::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 65%; height: 65%;
+  border: solid currentColor; border-width: 1.5px 1.5px 0 0;
+}
+/* Tilted paths orbit the existing logo. The camera angle follows the reading position. */
+.studio-orbits {position: absolute; inset: 17% 13%; z-index: 0; pointer-events: none; transform: rotate(-16deg)}
+.studio-orbits .orbit-track {position: absolute; inset: 15% 0; border: 1px solid #986a9550; border-radius: 50%; rotate: -20deg}
+.studio-orbits .orbit-track + .orbit-track {inset: 3% 18%; rotate: 36deg; border-color: #a3734f55}
+.orbit-track b {
+  position: absolute; inset: 0; border-radius: inherit; color: #a95288;
+}
+.orbit-track b::before {
+  position: absolute; content: ''; width: 8px; height: 8px; border-radius: 50%;
+  left: 50%; top: 0; translate: -50% -50%;
+  background: radial-gradient(circle at 29% 23%, #fff5ec, currentColor 55%, #4e304c);
+  box-shadow: 0 1px 4px #633d4c36;
+}
+.orbit-track + .orbit-track b {color: #ad805c}
+@supports (offset-path: ellipse(50% 50% at 50% 50%)) {
+  .orbit-track b {inset: auto; top: 0; left: 0; width: 8px; height: 8px; offset-path: ellipse(50% 50% at 50% 50%); offset-distance: 18%}
+  .orbit-track b::before {inset: 0; translate: none}
+  html[data-motion=full] .orbit-track b {animation: studio-satellite 14s linear infinite}
+  html[data-motion=full] .orbit-track + .orbit-track b {animation: studio-satellite 19s linear infinite reverse; animation-delay: -6s}
+  @keyframes studio-satellite {from {offset-distance: 0%} to {offset-distance: 100%}}
+}
+html[data-motion=full] .studio-orbits {rotate: calc((var(--scene-progress,.5) - .5) * 35deg)}
+body.motion-edition #main .cta-section .cta-top .eyebrow {color:#614638}
+body.motion-edition #main .cta-orb {
+  font-size: 0; position: relative; color: #fff;
+  background: linear-gradient(130deg, #aa346d, #7050ad);
+}
+body.motion-edition #main .cta-orb::after {
+  content: ''; width: 1.2rem; height: 1.2rem;
+  border: solid currentColor; border-width: 2px 2px 0 0;
+  background: linear-gradient(135deg, transparent 45%, currentColor 46% 53%, transparent 54%);
+}
+@media (max-width: 600px) {
+  body.motion-edition .cta-top {display:grid; justify-items:start; gap:1rem}
+  body.motion-edition .cta-top h2 {padding-right:0}
+  body.motion-edition #main .cta-orb {margin:0; width:50px; height:50px}
+}
+
+/* Leave the rim around the sculpture available for page scrolling on touchscreens. */
+body.motion-edition .logo-stage:not(.assembly-plate) .logo-scene[data-webgl="ready"],
+body.motion-edition .logo-stage:not(.assembly-plate) .logo-scene[data-webgl="software"] {
+  inset: 8% 4% 12%; touch-action:none; cursor:grab; user-select:none; border-radius:14px;
+}
+.logo-scene[data-dragging] {cursor:grabbing!important}
+.logo-scene[data-webgl="software"] canvas {opacity:1}
+.logo-scene[data-webgl="software"] .logo-fallback {visibility:hidden}
+.logo-stage .scene-coordinate-bottom {pointer-events:none; letter-spacing:.06em}
+.logo-stage .scene-coordinate-bottom button {pointer-events:auto}
+.logo-stage .rotation-hint,.logo-stage [data-inspect-logo] {display:none}
+.logo-stage:has(.logo-scene:is([data-webgl="ready"],[data-webgl="software"])) .rotation-hint {display:inline}
+.logo-stage:has(.logo-scene[data-webgl="fallback"]) [data-inspect-logo] {display:inline-block;border:1px solid #997a6b;padding:.45em .8em;color:#4a322b;background:#fff9ef;border-radius:18px}
+.logo-stage:has(.logo-scene[data-webgl="software"]) .logo-controls {z-index:3}
+.logo-stage .logo-object-controls,.logo-stage .logo-speed,.logo-stage .logo-view-controls {z-index:4}
+body.motion-edition .assembly-sequence {
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.85fr);
+  align-items:start;gap:clamp(28px,6vw,110px);padding-block:clamp(52px,7vw,110px);
+}
+.assembly-visual {position:sticky;top:clamp(100px,12vh,140px);min-width:0}
+.assembly-heading h2 {font-size:clamp(2.15rem,4.7vw,5.25rem);font-weight:450;line-height:1.03;letter-spacing:-.067em;margin:.24em 0 .38em}
+body.motion-edition .assembly-plate {
+  min-height:0; height:clamp(250px,47vh,550px); isolation:isolate;
+  background:radial-gradient(ellipse at 64% 28%,#fffdf6 0%,#efdfcf 70%,#dfc9bb);
+}
+.assembly-plate-grid {position:absolute;inset:0;background-image:linear-gradient(#a5807419 1px,transparent 1px),linear-gradient(90deg,#a5807419 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(25deg,#0009,#0002)}
+.assembly-scale {position:absolute;height:9px;left:8%;right:8%;bottom:6%;z-index:1;border-bottom:1px solid #a48b79;background:repeating-linear-gradient(90deg,#a48b7980 0 1px, transparent 1px 5%)}
+.assembly-scale i {position:absolute;bottom:0;left:calc(var(--assembly-progress,0)*100%);height:14px;width:2px;background:#9b4270}
+.assembly-chapters article {min-height:52vh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid #cdb5a4;padding:2.2rem 0}
+.assembly-chapters h3 {font-size:clamp(1.85rem,3vw,3.3rem);line-height:1.08;letter-spacing:-.05em;font-weight:480;margin:.4em 0 .32em}
+body.motion-edition #main .assembly-chapters p {font-size:var(--studio-reading);max-width:36ch;line-height:1.55}
+html[data-motion=full] .assembly-chapters article .eyebrow {transition:color .35s}
+.assembly-sequence[data-chapter="0"] article:nth-child(1) .eyebrow,.assembly-sequence[data-chapter="1"] article:nth-child(2) .eyebrow,.assembly-sequence[data-chapter="2"] article:nth-child(3) .eyebrow {color:#913665}
+html[data-motion=full] .reel-strip .ambient-video {scale:1.12;translate:0 calc((var(--scene-progress,.5) - .5)*9%)}
+html[data-motion=full] .ticker-track {translate:calc((.5 - var(--scene-progress,.5))*7vw) 0}
+html[data-motion=full] .ui-study-card .ui-preview {transform-origin:50% 85%;rotate:calc((.5 - var(--scene-progress,.5))*(var(--study-order,1) - 1)*7deg)}
+html[data-motion=full] .lab-swatch-card .swatch-orbit {rotate:calc((var(--scene-progress,.5) - .5)*96deg);scale:calc(.85 + var(--scene-progress,.5)*.3)}
+html[data-motion=full] .studio-band .mini-facts > div {translate:0 calc((.5 - var(--scene-progress,.5))*28px)}
+html[data-motion=full] .studio-band .mini-facts > div:nth-child(2) {translate:0 calc((.5 - var(--scene-progress,.5))*-26px)}
+html[data-motion=full] .service-item.open .service-scene-floor {rotate:calc((var(--scene-progress,.5) - .5)*11deg)}
+@media (max-width:760px) {
+  body.motion-edition .assembly-sequence {display:block}
+  .assembly-visual {top:75px;z-index:2;padding:9px 0;background:var(--paper)}
+  .assembly-heading h2 {font-size:clamp(1.7rem,6.1vw,2.6rem);margin:4px 0 10px}
+  body.motion-edition .assembly-plate {height:clamp(140px,25svh,285px)}
+  .assembly-chapters article {min-height:55svh;justify-content:flex-end;padding:1.5rem 0 2.5rem}
+}
+@media(max-height:550px){.assembly-visual {position:relative;top:auto}}
+html:not([data-motion=full]) .assembly-visual {position:relative;top:auto}
+html:not([data-motion=full]) .assembly-chapters article {min-height:0;padding-block:1.6rem}

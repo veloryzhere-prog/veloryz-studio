@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {studioEnvironment} from '../lib/supabase-backend.mjs';
+const original=globalThis.fetch,requests=[];
+globalThis.fetch=async(url,options)=>{requests.push({url,options});return Response.json([{results:[{value:'ok'}],meta:{changes:1},success:true}]);};
+const env=studioEnvironment({STUDIO_DATABASE:'supabase',SUPABASE_URL:'https://example.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'server-test-key'});
+assert.equal(studioEnvironment(env),env);
+assert.deepEqual(await env.DB.prepare('SELECT ? AS value').bind("a'); DELETE FROM staff; --").first(),{value:'ok'});
+const sent=JSON.parse(requests[0].options.body).p_statements[0];
+assert.match(sent.key,/^[a-f0-9]{64}$/);assert.equal(sent.params[0],"a'); DELETE FROM staff; --");assert(!requests[0].options.body.includes('"sql"'));
+assert.equal(requests[0].options.headers.Authorization,'Bearer server-test-key');
+await env.DB.batch([env.DB.prepare('SELECT 1'),env.DB.prepare('SELECT 2')]);
+assert.equal(JSON.parse(requests[1].options.body).p_statements.length,2);
+globalThis.fetch=async()=>Response.json({code:'23505'},{status:409});
+await assert.rejects(()=>env.DB.prepare('SELECT 1').run(),/UNIQUE/);
+globalThis.fetch=original;
+assert.throws(()=>studioEnvironment({STUDIO_DATABASE:'supabase'}),/missing/);
+console.log('PASS: server-only gateway, hashed contracts, bound parameters, atomic batches, idempotent wrapping and database errors.');
