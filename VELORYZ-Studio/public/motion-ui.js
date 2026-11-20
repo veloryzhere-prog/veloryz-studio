@@ -16,12 +16,48 @@
  const main=document.querySelector('#main');
  new MutationObserver(refresh).observe(main,{childList:true});
  refresh();
- try{
-  if(full()&&!sessionStorage.getItem('veloryz.motion.intro')){
-   sessionStorage.setItem('veloryz.motion.intro','seen');
-   const entry=document.createElement('div');entry.className='brand-entry';entry.setAttribute('aria-hidden','true');
-   entry.innerHTML='<img src="/assets/brand/veloryz-mark.svg" alt=""><span>A VELORYZ CREATION</span>';
-   document.body.append(entry);entry.addEventListener('animationend',()=>entry.remove(),{once:true});
-  }
- }catch{}
+ const seenKey='veloryz.workInvitation.v1';
+ const lifecycle=new AbortController();
+ const options={signal:lifecycle.signal};
+ let invitation;
+ function dismiss(){
+  invitation?.remove();
+  lifecycle.abort();
+ }
+ function offerWork(){
+  if(invitation || location.pathname!=='/' || document.hidden || location.hash ||
+     window.StudioMotion?.onboardingActive || document.querySelector('dialog[open],.modal-backdrop'))return;
+  const work=document.getElementById('selected-work');
+  if(!work || window.scrollY>96)return;
+  try{if(localStorage.getItem(seenKey)){dismiss();return;}}catch{}
+  invitation=document.createElement('aside');
+  invitation.className='work-invitation';
+  invitation.setAttribute('aria-label','Explore the studio’s work');
+  invitation.innerHTML=`<img src="/assets/brand/veloryz-mark.svg" width="34" height="34" alt="">
+   <div><p>Scroll down to see what we make.</p><a href="#selected-work">Explore our work <span aria-hidden="true">↓</span></a></div>
+   <button type="button" aria-label="Dismiss scroll invitation">×</button>`;
+  document.body.append(invitation);
+  try{localStorage.setItem(seenKey,'1');}catch{}
+  invitation.querySelector('button').addEventListener('click',dismiss);
+  invitation.querySelector('a').addEventListener('click',event=>{
+   event.preventDefault();
+   const target=document.getElementById('selected-work');
+   dismiss();
+   if(!target)return;
+   const heading=target.querySelector('h2');
+   if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+   target.scrollIntoView({block:'start',behavior:full()?'smooth':'instant'});
+  });
+  window.addEventListener('scroll',()=>{if(window.scrollY>96)dismiss();},{passive:true,...options});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')dismiss();},options);
+ }
+ function onRoute(){
+  if(invitation && (location.pathname!=='/' || !document.getElementById('selected-work')))dismiss();
+  else offerWork();
+ }
+ document.addEventListener('studio:route',onRoute,options);
+ document.addEventListener('studio:motion-intro-complete',offerWork,options);
+ document.addEventListener('visibilitychange',offerWork,options);
+ window.addEventListener('storage',event=>{if(event.key===seenKey && event.newValue)dismiss();},options);
+ offerWork();
 })();
