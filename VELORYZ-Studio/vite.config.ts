@@ -62,6 +62,7 @@ export default defineConfig(async ({ command }) => {
         config: {
           ...localBindingConfig,
           keep_vars: true,
+          ...(command === "build" ? { ai: { binding: "AI" } } : {}),
           ...(command === "serve"
             ? {
                 services: [

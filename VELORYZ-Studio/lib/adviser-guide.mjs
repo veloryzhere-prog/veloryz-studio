@@ -5,13 +5,13 @@ export function studioGuide(agent,messages,state){
  const question=latest.toLowerCase().trim();
  const context=messages.filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' ').toLowerCase();
  const designs=(state.catalogue||[]).filter(x=>x.enabled).sort((a,b)=>a.price-b.price);
- const kind=/e.?commerce|online (?:shop|store)|sell|shopping/.test(context)?'commerce':/gam(?:e|ing)/.test(context)?'gaming':/blog|editorial|news/.test(context)?'editorial':/portfolio|personal/.test(context)?'portfolio':'';
+ const kind=/e.?commerce|\bstore\b|online shop|sell|shopping/.test(context)?'commerce':/gam(?:e|ing)/.test(context)?'gaming':/blog|editorial|news/.test(context)?'editorial':/portfolio|personal/.test(context)?'portfolio':'';
  const selected=kind?designs.find(x=>(x.category+' '+x.name).toLowerCase().includes(kind))||designs[0]:designs[0];
- const handoff=messages.filter(m=>m.role==='user').length>=4||/human|person|refund|urgent|unresolved|still not|payment failed|security|breach|whatsapp/.test(question);
+ const handoff=/human|person|refund|urgent|unresolved|still not|payment failed|security|breach|whatsapp/.test(question);
  const isHindi=/[\u0900-\u097F]/.test(latest)||/\b(kya|kaise|haan|nahi|bhai|acha|theek|thik|namaste|aur)\b/i.test(latest);
  const say=(en,hi)=>isHindi?(hi||en):en;
  let answer,links=[];
- if(/^(hi|hello|hey|hii+|yo|sup|what'?s up|namaste|namaskar|ram ram|good (morning|afternoon|evening))\b/.test(question)){
+ if(/^(hi|hello|hey|hii+|yo|sup|what'?s up|namaste|namaskar|ram ram|good (morning|afternoon|evening))[!?. ]*$/.test(question)){
   answer=say(`${agent.name} here. Hey — what’s up?`,`Namaste, ${agent.name} yahan. Bolo, kya scene hai?`);
   return {answer,agent:agent.name,mode:'guide',available:false,handoff:false,links:[],notice:'Local studio guide · Not a live AI response.'};
  }
@@ -27,7 +27,7 @@ export function studioGuide(agent,messages,state){
   return {answer,agent:agent.name,mode:'guide',available:false,handoff:false,links:[],notice:'Local studio guide · Not a live AI response.'};
  }
  if(handoff){answer=`The studio should review this with you directly. Share your goals and any project reference on WhatsApp +${state.site.phone}, or email ${state.site.email}. I cannot confirm appointments, payments or account changes.`;links=[{label:'Contact the studio',url:'/contact/'}];}
- else if(/offer|discount|coupon|sale/.test(question)){
+ else if(/discount|coupon|special offer|offers|on sale/.test(question)){
   const t=Date.now(),offers=(state.offers||[]).filter(o=>o.kind==='offer'&&o.enabled&&(!o.startAt||Date.parse(o.startAt)<=t)&&(!o.endAt||Date.parse(o.endAt)>t));
   answer=offers.length?`The studio is currently sharing: ${offers.slice(0,2).map(o=>o.title+': '+o.body).join(' ')} Confirm eligibility and scope with the studio.`:'There is no published offer to quote right now. I can help you compare starting prices, or you can ask the studio for a proposal within your budget.';links=[{label:'View starting prices',url:'/pricing/'}];
  }else if(/book|consult|appointment|call|meeting/.test(question)){
@@ -40,6 +40,8 @@ export function studioGuide(agent,messages,state){
   answer='VELORI is a VELORYZ product. Explore its studio page for the project, or visit the product through the link provided there. What would you like to build for your own audience?';links=[{label:'Meet VELORI',url:'/velori/'}];
  }else if(/payment|invoice|upi/.test(question)){
   answer='Select Connect studio to discuss on the payments page. Share your project reference and the studio will confirm your milestone directly. Never share a card number, password or UPI PIN in chat.';links=[{label:'Payment information',url:'/payments/'}];
+ }else if(/milestone|first step|prepare|must.have|essential feature|how (do we|to) (begin|start)/.test(question)){
+  answer='Start with one customer and the first action they should take. For a store, map one product from discovery to enquiry. For a service, map a visitor from the offer to a qualified project brief. Put that path in the planner, then add secondary pages once the studio has scoped the core flow.';links=[{label:'Build a project brief',url:'/create/'}];
  }else if(kind&&selected){
   answer=`For ${kind==='commerce'?'an online store':kind==='gaming'?'a gaming project':kind==='editorial'?'an editorial site':'a personal portfolio'}, ${selected.name.split(' / ')[0]} is a useful starting direction from ${money(selected.price)}. ${selected.scope.slice(0,2).join('; ')}. What features matter most to your idea?`;links=[{label:'Explore the designs',url:'/design/'},{label:'Create a brief',url:'/create/'}];
  }else if(/api|backend|database|integrat|develop|website|design|service|figma|brand/.test(question)){

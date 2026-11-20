@@ -5,6 +5,8 @@ function savedPlanner(){try{return VeloryzPlanner.restore(sessionStorage.getItem
 let designCategory='All',designQuery='',projectBrief=savedPlanner(),chosenDesign=null;
 let adviserIndex=0,chatMessages=[],chatBusy=false,chatAgent='',chatSession=0;
 // Conversations are kept only while this page is open, separately for each AI persona.
+let visitorFirstName='',namePromptSkipped=false;
+const introducedTo=new Set();
 const chatHistories=Object.create(null);
 const advisers=[
  {id:'happy',name:'Happy',role:'First contact · Bold & friendly',color:'#eab04d'},
@@ -149,6 +151,20 @@ function chatBubble(message,a){
  else{item.innerHTML='<div class="chat-bubble-person">'+avatar(a,true)+'<span>'+esc(a.name)+' · AI</span></div><p>'+esc(message.content)+'</p>';appendChatExtras(item,message.extras);}
  return item;
 }
+function askFirstName(log){
+ if(visitorFirstName||namePromptSkipped||log.querySelector('.chat-name-card'))return;
+ const card=document.createElement('form');
+ card.className='chat-name-card';
+ card.innerHTML='<label for="chat-first-name">What should I call you?</label><div><input id="chat-first-name" aria-label="Your first name" placeholder="Your first name" autocomplete="given-name" maxlength="80" required><button type="submit">Use name</button></div><button type="button" data-skip-name>Skip for now</button>';
+ card.querySelector('[data-skip-name]').onclick=()=>{namePromptSkipped=true;card.remove();};
+ card.onsubmit=e=>{
+  e.preventDefault();
+  const field=card.querySelector('input'),name=field.value.normalize('NFC').trim().split(/\s+/u)[0];
+  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Enter your first name using letters.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
+  visitorFirstName=name;card.remove();chatStatus('I’ll call you '+name+'.');$('#expert-question')?.focus();
+ };
+ log.append(card);
+}
 function chatStatus(text,error=false){const el=$('.chat-connection');if(!el)return;el.textContent=text;el.classList.toggle('offline',error);el.classList.toggle('guide-mode',error);}
 function openExpert(id=''){
  chatSession++;const connectionSession=chatSession;
@@ -169,11 +185,11 @@ function openExpert(id=''){
  </div>`,'expert-modal');
  sizeChatViewport();
  const log=$('.chat-log');
- if(chatMessages.length){for(const message of chatMessages)log.append(chatBubble(message,a));}
+ if(chatMessages.length){for(const message of chatMessages)log.append(chatBubble(message,a));askFirstName(log);}
  else{const intro=chatBubble({role:'assistant',content:adviserIntros[a.id]},a);intro.classList.add('intro');log.append(intro);}
  log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
  fetch('/api/platform',{cache:'no-store'}).then(r=>r.json()).then(d=>{
-  if(chatAgent!==a.id||chatSession!==connectionSession)return;
+  if(chatAgent!==a.id||chatSession!==connectionSession||chatBusy||chatMessages.length)return;
   const configured=Boolean(d.aiConfigured);
   chatStatus(configured?'Studio AI is configured · Ask anything about the studio or your project.':'Studio guide · Answers from the published library.',!configured);
   const mode=$('[data-chat-mode]');if(mode)mode.textContent=configured?'Ready to connect':'Studio guide';
@@ -186,13 +202,14 @@ async function sendChat(form){
  chatBusy=true;form.setAttribute('aria-busy','true');$('button[type="submit"]',form).disabled=true;
  input.value='';const turn={role:'user',content:question};
  // Keep the latest 16 user turns and 15 assistant replies, preserving role alternation.
- const history=[...chatMessages.slice(-30),turn];
+ const history=[...chatMessages.slice(-30),turn].map(({role,content})=>({role,content}));
+ while(new TextEncoder().encode(JSON.stringify(history)).length>97000)history.splice(0,2);
  const userBubble=chatBubble({role:'user',content:question},a);log.append(userBubble);
  const typing=document.createElement('div');typing.className='chat-typing';typing.innerHTML=avatar(a,true)+'<i></i><i></i><i></i><span>'+esc(name)+' is thinking…</span>';log.append(typing);
  log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;$('.chat-suggestions').hidden=true;
  chatStatus(name+' is preparing a reply…');
  try{
-  const r=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,allowGuide:true,messages:history.map(({role,content})=>({role,content})),page:currentRoute}),signal:AbortSignal.timeout(36000)});
+  const r=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(agent),allowGuide:true,messages:history.map(({role,content})=>({role,content})),page:currentRoute}),signal:AbortSignal.timeout(36000)});
   const data=await r.json();if(chatSession!==session||chatAgent!==agent||!form.isConnected)return;
   typing.remove();
   if(!r.ok||!['ai','guide'].includes(data.mode)||!data.answer){
@@ -206,6 +223,7 @@ async function sendChat(form){
    chatMessages.push(turn,{role:'assistant',content:data.answer,extras:data.extras});
    if(chatMessages.length>32)chatMessages.splice(0,2);
    log.append(chatBubble({role:'assistant',content:data.answer,extras:data.extras},a));
+   if(visitorFirstName)introducedTo.add(agent);askFirstName(log);
    chatStatus(data.notice||'Live AI answer',false);
    const mode=$('[data-chat-mode]');if(mode)mode.textContent=data.mode==='guide'?'Studio guide':'Live AI';
   }

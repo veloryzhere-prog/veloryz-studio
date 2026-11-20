@@ -41,3 +41,10 @@ body:has([aria-modal="true"]:not([hidden])) .make-project-link {display:none}
   body:has(.offer-dock-content) .make-project-link {bottom:calc(100px + env(safe-area-inset-bottom))}
 }
 @media print {.make-project-link {display:none!important}}
+
+.chat-name-card{padding:14px 16px;margin:12px 0;border:1px solid #58adeb;border-radius:16px;background:#e9f6ff;color:#112e48}
+.chat-name-card label{display:block;font-weight:700;margin-bottom:8px;color:#12385b}
+.chat-name-card div{display:flex;gap:8px;flex-wrap:wrap}
+.chat-name-card input{min-width:0;flex:1 1 120px;padding:9px;border:1px solid #468dc6;border-radius:8px;background:white;color:#102b44;font-size:16px}
+.chat-name-card button{padding:7px 12px;background:#125895;color:white;border:0;border-radius:8px;cursor:pointer}
+.chat-name-card [data-skip-name]{background:transparent;color:#23537a;padding-left:0}
