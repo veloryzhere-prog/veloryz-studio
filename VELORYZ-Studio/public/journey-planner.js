@@ -92,7 +92,7 @@
   event.preventDefault();if(step<2){chooseStep(step+1);return;}
   if(!validateGoal())return;
   projectBrief.goal=document.querySelector('[data-planner-goal]').value;persist();
-  navigate('/book/');
+  requestStudio('project');
  });
  window.addEventListener('scroll',schedule,{passive:true});
  window.addEventListener('resize',schedule,{passive:true});

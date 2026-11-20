@@ -25,15 +25,26 @@ export async function submitEnquiry(request,env,state){
  const input=await readBody(request);
  if(input.consent!==true)reject('Please agree to share your enquiry with the studio.');
  if(input.website)reject('The request could not be accepted.');
- const data={id:clean(input.requestId,36,true),name:clean(input.name,100,true),email:clean(input.email,180,true).toLowerCase(),phone:clean(input.phone,20),service:clean(input.service,120,true),budget:clean(input.budget,100),preferred_date:clean(input.date,10,true),preferred_time:clean(input.time,40,true),company:clean(input.company,200),message:clean(input.message,2000,true)};
+ const discussion=['design','project','payment'].includes(input.kind);
+ const data={id:clean(input.requestId,36,true),name:clean(input.name,100,true),email:clean(input.email,180,true).toLowerCase(),phone:clean(input.phone,20),service:discussion?'Studio discussion':clean(input.service,120,true),budget:clean(input.budget,100),preferred_date:discussion?'':clean(input.date,10,true),preferred_time:discussion?'':clean(input.time,40,true),company:clean(input.company,200),message:clean(input.message,2000,true)};
  if(!uuid(data.id))reject('Please reload the form and try again.');
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))reject('Enter a valid email address.');
  if(data.phone&&(!/^\+?[0-9 ()-]{8,20}$/.test(data.phone)||!/^\d{8,15}$/.test(data.phone.replace(/\D/g,''))))reject('Enter a phone number with its country code, or leave it empty.');
  if(data.message.length<10)reject('Tell us a little more about your project.');
+ if(discussion){
+  let context=input.kind==='payment'?'Payment discussion':'Custom project';
+  if(input.kind==='design'){
+   const design=state.catalogue.find(d=>d.enabled&&d.id===input.designId);
+   if(!design)reject('This direction is no longer available.',409);
+   context='Design request: '+design.name;
+   data.message=[context,'Starting estimate: INR '+design.price,'Delivery window: '+design.timeline,'Scope: '+design.scope.join(', '),'',data.message].join('\n');
+  }
+  data.service=context.slice(0,120);
+ }
  const fingerprint=await hash(JSON.stringify(data)),existing=await env.DB.prepare('SELECT reference,fingerprint FROM studio_enquiries WHERE id=?').bind(data.id).first();
  if(existing){if(existing.fingerprint!==fingerprint)reject('This request was already received. Use Send another request for a new enquiry.',409);return response({ok:true,reference:existing.reference,status:'received'});}
- if(!state.services.some(s=>s.name===data.service)&&data.service!=='Not sure yet — let’s discuss')reject('Choose a current service from the form.');
- validateSchedule(data.preferred_date,data.preferred_time);
+ if(!discussion&&!state.services.some(s=>s.name===data.service)&&data.service!=='Not sure yet — let’s discuss')reject('Choose a current service from the form.');
+ if(!discussion)validateSchedule(data.preferred_date,data.preferred_time);
  const rateKey=await hash(data.email),networkKey=await hash(request.headers.get('cf-connecting-ip')||request.headers.get('user-agent')||'unknown-client'),created=new Date().toISOString(),since=new Date(Date.now()-3600000).toISOString(),reference='VZ-'+data.id.replaceAll('-','').slice(0,12).toUpperCase();
  const saved=await env.DB.prepare(`INSERT INTO studio_enquiries (id,reference,name,email,phone,service,budget,preferred_date,preferred_time,company,message,status,notes,version,fingerprint,rate_key,network_key,created_at,updated_at) SELECT ?,?,?,?,?,?,?,?,?,?,?,'new','',0,?,?,?,?,? WHERE (SELECT count(*) FROM studio_enquiries WHERE rate_key=? AND created_at>?)<3 AND (SELECT count(*) FROM studio_enquiries WHERE network_key=? AND created_at>?)<30 ON CONFLICT(id) DO NOTHING`).bind(data.id,reference,data.name,data.email,data.phone,data.service,data.budget,data.preferred_date,data.preferred_time,data.company,data.message,fingerprint,rateKey,networkKey,created,created,rateKey,since,networkKey,since).run();
  if(!saved.meta?.changes){const retry=await env.DB.prepare('SELECT reference,fingerprint FROM studio_enquiries WHERE id=?').bind(data.id).first();if(retry?.fingerprint===fingerprint)return response({ok:true,reference:retry.reference,status:'received'});reject('Too many requests. Please try again in an hour or contact the studio directly.',429);}
@@ -48,10 +59,15 @@ export async function enquiryAdmin(request,env,path){
   const total=await env.DB.prepare(`SELECT count(*) AS total FROM studio_enquiries WHERE ${condition}`).bind(...values).first();
   return response({items:items.results,total:total.total,page});
  }
+ const activity=path.match(/^\/api\/admin\/enquiries\/([^/]+)\/activity$/);
+ if(activity&&request.method==='GET'&&uuid(activity[1])){
+  const events=await env.DB.prepare('SELECT status,notes,recorded_at FROM studio_request_events WHERE request_id=? ORDER BY version DESC LIMIT 100').bind(activity[1]).all();
+  return response({events:events.results});
+ }
  const id=path.split('/').at(-1);if(!uuid(id)||request.method!=='PUT')return response({error:'Not found.'},404);
  const data=await readBody(request);if(!['new','contacted','confirmed','closed'].includes(data.status)||!Number.isInteger(data.version))reject('Choose a valid status and revision.');
  const row=await env.DB.prepare('SELECT preferred_date,preferred_time FROM studio_enquiries WHERE id=?').bind(id).first();if(!row)reject('This enquiry could not be found.',404);
- if(data.status==='confirmed')validateSchedule(row.preferred_date,row.preferred_time);
+ if(data.status==='confirmed'&&row.preferred_date)validateSchedule(row.preferred_date,row.preferred_time);
  let updated;try{updated=await env.DB.prepare(`UPDATE studio_enquiries SET status=?,notes=?,version=version+1,updated_at=? WHERE id=? AND version=? RETURNING ${fields}`).bind(data.status,clean(data.notes,3000),new Date().toISOString(),id,data.version).first();}catch(error){if(String(error.message).includes('UNIQUE'))reject('Another consultation is confirmed for this time. Contact the visitor to arrange another slot.',409);throw error;}
  if(!updated)reject('This enquiry changed in another tab. Refresh the inbox before saving.',409);
  return response({ok:true,item:updated});

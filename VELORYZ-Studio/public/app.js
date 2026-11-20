@@ -9,7 +9,7 @@ const $=(selector,root=document)=>root.querySelector(selector);
 const $$=(selector,root=document)=>Array.from(root.querySelectorAll(selector));
 const arrow='<span class="arrow" aria-hidden="true">↗</span>';
 const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-const wa=message=>`https://wa.me/${CONTACT.phone}?text=${encodeURIComponent(message)}`;
+const wa=message=>`https://wa.me/919955326740?text=${encodeURIComponent(message)}`;
 const reduced=window.StudioMotion||window.matchMedia('(prefers-reduced-motion: reduce)');
 let currentRoute=normalise(location.pathname), observer, modalReturnFocus, popupTimer;
 let modalOpen=false, formCounter=0;
@@ -343,14 +343,15 @@ document.addEventListener('submit',async event=>{
   let result;try{result=await response.json();}catch{throw new Error('The enquiry service could not respond. Please try again or contact us directly.');}
   if(!response.ok)throw new Error(result.error||'Please try again or contact the studio directly.');
   form.dataset.sent='true';submit.textContent='Request received ✓';
-  const preview=$('.book-preview',form);preview.classList.add('visible');
-  const message=`Hi VELORYZ Studio! My enquiry reference is ${result.reference}. My name is ${data.get('name')}. I would like to discuss ${data.get('service')}.`;
-  preview.innerHTML=`<h3>Your next conversation is on its way.</h3><p>Your request is saved. Keep reference <strong>${esc(result.reference)}</strong>. The studio will contact you at ${esc(data.get('email'))} to confirm the next step.</p><a href="${wa(message)}" target="_blank" rel="noopener">Continue on WhatsApp ↗</a><button type="button" class="text-link" data-enquiry-new>Send another request ↗</button>`;
+  const preview=$('.book-preview',form);preview.hidden=false;preview.classList.add('visible');
+  const message=`Hi VELORYZ Studio! My reference is ${result.reference}. I’m ${data.get('name')}. ${form.dataset.summary||data.get('service')||'Project discussion'}.\n${data.get('message')}`;
+  preview.innerHTML=`<h3>Your request is saved.</h3><p>Your request is saved. Keep reference <strong>${esc(result.reference)}</strong>. The studio will contact you at ${esc(data.get('email'))} to confirm the next step.</p><a href="${wa(message)}" target="_blank" rel="noopener">Send to the studio on WhatsApp ↗</a><button type="button" class="text-link" data-enquiry-new>Send another request ↗</button>`;
+  if(form.matches('.purchase-form'))location.assign(wa(message));
   preview.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'nearest'});
  }catch(error){errorBox.textContent=error.name==='AbortError'?'The connection timed out. Retry this form safely, or contact the studio directly.':error.message;errorBox.hidden=false;submit.disabled=false;submit.innerHTML=original;errorBox.scrollIntoView({behavior:'instant',block:'nearest'});}
  finally{clearTimeout(timeout);delete form.dataset.sending;form.removeAttribute('aria-busy');}
 });
-document.addEventListener('click',event=>{const button=event.target.closest('[data-enquiry-new]');if(!button)return;const form=button.closest('form');form.reset();form.dataset.requestId=newRequestId();delete form.dataset.sent;$('.book-preview',form).classList.remove('visible');$('.book-preview',form).innerHTML='';const submit=$('[type="submit"]',form);submit.disabled=false;submit.innerHTML='Send consultation request '+arrow;$('[name="name"]',form).focus();});
+document.addEventListener('click',event=>{const button=event.target.closest('[data-enquiry-new]');if(!button)return;const form=button.closest('form');form.reset();form.dataset.requestId=newRequestId();delete form.dataset.sent;$('.book-preview',form).classList.remove('visible');$('.book-preview',form).innerHTML='';const submit=$('[type="submit"]',form);submit.disabled=false;submit.innerHTML=(form.matches('.purchase-form')?'Save and open WhatsApp ':'Send consultation request ')+arrow;$('[name="name"]',form).focus();});
 document.addEventListener('change',event=>{if(event.target.name!=='date'||!event.target.closest('[data-enquiry]'))return;const form=event.target.closest('form'),time=$('[name="time"]',form),local=new Date(Date.now()+330*60000);for(const option of time.options){if(!option.value)continue;const h=Number(option.value.split(':')[0])+(option.value.startsWith('12:')?0:option.value.split(' – ')[0].includes('PM')?12:0);option.disabled=event.target.value===todayInIndia()&&h<=local.getUTCHours();}if(time.selectedOptions[0]?.disabled)time.value='';});
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'){

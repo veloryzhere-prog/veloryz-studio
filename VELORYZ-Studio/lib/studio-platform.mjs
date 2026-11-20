@@ -1,3 +1,4 @@
+import {studioGuide} from './adviser-guide.mjs';
 import {personas,adviserPrompt} from './adviser-personas.mjs';
 import {resolveAiSettings} from './ai-settings.mjs';
 import {adviserNavigation} from './adviser-navigation.mjs';
@@ -88,7 +89,10 @@ export async function adviserChat(request,env,state){
  const handoff=/not (?:help|work|resolv)|still (?:broken|unresolved)|unresolved|human|real person|refund|payment failed|security breach/i.test(messages.at(-1).content);
  const extras=adviserNavigation(messages.at(-1).content,data.page,data.agent);
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));
- if(!config.configured||config.provider==='guide')return reply({error:'The VELORYZ AI connection is not configured. The studio owner can connect a live model in the admin settings.',code:'AI_NOT_CONFIGURED',agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI offline · No generated reply was provided.',extras},503);
+ if(!config.configured||config.provider==='guide'){
+  if(data.allowGuide===true)return reply({...studioGuide(agent,messages,state),extras});
+  return reply({error:'The live AI is not configured.',code:'AI_NOT_CONFIGURED',agent:agent.name,mode:'unavailable',available:false,extras},503);
+ }
  if(health?.retryAt>Date.now())return reply({error:'The studio AI connection is temporarily unavailable. Please retry shortly.',code:'AI_TEMPORARILY_UNAVAILABLE',agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI temporarily unavailable.',extras},503);
  const maxOutput=['nikhil','aryan'].includes(data.agent)?1600:data.agent==='ritik'?1200:950;
  const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page),maxOutput);
@@ -105,12 +109,13 @@ export async function paymentApi(request,env,path){
  if(path==='/api/payment-request'&&request.method==='GET'){
   const token=query.get('token')||'';if(!/^[a-f0-9]{64}$/.test(token))return reply({error:'This payment request could not be found.'},404);
   const item=await env.DB.prepare('SELECT reference,title,amount_paise,status,checkout_url,created_at FROM studio_payments WHERE token=?').bind(token).first();if(!item)return reply({error:'This payment request could not be found.'},404);
-  return reply({item});
+  return reply({item:{...item,checkout_url:'https://wa.me/919955326740',mode:'studio-discussion'}});
  }
  if(request.method==='GET'){const items=await env.DB.prepare('SELECT id,reference,title,amount_paise,status,checkout_url,created_at,version,token FROM studio_payments ORDER BY created_at DESC LIMIT 100').all();return reply({items:items.results});}
  const data=await boundedBody(request,4000);
  if(request.method==='POST'){
-  const reference=plain(data.reference,30,true).toUpperCase(),title=plain(data.title,160,true),amount=Number(data.amount),url=checkoutLink(plain(data.checkoutUrl,2000,true));
+  if(data.checkoutUrl)checkoutLink(data.checkoutUrl);
+  const reference=plain(data.reference,30,true).toUpperCase(),title=plain(data.title,160,true),amount=Number(data.amount),url='https://wa.me/919955326740';
   if(!Number.isFinite(amount)||amount<1||amount>10000000||Math.abs(amount*100-Math.round(amount*100))>.001)fail('Enter a valid INR amount with up to two decimal places.');
   if(!await env.DB.prepare('SELECT id FROM studio_enquiries WHERE reference=?').bind(reference).first())fail('Use a reference from the enquiry inbox.');
   const id=plain(data.requestId,36,true);if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))fail('Reload the payment form and try again.');

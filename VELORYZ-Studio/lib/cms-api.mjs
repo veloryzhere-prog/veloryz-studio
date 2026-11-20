@@ -120,7 +120,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   const path=new URL(request.url).pathname.replace(/\/$/,'');
   if(path==='/api/site'&&request.method==='GET'){const data=await getPublished(env);return json({...data,activeOffers:activeOffers(data.state)});}
   if(path==='/api/enquiries'&&request.method==='POST'){mutationOrigin(request);return await submitEnquiry(request,env,(await getPublished(env)).state);}
-  if(path==='/api/platform'&&request.method==='GET'){const ai=await aiConnection(env);return json({aiConfigured:ai.configured,aiAvailable:ai.status==='live',aiProviderLabel:'VELORYZ Studio AI',guideAvailable:false,paymentMode:'individual-provider-links'});}
+  if(path==='/api/platform'&&request.method==='GET'){const ai=await aiConnection(env);return json({aiConfigured:ai.configured,aiAvailable:ai.status==='live',aiProviderLabel:'VELORYZ Studio AI',guideAvailable:false,paymentMode:'studio-discussion'});}
   if(path==='/api/adviser'&&request.method==='POST'){mutationOrigin(request);return await adviserChat(request,env,(await getPublished(env)).state);}
   if(path==='/api/payment-request'&&request.method==='GET')return await paymentApi(request,env,path);
   if(path==='/api/health'&&request.method==='GET'){if(!env.DB||!env.BUCKET)fail('The studio service is temporarily unavailable.',503);try{await env.DB.prepare('SELECT id FROM studio_enquiries LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_limits LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_payments LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_ai_settings LIMIT 1').first();}catch{fail('The studio database is temporarily unavailable.',503);}return json({ok:true});}

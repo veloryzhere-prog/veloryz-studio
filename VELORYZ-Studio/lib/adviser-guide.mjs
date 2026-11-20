@@ -39,7 +39,7 @@ export function studioGuide(agent,messages,state){
  }else if(/velori/.test(question)){
   answer='VELORI is a VELORYZ product. Explore its studio page for the project, or visit the product through the link provided there. What would you like to build for your own audience?';links=[{label:'Meet VELORI',url:'/velori/'}];
  }else if(/payment|invoice|upi/.test(question)){
-  answer='Payments follow an agreed proposal and individual payment request from the studio. Available methods depend on the hosted checkout provider. Never share a card number, password or UPI PIN in chat.';links=[{label:'Payment information',url:'/payments/'}];
+  answer='Select Connect studio to discuss on the payments page. Share your project reference and the studio will confirm your milestone directly. Never share a card number, password or UPI PIN in chat.';links=[{label:'Payment information',url:'/payments/'}];
  }else if(kind&&selected){
   answer=`For ${kind==='commerce'?'an online store':kind==='gaming'?'a gaming project':kind==='editorial'?'an editorial site':'a personal portfolio'}, ${selected.name.split(' / ')[0]} is a useful starting direction from ${money(selected.price)}. ${selected.scope.slice(0,2).join('; ')}. What features matter most to your idea?`;links=[{label:'Explore the designs',url:'/design/'},{label:'Create a brief',url:'/create/'}];
  }else if(/api|backend|database|integrat|develop|website|design|service|figma|brand/.test(question)){
