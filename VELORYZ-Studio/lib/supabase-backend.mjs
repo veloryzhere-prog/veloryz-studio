@@ -5,7 +5,10 @@ async function key(sql) {
  return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2,'0')).join('');
 }
 export function studioEnvironment(env) {
- if (env.__studioSupabase || env.STUDIO_DATABASE !== 'supabase') return env;
+ if (env.__studioSupabase) return env;
+ const provider = env.STUDIO_DATABASE?.trim().toLowerCase();
+ const hasCredentials = Boolean(env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY);
+ if (provider ? provider !== 'supabase' : env.DB || !hasCredentials) return env;
  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) throw new Error('Studio Supabase runtime settings are missing.');
  const base = env.SUPABASE_URL.replace(/\/$/,'');
  if (!base.startsWith('https://')) throw new Error('Studio Supabase requires HTTPS.');
@@ -57,5 +60,5 @@ export function studioEnvironment(env) {
    }
   };
  }
- return {...env,DB,BUCKET,__studioSupabase:true};
+ return {...env,STUDIO_DATABASE:'supabase',DB,BUCKET,__studioSupabase:true};
 }
