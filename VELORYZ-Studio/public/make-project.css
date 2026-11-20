@@ -1,0 +1,43 @@
+a.make-project-link {
+  position: fixed;
+  z-index: 34;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: .65em;
+  min-height: 44px;
+  padding: 5px 6px 5px 16px;
+  box-sizing: border-box;
+  border: 1px solid #ddcfd5;
+  border-radius: 99px;
+  background: #fffaf5;
+  color: #000;
+  box-shadow: 0 4px 16px #27122024;
+  text-decoration: none;
+  font: 650 14px/1.2 system-ui, sans-serif;
+}
+.make-project-arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #efcfde;
+  color: #000;
+  font-size: 18px;
+}
+.make-project-link:focus-visible {outline: 3px solid #87275a; outline-offset: 3px}
+@keyframes project-arrow-lift {
+  0%, 55%, 100% {transform: translate(0,0)}
+  75% {transform: translate(2px,-2px)}
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="reduced"]):not([data-motion="paused"]):not([data-motion="pause"]) .make-project-arrow {animation: project-arrow-lift 2.8s ease-in-out infinite}
+}
+html[data-motion-gate] .make-project-link,
+body:has([aria-modal="true"]:not([hidden])) .make-project-link {display:none}
+@media(max-width:940px) {
+  body:has(.offer-dock-content) .make-project-link {bottom:calc(100px + env(safe-area-inset-bottom))}
+}
+@media print {.make-project-link {display:none!important}}

@@ -110,7 +110,7 @@ body.motion-edition{--paper:#100711;--white:#1b101f;--ink:#f8f0fa;--muted:#b0a1b
 .motion-edition .form-panel,.motion-edition .booking-main,.motion-edition .modal,.motion-edition .legal-modal{background:#1d1124;color:#f5e7fb}
 .motion-edition .booking-aside{background:linear-gradient(130deg,#3f1738,#262044);color:#f7e6fb}
 .motion-edition .field input,.motion-edition .field select,.motion-edition .field textarea{background:#28182f;color:#fff;border-color:#69456d}
-.motion-edition .field label,.motion-edition .contact-channel strong{color:#ebdaef}
+.motion-edition .field label,.motion-edition .contact-channel strong{color:#000}
 .motion-edition .field input::placeholder,.motion-edition .field textarea::placeholder{color:#a68caf}
 .motion-edition .modal-close{color:#eedaf7;background:#33203e}
 .motion-edition .motion-dialog{background:#1d1124;color:#f7e8fc;border-color:#56335d}
