@@ -1,4 +1,4 @@
-import {addressFor} from './adviser-address.mjs';
+import {addressFor,nameError,familiarLead,relationshipPrompt} from './adviser-address.mjs';
 import {studioGuide} from './adviser-guide.mjs';
 import {personas,adviserPrompt} from './adviser-personas.mjs';
 import {resolveAiSettings} from './ai-settings.mjs';
@@ -90,14 +90,18 @@ export async function adviserChat(request,env,state){
  const handoff=/not (?:help|work|resolv)|still (?:broken|unresolved)|unresolved|human|real person|refund|payment failed|security breach/i.test(messages.at(-1).content);
  const extras=adviserNavigation(messages.at(-1).content,data.page,data.agent);
  const profile=addressFor(data.firstName,data.agent);
+ if((data.firstName&&nameError(data.firstName))||(!profile&&messages.length>1)){
+  return reply({error:nameError(data.firstName),code:'NAME_REQUIRED'},400);
+ }
  const firstNamed=data.firstNamed===true;
- const greeting=profile?(profile.mirror&&firstNamed?'Talking to your AI double! How does it feel? ':profile.title+', '):'';
+ const turnIndex=Math.floor(messages.length/2);
+ const greeting=familiarLead(profile,data.agent,turnIndex,firstNamed);
  const roast=/\b(motherchod|madarchod|behenchod|bhenchod|kutta|sala|saala)\b/i.test(messages.at(-1).content);
- const voice=profile?' Address this visitor as '+JSON.stringify(profile.title)+'. Tone: '+profile.style+'.':'';
+ const voice=relationshipPrompt(profile);
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
   if(profile&&firstNamed&&messages.at(-1).content.startsWith('My first name is ')){
-   const answer=profile.mirror?'Hey, how does it feel talking to your AI double? What should we work on next?':profile.title+', '+(profile.style.includes('respect')?'ji, aap bataiye. What would you like to work on next?':profile.style.includes('friends')?'arre, apna banda! Bata, project ka kya scene hai?':'good to meet you. Where should we pick up?');
+   const answer=greeting+'Bataiye, aapke project mein kaise help kar sakta hoon?';
    return reply({...result,answer,extras,canUseStudioModel:false});
   }
   const banter=roast&&!profile?.style.includes('respect')?'Itni bakchodi se brief nahi banega. Actual problem bata, phir kaam ki baat karte hain. ':'';
@@ -114,7 +118,7 @@ export async function adviserChat(request,env,state){
  const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice+" If insulted, respond with a sharp situational roast, then help with the actual project. Respect family tones.",maxOutput);
  if(!result.ok&&data.allowGuide===true)return guide();
  if(!result.ok)return reply({error:'The VELORYZ AI engine could not respond. Please retry or contact the studio.',code:'AI_PROVIDER_'+result.status.toUpperCase(),agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI reply failed · No simulated response was substituted.',extras},503);
- return reply({answer:profile&&!result.answer.toLowerCase().includes(profile.title.toLowerCase())?greeting+result.answer:result.answer,agent:agent.name,handoff,available:true,mode:'ai',notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
+ return reply({answer:greeting+result.answer,agent:agent.name,handoff,available:true,mode:'ai',notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
 }
 
 export function checkoutLink(value){

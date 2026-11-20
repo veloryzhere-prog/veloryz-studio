@@ -5,7 +5,7 @@ function savedPlanner(){try{return VeloryzPlanner.restore(sessionStorage.getItem
 let designCategory='All',designQuery='',projectBrief=savedPlanner(),chosenDesign=null;
 let adviserIndex=0,chatMessages=[],chatBusy=false,chatAgent='',chatSession=0;
 // Conversations are kept only while this page is open, separately for each AI persona.
-let visitorFirstName='',namePromptSkipped=false;
+let visitorFirstName='',nameRequired=false;
 const introducedTo=new Set();
 const chatHistories=Object.create(null);
 const advisers=[
@@ -152,20 +152,27 @@ function chatBubble(message,a){
  return item;
 }
 function askFirstName(log){
- if(visitorFirstName||namePromptSkipped||log.querySelector('.chat-name-card'))return;
+ if(visitorFirstName||document.querySelector('.chat-name-card'))return;
  const card=document.createElement('form');
+ nameRequired=true;
  card.className='chat-name-card';
- card.innerHTML='<label for="chat-first-name">What should I call you?</label><div><input id="chat-first-name" aria-label="Your first name" placeholder="Your first name" autocomplete="given-name" maxlength="80" required><button type="submit">Use name</button></div><button type="button" data-skip-name>Skip for now</button>';
- card.querySelector('[data-skip-name]').onclick=()=>{namePromptSkipped=true;card.remove();};
+ card.innerHTML='<label for="chat-first-name">Your first name, please</label><p id="chat-name-help">Enter only your first name to continue chatting.</p><div><input id="chat-first-name" aria-label="Your first name" aria-describedby="chat-name-help" placeholder="e.g. Shivam" autocomplete="given-name" maxlength="40" required><button type="submit">Continue ↗</button></div>';
  card.onsubmit=e=>{
   e.preventDefault();
-  const field=card.querySelector('input'),name=field.value.normalize('NFC').trim().split(/\s+/u)[0];
-  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Enter your first name using letters.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
-  visitorFirstName=name;card.remove();chatStatus('I’ll call you '+name+'.');
+  const field=card.querySelector('input'),name=field.value.normalize('NFC').trim();
+  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Enter only your first name, such as Shivam. Leave out surnames and relationship titles.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
+  visitorFirstName=name;nameRequired=false;card.remove();syncChatComposer();chatStatus('I’ll call you '+name+'.');
   const form=$('#expert-chat-form'),input=$('#expert-question');
   if(form&&input&&!input.value.trim()&&!chatBusy){input.value='My first name is '+name+'.';sendChat(form);}else input?.focus();
  };
- log.append(card);
+ $('.chat-name-slot').append(card);syncChatComposer();
+}
+function syncChatComposer(){
+ const form=$('#expert-chat-form');if(!form)return;
+ const locked=nameRequired&&!visitorFirstName;
+ $('textarea',form).disabled=locked;
+ $('button[type="submit"]',form).disabled=locked||chatBusy;
+ $('textarea',form).placeholder=locked?'Enter your first name above to continue':'Message '+(advisers.find(a=>a.id===chatAgent)?.name||'the studio')+'…';
 }
 function chatStatus(text,error=false){const el=$('.chat-connection');if(!el)return;el.textContent=text;el.classList.toggle('offline',error);el.classList.toggle('guide-mode',error);}
 function openExpert(id=''){
@@ -174,19 +181,20 @@ function openExpert(id=''){
  chatAgent=a.id;chatMessages=chatHistories[a.id]||(chatHistories[a.id]=[]);chatBusy=false;
  clearTimeout(campaignTimer);
  openModal(`<div class="expert-chat ai-conversation" data-persona="${a.id}">
- <div class="chat-scroll-area"><div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ · STUDIO AI</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Design, scope and project advice</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
+ <div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ · STUDIO AI</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Design, scope and project advice</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
  <div class="chat-personas" role="group" aria-label="Choose AI personality">${advisers.map(p=>`<button type="button" class="${p.id===a.id?'selected':''} ${p.id==='aryan'?'executive-agent':''}" data-chat-agent="${p.id}" aria-pressed="${p.id===a.id}" title="${p.id==='aryan'?'Executive escalation':p.role}">${avatar(p,true)}<span>${p.name}</span></button>`).join('')}</div>
  <div class="chat-conversation-meta"><span><span class="chat-live-dot" aria-hidden="true"></span> ${a.name} · <span data-chat-mode>Connecting…</span></span><button type="button" data-chat-clear>New chat ↺</button></div>
- <div class="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat with ${a.name}"></div>
- <div class="chat-suggestions" ${chatMessages.length?'hidden':''}>${['Help me choose a design','How do I request a project?','हिंदी में बात करें'].map(t=>`<button type="button" data-chat-prompt="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+ <div class="chat-scroll-area"><div class="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat with ${a.name}"></div>
+ <div class="chat-suggestions" ${chatMessages.length?'hidden':''}>${['Help me choose a design','How do I request a project?','Hinglish mein baat karein'].map(t=>`<button type="button" data-chat-prompt="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+ </div><div class="chat-name-slot"></div>
  <div class="chat-connection" role="status">Checking VELORYZ AI connection…</div>
 
  <div class="chat-footer"><span>Fictional AI persona · Responses can be mistaken. Avoid private details. Chats stay in this browser tab.</span><a href="${wa('Hi VELORYZ! I would like to speak with the studio.')}" target="_blank" rel="noopener">Human studio ↗</a></div>
- </div>
  <form id="expert-chat-form"><label class="sr-only" for="expert-question">Message ${a.name}</label><textarea id="expert-question" name="question" maxlength="1200" required rows="2" placeholder="Message ${a.name}…"></textarea><button type="submit" class="button" aria-label="Send message to ${a.name}"><span>Send</span><span aria-hidden="true">↗</span></button></form>
  </div>`,'expert-modal');
  sizeChatViewport();
  const log=$('.chat-log');
+ if(nameRequired)askFirstName(log);
  if(chatMessages.length){for(const message of chatMessages)log.append(chatBubble(message,a));askFirstName(log);}
  else{const intro=chatBubble({role:'assistant',content:adviserIntros[a.id]},a);intro.classList.add('intro');log.append(intro);}
  log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
@@ -198,6 +206,7 @@ function openExpert(id=''){
  }).catch(()=>{if(chatSession===connectionSession)chatStatus('Could not check the live provider status.',true);});
 }
 async function sendChat(form){
+ if(nameRequired&&!visitorFirstName){askFirstName($(".chat-log"));$("#chat-first-name")?.focus();return;}
  if(chatBusy||!form.reportValidity())return;
  const input=$('textarea',form),question=input.value.trim();if(!question)return;
  const session=chatSession,agent=chatAgent,a=advisers.find(p=>p.id===agent),name=a.name,log=$('.chat-log');
@@ -235,7 +244,7 @@ async function sendChat(form){
   typing.remove();userBubble.remove();input.value=question;
   const error=document.createElement('div');error.className='chat-error';error.setAttribute('role','alert');error.textContent='The live connection timed out or was interrupted. Your message is ready to retry.';log.append(error);
   chatStatus('Live AI connection interrupted. Please retry.',true);log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;
- }finally{if(chatSession===session&&chatAgent===agent&&form.isConnected){chatBusy=false;form.removeAttribute('aria-busy');$('button[type="submit"]',form).disabled=false;input.focus();}}
+ }finally{if(chatSession===session&&chatAgent===agent&&form.isConnected){chatBusy=false;form.removeAttribute('aria-busy');syncChatComposer();if(nameRequired&&!visitorFirstName)$('#chat-first-name')?.focus();else input.focus();}}
 }
 
 document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
@@ -254,7 +263,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  if(b.hasAttribute('data-brief-download')){const blob=new Blob(['VELORYZ / PROJECT STARTING BRIEF\n\n'+briefText()+'\n\nPlanning estimate only. Contact '+CONTACT.email+' to confirm a scoped proposal.'],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='veloryz-project-brief.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
  if(b.hasAttribute('data-expert'))openExpert(b.dataset.expert);
  if(b.hasAttribute('data-help-question')){openExpert('happy');const field=$('#expert-question');if(field){field.value=b.dataset.helpQuestion;field.focus();}}
- if(b.hasAttribute('data-chat-agent')){if(chatBusy)return;closeModal();openExpert(b.dataset.chatAgent);}
+ if(b.hasAttribute('data-chat-agent')){closeModal();openExpert(b.dataset.chatAgent);}
  if(b.hasAttribute('data-chat-action')){
   const action=b.dataset.chatAction;
   if(action==='open_booking_form')openBooking();
