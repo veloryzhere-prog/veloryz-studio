@@ -44,7 +44,7 @@ let stored='',destination='';
 context.sessionStorage={setItem:(key,value)=>{stored=value;},removeItem:()=>{stored='';}};
 context.matchMedia=()=>media;context.requestAnimationFrame=fn=>{raf.push(fn);return raf.length;};
 context.innerHeight=800;context.window.StudioMotion={matches:true};context.window.addEventListener=()=>{};
-context.navigate=path=>{destination=path;};
+context.requestStudio=path=>{destination=path;};
 const mainSource=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 vm.runInContext(mainSource.slice(mainSource.indexOf('const journeyStages='),mainSource.indexOf('function projectJourney()')),context);
 vm.runInContext(fs.readFileSync(new URL('../public/journey-planner.js',import.meta.url),'utf8'),context);
@@ -58,7 +58,7 @@ listeners.get('submit')({target:{id:'guided-project-planner'},preventDefault(){p
 assert(prevented);assert.equal(destination,'');assert.equal(goalError.hidden,false);assert(goal.focused);
 goal.value='Help local customers discover our services and request a consultation.';
 listeners.get('submit')({target:{id:'guided-project-planner'},preventDefault(){}});
-assert.equal(destination,'/book/');assert(JSON.parse(stored).goal.includes('local customers'));
+assert.equal(destination,'project');assert(JSON.parse(stored).goal.includes('local customers'));
 controllerClick('data-journey-select',{journeySelect:'3'});assert.equal(story.dataset.stage,'3');assert.equal(chapters[3].hidden,false);assert.equal(chapters[0].hidden,true);
 media.matches=false;media.change();assert.equal(chapters.filter(c=>!c.hidden).length,5,'Desktop restores all story text.');
 console.log('PASS: step visibility, focus/status updates, goal validation gate, local draft preservation, consultation handoff and responsive story controls.');

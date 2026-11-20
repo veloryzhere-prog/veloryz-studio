@@ -16,7 +16,7 @@ const nonce=csp.match(/nonce-([a-f0-9]+)/)[1];
 const tags=[...body.matchAll(/<script\b[^>]*>/g)];assert.equal(tags.length,3);assert(tags.every(tag=>tag[0].includes(`nonce="${nonce}"`)));
 assert.equal(secureHtml(shell,200,true).headers.get('x-robots-tag'),'noindex, nofollow');assert.equal(secureHtml(shell,404).status,404);
 console.log('PASS: production script nonces, resource restrictions, metadata escaping, canonical URLs, structured-data injection protection and private-page indexing policy.');
-assert(body.includes('/app.js?v=veloryz-folio-20261120'),'A fresh release must not use a stale cached public app script');
+assert(body.includes('/app.js?v=veloryz-shop-20261120'),'A fresh release must not use a stale cached public app script');
 const clientShell=fs.readFileSync(new URL('../lib/site-shell.ts',import.meta.url),'utf8');assert(clientShell.indexOf('/motion.js')<clientShell.indexOf('/platform.js'));assert(clientShell.indexOf('/motion.js')<clientShell.indexOf('/app.js'));
 const devJs=ts.transpileModule(fs.readFileSync(new URL('../lib/response-security.ts',import.meta.url),'utf8').replaceAll('import.meta.env.DEV','true'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
 const dev=await import('data:text/javascript;base64,'+Buffer.from(devJs).toString('base64'));assert(dev.secureHtml(shell,200,true,true).headers.has('content-security-policy'),'Browser QA must exercise the actual production CSP');
