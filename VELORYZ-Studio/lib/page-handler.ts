@@ -42,7 +42,7 @@ export async function GET(request: Request) {
   data.state.offers.push({...data.state.offers[0],id:'preview-slider',kind:'ad',placement:'slider',title:'Explore the studio’s design directions',buttonLabel:'Browse designs',buttonUrl:'/design/'},{...data.state.offers[0],id:'preview-slider-two',kind:'ad',placement:'slider',title:'Meet the people behind the work',buttonLabel:'Meet the team',buttonUrl:'/teamjob/'});
   return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};</script><script src="/app.js" defer></script>`),200,true);
  }
- const data=await getPublished(env);
+ const data=await getPublished(env,request.url);
  const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
  const slug=(value:string)=>value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
  const people=[{name:data.state.site.founderName,slug:slug(data.state.site.founderName)},...data.state.team];
