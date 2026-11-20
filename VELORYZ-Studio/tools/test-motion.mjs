@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 const source=fs.readFileSync(new URL('../public/motion.js',import.meta.url),'utf8');
-function runtime({systemReduced=false,saved,blockedStorage=false,storage=new Map()}={}){
+function runtime({systemReduced=false,saved,guided=false,reload=false,blockedStorage=false,storage=new Map()}={}){
  if(saved)storage.set('veloryz.motion.v2',saved);
- const classes=new Set(),events={},windowEvents={},mediaEvents={},root={dataset:{},scrollHeight:2000,setAttribute(k,v){this[k]=v;},toggleAttribute(k,on){if(on)this[k]=true;else delete this[k];},removeAttribute(k){delete this[k];}};
+ const classes=new Set(),events={},windowEvents={},mediaEvents={},root={dataset:{guidedMotionIntro:String(guided)},scrollHeight:2000,setAttribute(k,v){this[k]=v;},toggleAttribute(k,on){if(on)this[k]=true;else delete this[k];},removeAttribute(k){delete this[k];}};
  const document={documentElement:root,body:{classList:{toggle(k,on){on?classes.add(k):classes.delete(k);}}},hidden:false,querySelectorAll(){return[];},querySelector(){return null;},addEventListener(k,fn){events[k]=fn;}};
  const media={matches:systemReduced,addEventListener(k,fn){mediaEvents[k]=fn;}};
- const window={addEventListener(k,fn){windowEvents[k]=fn;}};
+ const window={performance:{getEntriesByType:()=>[{type:reload?"reload":"navigate"}]},addEventListener(k,fn){windowEvents[k]=fn;}};
  const localStorage={getItem(k){if(blockedStorage)throw Error('Storage blocked');return storage.get(k)||null;},setItem(k,v){if(blockedStorage)throw Error('Storage blocked');storage.set(k,v);}};
  const sessionStorage={getItem(){return null;},setItem(){} };
  vm.runInNewContext(source,{window,document,matchMedia:()=>media,localStorage,sessionStorage,requestAnimationFrame:fn=>fn(),innerHeight:800,scrollY:0,console});
@@ -29,3 +29,11 @@ const css=fs.readFileSync(new URL('../public/motion-system.css',import.meta.url)
 for(const file of ['style.css','cms-public.css','studio-extras.css','visual-upgrade.css','platform.css','mailbox.css','admin.css'])assert(!fs.readFileSync(new URL('../public/'+file,import.meta.url),'utf8').includes('prefers-reduced-motion'),'Old independent motion policies must not disable Full mode: '+file);
 const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');assert(!app.includes('new IntersectionObserver(entries=>entries.forEach(entry=>entry.target.classList.toggle'),'Artwork must run without waiting for observer permission');
 console.log('PASS: device preference, explicit full override, persistence, pause/resume, system changes, visibility/BFCache recovery, blocked storage, missing observer fallback and one coherent CSS motion policy.');
+
+for(const saved of ['paused','reduced','full']){
+ for(const reload of [false,true]){
+  const {root}=runtime({saved,guided:true,reload});
+  assert.equal(root['data-motion-gate'],saved==='full'?undefined:'boot');
+ }
+}
+assert.equal(runtime({saved:'auto',systemReduced:true,guided:true,reload:true}).root['data-motion-gate'],'boot');

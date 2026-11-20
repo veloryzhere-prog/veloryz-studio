@@ -211,3 +211,8 @@ body.motion-edition #modal-root .modal.expert-modal {
 }
 #modal-root .expert-modal #expert-question {resize:none;height:48px;min-height:48px;font-size:16px}
 #modal-root .expert-modal .chat-header {padding-right:36px}
+
+/* Quiet modes still need a visible, stationary spotlight. */
+html[data-motion-gate] #main,html[data-motion-gate] #footer{filter:blur(9px)}
+html[data-motion-gate] #motion-focus-overlay{backdrop-filter:none;background:rgba(31,25,36,.25)}
+html[data-motion-gate]:is([data-motion=paused],[data-motion=reduced]) :is(.header-motion,.motion-wave i,[data-motion-choice=full]){animation:none!important}

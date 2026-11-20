@@ -34,18 +34,18 @@ vm.runInNewContext(fs.readFileSync(new URL('../public/frame-cut.js',import.meta.
 });
 const scene=new elementClass(), reveal=new Video(), scarf=new Video(), button=new Element();
 scene.querySelector=s=>({'.frame-reveal':reveal,'.frame-scarf':scarf,'.frame-toggle':button})[s];
-let top=0;
-scene.getBoundingClientRect=()=>({top,height:1960});
+let top=0, delay;
+scene.style={setProperty(_,value){delay=parseFloat(value);}};
+scene.getBoundingClientRect=()=>({top,bottom:top+1960,height:1960});
 scene.firstElementChild={clientHeight:800};
-scene.mount(); flush(); assert.equal(reveal.hasAttribute('src'),false);
-visibility([{isIntersecting:true}]); flush();
+scene.mount();flush();assert.equal(scarf.hasAttribute('src'),false);
+visibility([{isIntersecting:true}]);flush();assert.ok(scarf.hasAttribute('src'));
 function scroll(y){top=-y;window.dispatchEvent(new Event('scroll'));flush();}
-scroll(522);assert.ok(Math.abs(reveal.currentTime-2.15)<.04);
-scroll(1050);assert.ok(scene.hasAttribute('data-scarf'));assert.equal(scarf.paused,false);
-await Promise.resolve();await Promise.resolve();
+scroll(522);assert.ok(Math.abs(delay+.45)<.001);assert.ok(scarf.paused);
+scroll(1050);assert.equal(scarf.paused,false);
 button.dispatchEvent(new Event('click'));flush();assert.ok(scarf.paused);
-scroll(180);assert.ok(reveal.currentTime<.85);assert.equal(scene.hasAttribute('data-scarf'),false);
+scroll(180);assert.ok(Math.abs(delay+180/1160)<.001);assert.ok(button.hidden);
 window.StudioMotion.level='reduced';window.StudioMotion.dispatchEvent(new Event('change'));flush();
-assert.equal(scene.hasAttribute('data-full'),false);assert.equal(reveal.hasAttribute('src'),false);
+assert.equal(scene.hasAttribute('data-full'),false);
 scene.disconnectedCallback();assert.equal(frames.size,0);
-console.log('PASS: lazy media, forward/reverse scroll, scarf handoff, pause, reduced motion and route cleanup.');
+console.log('PASS: vector scroll progress in both directions, early film loading, playback, pause, reduced motion and cleanup.');

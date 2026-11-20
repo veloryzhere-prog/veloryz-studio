@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none">
+  <defs>
+    <linearGradient id="ivory" x2=".8" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#fff3dc"/><stop offset=".65" stop-color="#f5e6cb"/><stop offset="1" stop-color="#d6cbbd"/>
+    </linearGradient>
+  </defs>
+  <g stroke="url(#ivory)" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="16" d="M319 44C386 39 415 53 422 116C428 169 430 246 414 285C403 312 373 315 327 317C272 320 248 311 235 279C223 250 212 178 215 129C218 72 250 47 319 44Z"/>
+    <path stroke-width="12" d="M322 83C383 72 400 77 407 116C412 153 405 230 397 257C390 282 371 288 315 293C278 297 261 285 254 252C244 209 238 142 259 113C273 94 291 88 322 83Z"/>
+    <path stroke-width="9" d="M328 115C377 105 394 102 398 132C401 161 393 225 383 247C375 267 354 270 311 277C284 282 272 270 268 245C262 207 256 161 273 138C284 124 300 120 328 115Z"/>
+  </g>
+  <path stroke="#233de5" stroke-width="9" d="M320 144C362 132 378 126 385 147C390 163 379 216 372 235C366 252 353 255 309 263C286 267 279 259 277 237C274 206 272 172 285 159C293 151 307 147 320 144Z"/>
+  <path fill="#354bda" d="M350 122Q366 78 391 46L396 49Q371 80 350 122Z"/>
+</svg>

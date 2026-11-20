@@ -10,12 +10,11 @@
  let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='';
  try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;}catch{}
  const effective=()=>preference==='auto'?(media?.matches?'reduced':'full'):preference;
- const nav=window.performance?.getEntriesByType('navigation')[0];
- const internal=document.referrer && new URL(document.referrer).origin===window.location.origin;
- // A direct opening can reuse an existing tab. Only reload/history and internal
- // navigation inherit the previous visit, including a refresh during the guide.
- const needsIntro=root.dataset.guidedMotionIntro==='true' &&
-   nav?.type!=='reload' && nav?.type!=='back_forward' && !internal;
+ // Only an explicit Full motion choice completes the invitation. Automatic
+ // visitors see it on entry; a quiet preference also sees it after a refresh.
+ const reload=window.performance?.getEntriesByType('navigation')[0]?.type==='reload';
+ const needsIntro=root.dataset.guidedMotionIntro==='true' && preference!=='full' &&
+   (effective()!=='full' || !reload);
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
  function lockPage(){
@@ -60,6 +59,7 @@
   originalOverflow=document.body.style.overflow;
   document.body.classList.add('motion-focus-active');
   root.dataset.motionGate='icon';
+  window.scrollTo?.({top:0,behavior:'instant'});
   document.body.style.overflow='hidden';
   createOverlay();lockPage();
   button.classList.add('motion-gate-target');
