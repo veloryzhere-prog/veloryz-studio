@@ -88,3 +88,6 @@ body.motion-edition #modal-root .modal.expert-modal{background:#f7faff;max-width
  #modal-root .expert-modal .chat-personas button{padding:5px}
  #modal-root .expert-modal .chat-conversation-meta{padding-block:2px}
 }
+body.motion-edition #modal-root .modal.expert-modal{padding:0!important}
+body.motion-edition #modal-root .expert-modal .chat-message.user p{color:#193d62!important}
+body.motion-edition #modal-root .expert-modal .chat-message.user>span{color:#315477}

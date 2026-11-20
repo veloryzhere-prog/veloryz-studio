@@ -36,7 +36,7 @@ export function nameError(value){
 export function familiarLead(profile,agent,turn=0,first=false){
  if(!profile)return '';
  if(profile.mirror)return first?'Apne AI double se baat karke kaisa lag raha hai? ':'';
- const pick=items=>items[turn%items.length]+' ';
+ const pick=items=>items[first?0:turn%items.length]+' ';
  if(profile.id==='pradeep'||profile.id==='rupesh'){
   return first?'Kaise hain '+profile.title+'? Khana kha liye? ':pick([profile.title+', chaliye theek hai.',profile.title+', aap bataiye, main kaise help kar sakta hoon?',profile.title+', bilkul, samajh gaya.']);
  }
