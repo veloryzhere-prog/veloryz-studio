@@ -17,7 +17,7 @@ assert.equal(adviserNavigation('I want to book a call','/','happy').action.type,
 assert.equal(adviserNavigation('I want to build a website','/','happy').action.type,'open_project_planner');
 assert.deepEqual(adviserNavigation('Show me the price','/','happy').links.map(x=>x.url),['/pricing/','/create/']);
 assert.equal(personas.milky.name,'Milky');assert.match(personas.milky.voice,/female/i);
-assert.match(personas.aryan.voice,/VERY assertive/);
+assert.match(personas.aryan.voice,/founder-inspired AI counterpart/);
 assert.match(personas.nikhil.focus,/smartest analytical/);
 assert.match(adviserPrompt('aryan',defaults,false,[],'/pricing/'),/\/pricing\//);
 const client=fs.readFileSync(new URL('../public/platform.js',import.meta.url),'utf8');

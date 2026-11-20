@@ -96,7 +96,11 @@ export async function adviserChat(request,env,state){
  const voice=profile?' Address this visitor as '+JSON.stringify(profile.title)+'. Tone: '+profile.style+'.':'';
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
-  const banter=roast&&!profile?.style.includes('respect')?'Gaali se brief toh banega nahi. Give me the actual problem and let’s fix it. ':'';
+  if(profile&&firstNamed&&messages.at(-1).content.startsWith('My first name is ')){
+   const answer=profile.mirror?'Hey, how does it feel talking to your AI double? What should we work on next?':profile.title+', '+(profile.style.includes('respect')?'ji, aap bataiye. What would you like to work on next?':profile.style.includes('friends')?'arre, apna banda! Bata, project ka kya scene hai?':'good to meet you. Where should we pick up?');
+   return reply({...result,answer,extras,canUseStudioModel:false});
+  }
+  const banter=roast&&!profile?.style.includes('respect')?'Itni bakchodi se brief nahi banega. Actual problem bata, phir kaam ki baat karte hain. ':'';
   return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},canUseStudioModel:config.provider!=='guide'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));

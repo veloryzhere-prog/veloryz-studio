@@ -40,7 +40,7 @@ export function studioGuide(agent,messages,state){
   answer='VELORI is a VELORYZ product. Explore its studio page for the project, or visit the product through the link provided there. What would you like to build for your own audience?';links=[{label:'Meet VELORI',url:'/velori/'}];
  }else if(/payment|invoice|upi/.test(question)){
   answer='Select Connect studio to discuss on the payments page. Share your project reference and the studio will confirm your milestone directly. Never share a card number, password or UPI PIN in chat.';links=[{label:'Payment information',url:'/payments/'}];
- }else if(/milestone|first step|prepare|must.have|essential feature|how (do we|to) (begin|start)/.test(question)){
+ }else if(/milestone|launch first|feature.*first|prioriti[sz]e|first step|prepare|must.have|essential feature|how (do we|to) (begin|start)/.test(question)){
   answer='Start with one customer and the first action they should take. For a store, map one product from discovery to enquiry. For a service, map a visitor from the offer to a qualified project brief. Put that path in the planner, then add secondary pages once the studio has scoped the core flow.';links=[{label:'Build a project brief',url:'/create/'}];
  }else if(kind&&selected){
   answer=`For ${kind==='commerce'?'an online store':kind==='gaming'?'a gaming project':kind==='editorial'?'an editorial site':'a personal portfolio'}, ${selected.name.split(' / ')[0]} is a useful starting direction from ${money(selected.price)}. ${selected.scope.slice(0,2).join('; ')}. What features matter most to your idea?`;links=[{label:'Explore the designs',url:'/design/'},{label:'Create a brief',url:'/create/'}];

@@ -161,7 +161,9 @@ function askFirstName(log){
   e.preventDefault();
   const field=card.querySelector('input'),name=field.value.normalize('NFC').trim().split(/\s+/u)[0];
   if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Enter your first name using letters.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
-  visitorFirstName=name;card.remove();chatStatus('I’ll call you '+name+'.');$('#expert-question')?.focus();
+  visitorFirstName=name;card.remove();chatStatus('I’ll call you '+name+'.');
+  const form=$('#expert-chat-form'),input=$('#expert-question');
+  if(form&&input&&!input.value.trim()&&!chatBusy){input.value='My first name is '+name+'.';sendChat(form);}else input?.focus();
  };
  log.append(card);
 }

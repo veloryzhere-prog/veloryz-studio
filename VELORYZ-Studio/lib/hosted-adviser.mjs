@@ -17,5 +17,8 @@ export async function enhanceGuide(response,data,ai,loadState){
   if(!answer)return response;
   if(profile&&!answer.toLowerCase().includes(profile.title.toLowerCase()))answer=profile.title+', '+answer;
   return Response.json({...guide,answer:answer.slice(0,4500),mode:'ai',available:true,agent:personas[data.agent].name,notice:'VELORYZ Studio AI · Responses may contain mistakes.'},{headers:{'Cache-Control':'no-store'}});
- }catch{return response;}
+ }catch(error){
+  const code=String(error?.message||'').match(/\b[1-9][0-9]{3,5}\b/)?.[0]||'unavailable';
+  return Response.json({...guide,studioInference:code},{headers:{'Cache-Control':'no-store'}});
+ }
 }
