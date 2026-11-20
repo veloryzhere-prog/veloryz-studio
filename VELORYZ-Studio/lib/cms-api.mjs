@@ -52,14 +52,14 @@ async function ensureState(env){
  await env.DB.prepare('INSERT OR IGNORE INTO cms_state (id,published,draft,published_version,draft_version,updated_at) VALUES (1,?,?,0,0,?)').bind(JSON.stringify(defaults),JSON.stringify(defaults),now()).run();
  await env.DB.prepare("INSERT OR IGNORE INTO cms_history (id,revision,payload,summary,actor,created_at) SELECT 'initial-version',0,published,'Initial studio content','system',? FROM cms_state WHERE id=1 AND published_version=0").bind(now()).run();
 }
-async function authorize(request,env){
+async function authorize(request,env,defaultLoginMode){
  // Dedicated owner-password mode for hosts without trusted ChatGPT identity headers.
  // This NEVER authorizes a request by itself: every admin API route still checks
  // passwordSession() after authorize(), with a signed, HttpOnly session cookie.
  // Requiring both private runtime settings prevents accidental open access.
- if(env.ADMIN_LOGIN_MODE==='password'){
-  if(!env.DB)fail('The studio database is not available.',503);
-  if(!env.ADMIN_PASSWORD_HASH||!env.ADMIN_SESSION_SECRET)fail('Studio password login has not been configured.',503);
+ if((env.ADMIN_LOGIN_MODE || defaultLoginMode)==='password'){
+  if(!env.DB)fail('Connect the studio database in the Worker runtime settings before signing in.',503);
+  if(!env.ADMIN_PASSWORD_HASH||!env.ADMIN_SESSION_SECRET)fail('Configure the Worker secrets ADMIN_PASSWORD_HASH and ADMIN_SESSION_SECRET before signing in.',503);
   return {id:'studio-owner',name:'Studio owner'};
  }
  const userId=request.headers.get('oai-authenticated-user-id'),email=request.headers.get('oai-authenticated-user-email');
@@ -83,7 +83,7 @@ async function saveDraft(env,state,expected){
 const imageTypes=new Set(['image/png','image/jpeg','image/webp','image/gif','image/avif']);
 const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
-export async function handleApi(request,env){
+export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
   env=studioEnvironment(env);
   const path=new URL(request.url).pathname.replace(/\/$/,'');
@@ -94,7 +94,7 @@ export async function handleApi(request,env){
   if(path==='/api/payment-request'&&request.method==='GET')return await paymentApi(request,env,path);
   if(path==='/api/health'&&request.method==='GET'){if(!env.DB||!env.BUCKET)fail('The studio service is temporarily unavailable.',503);try{await env.DB.prepare('SELECT id FROM studio_enquiries LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_limits LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_payments LIMIT 1').first();await env.DB.prepare('SELECT id FROM studio_ai_settings LIMIT 1').first();}catch{fail('The studio database is temporarily unavailable.',503);}return json({ok:true});}
   if(!path.startsWith('/api/admin/'))return json({error:'Not found.'},404);
-  mutationOrigin(request);const user=await authorize(request,env);
+  mutationOrigin(request);const user=await authorize(request,env,defaultLoginMode);
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);

@@ -25,7 +25,7 @@ export async function GET(request: Request) {
  if(import.meta.env.DEV&&path==='/_studio_preview/unlock')return secureHtml(adminShell.replace('<script src="/admin.js" defer></script>','<script>window.ADMIN_UNLOCK_PREVIEW=true;</script><script src="/admin.js" defer></script>'),200,true);
  if(path==='/admin/preview'){
   const apiRequest=new Request(new URL('/api/admin/state',request.url),{headers:request.headers});
-  const result=await handleApi(apiRequest,env);
+  const result=await handleApi(apiRequest,env,'password');
   if(!result.ok)return secureHtml(adminShell,200,true);
   const data=await result.json() as {state:unknown};
   return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({state:data.state,version:-1,preview:true})};</script><script src="/app.js" defer></script>`).replace(/<body[^>]*>/,match=>match+'<a href="/admin" class="draft-preview-note">DRAFT PREVIEW · Return to Studio Control ↗</a>'),200,true);

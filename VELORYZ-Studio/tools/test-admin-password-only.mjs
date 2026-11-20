@@ -8,8 +8,8 @@ const sqlite=new DatabaseSync(':memory:');
 for(const f of fs.readdirSync(new URL('../drizzle/',import.meta.url)).filter(x=>x.endsWith('.sql')).sort())sqlite.exec(fs.readFileSync(new URL('../drizzle/'+f,import.meta.url),'utf8'));
 const DB={prepare(sql){let args=[];return {bind(...a){args=a;return this},async first(){return sqlite.prepare(sql).get(...args)||null},async all(){return {results:sqlite.prepare(sql).all(...args)}},async run(){return {meta:{changes:Number(sqlite.prepare(sql).run(...args).changes)}}}}}};
 const salt='a'.repeat(32),password='200814';
-const env={DB,BUCKET:{},ADMIN_LOGIN_MODE:'password',ADMIN_PASSWORD_HASH:'100000:'+salt+':'+await passwordHash(password,salt),ADMIN_SESSION_SECRET:'test-only-secret-'+crypto.randomUUID()};
-const call=async(path,{body,headers={},method=body?'POST':'GET'}={})=>{const r=await handleApi(new Request('https://studio.test'+path,{method,headers:{...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined}),env);return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')}};
+const env={DB,BUCKET:{},ADMIN_PASSWORD_HASH:'100000:'+salt+':'+await passwordHash(password,salt),ADMIN_SESSION_SECRET:'test-only-secret-'+crypto.randomUUID()};
+const call=async(path,{body,headers={},method=body?'POST':'GET'}={})=>{const r=await handleApi(new Request('https://studio.test'+path,{method,headers:{...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined}),env,'password');return {status:r.status,data:await r.json(),cookie:r.headers.get('set-cookie')}};
 try{
  const before=await call('/api/admin/state');assert.equal(before.status,401);assert.equal(before.data.passwordRequired,true);
  assert.equal((await call('/api/admin/unlock',{body:{password:'wrong'}})).status,401);
