@@ -13,6 +13,32 @@
  window.StudioMotion?.addEventListener('change',()=>{if(!full()){reset();cancelAnimationFrame(frame);frame=0;}});
  const stages=new IntersectionObserver(entries=>entries.forEach(e=>e.target.classList.toggle('is-active',e.isIntersecting)),{rootMargin:'-15% 0px -30%',threshold:.25});
  function refresh(){reset();stages.disconnect();document.querySelectorAll('.process-card').forEach(el=>stages.observe(el));}
+ // Track the project crossing the reading line without polling on scroll.
+ let projectObserver;
+ function indexProjects(){
+  projectObserver?.disconnect();
+  const nav=document.querySelector('.folio-index');
+  if(!nav)return;
+  const links=Array.from(nav.querySelectorAll('a'));
+  const cards=links.map(link=>document.getElementById(link.hash.slice(1)));
+  if(cards.some(card=>!card))return;
+  projectObserver=new IntersectionObserver(entries=>{
+   const active=entries.find(entry=>entry.isIntersecting);
+   if(!active)return;
+   const link=links[cards.indexOf(active.target)];
+   for(const item of links){
+    if(item===link)item.setAttribute('aria-current','location');
+    else item.removeAttribute('aria-current');
+   }
+   const bounds=nav.getBoundingClientRect(),rect=link.getBoundingClientRect();
+   if(rect.left<bounds.left || rect.right>bounds.right){
+    nav.scrollBy({left:rect.left-bounds.left-(bounds.width-rect.width)/2,behavior:'instant'});
+   }
+  },{rootMargin:'-44% 0px -55% 0px'});
+  cards.forEach(card=>projectObserver.observe(card));
+ }
+ document.addEventListener('studio:route',indexProjects);
+ indexProjects();
  const main=document.querySelector('#main');
  new MutationObserver(refresh).observe(main,{childList:true});
  refresh();

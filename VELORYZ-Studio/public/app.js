@@ -174,10 +174,11 @@ function journeyPage(){return `${intro('VELORYZ / the project journey','From a f
 function projectShowcase(){
  const featured=projects.filter(p=>p.featured);
  if(!featured.length)return '<p class="empty-work">New studio work is coming into focus.</p>';
- return '<div class="folio-stack">'+featured.map(p=>{
+ const index=featured.length>1?`<nav class="folio-index" aria-label="Featured projects">${featured.map((p,i)=>`<a href="#folio-${i+1}" ${i===0?'aria-current="location"':''}>${esc(p.name)}</a>`).join('')}</nav>`:'';
+ return '<div class="folio-stack">'+index+featured.map((p,i)=>{
   const artwork=p.cover||(!p.video&&Object.hasOwn(studioArtwork,p.id)?'/assets/renders/'+p.id+'-3d.webp':'');
   const media=artwork?`<img src="${esc(artwork)}" alt="${esc(p.name)} project artwork" loading="lazy" decoding="async">`:projectArt(p.id);
-  return `<article class="folio-shot"><div class="folio-stage"><div class="folio-image">${media}</div></div>
+  return `<article class="folio-shot" id="folio-${i+1}" tabindex="-1"><div class="folio-stage"><div class="folio-image">${media}</div></div>
    <div class="folio-copy"><p class="folio-meta">${[p.category,p.status,p.year].filter(Boolean).map(esc).join(' · ')}</p><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p>
    ${p.scope?.length?`<ul>${p.scope.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`:''}
    ${p.approach||p.note||p.website?`<details class="folio-details"><summary>Project details</summary>${p.approach?`<p>${esc(p.approach)}</p>`:''}${p.note?`<p>${esc(p.note)}</p>`:''}${p.website?`<a class="text-link" href="${esc(p.website)}" target="_blank" rel="noopener">Visit project</a>`:''}</details>`:''}
