@@ -97,7 +97,7 @@ export async function adviserChat(request,env,state){
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
   const banter=roast&&!profile?.style.includes('respect')?'Gaali se brief toh banega nahi. Give me the actual problem and let’s fix it. ':'';
-  return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},canUseStudioModel:!config.configured&&config.provider!=='guide'&&!config.storageError});
+  return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},canUseStudioModel:config.provider!=='guide'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));
  if(!config.configured||config.provider==='guide'){
