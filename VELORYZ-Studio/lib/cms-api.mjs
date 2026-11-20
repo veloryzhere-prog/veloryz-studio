@@ -42,7 +42,37 @@ export function validateState(value){
 }
 export function activeOffers(state,time=Date.now()){return state.offers.filter(o=>o.enabled&&(!o.startAt||Date.parse(o.startAt)<=time)&&(!o.endAt||Date.parse(o.endAt)>time)).sort((a,b)=>b.priority-a.priority);}
 function upgrade(state){return {...state,site:{...defaults.site,...state.site},catalogue:state.catalogue||structuredClone(defaults.catalogue)};}
-export async function getPublished(env){
+const hostedBackend = 'https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-studio-api';
+function usesHostedBackend(env, url) {
+ return !env.DB && !env.SUPABASE_SERVICE_ROLE_KEY && url && new URL(url).origin === 'https://veloryz.online';
+}
+async function forwardStudioRequest(request) {
+ const url = new URL(request.url);
+ const headers = new Headers();
+ for (const name of ['content-type','range','origin','sec-fetch-site','user-agent']) {
+  const value = request.headers.get(name);
+  if (value) headers.set(name,value);
+ }
+ const session = request.headers.get('cookie')?.match(/(?:^|;\s*)(vz_admin=[^;]+)/)?.[1];
+ if (session) headers.set('cookie',session);
+ const response = await fetch(hostedBackend + url.pathname + url.search,{
+  method:request.method, headers, body:request.body, redirect:'manual'
+ });
+ const outgoing = new Headers();
+ for (const name of ['content-type','cache-control','x-content-type-options','content-range','accept-ranges','etag']) {
+  const value=response.headers.get(name);
+  if(value) outgoing.set(name,value);
+ }
+ for(const cookie of response.headers.getSetCookie()) {
+  if(cookie.startsWith('vz_admin=')) outgoing.append('set-cookie',cookie);
+ }
+ return new Response(response.body,{status:response.status,headers:outgoing});
+}
+export async function getPublished(env, requestUrl){
+ if (usesHostedBackend(env,requestUrl)) {
+  const response=await fetch(hostedBackend+'/api/site');
+  if(response.ok){const {state,version}=await response.json();return {state,version};}
+ }
  env=studioEnvironment(env);
  if(!env.DB)return {state:structuredClone(defaults),version:0};
  const row=await env.DB.prepare('SELECT published,published_version FROM cms_state WHERE id=1').first();
@@ -85,6 +115,7 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  if(usesHostedBackend(env,request.url)) return await forwardStudioRequest(request);
   env=studioEnvironment(env);
   const path=new URL(request.url).pathname.replace(/\/$/,'');
   if(path==='/api/site'&&request.method==='GET'){const data=await getPublished(env);return json({...data,activeOffers:activeOffers(data.state)});}
@@ -146,6 +177,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  }catch(error){return json({error:error.status?error.message:'The studio service could not complete this request. Please try again.'},error.status||500);}
 }
 export async function mediaResponse(request,env,id){
+ if(usesHostedBackend(env,request.url)) return forwardStudioRequest(request);
  env=studioEnvironment(env);
  if(!/^[0-9a-f-]{36}$/.test(id)||!env.DB||!env.BUCKET)return new Response('Not found',{status:404});
  const row=await env.DB.prepare('SELECT storage_key,mime FROM cms_media WHERE id=?').bind(id).first();if(!row)return new Response('Not found',{status:404});
