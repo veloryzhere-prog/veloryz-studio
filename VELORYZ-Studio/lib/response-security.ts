@@ -7,7 +7,7 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  const projectLink='<a class="make-project-link" href="/create/"><span>Make your project</span><span class="make-project-arrow" aria-hidden="true">↗</span></a>';
  html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"></head>').replace('</body>',projectLink+'</body>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
- html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-personal-20261120"`);
+ html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-personal2-20261120"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
 }
 export function pageMetadata(html:string,{title,description,url,image,site}:{title:string;description:string;url:string;image:string;site:any}){
