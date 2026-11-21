@@ -5,7 +5,7 @@
  * Phones/tablets retain native touch inertia; no scroll-jacking of chat,
  * forms, dialogs, docs sidebars or project creation.
  *
- * Responsive inertial input: lerp 0.18 and wheelMultiplier 1 are deliberately responsive:
+ * Native-feeling Lenis input: lerp 0.23 on regular pages, direct 1 inside the cinematic scene:
  * no artificially slow, multi-second trailing scroll or acceleration.
  */
 (()=>{
@@ -15,7 +15,9 @@
  const narrow=matchMedia('(max-width: 900px)');
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  const lowPower=()=>Boolean(connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
- let lenis=null,resizeFrame=0;
+ let lenis=null,resizeFrame=0,cinematic=false;
+ const defaultLerp=.23;
+ const applyCinematic=()=>{if(lenis)lenis.options.lerp=cinematic?1:defaultLerp;};
  const selectors=[
   'dialog',
   '.modal-backdrop',
@@ -71,7 +73,7 @@
    lenis=new window.Lenis({
     autoRaf:true,
     anchors:{offset:-96},
-    lerp:0.18,
+    lerp:defaultLerp,
     wheelMultiplier:1,
     smoothWheel:true,
     syncTouch:false,
@@ -82,6 +84,7 @@
     respectReducedMotion:true
    });
    root.dataset.vzSmoothWheel='lenis';
+   applyCinematic();
   }catch{
    cleanup();root.style.scrollBehavior='auto'; // Keep the page navigable if vendor JS fails.
   }
@@ -107,12 +110,16 @@
  window.VeloryzScroll={
   get active(){return Boolean(lenis);},
   get engine(){return lenis;},
-  settings:{lerp:0.18,wheelMultiplier:1,touch:'native'},
+  settings:{lerp:defaultLerp,wheelMultiplier:1,touch:'native',cinematicLerp:1},
   sync,scrollTo:jump
  };
  window.StudioMotion?.addEventListener('change',sync);
  document.addEventListener('studio:motion-intro-complete',sync);
- document.addEventListener('studio:route',onRoute);
+ document.addEventListener('studio:route',()=>{cinematic=false;applyCinematic();onRoute();});
+ document.addEventListener('studio:cinema-focus',event=>{
+  cinematic=Boolean(event.detail?.active);
+  applyCinematic();
+ });
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
  reduced.addEventListener?.('change',sync);
