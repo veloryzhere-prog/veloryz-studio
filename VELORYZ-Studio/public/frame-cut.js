@@ -267,6 +267,12 @@ class VeloryzFrameCut extends HTMLElement {
    label();
   });
   on(window,'scroll',schedule,{passive:true});
+  on(window,'veloryz:scroll-frame',()=>{
+   // When Lenis owns the scroll this callback runs in its rAF, before paint.
+   // Don't wait for a second animation frame to show the new V/scarf pose.
+   if(raf){cancelAnimationFrame(raf);raf=0;}
+   render();
+  },{passive:true});
   on(window,'resize',()=>{layout=null;drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
   on(window,'pageshow',()=>{layout=null;schedule();});
   on(document,'visibilitychange',schedule);
