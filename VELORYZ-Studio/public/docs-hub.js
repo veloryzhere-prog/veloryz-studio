@@ -9,7 +9,7 @@
   const edits=typeof studioCMS!=='undefined'?studioCMS?.site?.documentation?.edits||{}:{};
   return (studioCatalog?.articles||[]).map(a=>{
    const override=edits[a.path.replace(/\/$/,'')]||{};
-   return {id:a.id,label:override.title||a.title,description:override.summary||a.summary,category:a.category,markdown:override.markdown||a.markdown,path:a.path,kind:a.id.startsWith('H-')?'Help Centre':'Studio documentation',visible:override.visible!==false};
+   return {id:a.id,label:override.title||a.title,description:override.summary||a.summary,category:a.category,markdown:override.markdown||a.markdown||'',path:a.path,kind:a.id.startsWith('H-')?'Help Centre':'Studio documentation',visible:override.visible!==false};
   }).filter(a=>a.visible);
  };
  const docs=()=>[...serviceDocs(),...productDocs()];
@@ -83,7 +83,7 @@
     });
     return value;
    }),
-   fetch('/studio-docs-catalog.json?v=20261121-handbook',{cache:'no-cache'}).then(async r=>{
+   fetch('/studio-docs-index.json?v=20261121-handbook-2',{cache:'no-cache'}).then(async r=>{
     if(!r.ok)throw Error('Studio product manual is unavailable.');
     const value=await r.json();
     if(!Array.isArray(value.articles)||value.articles.length!==141)throw Error('The product manual registry is incomplete.');
