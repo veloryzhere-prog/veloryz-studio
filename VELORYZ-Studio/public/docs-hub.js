@@ -66,7 +66,14 @@
    if(!Array.isArray(value.documents)||value.documents.length<10)throw Error('The documentation index is incomplete.');
    const ids=new Set();
    for(const d of value.documents){if(!/^[a-z0-9-]{2,40}$/.test(d.id)||typeof d.markdown!=='string'||ids.has(d.id))throw Error('Invalid documentation source.');ids.add(d.id);}
-   library=value;error='';return value;
+   library=value;
+   const overrides=typeof studioCMS!=='undefined'?studioCMS?.site?.documentation?.edits||{}:{};
+   library.documents=library.documents.filter(d=>{
+     const edit=overrides['/docs/'+d.id];if(edit?.visible===false)return false;
+     if(edit){if(edit.title)d.label=edit.title;if(edit.summary)d.description=edit.summary;if(edit.markdown)d.markdown=edit.markdown;}
+     return true;
+   });
+   error='';return value;
   }).catch(err=>{error=err.message;return null}).finally(()=>{
    loading=null;
    if(location.pathname.startsWith('/docs/')&&document.getElementById('docs-app'))refresh();
