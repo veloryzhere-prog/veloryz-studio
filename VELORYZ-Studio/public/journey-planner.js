@@ -107,6 +107,14 @@
   if(event.target.id!=='guided-project-planner')return;
   event.preventDefault();if(step<2){chooseStep(step+1);return;}
   if(!validateGoal())return;
+  const contact=document.querySelector('[data-planner-contact-email]');
+  const error=document.getElementById('planner-contact-error');
+  if(!contact||!contact.validity.valid){
+   if(error){error.hidden=false;error.textContent='Please enter a valid email address so the studio can send your client invitation when your project is ready.';}
+   contact?.focus();contact?.reportValidity();return;
+  }
+  if(error)error.hidden=true;
+  window.VeloryzProjectEmail=contact.value.trim().toLowerCase();
   projectBrief.goal=document.querySelector('[data-planner-goal]').value;persist();
   requestStudio('project');
  });

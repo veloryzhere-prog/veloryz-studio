@@ -1,5 +1,5 @@
 'use strict';
-let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpEditMode='',cpError='';
+let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpEditMode='',cpError='',cpNewDraft=null;
 const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
 const cpEsc=v=>E(v??'');
 const cpOption=(v,name,current)=>'<option value="'+cpEsc(v)+'" '+(v===current?'selected':'')+'>'+cpEsc(name)+'</option>';
@@ -45,7 +45,7 @@ function clientPortalAdmin(){
  '<div class="cp-admin-layout"><aside class="cp-list"><strong>CLIENT SPACES / '+cpProjects.length+'</strong>'+
  cpProjects.map(x=>'<button data-cp-action="select" data-id="'+cpEsc(x.id)+'" class="'+(cpSelected===x.id?'active':'')+'"><span>'+cpEsc(x.client_name)+'</span><strong>'+cpEsc(x.title)+'</strong><small>'+cpEsc(x.phase)+' · '+cpEsc(x.progress)+'%</small></button>').join('')+
  '<button data-cp-action="new">+ Start a new client project</button></aside><div class="cp-detail">'+
- (cpEditMode==='project'?cpEditor(p&&cpNewProject===false?p:{}):cpEditMode==='item'?cpItemForm(cpEditingItem?cpWorkspace?.items?.find(i=>i.id===cpEditingItem):{}):cpDashboard())+
+ (cpEditMode==='project'?cpEditor(cpNewProject?(cpNewDraft||{}):(p||{})):cpEditMode==='item'?cpItemForm(cpEditingItem?cpWorkspace?.items?.find(i=>i.id===cpEditingItem):{}):cpDashboard())+
  '</div></div>');
 }
 let cpNewProject=false,cpEditingItem='';
@@ -62,10 +62,18 @@ async function cpLoad(selected=''){
  finally{cpLoading=false}
 }
 document.addEventListener('click',async e=>{
- const b=e.target.closest('[data-cp-action]');if(!b||section!=='client-portal')return;
+ const b=e.target.closest('[data-cp-action]');if(!b)return;
  const action=b.dataset.cpAction;
- if(action==='new'){cpNewProject=true;cpEditMode='project';render();return}
- if(action==='cancel'){cpEditMode='';cpNewProject=false;cpEditingItem='';render();return}
+ if(action==='from-enquiry'){
+   const enquiry=typeof enquiryItems!=='undefined'?enquiryItems.find(item=>item.id===b.dataset.id):null;
+   if(!enquiry)return;
+   cpNewDraft={client_name:enquiry.name,client_email:enquiry.email,title:enquiry.service||'New client project',summary:enquiry.message?.slice(0,1500)||'',phase:'Discover',status:'planning',progress:0,next_step:'Studio is reviewing your project scope.'};
+   cpNewProject=true;cpEditMode='project';cpWorkspace=null;
+   closeModal();location.hash='#/client-portal';render();return;
+ }
+ if(section!=='client-portal')return;
+ if(action==='new'){cpNewDraft=null;cpNewProject=true;cpEditMode='project';render();return}
+ if(action==='cancel'){cpEditMode='';cpNewProject=false;cpNewDraft=null;cpEditingItem='';render();return}
  if(action==='edit-project'){cpNewProject=false;cpEditMode='project';render();return}
  if(action==='new-item'){cpEditingItem='';cpEditMode='item';render();return}
  if(action==='edit-item'){cpEditingItem=b.dataset.id;cpEditMode='item';render();return}
@@ -75,7 +83,13 @@ document.addEventListener('click',async e=>{
  try{
   if(action==='invite'){
    const data=await cpReq('/invite',{method:'POST',body:JSON.stringify({project_id:cpSelected})});
-   showModal('A private invitation.','Valid for 14 days. Sharing is manual to protect your client.', '<div class="cp-invite"><label>Invitation URL</label><input readonly value="'+cpEsc(data.url)+'"><p>Copy this URL privately to your verified client. Anyone holding the invitation can access the project.</p></div>', '<button class="admin-button secondary" data-action="close-modal">Close</button>','medium');
+   const delivery=data.delivery||{status:'manual',message:'Email delivery has not been configured.'};
+   const subject=encodeURIComponent('Your VELORYZ Studio private project invitation');
+   const body=encodeURIComponent('Hello '+(cpWorkspace?.project?.client_name||'')+',\n\nYour VELORYZ client workspace is ready.\n\nOne-time code: '+data.code+'\n\nOpen: '+data.url+'\n\nThis invitation expires in 14 days. Do not forward it.\n\nVELORYZ Studio');
+   const draft='mailto:'+encodeURIComponent(data.email)+'?subject='+subject+'&body='+body;
+   showModal('Your private client invitation.','A unique one-time code, valid for 14 days. A new invite revokes the previous one.',
+   '<div class="cp-invite"><div class="cp-invite-status '+(delivery.status==='sent'?'is-sent':'is-manual')+'"><strong>'+(delivery.status==='sent'?'Email accepted by provider':delivery.status==='manual'?'Manual delivery required':'Email delivery failed')+'</strong><p>'+cpEsc(delivery.message)+'</p></div><label>Client email address</label><input readonly value="'+cpEsc(data.email)+'"><label>One-time client code</label><input readonly value="'+cpEsc(data.code)+'" aria-label="Invitation code"><label>Private invitation URL</label><input readonly value="'+cpEsc(data.url)+'" id="cp-invite-url"><div class="cp-invite-actions"><button type="button" class="admin-button secondary" data-cp-invite-copy>Copy invitation link</button><a class="admin-button" href="'+cpEsc(draft)+'">Open email draft ↗</a></div><p>The link and code are shown only now. Sending an email draft requires you to complete the send in your email app. Only a successful provider response is treated as sent.</p></div>',
+   '<button class="admin-button secondary" data-action="close-modal">Close</button>','medium');
   }
   if(action==='delete-item'){
    await cpReq('/items/'+b.dataset.id+'?project_id='+encodeURIComponent(cpSelected),{method:'DELETE'});await cpLoad(cpSelected);toast('Project item removed.');
@@ -91,7 +105,7 @@ document.addEventListener('submit',async e=>{
   if(f.dataset.cpForm==='project'){
    const edit=!cpNewProject&&Boolean(cpSelected);
    const result=await cpReq(edit?'/projects/'+cpSelected:'/projects',{method:edit?'PUT':'POST',body:JSON.stringify(data)});
-   cpSelected=result.id;cpEditMode='';cpNewProject=false;cpWorkspace=null;await cpLoad(result.id);toast('Client project saved.');
+   cpSelected=result.id;cpEditMode='';cpNewProject=false;cpNewDraft=null;cpWorkspace=null;await cpLoad(result.id);toast('Client project saved.');
   }
   if(f.dataset.cpForm==='item'){
    await cpReq('/items',{method:'POST',body:JSON.stringify({...data,id:cpEditingItem||undefined,project_id:cpSelected})});
@@ -103,3 +117,5 @@ document.addEventListener('submit',async e=>{
   }
  }catch(err){toast(err.message);btn.disabled=false}
 });
+
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-cp-invite-copy]');if(!b)return;const input=document.getElementById('cp-invite-url');if(!input)return;try{await navigator.clipboard.writeText(input.value);toast('Private invitation link copied.')}catch{input.focus();input.select();toast('Select and copy the invitation link.')}});
