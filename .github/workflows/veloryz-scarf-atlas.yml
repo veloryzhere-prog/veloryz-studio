@@ -1,0 +1,35 @@
+name: Generate original scarf motion frame atlases
+on:
+  push:
+    branches: [main]
+    paths:
+      - "VELORYZ-Studio/scripts/build-scarf-atlas.sh"
+      - ".github/workflows/veloryz-scarf-atlas.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  scarf-frames:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout original artwork
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify FFmpeg is available
+        run: ffmpeg -version | head -n 2
+      - name: Generate exact original scarf frames
+        run: bash VELORYZ-Studio/scripts/build-scarf-atlas.sh
+      - name: Commit pre-rendered video frames to VELORYZ source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VELORYZ-Studio/public/assets/frame-cut/scarf-frames/
+          if git diff --cached --quiet; then
+            echo "Scarf frame atlases already up-to-date."
+          else
+            git commit -m "Add original 24fps scarf frame atlases for smooth low-GPU scroll motion"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
