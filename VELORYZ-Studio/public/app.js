@@ -14,7 +14,7 @@ const reduced=window.StudioMotion||window.matchMedia('(prefers-reduced-motion: r
 let currentRoute=normalise(location.pathname), observer, modalReturnFocus, popupTimer;
 let modalOpen=false, formCounter=0;
 const modalStack=[];
-function normalise(path){return '/'+path.split('/').filter(Boolean).join('/')+(path==='/'?'':'/');}
+function normalise(path){const pathname=String(path||'/').split(/[?#]/)[0];return '/'+pathname.split('/').filter(Boolean).join('/')+(pathname==='/'?'':'/');}
 const routes={
   '/':{title:'VELORYZ Studio — Built to be remembered.',render:homePage},
   '/design/':{title:'Design Library — VELORYZ Studio',render:designPage},
@@ -70,7 +70,9 @@ function needHelpBlock(){
  return '<section class="vz-need-help container"><div><span class="kb-eyebrow">WE ARE HERE TO HELP</span><h2>Need help?</h2><p>Have a question, need support, or want the team to review your project? The AI guide can help you find the next step, and our team remains available for direct contact.</p></div><div class="vz-need-help-actions"><a href="/support/">Chat with Support AI ↗</a><a href="/contact/">Contact the team ↗</a></div></section>';
 }
 function knowledgeChatPage(agent){
- const title=agent==='support'?'Contact Support':'Help Centre AI',back=agent==='support'?'/contact/':'/help/studio/';
+ const requested=new URLSearchParams(location.search).get('agent');
+ if(agent==='help'&&['help','support','client','creator'].includes(requested))agent=requested;
+ const title=agent==='support'?'Contact Support':agent==='client'?'Client Portal Guide':agent==='creator'?'Project Planner':'Help Centre AI',back=agent==='support'?'/contact/':agent==='client'?'/client/':agent==='creator'?'/create/':'/help/studio/';
  return '<div class="vz-chat-page"><header class="vz-chat-page-head"><div><span class="kb-eyebrow">VELORYZ / ASSISTANTS</span><h1>'+title+'</h1></div><a href="'+back+'">← Back to '+(agent==='support'?'Contact':'Help Centre')+'</a></header>'+
  (window.VeloryzSupportChat?.render(agent)||'<p>The Studio assistant is loading. You can still <a href="/contact/">contact the team</a>.</p>')+
  '<div class="vz-need-help"><div><span class="kb-eyebrow">HUMAN SUPPORT WHEN YOU NEED IT</span><h2>Need help?</h2><p>For project-specific decisions, privacy questions or urgent requests, contact the Studio team directly.</p></div><div class="vz-need-help-actions"><a href="/contact/">Contact the team ↗</a><a href="/docs/">Browse all documentation ↗</a></div></div></div>';
