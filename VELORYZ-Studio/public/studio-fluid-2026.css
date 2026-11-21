@@ -68,7 +68,7 @@ body.motion-edition :is(.text-link,.footer-knowledge-cta){transition:color .25s 
 body.motion-edition .button{min-height:48px;line-height:1.3;border-radius:100px;transition:transform .35s var(--vz-ease),box-shadow .35s,background .25s,border-color .25s,color .25s}
 body.motion-edition .button.small{min-height:43px}
 body.motion-edition .site-header{gap:clamp(8px,1.3vw,25px);max-width:1800px;min-width:0}
-body.motion-edition .site-header .brand--official img{max-width:min(180px,23vw);height:auto;object-fit:contain}
+body.motion-edition .site-header .brand--official img{max-width:clamp(120px,15vw,200px);height:auto;object-fit:contain}
 body.motion-edition .site-header .desktop-nav{gap:clamp(9px,1vw,20px)}
 body.motion-edition .site-header .desktop-nav a{line-height:1.4}
 body.motion-edition .header-end{gap:clamp(8px,1vw,17px)}
@@ -140,6 +140,21 @@ body.motion-edition .site-header,.v4-root,.kb-v4,.vz-chat,.modal{ -webkit-font-s
 body.motion-edition .vz-footer-help{position:relative;isolation:isolate;overflow:hidden}
 body.motion-edition .vz-footer-help::after{content:"";position:absolute;top:-42%;right:-7%;width:min(48%,310px);aspect-ratio:1;pointer-events:none;border-radius:50%;background:radial-gradient(circle,rgba(121,165,239,.18),transparent 70%);z-index:-1}
 
+/* Tablet navigation: swap the crowded nine-link desktop row for a scrollable menu.
+   Keeps Start Project and motion settings reachable, even on 768–1024px devices. */
+@media(max-width:1150px){
+ body.motion-edition .site-header .desktop-nav{display:none!important}
+ body.motion-edition .site-header .menu-toggle{display:grid!important;place-items:center;flex:none;min-width:44px;min-height:44px}
+ body.motion-edition .site-header .mobile-nav{display:none;position:absolute;top:100%;left:var(--pad);right:var(--pad);width:auto;z-index:14000;max-height:calc(100dvh - 90px);overflow-y:auto;background:#fffcf7;border:1px solid rgba(130,89,91,.2);border-radius:0 0 18px 18px;padding:16px clamp(17px,2vw,29px) 25px;box-shadow:0 22px 46px rgba(39,29,37,.14)}
+ body.motion-edition .site-header .mobile-nav.open{display:flex!important;flex-direction:column;gap:4px}
+ body.motion-edition .site-header .mobile-nav a:not(.button){display:flex;align-items:center;min-height:43px;padding:9px 5px;border-bottom:1px solid rgba(84,61,63,.09);font-size:clamp(16px,1.7vw,23px);letter-spacing:-.035em}
+ body.motion-edition .site-header .mobile-nav a[aria-current="page"]{color:#86508e;font-weight:700}
+ body.motion-edition .site-header .mobile-nav .button{align-self:flex-start;margin-top:10px}
+}
+@media(max-width:680px){
+ body.motion-edition .site-header .header-end .button.small{display:none!important}
+ body.motion-edition .site-header{justify-content:space-between}
+}
 /* Tablet: eliminate awkward narrow columns and prevent inaccessible nav */
 @media (max-width:1200px){
  body.motion-edition .site-header{gap:14px}
