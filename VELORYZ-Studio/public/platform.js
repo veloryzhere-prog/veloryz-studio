@@ -9,7 +9,7 @@ let visitorFirstName='',nameRequired=false;
 const introducedTo=new Set();
 const chatHistories=Object.create(null);
 const chatHeat=Object.create(null);
-const chatToneReady=import('/chat-tone.mjs?v=20261121');
+const chatToneReady=import('/chat-tone.mjs?v=20261121-spicy-v3');
 const advisers=[
  {id:'happy',name:'Happy',role:'First contact · Bold & friendly',color:'#eab04d'},
  {id:'nikhil',name:'Nikhil',role:'Senior intelligence · Strategy',color:'#56adbd'},
@@ -173,7 +173,7 @@ function askFirstName(log){
  card.onsubmit=e=>{
   e.preventDefault();
   const field=card.querySelector('input'),name=field.value.normalize('NFC').trim();
-  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Enter only your first name, such as Shivam. Leave out surnames and relationship titles.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
+  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)||/^(?:jagriti|jagruti|जागृति|जाग्रति)$/iu.test(name)){field.setCustomValidity('Please enter your own first name only — without surnames, nicknames used as pranks, or relationship titles.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
   visitorFirstName=name;nameRequired=false;card.remove();syncChatComposer();chatStatus('I’ll call you '+name+'.');
   const form=$('#expert-chat-form'),input=$('#expert-question');
   if(form&&input&&!input.value.trim()&&!chatBusy){input.value='My first name is '+name+'.';sendChat(form);}else input?.focus();
