@@ -245,7 +245,7 @@
    '<div class="v4-template-info"><div><span>ORIGINAL VELORYZ · '+escape(p.category)+'</span><span>'+escape(p.style)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(product?.description||p.description)+'</p>'+
    (product?'<span class="v4-template-price">Template license ₹'+product.price.toLocaleString('en-IN')+' · Full build quoted separately</span>':'')+
    '<button type="button" data-v4-template="'+escape(p.id)+'">'+(data.template===p.id?'✓ Selected':'Use this working template →')+'</button>'+
-   (product?'<a class="v4-template-store-link" href="/design/">Explore all templates & pricing ↗</a>':'')+'</div></article>'}).join(''):
+   (product?'<a class="v4-template-store-link" href="/design/?buy='+encodeURIComponent(p.id)+'">Request this template license ↗</a>':'')+'</div></article>'}).join(''):
    eList.map(p=>'<article class="v4-template-card v4-external-card">'+preview(p.name,p.style,p.category)+
    '<div class="v4-template-info"><div><span>'+escape(p.source)+' · '+escape(p.category)+'</span><span>EXTERNAL</span></div><h3>'+escape(p.name)+'</h3><p>Original template reference. View the actual design and licensing on '+escape(p.source)+'.</p><div class="v4-reference-actions"><a href="'+escape(p.url)+'" target="_blank" rel="noopener noreferrer">View original ↗</a><button type="button" data-v4-external="'+escape(p.name)+'">Use as inspiration →</button></div></div></article>').join('');
   return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No templates match these filters. Try another category.</div>')+'</div>'+
