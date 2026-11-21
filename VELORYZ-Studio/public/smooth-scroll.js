@@ -117,8 +117,13 @@
  document.addEventListener('studio:motion-intro-complete',sync);
  document.addEventListener('studio:route',()=>{cinematic=false;applyCinematic();onRoute();});
  document.addEventListener('studio:cinema-focus',event=>{
-  cinematic=Boolean(event.detail?.active);
+  const active=Boolean(event.detail?.active);
+  if(active===cinematic)return;
+  cinematic=active;
   applyCinematic();
+  // Cancel any previous trailing Lenis animation when entering the film.
+  // Keep the current position, not the target, so there is no visual jump.
+  if(active&&lenis&&Number.isFinite(window.scrollY))lenis.scrollTo(window.scrollY,{immediate:true,force:true});
  });
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
