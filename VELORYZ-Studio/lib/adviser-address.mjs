@@ -12,10 +12,11 @@ const aliases = {
 };
 const friends=new Set(['shivam','ayush','rupam','krishna','tejas','dheeraj','animesh']);
 export function addressFor(value,agent){
- const name=typeof value==='string'?value.normalize('NFC').trim().split(/\s+/u)[0]:'';
+ let name=typeof value==='string'?value.normalize('NFC').trim().split(/\s+/u)[0]:'';
  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name))return null;
  const key=name.toLowerCase().normalize('NFD').replace(/(?<=[a-z])\p{M}+/gu,'').normalize('NFC');
  const id=Object.keys(aliases).find(id=>aliases[id].split(' ').includes(key));
+ if(id==='shivam')name='Shivam';
  let title=name,style='natural and conversational';
  if(id===agent || id==='tripti'&&agent==='milky'){style='playful namesake; acknowledge the mirror once, then answer normally';}
  else if(id==='pradeep'||id==='rupesh'){
@@ -52,5 +53,5 @@ export function familiarLead(profile,agent,turn=0,first=false){
 export function relationshipPrompt(profile){
  if(!profile)return '';
  return ' Conversational roleplay based on the visitor’s supplied first name: '+JSON.stringify({address:profile.title,tone:profile.style})+
- '. Prefer Roman-script Hinglish for familiar exchanges. These are playful studio character relationships. Never claim to verify identity or know private events. If asked who you are to them, explain the requested family or friend role as AI roleplay. Mild situational swearing is allowed when invited. Avoid attacks on third parties, sexual humiliation, threats and repeated personal degradation. Keep the answer useful for the project.';
+ '. Use the supplied canonical address even when the conversation contains a misspelled version of the name. Prefer Roman-script Hinglish for familiar exchanges. These are playful studio character relationships. Never claim to verify identity or know private events. If asked who you are to them, explain the requested family or friend role as AI roleplay. Mild situational swearing is allowed when invited. Avoid attacks on third parties, sexual humiliation, threats and repeated personal degradation. Keep the answer useful for the project.';
 }
