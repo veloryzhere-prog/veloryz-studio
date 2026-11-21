@@ -150,14 +150,10 @@ export async function adviserChat(request,env,state){
  const turnIndex=Math.floor(messages.length/2);
  const greeting=familiarLead(profile,data.agent,turnIndex,firstNamed);
  const roast=isSpicy(messages.at(-1).content);
- const voice=relationshipPrompt(profile)+tonePrompt(messages.at(-1).content,data.agent);
+ const voice=relationshipPrompt(profile,data.agent,turnIndex)+tonePrompt(messages.at(-1).content,data.agent,profile?.role);
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
-  if(profile&&firstNamed&&messages.at(-1).content.startsWith('My first name is ')){
-   const answer=greeting+'Bataiye, aapke project mein kaise help kar sakta hoon?';
-   return reply({...result,answer,extras,canUseStudioModel:false});
-  }
-  const banter=roast&&['aryan','nikhil','happy'].includes(data.agent)&&!profile?.style.includes('respect')?['Volume full, brief zero? Thoda bakchodi kam, actual problem bata. ','Bhai, gaali ka budget unlimited hai, idea ka bhi kuch plan hai? ','Itna dramatic entry? Ab actual kaam ki baat kar. '][turnIndex%3]:'';
+  const banter=roast&&['aryan','nikhil','happy'].includes(data.agent)&&!['father','uncle','elder-uncle'].includes(profile?.role)?'Bhai, gaali apni jagah — ab actual point pe aate hain. ':'';
   return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},canUseStudioModel:config.provider!=='guide'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));
@@ -168,7 +164,8 @@ export async function adviserChat(request,env,state){
  if(health?.retryAt>Date.now()&&data.allowGuide===true)return guide();
  if(health?.retryAt>Date.now())return reply({error:'The studio AI connection is temporarily unavailable. Please retry shortly.',code:'AI_TEMPORARILY_UNAVAILABLE',agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI temporarily unavailable.',extras},503);
  const maxOutput=['nikhil','aryan'].includes(data.agent)?1600:data.agent==='ritik'?1200:950;
- const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice+" If insulted, respond with a sharp situational roast, then help with the actual project. Respect family tones.",maxOutput);
+ const firstTurnInstruction=!profile&&messages.length===1?'\nFIRST ENCOUNTER: Answer their first question briefly and naturally. At the end, ask once for their first name so you can personalize the next replies. The existing frontend displays the required first-name input. Do not demand a full name.':'';
+ const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice+firstTurnInstruction,maxOutput);
  if(!result.ok&&data.allowGuide===true)return guide();
  if(!result.ok)return reply({error:'The VELORYZ AI engine could not respond. Please retry or contact the studio.',code:'AI_PROVIDER_'+result.status.toUpperCase(),agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI reply failed · No simulated response was substituted.',extras},503);
  return reply({answer:result.answer,agent:agent.name,handoff,available:true,mode:'ai',notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
