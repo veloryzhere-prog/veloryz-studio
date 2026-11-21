@@ -32,8 +32,7 @@
  const api=()=>window.VeloryzCreatorV4;
  function mount(){
   const slot=document.getElementById('v4-ai-slot');if(!slot)return;
-  const stage=api()?.stage?.();
-  if(stage==='welcome'||stage==='success'){slot.innerHTML='';return;}
+  // The planner is available from the welcome screen, not only after the first choice.
   slot.innerHTML='<div class="v4-ai-dock"><button type="button" class="v4-ai-toggle" data-v4-ai-toggle aria-expanded="'+store.open+'" aria-controls="v4-ai-panel"><span class="v4-ai-sparkle" aria-hidden="true">✳</span><span>Ask VELORYZ Project AI</span><b aria-hidden="true">'+(store.open?'×':'↗')+'</b></button>'+
   '<section id="v4-ai-panel" class="v4-ai-panel" role="region" aria-label="VELORYZ project planning assistant" '+(store.open?'':'hidden')+'><div class="v4-ai-heading"><div><span>✳ &nbsp; VELORYZ PROJECT AI</span><h2>Build with clarity.</h2><p>Ask about scope, features, budget or the next step.</p></div><button type="button" data-v4-ai-toggle aria-label="Close Project AI">×</button></div>'+
   '<div class="v4-ai-history" id="v4-ai-history" role="log" aria-live="polite" aria-relevant="additions text"></div>'+

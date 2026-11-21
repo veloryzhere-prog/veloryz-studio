@@ -55,10 +55,11 @@ output=vm.runInContext('createPage()',ctx);
 assert(output.includes('Start a project'));
 assert(output.includes('v4-welcome'));
 assert(!output.includes('v4-category-grid'));
+assert(!output.includes('v4-top-next')); // Only Start is shown on welcome.
 const attr=key=>'data-'+key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());
 function click(dataset){
- const control={dataset,hasAttribute:key=>Object.hasOwn(dataset,key.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase()))};
- listeners.click({target:{closest:()=>control}});
+ const control={dataset,hasAttribute:key=>Object.hasOwn(dataset,key.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase())),closest:selector=>selector==='.v4-root'?root:null};
+ listeners.click({target:{closest:()=>control},preventDefault(){},stopImmediatePropagation(){}});
  return output;
 }
 function input(field,value){
@@ -68,6 +69,9 @@ function input(field,value){
 click({v4Action:'start'});
 assert(location.href.includes('question=discover'));
 assert(output.includes('What are you thinking of creating?'));
+assert(output.includes('v4-top-actions'));
+assert(output.includes('v4-top-next'));
+assert(!output.includes('v4-bottom'));
 assert(!output.includes('v4-library-grid'));
 click({v4Pick:'category',value:'SaaS / platform'});
 assert(location.href.includes('question=template'));
