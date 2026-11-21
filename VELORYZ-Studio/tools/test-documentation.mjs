@@ -138,3 +138,30 @@ assert.match(visualMap,/\/docs\/studio\/seo\/indexing\//,'Studio articles absent
 mockLocation.pathname='/docs/studio/seo/indexing/';
 assert.match(mockWindow.VeloryzDocs.render(),/existing article reader/,'Existing content reader must remain intact');
 console.log('Living Blueprint visual routing passed: docs, help, Studio topics, searchable network, full footer and existing articles.');
+
+
+/* Uploaded Figma Make source, original SVG library and human-friendly XML sitemap checks. */
+const figmaCSS=file('public/knowledge-figma.css');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-figma.css?v=20261121-source-figma-1'),'Figma visual stylesheet is not loaded');
+assert.ok(figmaCSS.includes('#f8f9f7')&&figmaCSS.includes('#111c32')&&figmaCSS.includes('#23bde6')&&figmaCSS.includes('#4267e8'),'Figma source palette changed unexpectedly');
+assert.ok(figmaCSS.includes('prefers-reduced-motion'),'Original motion system requires reduced-motion support');
+assert.ok(ui.includes('Main-Dark-Ink-Transparent.webp'),'Original brand logo must remain in the documentation experience');
+assert.ok(!ui.includes('aria-label="VELORYZ logo placeholder"'),'Generic Figma placeholder logo is forbidden');
+assert.ok(ui.includes('kb-service-toc')&&ui.includes('kb-reader-progress'),'Article navigation and reading progress missing');
+const assets=json('public/assets/future-assets/catalog.json');
+assert.equal(assets.length,100,'All 100 original future assets must exist');
+assert.equal(new Set(assets.map(x=>x.id)).size,100,'SVG catalog IDs must be unique');
+for(const item of assets){
+ assert.match(item.path,/^\.\/[a-z]+\/[a-z0-9-]+\.svg$/,'Asset path is not safe: '+item.path);
+ const path='public/assets/future-assets/'+item.path.slice(2);
+ assert.ok(existsSync(resolve(root,path)),'Missing imported Figma asset '+item.path);
+ const svg=file(path);
+ assert.ok(svg.startsWith('<svg ')&&svg.includes('prefers-reduced-motion:reduce'),'Imported SVG is invalid or lacks reduced-motion support: '+item.path);
+}
+const xsl=file('public/sitemap.xsl');
+assert.ok(xsl.startsWith('<?xml version="1.0"'),'XSL must be valid XML');
+assert.ok(xsl.includes('<xsl:stylesheet')&&xsl.includes('match="/"')&&xsl.includes('sm:urlset/sm:url'),'XML site map view must list all public routes');
+assert.ok(xsl.includes('Main-Dark-Ink-Transparent.webp'),'Branded sitemap XSL must use the original VELORYZ wordmark');
+assert.ok(server.includes('<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>'),'XML route must associate the readable XSL stylesheet');
+assert.ok(server.includes('http://www.sitemaps.org/schemas/sitemap/0.9'),'XML sitemap must retain crawler-compliant namespace');
+console.log('Figma source integration checks passed: exact 100-asset library, official logo, article reader and styled XML sitemap.');
