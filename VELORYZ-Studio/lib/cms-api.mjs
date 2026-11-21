@@ -113,6 +113,24 @@ async function forwardStudioRequest(request) {
  return new Response(response.body,{status:response.status,headers:outgoing});
 }
 // The separate private client room is intentionally not part of the public CMS.
+const knowledgeApiOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-knowledge-ai';
+async function forwardKnowledgeAi(request){
+ const url=new URL(request.url),path=url.pathname;
+ const publicAllowed=(path==='/api/knowledge-ai/agents'&&request.method==='GET')||(path==='/api/knowledge-ai/chat'&&request.method==='POST');
+ const adminAllowed=(path==='/api/admin/knowledge-ai/agents'&&request.method==='GET')||
+ (/^\/api\/admin\/knowledge-ai\/agents\/(?:help|support|client|creator)$/.test(path)&&['PUT','POST'].includes(request.method));
+ if(!publicAllowed&&!adminAllowed)return json({error:'Not found.'},404);
+ mutationOrigin(request);
+ const headers=new Headers();
+ for(const name of ['content-type','origin','sec-fetch-site','cf-connecting-ip','user-agent']){
+  const value=request.headers.get(name);if(value)headers.set(name,value);
+ }
+ if(adminAllowed){const cookie=request.headers.get('cookie')?.match(/(?:^|;\s*)(vz_admin=[^;]+)/)?.[1];if(cookie)headers.set('cookie',cookie);}
+ const response=await fetch(knowledgeApiOrigin+path,{method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:request.body,redirect:'manual'});
+ const outgoing=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+ const type=response.headers.get('content-type');if(type)outgoing.set('Content-Type',type);
+ return new Response(response.body,{status:response.status,headers:outgoing});
+}
 const clientPortalOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-client-portal-api';
 async function forwardClientPortal(request){
  const url=new URL(request.url),headers=new Headers();
@@ -175,6 +193,10 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  // Dedicated four-role Knowledge AI API: server-only credentials and owner-guarded settings.
+  if(new URL(request.url).pathname.startsWith('/api/knowledge-ai/')||new URL(request.url).pathname.startsWith('/api/admin/knowledge-ai/')){
+   return await forwardKnowledgeAi(request);
+  }
   // Local dedicated project AI, not the legacy persona endpoint or the hosted backend proxy.
   if(new URL(request.url).pathname==='/api/project-ai'&&request.method==='POST'){
    mutationOrigin(request);
