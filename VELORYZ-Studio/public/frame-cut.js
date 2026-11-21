@@ -26,7 +26,7 @@ class VeloryzFrameCut extends HTMLElement {
   try{scarfCtx=scarfCanvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
   const scarfSprites=Boolean(scarfCtx&&typeof Image==='function');
   const scarfSheets=new Map();
-  const SCARF_FRAMES=178,SCARF_COLS=3,SCARF_CELL_W=576,SCARF_CELL_H=324;
+  const SCARF_FRAMES=222,SCARF_COLS=3,SCARF_CELL_W=576,SCARF_CELL_H=324;
   let scarfSpriteError=false,scarfSpriteReady=false,scarfDrawn=-1;
   let scarfWarm=0,scarfWarmTimer=0;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
@@ -122,12 +122,12 @@ class VeloryzFrameCut extends HTMLElement {
    styleCache.set(key,next);
    this.style.setProperty(key,next);
   };
-  // The real 7.4-second knitted scarf is represented as 178 frames at 24fps.
+  // The real 7.4-second knitted scarf is represented at its native 30fps.
   // Every frame is an original video sample; no video seek or continuous
   // playback happens while the visitor is scrolling.
   const scarfFrame=p=>Math.min(SCARF_FRAMES-1,Math.round(range(p,.43,1)*(SCARF_FRAMES-1)));
   const loadScarfSheet=index=>{
-   if(!scarfSprites||scarfSpriteError||deleted||index<0||index>=20||scarfSheets.has(index))return;
+   if(!scarfSprites||scarfSpriteError||deleted||index<0||index>=25||scarfSheets.has(index))return;
    const image=new Image(),item={image,ready:false};
    scarfSheets.set(index,item);
    image.onload=()=>{
@@ -147,14 +147,14 @@ class VeloryzFrameCut extends HTMLElement {
   const warmScarf=()=>{
    scarfWarmTimer=0;
    if(deleted||!near||scarfSpriteError||!scarfSprites)return;
-   if(scarfWarm<20)loadScarfSheet(scarfWarm++);
-   if(scarfWarm<20&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
+   if(scarfWarm<(keepDecoded?25:6))loadScarfSheet(scarfWarm++);
+   if(scarfWarm<(keepDecoded?25:6)&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
   };
   const drawScarf=progress=>{
    if(!scarfSprites||scarfSpriteError||!scarfCtx||!scarfCanvas)return false;
    const frame=scarfFrame(progress),index=Math.floor(frame/9);
    loadScarfSheet(index);
-   if(index<19)loadScarfSheet(index+1);
+   if(index<24)loadScarfSheet(index+1);
    const item=scarfSheets.get(index);
    if(!item?.ready)return scarfSpriteReady;
    const widthBase=layout?.width||window.innerWidth||640;
@@ -251,7 +251,7 @@ class VeloryzFrameCut extends HTMLElement {
    }
    if(scarfSprites&&!scarfSpriteError){
     loadScarfSheet(0);loadScarfSheet(1);loadScarfSheet(2);
-    if(!scarfWarmTimer&&scarfWarm<20&&typeof setTimeout==='function')
+    if(!scarfWarmTimer&&scarfWarm<(keepDecoded?25:6)&&typeof setTimeout==='function')
      scarfWarmTimer=setTimeout(warmScarf,85);
    }
    if((!scarfSprites||scarfSpriteError)&&!scarfLoaded){
