@@ -1,0 +1,37 @@
+/* VELORYZ / Editorial scroll motion and scarf performance layer.
+   Geometric reveals and pacing inspired by Agentura's motion principles.
+   V-shaped mark, original films and source identity remain unchanged. */
+html[data-vz-rhythm="on"] .vz-motion-pending{opacity:0;transform:translate3d(0,30px,0)}
+html[data-vz-rhythm="on"] .vz-motion-enter{animation:vz-editorial-enter 750ms cubic-bezier(.18,.7,.14,1) both;animation-delay:var(--vz-stagger,0ms)}
+@keyframes vz-editorial-enter{
+ from{opacity:.1;transform:translate3d(0,30px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+html[data-vz-rhythm="off"] .vz-motion-pending{opacity:1!important;transform:none!important}
+html[data-vz-rhythm="on"] #selected-work .vz-home-featured img{transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center}
+html[data-vz-rhythm="on"] #selected-work .vz-home-featured article:hover img{transform:scale(1.045)}
+/* Gentle viewport reveal: the scene is pinned by CSS only, media decoding is lazy. */
+veloryz-frame-cut{contain:layout style;overflow:clip}
+veloryz-frame-cut .frame-stage{isolation:isolate;backface-visibility:hidden}
+veloryz-frame-cut .frame-emblem,veloryz-frame-cut .frame-rings,veloryz-frame-cut .frame-scarf{backface-visibility:hidden;transform-origin:center;will-change:auto}
+veloryz-frame-cut[data-focus] .frame-emblem,
+veloryz-frame-cut[data-focus] .frame-scarf{will-change:transform,opacity}
+veloryz-frame-cut .frame-scarf{pointer-events:none}
+veloryz-frame-cut .frame-toggle{pointer-events:auto}
+@media(min-width:901px) and (prefers-reduced-motion:no-preference){
+ html[data-motion="full"] veloryz-frame-cut[data-full]{height:290svh}
+ html[data-motion="full"] veloryz-frame-cut .frame-stage{transform:translateZ(0)}
+}
+/* Preserve native inertial touch scroll, and never animate modal surfaces on scroll. */
+@media(max-width:900px){
+ veloryz-frame-cut[data-full]{height:240svh}
+ veloryz-frame-cut[data-full] .frame-stage{height:100svh}
+ .vz-motion-pending{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html .vz-motion-pending,html .vz-motion-enter{opacity:1!important;transform:none!important;animation:none!important}
+ veloryz-frame-cut{height:auto!important}
+ veloryz-frame-cut .frame-stage{position:relative!important;height:clamp(290px,56.25vw,80svh)!important}
+ veloryz-frame-cut .frame-emblem,veloryz-frame-cut .frame-rings,veloryz-frame-cut .frame-scarf{animation:none!important}
+ veloryz-frame-cut .frame-scarf{opacity:0!important}
+}
