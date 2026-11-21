@@ -136,6 +136,13 @@
  let stageFromURL;
  try{stageFromURL=new URL(location.href).searchParams.get('question');}catch{stageFromURL=null;}
  let active=stageFromURL||'welcome',busy=false,finished=null,error='',search='',categoryFilter='All',galleryTab='studio',refChoice='',inlineNotice='',jumpToken=0,reviewVisited=active==='review';
+ let storeTemplate='';
+ try{storeTemplate=new URL(location.href).searchParams.get('template')||''}catch{}
+ const fromStore=presets.find(p=>p.id===storeTemplate);
+ if(fromStore){
+  Object.assign(data,{template:fromStore.id,category:fromStore.category,style:fromStore.style,pages:fromStore.pages,features:fromStore.features.slice(),external:'',requestId:''});
+  if(!stageFromURL)active='template';
+ }
  const lightEscape=v=>escape(str(v).slice(0,1200));
  function sync(){
   projectBrief=VeloryzPlanner.normalize({...projectBrief,purpose:data.category,pages:String(data.pages),style:data.style,features:data.features,budget:data.budget,timeline:data.timeline,goal:data.goal,assets:data.assets});
@@ -232,16 +239,21 @@
   const pList=presets.filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description].join(' ').toLowerCase().includes(search.toLowerCase())));
   const eList=refs.filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.source].join(' ').toLowerCase().includes(search.toLowerCase())));
   const cards=galleryTab==='studio'?
-   pList.map(p=>'<article class="v4-template-card '+(data.template===p.id?'is-selected':'')+'">'+preview(p.name,p.style,p.category)+
-   '<div class="v4-template-info"><div><span>VELORYZ CONCEPT · '+escape(p.category)+'</span><span>'+escape(p.style)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p><button type="button" data-v4-template="'+escape(p.id)+'">'+(data.template===p.id?'✓ Selected':'Choose this direction →')+'</button></div></article>').join(''):
+   pList.map(p=>{const product=window.VELORYZ_TEMPLATE_PRODUCTS?.find(t=>t.id===p.id);
+    const art=product?'<a class="v4-template-live-art" href="'+product.preview+'" target="_blank" rel="noopener"><img src="'+product.cover+'" alt="Original VELORYZ '+escape(p.name)+' working website preview" loading="lazy" decoding="async" width="1280" height="800"><span>Open the live website ↗</span></a>':preview(p.name,p.style,p.category);
+    return '<article class="v4-template-card '+(data.template===p.id?'is-selected':'')+'">'+art+
+   '<div class="v4-template-info"><div><span>ORIGINAL VELORYZ · '+escape(p.category)+'</span><span>'+escape(p.style)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(product?.description||p.description)+'</p>'+
+   (product?'<span class="v4-template-price">Template license ₹'+product.price.toLocaleString('en-IN')+' · Full build quoted separately</span>':'')+
+   '<button type="button" data-v4-template="'+escape(p.id)+'">'+(data.template===p.id?'✓ Selected':'Use this working template →')+'</button>'+
+   (product?'<a class="v4-template-store-link" href="/design/">Explore all templates & pricing ↗</a>':'')+'</div></article>'}).join(''):
    eList.map(p=>'<article class="v4-template-card v4-external-card">'+preview(p.name,p.style,p.category)+
    '<div class="v4-template-info"><div><span>'+escape(p.source)+' · '+escape(p.category)+'</span><span>EXTERNAL</span></div><h3>'+escape(p.name)+'</h3><p>Original template reference. View the actual design and licensing on '+escape(p.source)+'.</p><div class="v4-reference-actions"><a href="'+escape(p.url)+'" target="_blank" rel="noopener noreferrer">View original ↗</a><button type="button" data-v4-external="'+escape(p.name)+'">Use as inspiration →</button></div></div></article>').join('');
   return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No templates match these filters. Try another category.</div>')+'</div>'+
-   '<p class="v4-credits">Marketplace concepts are credited external references. Choosing one as inspiration does not purchase a license or copy its source code.</p></div>';
+   '<p class="v4-credits">Original VELORYZ front-end templates. Selection personalizes your project brief; it does not purchase a license or collect payment.</p></div>';
  }
  function templateScreen(){
   return sectionTitle('01 / THE STARTING POINT','Would you like to start with inspiration?','Choose an original studio concept, browse credited marketplace references, or begin with a blank canvas.','OPTIONAL')+
-   '<div class="v4-library-controls"><div class="v4-tab-switch" role="group" aria-label="Library source"><button type="button" data-v4-gallery="studio" aria-pressed="'+(galleryTab==='studio')+'" class="'+(galleryTab==='studio'?'active':'')+'">VELORYZ concepts <span>12</span></button><button type="button" data-v4-gallery="external" aria-pressed="'+(galleryTab==='external')+'" class="'+(galleryTab==='external'?'active':'')+'">Web inspiration <span>'+refs.length+'</span></button></div><label class="v4-search"><span class="sr-only">Search template names</span><input data-v4-search type="search" placeholder="Search templates" autocomplete="off" value="'+escape(search)+'"></label></div>'+
+   '<div class="v4-library-controls"><div class="v4-tab-switch" role="group" aria-label="Library source"><button type="button" data-v4-gallery="studio" aria-pressed="true" class="active">Original VELORYZ websites <span>'+presets.length+'</span></button><a href="/design/" class="v4-market-link">Template store ↗</a></div><label class="v4-search"><span class="sr-only">Search template names</span><input data-v4-search type="search" placeholder="Search templates" autocomplete="off" value="'+escape(search)+'"></label></div>'+
    '<div class="v4-filter-strip" role="group" aria-label="Template categories">'+['All',...categories].map(c=>'<button type="button" data-v4-filter="'+escape(c)+'" class="'+(categoryFilter===c?'active':'')+'" aria-pressed="'+(categoryFilter===c)+'">'+escape(c)+'</button>').join('')+'</div>'+
    '<div id="v4-gallery-holder">'+library()+'</div>'+
    '<button type="button" class="v4-skip-template" data-v4-action="blank">Start with a blank canvas <span>→</span></button>';
@@ -533,7 +545,7 @@
    data.template='';data.external=ref.name+' ('+ref.source+'): '+ref.url;
    data.category=ref.category;data.style=ref.style;data.requestId='';sync();return move(1);
   }
-  if(b.hasAttribute('data-v4-gallery')){galleryTab=b.dataset.v4Gallery;render();return;}
+  if(b.hasAttribute('data-v4-gallery')){galleryTab='studio';render();return;}
   if(b.hasAttribute('data-v4-filter')){categoryFilter=b.dataset.v4Filter;refreshLibrary();const strip=document.querySelector('.v4-filter-strip');if(strip){strip.querySelectorAll('button').forEach(el=>{const yes=el.dataset.v4Filter===categoryFilter;el.classList.toggle('active',yes);el.setAttribute('aria-pressed',String(yes));});}return;}
   if(b.hasAttribute('data-v4-budget-set')){
    change('budget',Number(b.dataset.v4BudgetSet));render();return;
@@ -583,7 +595,12 @@
  // Persist on first use, but do not create a ghost draft on a clean welcome screen.
  if(active!=='welcome'&&active!=='success'){data.lastQuestion=active;sync();}
  function creatorPage(){
-  const fromURL=new URL(location.href).searchParams.get('question')||'welcome';
+  const params=new URL(location.href).searchParams,selected=params.get('template');
+  const chosen=presets.find(p=>p.id===selected);
+  if(chosen&&data.template!==chosen.id){
+   Object.assign(data,{template:chosen.id,category:chosen.category,style:chosen.style,pages:chosen.pages,features:chosen.features.slice(),external:'',requestId:''});sync();
+  }
+  const fromURL=params.get('question')||(chosen?'template':'welcome');
   active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
   if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
