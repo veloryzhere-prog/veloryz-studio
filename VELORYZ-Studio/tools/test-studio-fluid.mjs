@@ -35,7 +35,7 @@ assert.ok(siteShell.includes('studio-fluid-2026.css?v=20261121-fluid-v1'));
 assert.ok(siteShell.includes('studio-fluid-motion.js?v=20261121-fluid-v1'));
 assert.ok(siteShell.indexOf('/studio-fluid-2026.css')>siteShell.indexOf('/knowledge-figma.css'),'Fluid CSS must load after legacy styles');
 assert.ok(siteShell.indexOf('/studio-fluid-motion.js')>siteShell.indexOf('/app.js'),'Motion enhancement must follow the SPA boot script');
-assert.ok(siteShell.includes('data-guided-motion-intro="false"'),'First visit should not force a motion-choice gate');
+assert.ok(siteShell.includes('data-guided-motion-intro="true"'),'First visit must show the motion-choice experience');
 assert.ok(clientShell.includes('/studio-console-fluid-2026.css'),'Client portal must use the new responsive layer');
 assert.ok(adminShell.includes('/studio-console-fluid-2026.css'),'Studio Control must use the new responsive layer');
 for(const [label,content]of [['public',publicCss],['console',consoleCss]]){
