@@ -86,7 +86,7 @@ export async function GET(request: Request) {
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise(data)};</script><script src="/app.js" defer></script>`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
- const description=(override?.summary||studioDocsSummaries[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
+ const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
  if(known&&(normal==='/sitemap'||normal.startsWith('/docs/')||normal.startsWith('/help/studio/')||normal==='/docs')){
   const crumbs=[{name:'VELORYZ Studio',item:base+'/'}];
@@ -100,9 +100,9 @@ export async function GET(request: Request) {
    if(crumbs[crumbs.length-1].item!==at)crumbs.push({name:current,item:at});
   }
   const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:crumbs.map((c,i)=>({'@type':'ListItem',position:i+1,name:c.name,item:c.item}))};
-  const structured=[breadcrumb];
-  if(studioDocsRoutes[normal]||normal.startsWith('/docs/')&&normal!=='/docs/studio'){
-   structured.push({'@context':'https://schema.org','@type':normal.startsWith('/help/')?'Article':'TechArticle',headline:pages[normal],description,articleSection:studioDocsCategories[normal]||'Documentation',publisher:{'@type':'Organization',name:'VELORYZ Studio'},mainEntityOfPage:base+canonicalPath(normal)} as any);
+  const structured:Record<string,unknown>[]=[breadcrumb];
+  if((studioDocsRoutes as Record<string,string>)[normal]||normal.startsWith('/docs/')&&normal!=='/docs/studio'){
+   structured.push({'@context':'https://schema.org','@type':normal.startsWith('/help/')?'Article':'TechArticle',headline:pages[normal],description,articleSection:(studioDocsCategories as Record<string,string>)[normal]||'Documentation',publisher:{'@type':'Organization',name:'VELORYZ Studio'},mainEntityOfPage:base+canonicalPath(normal)});
   }
   html=html.replace('</head>',`<script type="application/ld+json">${serialise(structured)}</script></head>`);
  }
