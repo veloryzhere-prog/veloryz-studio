@@ -51,7 +51,13 @@ export function validateState(value){
  return {site,branding,projects,services,team,offers,catalogue};
 }
 export function activeOffers(state,time=Date.now()){return state.offers.filter(o=>o.enabled&&(!o.startAt||Date.parse(o.startAt)<=time)&&(!o.endAt||Date.parse(o.endAt)>time)).sort((a,b)=>b.priority-a.priority);}
-function upgrade(state){return {...state,site:{...defaults.site,...state.site},catalogue:state.catalogue||structuredClone(defaults.catalogue)};}
+function upgrade(state){
+ const incoming=state.site||{},pricing=incoming.creatorPricing||{};
+ return {...state,site:{...defaults.site,...incoming,creatorPricing:{
+  ...defaults.site.creatorPricing,...pricing,
+  categoryBases:{...defaults.site.creatorPricing.categoryBases,...(pricing.categoryBases||{})}
+ }},catalogue:state.catalogue||structuredClone(defaults.catalogue)};
+}
 const hostedBackend = 'https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-studio-api';
 function usesHostedBackend(env, url) {
  return !env.DB && !env.SUPABASE_SERVICE_ROLE_KEY && url && new URL(url).origin === 'https://veloryz.online';
@@ -97,7 +103,7 @@ async function forwardClientPortal(request){
 export async function getPublished(env, requestUrl){
  if (usesHostedBackend(env,requestUrl)) {
   const response=await fetch(hostedBackend+'/api/site');
-  if(response.ok){const {state,version}=await response.json();return {state,version};}
+  if(response.ok){const {state,version}=await response.json();return {state:upgrade(state),version};}
  }
  env=studioEnvironment(env);
  if(!env.DB)return {state:structuredClone(defaults),version:0};
