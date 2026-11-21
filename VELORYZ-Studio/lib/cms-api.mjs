@@ -2,7 +2,7 @@ import {enhanceGuide} from './hosted-adviser.mjs';
 import {studioEnvironment} from './supabase-backend.mjs';
 import {auditStudioContent} from './content-audit.mjs';
 import defaults from './defaults.json' with { type: 'json' };
-import { passwordSession,unlockAdmin,lockAdmin,adviserChat,paymentApi,aiConnection,checkAiConnection } from './studio-platform.mjs';
+import { passwordSession,unlockAdmin,lockAdmin,adviserChat,paymentApi,aiConnection,checkAiConnection,projectCreatorAi } from './studio-platform.mjs';
 import {aiSettingsMetadata,saveAiSettings} from './ai-settings.mjs';
 import {boundedBody,rateLimit} from './studio-platform.mjs';
 import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
@@ -135,6 +135,11 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  // Local dedicated project AI, not the legacy persona endpoint or the hosted backend proxy.
+  if(new URL(request.url).pathname==='/api/project-ai'&&request.method==='POST'){
+   mutationOrigin(request);
+   return await projectCreatorAi(request,studioEnvironment(env));
+  }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
