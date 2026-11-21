@@ -37,7 +37,7 @@
  function load(){
   if(loading||(catalog&&service))return loading;
   loading=Promise.all([
-   fetch('/studio-docs-catalog.json?v=20261121-handbook-1',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Product guide index is unavailable.');return r.json()}),
+   fetch('/studio-docs-index.json?v=20261121-handbook-2',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Product guide index is unavailable.');return r.json()}),
    fetch('/docs-library.json?v=20261121-docs-library-v2',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Service guide index is unavailable.');return r.json()})
   ]).then(([c,s])=>{
    if(!Array.isArray(c.articles)||c.articles.length!==141||!Array.isArray(s.documents))throw Error('Invalid site-map source.');
