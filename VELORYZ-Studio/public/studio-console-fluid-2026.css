@@ -1,0 +1,111 @@
+/* VELORYZ Studio Control & Client Workspace / Responsive visual finish.
+   Scopes every rule to admin/client shells; original brand and content preserved. */
+:root{--vz-console-ease:cubic-bezier(.22,1,.36,1);--vz-console-shadow:0 12px 40px rgba(30,39,53,.065)}
+:where(.admin-layout,.cp-body){-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+:where(.admin-layout,.cp-body) *{min-width:0}
+:where(.admin-layout,.cp-body) :is(button,a,input,textarea,select,summary):focus-visible{outline:3px solid #6385cd;outline-offset:3px}
+:where(.admin-layout,.cp-body) :is(button,a){touch-action:manipulation}
+:where(.admin-layout,.cp-body) :is(img,svg,video){max-width:100%}
+.admin-layout{background:linear-gradient(140deg,#f7f9f4,#f6f7f2 35%,#f8fbfb)}
+.admin-layout .sidebar{box-shadow:4px 0 30px rgba(25,37,28,.07)}
+.admin-layout .admin-brand{gap:12px}
+.admin-layout .admin-main{min-width:0}
+.admin-layout .admin-topbar{background:rgba(252,253,250,.95);border-bottom-color:#e0e8da;backdrop-filter:saturate(1.07) blur(9px)}
+.admin-layout .admin-page-heading{gap:18px}
+.admin-layout .admin-page-heading :is(h1,h2){letter-spacing:-.06em;text-wrap:balance;line-height:1.07}
+.admin-layout .admin-page-heading p{line-height:1.7;max-width:770px;text-wrap:pretty}
+.admin-layout :is(.form-card,.admin-panel,.editable-person,.admin-project-card,.ka-panel,.docs-admin-panel){border-radius:clamp(11px,1.4vw,18px);box-shadow:var(--vz-console-shadow);border-color:rgba(78,105,78,.13)}
+.admin-layout :is(.admin-button,.icon-button,.admin-nav a,.docs-admin-entry,.admin-catalogue-preview,.admin-payment-list article){transition:background-color .22s ease,color .22s ease,border-color .22s ease,box-shadow .25s ease,transform .28s var(--vz-console-ease)}
+.admin-layout .admin-button{min-height:39px}
+.admin-layout .admin-button:not(.secondary){box-shadow:0 4px 14px rgba(50,75,49,.11)}
+.admin-layout .admin-button:hover:not(:disabled){transform:translateY(-1px)}
+.admin-layout .admin-nav a{min-height:42px;line-height:1.4}
+.admin-layout .admin-nav a:hover{transform:translateX(2px)}
+.admin-layout :is(.form-card,.admin-panel,.editable-person,.admin-form-grid)>*{min-width:0}
+.admin-layout .admin-form-grid{gap:clamp(16px,2vw,24px)}
+.admin-layout :is(.admin-field input,.admin-field textarea,.admin-field select){min-height:42px;border-radius:9px;background:#fff}
+.admin-layout :is(.admin-field input,.admin-field textarea,.admin-field select):focus{border-color:#7ba17f;box-shadow:0 0 0 3px #e5f3e5}
+.admin-layout .admin-field label{font-size:11px}
+.admin-layout .admin-field small{font-size:10px;line-height:1.65}
+.admin-layout .status-label{white-space:nowrap}
+.admin-layout :is(.admin-platform-routes,.docs-admin-list,.editable-list,.ka-agent-grid){min-width:0}
+.admin-layout .ka-panel{overflow:hidden}
+.admin-layout .ka-agent-card:hover{box-shadow:0 13px 28px rgba(58,93,152,.11)}
+.admin-layout :is(.docs-admin-entry,.admin-platform-routes a){border-radius:10px}
+.admin-layout :is(.admin-panel,.form-card) :is(table,pre){max-width:100%;overflow:auto}
+.admin-layout :is(.admin-panel,.form-card) table{display:block;max-width:100%;overflow-x:auto}
+.admin-layout .docs-admin-entry{overflow-wrap:anywhere}
+.cp-body{background:#f4f5f7}
+.cp-body .cp-header{background:rgba(255,255,255,.97);border-bottom:1px solid #e4e8ed}
+.cp-body .cp-header .cp-brand img{max-width:100%;height:auto}
+.cp-body .cp-main{min-width:0;min-height:0}
+.cp-body .cp-app-layout{background:linear-gradient(130deg,#f6f8fb,#f2f4f7)}
+.cp-body .cp-app-sidebar{box-shadow:3px 0 18px rgba(34,45,68,.035)}
+.cp-body .cp-app-content{min-width:0}
+.cp-body .cp-app-topbar{background:rgba(255,255,255,.96);border-bottom-color:#e5e9f0}
+.cp-body .cp-app-content :is(h1,h2){text-wrap:balance;letter-spacing:-.055em}
+.cp-body :is(.cp-surface,.cp-auth-card,.cp-metric,.cp-card,.cp-chat-card,.cp-document-card){border-radius:clamp(11px,1.4vw,17px);box-shadow:0 8px 29px rgba(33,47,64,.047);border-color:#e1e7ef}
+.cp-body :is(.cp-button,.cp-app-nav button,.cp-refresh-button,.cp-exit,.cp-dark-button){transition:background-color .2s ease,color .2s ease,transform .25s var(--vz-console-ease),box-shadow .25s ease,border-color .2s}
+.cp-body :is(.cp-button,.cp-dark-button):hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 19px rgba(25,57,95,.12)}
+.cp-body .cp-message{overflow-wrap:anywhere}
+.cp-body :is(.cp-page-heading,.cp-page-heading p){max-width:100%;text-wrap:pretty}
+.cp-body .cp-app-sidebar :is(a,button){min-height:42px}
+.cp-body .cp-app-content :is(table,pre){display:block;max-width:100%;overflow:auto}
+.cp-body .vz-chat.is-embedded{border-radius:18px;max-width:100%}
+.cp-body .vz-chat :is(textarea,input){font-size:16px}
+@media(max-width:1150px){
+ .admin-layout .admin-topbar{gap:10px}
+ .admin-layout .topbar-actions{gap:8px;flex-wrap:wrap;justify-content:flex-end}
+ .admin-layout .admin-page-heading h1{font-size:clamp(29px,3vw,48px)}
+ .admin-layout .ka-agent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .cp-body .cp-app-content{padding-inline:clamp(15px,3vw,36px)}
+}
+@media(max-width:900px){
+ .admin-layout .sidebar{box-shadow:9px 0 35px rgba(15,26,20,.12)}
+ .admin-layout .admin-main{width:100%;max-width:100%}
+ .admin-layout .admin-page-heading{flex-wrap:wrap}
+ .admin-layout .admin-topbar{padding-inline:clamp(12px,3vw,24px)}
+ .admin-layout .admin-panel,.admin-layout .form-card{max-width:100%}
+ .admin-layout .ka-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .cp-body .cp-app-layout{display:block}
+ .cp-body .cp-app-sidebar{min-width:0}
+ .cp-body .cp-app-nav{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+ .cp-body .cp-app-topbar{padding:clamp(14px,3vw,25px)}
+ .cp-body .vz-chat.is-embedded{grid-template-columns:1fr}
+ .cp-body .vz-chat.is-embedded .vz-chat-side{display:none}
+}
+@media(max-width:650px){
+ .admin-layout .admin-main{min-width:0}
+ .admin-layout .topbar-actions{gap:5px}
+ .admin-layout .topbar-actions .admin-button{min-height:42px}
+ .admin-layout .admin-form-grid,.admin-layout .ka-form-grid{grid-template-columns:1fr}
+ .admin-layout .admin-field.full,.admin-layout .ka-field.ka-full{grid-column:auto}
+ .admin-layout .admin-page-heading h1{font-size:clamp(28px,7vw,42px)}
+ .admin-layout .ka-summary{grid-template-columns:1fr}
+ .admin-layout .ka-agent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .admin-layout .ka-agent-card{padding:15px;min-height:145px}
+ .admin-layout .ka-panel{padding:21px 15px}
+ .admin-layout .admin-form-grid :is(input,textarea,select){font-size:16px}
+ .cp-body .cp-header{gap:10px}
+ .cp-body .cp-header-actions{gap:7px}
+ .cp-body .cp-app-content{padding-inline:13px}
+ .cp-body .cp-page-heading h1{font-size:clamp(29px,8vw,42px)}
+ .cp-body .cp-auth-card{padding:clamp(17px,4vw,28px)}
+ .cp-body :is(input,textarea,select){font-size:16px}
+ .cp-body .cp-app-bottom{flex-wrap:wrap;gap:15px}
+ .cp-body .vz-chat.is-embedded{min-height:490px;height:70dvh}
+}
+@media(max-width:400px){
+ .admin-layout .ka-agent-grid{grid-template-columns:1fr}
+ .admin-layout .ka-panel{padding:16px 11px}
+ .admin-layout .admin-topbar{padding-inline:10px}
+ .cp-body .cp-app-topbar{padding-inline:10px}
+ .cp-body .cp-app-content{padding-inline:9px}
+}
+@media(hover:none),(pointer:coarse){
+ .admin-layout :is(.admin-button,.icon-button,.admin-nav a,.ka-agent-card),.cp-body :is(.cp-app-nav button,.cp-button,.cp-refresh-button){min-height:44px}
+ .admin-layout :is(.admin-button,.admin-nav a,.ka-agent-card):hover,.cp-body :is(.cp-button,.cp-dark-button):hover{transform:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .admin-layout :is(.admin-button,.admin-nav a,.ka-agent-card,.form-card),.cp-body :is(.cp-button,.cp-app-nav button,.cp-surface){transition:none!important;animation:none!important;transform:none!important}
+}
