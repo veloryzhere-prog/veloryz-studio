@@ -1,6 +1,6 @@
 'use strict';
 (()=>{
- const storageKey='veloryz.planner.v1',stepNames=['Direction','Scope','Review'];
+ const storageKey='veloryz.planner.v1',stepNames=['Vision','Visual style','Features & budget','Proposal'];
  let step=0,stories=[],scrollFrame=0;
  const compact=matchMedia('(max-width: 760px)');
  function persist(){
@@ -12,17 +12,17 @@
  }
  function chooseStep(value,focus=true){
   const root=document.querySelector('#guided-project-planner');if(!root)return;
-  step=Math.max(0,Math.min(2,Number(value)||0));
+  step=Math.max(0,Math.min(3,Number(value)||0));
   root.querySelectorAll('[data-planner-panel]').forEach((panel,i)=>{panel.hidden=i!==step;});
   document.querySelectorAll('[data-planner-go]').forEach(button=>{
    const index=Number(button.dataset.plannerGo);button.setAttribute('aria-current',index===step?'step':'false');
    button.classList.toggle('complete',index<step);
   });
   root.querySelector('[data-planner-back]').disabled=step===0;
-  root.querySelector('[data-planner-next]').hidden=step===2;
-  root.querySelector('[data-planner-submit]').hidden=step!==2;
-  root.querySelector('.planner-progress span').style.width=((step+1)/3*100)+'%';
-  root.querySelector('.planner-step-status').textContent='Step '+(step+1)+' of 3 · '+stepNames[step];
+  root.querySelector('[data-planner-next]').hidden=step===3;
+  root.querySelector('[data-planner-submit]').hidden=step!==3;
+  root.querySelector('.planner-progress span').style.width=((step+1)/4*100)+'%';
+  root.querySelector('.planner-step-status').textContent='Step '+(step+1)+' of 4 · '+stepNames[step];
   persist();
   if(focus){const panel=root.querySelector('[data-planner-panel="'+step+'"]');panel.querySelector('[data-planner-heading]').focus({preventScroll:true});panel.scrollIntoView({block:'start',behavior:window.StudioMotion?.matches?'auto':'smooth'});}
  }
@@ -105,7 +105,7 @@
  });
  document.addEventListener('submit',event=>{
   if(event.target.id!=='guided-project-planner')return;
-  event.preventDefault();if(step<2){chooseStep(step+1);return;}
+  event.preventDefault();if(step<3){chooseStep(step+1);return;}
   if(!validateGoal())return;
   const contact=document.querySelector('[data-planner-contact-email]');
   const error=document.getElementById('planner-contact-error');
