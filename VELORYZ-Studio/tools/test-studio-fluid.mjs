@@ -54,7 +54,9 @@ assert.ok(publicCss.includes('.vz-footer-help'),'Need Help card must remain visu
 assert.ok(!publicCss.includes('.studio-render){pointer-events:none}'),'Do not disable original V sculpture pointer interaction');
 assert.ok(consoleCss.includes('.admin-layout')&&consoleCss.includes('.cp-body'),'Admin and portal styles must be separately scoped');
 assert.ok(consoleCss.includes('.ka-agent-card'),'AI Management responsive cards must be enhanced');
-assert.ok(visual.includes('const frameBudget=economical?32:19'),'Motion should adapt frame budgets');
+assert.ok(!visual.includes('frameBudget')&&!visual.includes('lastPaint'),'Motion must not drop compositor frames on 60/90/120Hz screens');
+assert.ok(visual.includes('cameraY=actualY'),'Visual scroll transforms must follow Lenis/native scroll rather than adding a second momentum loop');
+assert.ok(visual.includes('previousTime=0; // No independently scheduled tail'),'Scroll animation must stop running when scroll events stop');
 assert.ok(visual.includes('Math.abs(el.vzSceneProgress-progress)>0.003'),'Avoid redundant animation style writes');
 assert.ok(visual.includes('if (economical || navigator.connection?.saveData) return;'),'Skip expensive decoration on low-powered devices');
 assert.ok(motion.includes('IntersectionObserver'),'Motion entrances must rely on visibility');
