@@ -52,7 +52,7 @@ body.motion-edition .hero h1{font-size:var(--vz-display);line-height:.96;letter-
 body.motion-edition .hero-desc{max-width:500px}
 body.motion-edition .hero-actions{gap:clamp(13px,2vw,28px);flex-wrap:wrap}
 body.motion-edition .hero-art{min-width:0;transform-origin:center}
-body.motion-edition .hero :is(.hero-motion-graphic,.studio-render){pointer-events:none}
+body.motion-edition .hero .hero-motion-graphic{pointer-events:none} /* Preserve original V sculpture pointer interaction. */
 body.motion-edition .hero-meta{column-gap:clamp(14px,2vw,32px)}
 body.motion-edition .work-grid{gap:clamp(17px,2.4vw,38px)}
 body.motion-edition .project-link{position:relative;isolation:isolate}
@@ -170,7 +170,7 @@ body.motion-edition .vz-footer-help::after{content:"";position:absolute;top:-42%
  body.motion-edition .section-head{align-items:flex-start;flex-direction:column}
  body.motion-edition .work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  body.motion-edition .project-art{height:clamp(235px,33vw,340px);min-height:0}
- body.motion-edition .split-section,.body.motion-edition .contact-layout{grid-template-columns:1fr}
+ body.motion-edition .split-section,body.motion-edition .contact-layout{grid-template-columns:1fr}
  body.motion-edition .contact-layout{grid-template-columns:1fr}
  body.motion-edition .mobile-nav{border-radius:0 0 18px 18px;box-shadow:0 22px 50px rgba(35,28,27,.12)}
  body.motion-edition .mobile-nav>a{min-height:44px;display:flex;align-items:center}
@@ -241,7 +241,8 @@ body.motion-edition .vz-footer-help::after{content:"";position:absolute;top:-42%
 }
 @media (prefers-reduced-motion:reduce){
  html{scroll-behavior:auto!important}
- html body.motion-edition :is(.sculpture,.ticker-track,.orbit-lines ellipse,.vz-footer-help::after){animation:none!important;transition:none!important}
+ html body.motion-edition :is(.sculpture,.ticker-track,.orbit-lines ellipse){animation:none!important;transition:none!important}
+ html body.motion-edition .vz-footer-help::after{animation:none!important;transition:none!important}
  html body.motion-edition :is(.project-link,.button,.design-card,.feature-card,.process-card,.price-card,.team-card,.people-card,.service-item,.contact-channel){transform:none!important;transition:none!important}
 }
 html[data-motion="paused"] body.motion-edition *,html[data-motion="reduced"] body.motion-edition .vz-footer-help::after{animation-play-state:paused!important}
