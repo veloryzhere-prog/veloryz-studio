@@ -19,12 +19,14 @@ assert.match(css,/height:178svh/,'The transition must complete within 78svh of t
 assert.match(code,/range\(p,0,\.49\)/,'Frame scrub must directly track the physical scroll position');
 assert.doesNotMatch(css,/:has\(/,'Cinematic focus must not cause repeated :has layout matching');
 assert.match(code,/planScarf\(progress\)/,'The scarf must be tied directly to scroll progress');
+assert.match(code,/const measure=/,'Scroll scene must cache layout geometry');
+assert.doesNotMatch(code,/const bounds=this\.getBoundingClientRect\(\),stageHeight=/,'Do not force layout every scroll frame');
 assert.match(css,/frame-film-plane/);
 assert.doesNotMatch(css,/animation-timeline/);
 
 let FrameCut,visibility;
 const frames=new Map();let nextFrame=0;
-const window=Object.assign(new EventTarget(),{innerHeight:800,StudioMotion:Object.assign(new EventTarget(),{level:'full'})});
+const window=Object.assign(new EventTarget(),{innerHeight:800,scrollY:0,StudioMotion:Object.assign(new EventTarget(),{level:'full'})});
 const document=Object.assign(new EventTarget(),{hidden:false,documentElement:{setAttribute(){}}});
 class Element extends EventTarget{
  attrs=new Map();isConnected=true;hidden=false;
@@ -69,7 +71,7 @@ assert.match(reveal.getAttribute('src'),/reveal\.mp4/);
 assert.match(scarf.getAttribute('src'),/scarf\.mp4/);
 reveal.dispatchEvent(new Event('loadedmetadata'));
 reveal.dispatchEvent(new Event('loadeddata'));flush();
-const scroll=y=>{top=-y;window.dispatchEvent(new Event('scroll'));flush();};
+const scroll=y=>{top=-y;window.scrollY=y;window.dispatchEvent(new Event('scroll'));flush();};
 scroll(300);
 const early=reveal.currentTime;
 assert(early>.2&&early<2.3,'Short responsive timeline should advance the real V film immediately');
@@ -113,7 +115,7 @@ assert.equal(scarf.hasAttribute('src'),false);
  let SpriteFrameCut,spriteVisibility,frameId=0;
  const frames2=new Map(),draws=[],loadedSheets=[];
  const win=Object.assign(new EventTarget(),{
-  innerHeight:800,innerWidth:1280,devicePixelRatio:1,
+  innerHeight:800,innerWidth:1280,devicePixelRatio:1,scrollY:0,
   StudioMotion:Object.assign(new EventTarget(),{level:'full'})
  });
  const doc=Object.assign(new EventTarget(),{hidden:false,documentElement:{setAttribute(){}}});
@@ -148,7 +150,7 @@ assert.equal(scarf.hasAttribute('src'),false);
  assert(loadedSheets.some(url=>url.includes('sheet-0.webp')));
  assert(draws.length>0,'Canvas must render original film cells');
  assert.equal(reveal2.hasAttribute('src'),false,'Avoid MP4 decoder work while sprites are supported');
- scrollPosition=750;win.dispatchEvent(new Event('scroll'));pump();
+ scrollPosition=750;win.scrollY=750;win.dispatchEvent(new Event('scroll'));pump();
  assert(loadedSheets.some(url=>url.includes('sheet-9.webp')));
  assert.equal(Number(variables.get('--frame-canvas-ready')),1);
  assert.equal(scarf2.paused,true,'A scarf sprite scrub must never run an independent video loop');
@@ -156,7 +158,7 @@ assert.equal(scarf.hasAttribute('src'),false);
  const lastFrame=draws.at(-1);
  assert.equal(lastFrame[3],768);
  assert.equal(lastFrame[4],432);
- scrollPosition=140;win.dispatchEvent(new Event('scroll'));pump();
+ scrollPosition=140;win.scrollY=140;win.dispatchEvent(new Event('scroll'));pump();
  assert.equal(scarf2.paused,true);
  assert.equal(Number(variables.get('--scarf-film-opacity')),0);
  assert(scarf2.currentTime<.05,'Reversing the scrub must seek the scarf back to its start');
