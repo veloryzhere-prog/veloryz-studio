@@ -8,7 +8,25 @@
   'Help me describe my project goal',
   'What happens after I submit?'
  ];
- const store={open:false,busy:false,messages:[],error:''};
+ const store={open:false,busy:false,messages:[],error:'',fallback:false};
+ function prewrittenGuide(question,context){
+  const text=String(question||'').toLowerCase();
+  const category=String(context.category||'your project'),features=Array.isArray(context.features)?context.features:[];
+  const selection=features.length?features.slice(0,4).join(', '):'a clear homepage or opening screen, contact flow and responsive layout';
+  if(/price|cost|budget|cheaper|less|reduce|offer|discount|afford/i.test(text)){
+   return 'A practical way to manage the '+category+' budget is to define a small first release. Prioritize the two or three features visitors actually need, postpone optional animations or integrations, and ask the VELORYZ team for a phased scope and written quotation. Discounts are not automatic and only published, eligible offers can be considered.';
+  }
+  if(/feature|need|include|integrat|account|dashboard|login|payment/i.test(text)){
+   return 'For '+category+', begin with the essential user journey. Your current ideas include: '+selection+'. Decide what visitors must do in the first release, and which features can wait. Accounts, payments, AI and custom APIs should be reviewed for data, security, ongoing service costs and delivery effort.';
+  }
+  if(/goal|brief|describe|vision|word|write/i.test(text)){
+   return 'Try this project-goal outline: “We are creating a '+category+' experience for [target audience]. Visitors should be able to [main action]. The project will be successful when [measurable outcome].” Add the content, integrations and brand materials you already have.';
+  }
+  if(/submit|after|code|email|client|portal|track|activat|invite/i.test(text)){
+   return 'After a successful submission, you receive a project reference on screen. The team reviews the enquiry and may contact you at the supplied email. A separate one-time invitation code is issued only after a private client workspace has been created and email delivery is available. That code opens /client/. Submitting a brief does not instantly activate a portal account.';
+  }
+  return 'For '+category+', start with the audience, the most important action, the content or screens you need, and your preferred budget and launch window. The VELORYZ team can help narrow scope, discuss phased delivery and prepare an individual quote. This is predefined planning guidance, not a live AI reply.';
+ }
  const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const short=v=>String(v??'').slice(0,350);
  const api=()=>window.VeloryzCreatorV4;
@@ -26,8 +44,8 @@
   const history=document.getElementById('v4-ai-history');
   if(history){
    store.messages.forEach(message=>{
-    const line=document.createElement('div');line.className='v4-ai-message '+(message.role==='user'?'is-user':'is-assistant');
-    const label=document.createElement('span');label.textContent=message.role==='user'?'YOU':'PROJECT AI';
+    const line=document.createElement('div');line.className='v4-ai-message '+(message.role==='user'?'is-user':message.mode==='guide'?'is-guide':'is-assistant');
+    const label=document.createElement('span');label.textContent=message.role==='user'?'YOU':message.mode==='guide'?'STUDIO GUIDE · PREWRITTEN':'PROJECT AI · LIVE MODEL';
     const p=document.createElement('p');p.textContent=message.content;
     line.append(label,p);history.append(line);
    });
@@ -35,7 +53,7 @@
   }
   const prompts=document.getElementById('v4-ai-prompts');if(prompts)prompts.hidden=store.messages.length>0;
   const status=document.getElementById('v4-ai-status');
-  if(status){status.textContent=store.busy?'Preparing your answer…':store.error;status.classList.toggle('is-error',!!store.error);}
+  if(status){status.textContent=store.busy?'Checking live Project AI…':store.error;status.classList.toggle('is-error',!!store.error&&!store.fallback);status.classList.toggle('is-guide',store.fallback);}
  }
  function context(){
   const v=api()?.get?.()||{},e=api()?.estimate?.();
@@ -45,7 +63,7 @@
  async function ask(question){
   if(store.busy||!api()||!question.trim())return;
   const text=question.trim().slice(0,650);
-  store.messages.push({role:'user',content:text});store.error='';store.busy=true;store.open=true;mount();
+  store.messages.push({role:'user',content:text});store.error='';store.fallback=false;store.busy=true;store.open=true;mount();
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),26000);
   try{
    const reply=await fetch('/api/project-ai',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({messages:store.messages.slice(-11),context:context()}),signal:ctrl.signal});
@@ -53,7 +71,9 @@
    if(!reply.ok||!data.available||!data.answer)throw Error(data.error||'Project AI is unavailable. Please message the team.');
    store.messages.push({role:'assistant',content:String(data.answer).slice(0,1400)});
   }catch(err){
-   store.messages.pop();store.error=err.name==='AbortError'?'Project AI timed out. Please retry or message the team.':err.message;
+   store.fallback=true;
+   store.error='Live AI is unavailable. Below is predefined studio guidance, not a generated answer. You can still try again or contact the team.';
+   store.messages.push({role:'assistant',mode:'guide',content:prewrittenGuide(text,context())});
   }finally{clearTimeout(timeout);store.busy=false;mount();}
  }
  document.addEventListener('click',event=>{
