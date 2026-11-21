@@ -22,7 +22,7 @@ class VeloryzFrameCut extends HTMLElement {
   let playback=false,manualPlay=false,seekTarget=0,seekPending=false,lastSeek=-1;
   let scarfTarget=0,scarfPending=false,lastScarfSeek=-1;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
-  let layout=null,lastScrollY=NaN,lastMeasureAt=0;
+  let layout=null;
   const scrollY=()=>Number(window.scrollY)||0;
   // Layout is measured at mount/resize/route, never in the per-frame scrub.
   // Native and Lenis both change scrollY, so the frame follows exactly.
@@ -30,8 +30,8 @@ class VeloryzFrameCut extends HTMLElement {
    if(deleted||!this.isConnected)return;
    const box=this.getBoundingClientRect();
    const height=stage.clientHeight||window.innerHeight||1;
-   layout={top:box.top+scrollY(),height,travel:Math.max(1,box.height-height)};
-   lastMeasureAt=Date.now();
+   const width=stage.clientWidth||window.innerWidth||640;
+   layout={top:box.top+scrollY(),width,height,travel:Math.max(1,box.height-height)};
   };
   // The original reveal has 90 frames across ten 3x3 WebP sprite sheets.
   // Drawing one source cell per scroll frame avoids expensive arbitrary MP4 seeking.
@@ -84,8 +84,8 @@ class VeloryzFrameCut extends HTMLElement {
    }
    // Original cells are 768×432. Never create an enormous 4K canvas on each
    // scroll; one bounded canvas and one sprite draw keep the main thread nimble.
-   const stageWidth=stage.clientWidth||window.innerWidth||640;
-   const stageHeight=stage.clientHeight||window.innerHeight||360;
+   const stageWidth=layout?.width||window.innerWidth||640;
+   const stageHeight=layout?.height||window.innerHeight||360;
    const resolution=Math.min(1,1280/Math.max(stageWidth,stageHeight*16/9));
    const width=Math.max(1,Math.round(stageWidth*resolution));
    const height=Math.max(1,Math.round(stageHeight*resolution));
@@ -105,7 +105,15 @@ class VeloryzFrameCut extends HTMLElement {
    if(!keepDecoded)for(const key of sheets.keys())if(Math.abs(key-index)>3)sheets.delete(key);
    return true;
   };
-  const set=(key,value)=>this.style.setProperty(key,String(value));
+  // Memoize CSS variable writes. Constant values such as the 100%-visible
+  // portal or hidden scarf should not dirty style on every scroll event.
+  const styleCache=new Map();
+  const set=(key,value)=>{
+   const next=String(value);
+   if(styleCache.get(key)===next)return;
+   styleCache.set(key,next);
+   this.style.setProperty(key,next);
+  };
   let lastCinema=null;
   const cinema=active=>{
    if(lastCinema===active)return;
