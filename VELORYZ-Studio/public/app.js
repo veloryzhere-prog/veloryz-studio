@@ -197,26 +197,18 @@ function projectJourney(){return `<section class="section container project-jour
 function journeyPage(){return `${intro('VELORYZ / the project journey','From a first thought.<br><span class="gradient-text">To something you can experience.</span>','Explore the studio’s approach through a visual interface study. Scroll through the stages or choose one to take a closer look.','JOURNEY')}${projectJourney()}${cta()}`;}
 
 function projectShowcase(){
- const featured=projects.filter(p=>p.featured);
- if(!featured.length)return '<p class="empty-work">New studio work is coming into focus.</p>';
- const index=featured.length>1?`<nav class="folio-index" aria-label="Featured projects">${featured.map((p,i)=>`<a href="#folio-${i+1}" ${i===0?'aria-current="location"':''}>${esc(p.name)}</a>`).join('')}</nav>`:'';
- return '<div class="folio-stack">'+index+featured.map((p,i)=>{
-  const artwork=p.cover||(!p.video&&Object.hasOwn(studioArtwork,p.id)?'/assets/renders/'+p.id+'-3d.webp':'');
-  const media=artwork?`<img src="${esc(artwork)}" alt="${esc(p.name)} project artwork" loading="lazy" decoding="async">`:projectArt(p.id);
-  return `<article class="folio-shot" id="folio-${i+1}" tabindex="-1"><div class="folio-stage"><div class="folio-image">${media}</div></div>
-   <div class="folio-copy"><p class="folio-meta">${[p.category,p.status,p.year].filter(Boolean).map(esc).join(' · ')}</p><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p>
-   ${p.scope?.length?`<ul>${p.scope.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`:''}
-   ${p.approach||p.note||p.website?`<details class="folio-details"><summary>Project details</summary>${p.approach?`<p>${esc(p.approach)}</p>`:''}${p.note?`<p>${esc(p.note)}</p>`:''}${p.website?`<a class="text-link" href="${esc(p.website)}" target="_blank" rel="noopener">Visit project</a>`:''}</details>`:''}
-   <button type="button" data-case="${esc(p.id)}">Explore project</button></div></article>`;
- }).join('')+'</div>';
+ // Three independently created live design references; these are not studio client projects.
+ return window.VeloryzExternalDesignLibrary?.showcase() ||
+ '<p class="empty-work">Explore our curated real-world websites in the <a href="/design/">design library</a>.</p>';
 }
+
 function typeStudy(){
  return `<section class="type-study container"><div class="type-heading"><div><span class="eyebrow">Motion playground</span><h2>Type in motion.</h2></div><label>Letter spacing <input type="range" min="0" max="100" value="40" data-type-spacing></label></div>
  <div class="type-window" aria-label="Veloryz kinetic type study"><div aria-hidden="true">${['VELORYZ','STUDIO','VELORYZ'].map(word=>`<span>${word}</span>`).join('')}</div></div></section>`;
 }
 function homePage(){const settings=studioCMS?.site||{};return `
  <section class="hero container motion-hero"><div class="hero-topline intro-animate"><div class="eyebrow hero-studio-tagline" data-cursor-fade>Independent creative & technology studio</div><span class="small-index">BOKARO, INDIA · WORKING EVERYWHERE</span></div><div class="hero-layout"><div class="hero-copy"><div class="hero-chapter intro-animate">DESIGN × CODE × MOTION</div><h1 class="intro-animate delay-1">Built to be<br><span class="serif">remembered.</span></h1><p class="hero-desc intro-animate delay-2">Distinctive identities, thoughtful websites and digital experiences. A little different thinking. A lasting impression.</p><div class="hero-actions intro-animate delay-3"><a href="/work/" class="button">Explore our work ${arrow}</a><button class="motion-secondary" data-book>Start a conversation ${arrow}</button></div><a class="hero-maker intro-animate delay-3" href="/studio/"><span class="maker-monogram">AR</span><span>Designed & built by<strong>Aryan Raj Singh <span aria-hidden="true">↗</span></strong></span></a></div><div class="hero-art intro-animate delay-2">${logoStage()}</div></div><div class="hero-meta intro-animate delay-3"><div><span>01 / A SMALL STUDIO. A BIG VISION.</span>Design, technology & a little different thinking.</div><div><span>02 / FOUNDED BY ARYAN RAJ SINGH</span>Independent since 2025.</div><div><span>03 / KEEP EXPLORING</span><a href="${settings.showWork===false?'/work/':'#selected-work'}">Scroll to discover ↓</a></div></div></section>
-${settings.showWork!==false?` <section id="selected-work" class="section container"><div class="section-head reveal"><div><div class="eyebrow">Selected work & ongoing projects</div><h2>${esc(settings.showcaseTitle||'Ideas, made tangible.')}</h2></div><a href="/work/" class="text-link">View all work ${arrow}</a></div>${projectShowcase()}</section>`:''}
+${settings.showWork!==false?` <section id="selected-work" class="section container"><div class="section-head reveal"><div><div class="eyebrow">Featured real-world design references</div><h2>${esc(settings.showcaseTitle||'Ideas, made tangible.')}</h2></div><a href="/work/" class="text-link">Explore the design library ${arrow}</a></div>${projectShowcase()}</section>`:''}
 ${settings.showScarf!==false?` <veloryz-frame-cut aria-label="The VELORYZ logo reveal and animated scarf"><div class="frame-stage">
    <div class="frame-emblem" aria-hidden="true"><img class="frame-rings" src="/assets/frame-cut/portal-rings.svg" alt="" loading="lazy"><img class="frame-mark" src="/assets/brand/veloryz-mark.svg" alt="" loading="lazy"></div>
    <video class="frame-scarf" preload="none" muted loop playsinline poster="/assets/frame-cut/scarf.jpg" aria-label="VELORYZ animated scarf"></video>
