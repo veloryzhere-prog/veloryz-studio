@@ -91,3 +91,13 @@
 @media(max-width:720px){.docs-hero-grid{grid-template-columns:1fr}.docs-hero-side{display:none}.docs-search-heading{align-items:stretch;flex-direction:column}.docs-search{flex:auto;width:100%;min-width:0}.docs-card-grid{grid-template-columns:1fr}.docs-item{min-height:200px}.docs-content{padding-top:36px}.docs-note{display:block}.docs-note p{margin-top:9px}.docs-reader-grid{grid-template-columns:1fr}.docs-sidebar{position:static;max-height:none}.docs-sidebar nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}.docs-sidebar nav a{flex:0 0 auto}.docs-breadcrumbs{margin-bottom:21px}.docs-next-prev{grid-template-columns:1fr}.docs-shell{width:calc(100% - 28px);padding:24px 0 55px}.docs-hero{padding:28px 23px}.docs-prose{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.docs-item{transition:none}.docs-item:hover{transform:none}}
 @media print{body #header,body #footer,.docs-sidebar,.docs-meta button,.docs-breadcrumbs,.docs-next-prev{display:none!important}.docs-shell{width:100%;padding:0}.docs-reader-grid{display:block}.docs-prose{font-size:11pt;color:#000}.docs-prose a{color:#000!important}.docs-article{max-width:none}.docs-article-head{border:0}.docs-prose table{page-break-inside:avoid}}
+
+/* Extra documentation link: keep the main navigation usable before phone width. */
+@media(min-width:601px) and (max-width:1260px){
+ .site-header .desktop-nav{display:none}
+ .site-header .menu-toggle{display:grid}
+ .site-header .mobile-nav{position:absolute;top:calc(100% - 2px);left:0;right:0;background:var(--paper,#fff);border-bottom:1px solid var(--line,#e2e9e2);padding:20px 26px 27px;box-shadow:0 19px 35px #101b1023;max-height:min(680px,calc(100dvh - 90px));overflow-y:auto}
+ .site-header .mobile-nav.open{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+ .site-header .mobile-nav a{font-size:18px;line-height:1.4;padding:9px 0;letter-spacing:-.3px}
+ .site-header .mobile-nav a.button{font-size:12px;align-self:flex-start;padding:12px 18px}
+}
