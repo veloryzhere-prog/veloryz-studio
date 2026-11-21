@@ -317,3 +317,14 @@ body:has(.v4-root) .v4-root{--v4-ink:#242927;--v4-ink-soft:#3c4843;--v4-sub:#7d8
 }
 @media(max-width:530px){.v4-root .v4-ai-dock{bottom:88px;right:10px}.v4-handoff-step{gap:10px;grid-template-columns:37px 1fr}.v4-handoff-step>span{height:35px;width:35px}.v4-handoff-step:before{left:17px;top:27px}.v4-root .v4-ai-toggle span:nth-child(2){font-size:10px}.v4-price-flex-actions a{flex:1;white-space:nowrap}.v4-success-handoff{padding:19px}.v4-ai-history{max-height:185px}}
 @media(prefers-reduced-motion:reduce){.v4-root .v4-ai-toggle{transition:none}.v4-root .v4-price-flex-actions a{transition:none}}
+
+/* Review edit shortcuts, larger-project budgets, and clearer decision paths. */
+.v4-review-row{display:grid;grid-template-columns:minmax(110px,.75fr) minmax(0,1.3fr) auto;gap:15px;align-items:baseline}
+.v4-review-row>span{flex:none}
+.v4-review-row>strong{text-align:left}
+.v4-review-row>button{border:0;background:transparent;color:#678b6e;font-size:10px;font-weight:740;white-space:nowrap;padding:5px 2px;text-decoration:underline;text-underline-offset:3px}
+.v4-review-row>button:hover{color:#355f43}
+.v4-return-review{border:1px solid #cddfcf;border-radius:8px;background:#f8fbf8;color:#51785b;font-size:11px;font-weight:690;padding:11px 16px}
+.v4-return-review:hover{background:#eaf4eb}
+@media(max-width:750px){.v4-review-row{grid-template-columns:minmax(0,1fr) auto;gap:5px 12px}.v4-review-row>span{grid-column:1;grid-row:1}.v4-review-row>strong{grid-column:1;grid-row:2}.v4-review-row>button{grid-column:2;grid-row:1/3;align-self:center}.v4-return-review{padding:9px 12px}}
+@media(max-width:530px){.v4-return-review{font-size:10px;padding:9px}.v4-review-row>strong{font-size:12px}.v4-bottom .v4-primary{min-width:114px;padding:11px 12px}.v4-budget-chips button{flex:0 1 auto}}
