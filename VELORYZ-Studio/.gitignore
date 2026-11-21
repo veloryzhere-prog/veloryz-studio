@@ -45,3 +45,7 @@ yarn-error.log*
 .DS_Store
 
 !.env.example
+
+# Original template fulfillment packages require verified payment and a written license.
+# Never commit or expose private customer delivery archives.
+/private/template-kits/
