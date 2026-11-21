@@ -195,7 +195,10 @@ function cpInvitation(data){
 function cpImportedEnquiry(id){
  const item=typeof enquiryItems!=='undefined'?enquiryItems.find(i=>i.id===id):null;
  if(!item)return;
- cpNewDraft={client_name:item.name,client_email:item.email,title:item.service||'Client project',summary:String(item.message||'').slice(0,1600),status:'planning',phase:'Discover',progress:0,next_step:'The studio will confirm the project scope and timeline.'};
+ const fields=typeof parseCreatorV3==='function'?parseCreatorV3(item.message):null;
+ const category=fields?.Project||'Client project',starter=fields?.Template||'';
+ const title=fields?(starter&&starter!=='Custom'?starter+' / '+category:category+' project'):(item.service||'Client project');
+ cpNewDraft={client_name:item.name,client_email:item.email,title:title.slice(0,160),summary:String(item.message||'').slice(0,1600),status:'planning',phase:'Discover',progress:0,next_step:'Review the project brief and confirm the scope, proposal and milestones before issuing portal access.'};
  cpNewProject=true;cpEditMode='project';cpEditingItem='';cpTab='overview';
  closeModal();
  location.hash='#/client-portal';

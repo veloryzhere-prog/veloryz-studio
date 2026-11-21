@@ -155,7 +155,7 @@
  function setPreset(id){const p=presets.find(x=>x.id===id);if(!p)return;data={...data,category:p.category,template:p.id,style:p.style,pages:p.pages,features:[...p.features],external:'',goal:data.goal||p.description};chosenDesign=null;sync();jump(2);}
  function briefTextV3(){
   const e=estimate();return [
-   'PROJECT CREATOR V3','Project: '+clean(data.category),'Template: '+clean(preset()?.name||'Custom'),
+   'PROJECT CREATOR V3','Project: '+clean(data.category),'Template: '+clean(preset()?.name||'Custom'),'Goal: '+clean(data.goal),
    data.external?'External inspiration: '+clean(data.external):'',
    data.reference?'Reference URL: '+clean(data.reference):'',
    'Visual style: '+clean(data.style)+' / '+clean(data.palette),
@@ -164,7 +164,7 @@
    ...Object.entries(data.answers).filter(([k])=>data.features.includes(k)).map(([k,v])=>clean(k)+': '+clean(v)),
    'Materials: '+(data.assets.join(', ')||'To confirm'),'Budget preference: '+money(data.budget),
    'Indicative range: '+money(e.low)+' - '+money(e.high),
-   'Timeline: '+clean(data.timeline),'Priority: '+clean(data.priority),'Goal: '+clean(data.goal),
+   'Timeline: '+clean(data.timeline),'Priority: '+clean(data.priority),
    data.notes?'Notes: '+clean(data.notes):'',
    'Quote and launch date subject to written studio approval.'
   ].filter(Boolean).join('\n').slice(0,1990);
