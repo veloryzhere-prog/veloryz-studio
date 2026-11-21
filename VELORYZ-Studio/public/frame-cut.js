@@ -11,6 +11,7 @@ class VeloryzFrameCut extends HTMLElement {
   const reveal=this.querySelector('.frame-reveal');
   const canvas=this.querySelector('.frame-reveal-canvas');
   const scarf=this.querySelector('.frame-scarf');
+  const scarfCanvas=this.querySelector('.frame-scarf-canvas');
   const button=this.querySelector('.frame-toggle');
   if(!stage||!reveal||!scarf||!button)return;
   const controller=new AbortController();
@@ -21,6 +22,13 @@ class VeloryzFrameCut extends HTMLElement {
   let raf=0,near=false,ready=false,loaded=false,scarfLoaded=false;
   let playback=false,manualPlay=false,seekTarget=0,seekPending=false,lastSeek=-1;
   let scarfTarget=0,scarfPending=false,lastScarfSeek=-1;
+  let scarfCtx=null;
+  try{scarfCtx=scarfCanvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
+  const scarfSprites=Boolean(scarfCtx&&typeof Image==='function');
+  const scarfSheets=new Map();
+  const SCARF_FRAMES=178,SCARF_COLS=3,SCARF_CELL_W=576,SCARF_CELL_H=324;
+  let scarfSpriteError=false,scarfSpriteReady=false,scarfDrawn=-1;
+  let scarfWarm=0,scarfWarmTimer=0;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
   let layout=null;
   const scrollY=()=>Number(window.scrollY)||0;
@@ -114,6 +122,66 @@ class VeloryzFrameCut extends HTMLElement {
    styleCache.set(key,next);
    this.style.setProperty(key,next);
   };
+  // The real 7.4-second knitted scarf is represented as 178 frames at 24fps.
+  // Every frame is an original video sample; no video seek or continuous
+  // playback happens while the visitor is scrolling.
+  const scarfFrame=p=>Math.min(SCARF_FRAMES-1,Math.round(range(p,.43,1)*(SCARF_FRAMES-1)));
+  const loadScarfSheet=index=>{
+   if(!scarfSprites||scarfSpriteError||deleted||index<0||index>=20||scarfSheets.has(index))return;
+   const image=new Image(),item={image,ready:false};
+   scarfSheets.set(index,item);
+   image.onload=()=>{
+    const finish=()=>{if(deleted)return;item.ready=true;lastProgress=-1;schedule();};
+    if(typeof image.decode==='function')image.decode().then(finish,finish);
+    else finish();
+   };
+   image.onerror=()=>{
+    if(deleted)return;
+    scarfSpriteError=true;scarfSheets.clear();
+    // Continue using the original video if the generated frames aren't hosted.
+    prefetch();lastProgress=-1;schedule();
+   };
+   image.decoding='async';
+   image.src='/assets/frame-cut/scarf-frames/sheet-'+String(index).padStart(2,'0')+'.webp';
+  };
+  const warmScarf=()=>{
+   scarfWarmTimer=0;
+   if(deleted||!near||scarfSpriteError||!scarfSprites)return;
+   if(scarfWarm<20)loadScarfSheet(scarfWarm++);
+   if(scarfWarm<20&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
+  };
+  const drawScarf=progress=>{
+   if(!scarfSprites||scarfSpriteError||!scarfCtx||!scarfCanvas)return false;
+   const frame=scarfFrame(progress),index=Math.floor(frame/9);
+   loadScarfSheet(index);
+   if(index<19)loadScarfSheet(index+1);
+   const item=scarfSheets.get(index);
+   if(!item?.ready)return scarfSpriteReady;
+   const widthBase=layout?.width||window.innerWidth||640;
+   const heightBase=layout?.height||window.innerHeight||360;
+   const factor=Math.min(1,960/Math.max(widthBase,heightBase*16/9));
+   const width=Math.max(1,Math.round(widthBase*factor));
+   const height=Math.max(1,Math.round(heightBase*factor));
+   if(scarfCanvas.width!==width||scarfCanvas.height!==height){
+    scarfCanvas.width=width;scarfCanvas.height=height;scarfDrawn=-1;
+   }
+   if(frame!==scarfDrawn){
+    const cell=frame%9,sx=(cell%SCARF_COLS)*SCARF_CELL_W;
+    const sy=Math.floor(cell/SCARF_COLS)*SCARF_CELL_H;
+    const renderWidth=Math.min(width,height*16/9),renderHeight=renderWidth*9/16;
+    scarfCtx.fillStyle='#030305';
+    scarfCtx.fillRect(0,0,width,height);
+    scarfCtx.imageSmoothingEnabled=true;
+    scarfCtx.imageSmoothingQuality='medium';
+    scarfCtx.drawImage(item.image,sx,sy,SCARF_CELL_W,SCARF_CELL_H,
+     (width-renderWidth)/2,(height-renderHeight)/2,renderWidth,renderHeight);
+    scarfDrawn=frame;
+   }
+   if(!scarfSpriteReady)scarfSpriteReady=true;
+   // On low-memory devices keep just the nearby atlas textures decoded.
+   if(!keepDecoded)for(const key of scarfSheets.keys())if(Math.abs(key-index)>2)scarfSheets.delete(key);
+   return true;
+  };
   let lastCinema=null;
   const cinema=active=>{
    if(lastCinema===active)return;
@@ -181,7 +249,12 @@ class VeloryzFrameCut extends HTMLElement {
     if(warmIndex<10&&!warmTimer&&typeof setTimeout==='function')
      warmTimer=setTimeout(warmMore,105);
    }
-   if(!scarfLoaded){
+   if(scarfSprites&&!scarfSpriteError){
+    loadScarfSheet(0);loadScarfSheet(1);loadScarfSheet(2);
+    if(!scarfWarmTimer&&scarfWarm<20&&typeof setTimeout==='function')
+     scarfWarmTimer=setTimeout(warmScarf,85);
+   }
+   if((!scarfSprites||scarfSpriteError)&&!scarfLoaded){
     scarfLoaded=true;
     scarf.preload='auto';
     scarf.src='/assets/frame-cut/scarf.mp4';
@@ -249,7 +322,10 @@ class VeloryzFrameCut extends HTMLElement {
     set('--scarf-x','0%');set('--scarf-y','0%');
     if(!sprites||spriteFailed)planSeek(progress);
     if(manualPlay){manualPlay=false;pause();}
-    planScarf(progress);
+    const hasScarfFrame=drawScarf(progress);
+    set('--scarf-sprite-visible',hasScarfFrame?transition.toFixed(4):0);
+    set('--scarf-video-visible',hasScarfFrame?0:transition.toFixed(4));
+    if(!scarfSprites||scarfSpriteError)planScarf(progress);
    }
    const showScarf=near&&visible&&progress>=.43;
    button.hidden=!showScarf;
@@ -291,7 +367,7 @@ class VeloryzFrameCut extends HTMLElement {
    if(raf){cancelAnimationFrame(raf);raf=0;}
    render();
   },{passive:true});
-  on(window,'resize',()=>{layout=null;drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
+  on(window,'resize',()=>{layout=null;drawnFrame=-1;scarfDrawn=-1;lastProgress=-1;schedule();},{passive:true});
   on(window,'pageshow',()=>{layout=null;schedule();});
   on(document,'visibilitychange',schedule);
   on(document,'studio:route',()=>{layout=null;lastProgress=-1;schedule();});
@@ -306,6 +382,8 @@ class VeloryzFrameCut extends HTMLElement {
   this.cleanup=()=>{
    deleted=true;controller.abort();observer?.disconnect();sizeObserver?.disconnect();
    if(warmTimer&&typeof clearTimeout==='function')clearTimeout(warmTimer);
+   if(scarfWarmTimer&&typeof clearTimeout==='function')clearTimeout(scarfWarmTimer);
+   scarfSheets.clear();
    cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
    cinema(false);pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
    reveal.load?.();scarf.load?.();
