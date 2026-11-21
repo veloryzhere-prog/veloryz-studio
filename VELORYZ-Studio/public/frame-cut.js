@@ -29,7 +29,7 @@ class VeloryzFrameCut extends HTMLElement {
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
   const sheets=new Map();
   const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
-  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(ease(range(p,0,.62))*(TOTAL_FRAMES-1)));
+  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.46)*(TOTAL_FRAMES-1)));
   const loadSheet=index=>{
    if(!sprites||spriteFailed||index<0||index>=10||sheets.has(index)||deleted)return;
    const img=new Image(),entry={img,ready:false};
@@ -50,15 +50,20 @@ class VeloryzFrameCut extends HTMLElement {
    if(!sprites||spriteFailed||!ctx)return false;
    const current=frameAt(progress),index=Math.floor(current/9);
    loadSheet(index);loadSheet(index+1);
-   if(progress<.2)loadSheet(0);
+   if(progress<.16)loadSheet(0);
    const entry=sheets.get(index);
    if(!entry?.ready){
-    if(spriteReady){spriteReady=false;set('--frame-canvas-ready',0);}
-    return false;
+    // Keep the last decoded V pose on screen during rapid jumps instead of
+    // flashing the poster or an empty canvas while a WebP sheet decodes.
+    return spriteReady;
    }
-   const ratio=Math.min(window.devicePixelRatio||1,1.5);
-   const width=Math.max(1,Math.round((stage.clientWidth||window.innerWidth||640)*ratio));
-   const height=Math.max(1,Math.round((stage.clientHeight||window.innerHeight||360)*ratio));
+   // Original cells are 768×432. Never create an enormous 4K canvas on each
+   // scroll; one bounded canvas and one sprite draw keep the main thread nimble.
+   const stageWidth=stage.clientWidth||window.innerWidth||640;
+   const stageHeight=stage.clientHeight||window.innerHeight||360;
+   const resolution=Math.min(1,1280/Math.max(stageWidth,stageHeight*16/9));
+   const width=Math.max(1,Math.round(stageWidth*resolution));
+   const height=Math.max(1,Math.round(stageHeight*resolution));
    const resize=canvas.width!==width||canvas.height!==height;
    if(resize){canvas.width=width;canvas.height=height;drawnFrame=-1;}
    if(drawnFrame!==current){
@@ -72,7 +77,7 @@ class VeloryzFrameCut extends HTMLElement {
    }
    if(!spriteReady){spriteReady=true;set('--frame-canvas-ready',1);}
    // Only active and nearby sheets are kept in decoded memory.
-   for(const key of sheets.keys())if(Math.abs(key-index)>2)sheets.delete(key);
+   for(const key of sheets.keys())if(Math.abs(key-index)>3)sheets.delete(key);
    return true;
   };
   const set=(key,value)=>this.style.setProperty(key,String(value));
@@ -97,7 +102,7 @@ class VeloryzFrameCut extends HTMLElement {
   }
   const planSeek=progress=>{
    if(!loaded||progress>.72)return;
-   seekTarget=ease(range(progress,0,.62))*Math.max(0,(Number.isFinite(reveal.duration)?reveal.duration:3)-.033);
+   seekTarget=range(progress,0,.46)*Math.max(0,(Number.isFinite(reveal.duration)?reveal.duration:3)-.033);
    seekPending=true;
    seekReveal();
   };
@@ -140,13 +145,14 @@ class VeloryzFrameCut extends HTMLElement {
    const focus=visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1;
    if(focus!==lastFocus){lastFocus=focus;this.toggleAttribute('data-focus',focus);}
    if(near)prefetch();
-   // Timeline: 0–62% original V/portal video; 58–72% seamless film blend;
-   // 72–100% living scarf. Scroll up reverses the authored portal sequence.
+   // Fast, immediately responsive timeline: original portal over the first
+   // 46% of the now-short scene; scarf crossfade at 40–57%; hold scarf.
+   // No slow easing on frame position: every wheel tick advances the artwork.
    if(Math.abs(progress-lastProgress)>.00045){
     lastProgress=progress;
-    const arrival=ease(range(progress,0,.12));
-    const transition=ease(range(progress,.58,.72));
-    const portalLife=1-ease(range(progress,.60,.75));
+    const arrival=ease(range(progress,0,.08));
+    const transition=ease(range(progress,.40,.57));
+    const portalLife=1-ease(range(progress,.43,.60));
     const hasFrame=drawSprite(progress);
     const fallback=hasFrame||ready?0:1;
     set('--scarf-progress',progress.toFixed(5));
@@ -154,7 +160,7 @@ class VeloryzFrameCut extends HTMLElement {
     set('--frame-reveal-ready',!hasFrame&&ready?1:0);
     set('--frame-canvas-ready',hasFrame?1:0);
     set('--frame-poster-opacity',hasFrame||ready?0:1);
-    set('--frame-portal-light',((.12+.72*Math.sin(Math.PI*range(progress,.04,.72)))*portalLife).toFixed(4));
+    set('--frame-portal-light',((.12+.72*Math.sin(Math.PI*range(progress,.03,.57)))*portalLife).toFixed(4));
     set('--frame-portal-rotation',(-8+progress*24).toFixed(3)+'deg');
     set('--scarf-film-opacity',transition.toFixed(4));
     set('--scarf-film-scale',(1.055-.055*transition).toFixed(4));
@@ -165,7 +171,7 @@ class VeloryzFrameCut extends HTMLElement {
     set('--scarf-x','0%');set('--scarf-y','0%');
     if(!sprites||spriteFailed)planSeek(progress);
    }
-   const showScarf=near&&visible&&progress>=.60;
+   const showScarf=near&&visible&&progress>=.43;
    button.hidden=!showScarf;
    if(!showScarf||held){pause();return;}
    if(!playback){
