@@ -32,6 +32,8 @@ jobs:
         run: corepack pnpm install --frozen-lockfile
       - name: Validate all public guides, routes and links
         run: node tools/test-documentation.mjs
+      - name: Validate AI agents, provider security and support UI
+        run: node tools/test-knowledge-ai.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
