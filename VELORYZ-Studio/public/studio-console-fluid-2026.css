@@ -64,7 +64,7 @@
  .admin-layout .sidebar{box-shadow:9px 0 35px rgba(15,26,20,.12)}
  .admin-layout .admin-main{width:100%;max-width:100%}
  .admin-layout .admin-page-heading{flex-wrap:wrap}
- .admin-layout .admin-topbar{padding-inline:clamp(12px,3vw,24px)}
+ .admin-layout .admin-topbar{padding-inline:clamp(12px,3vw,24px);backdrop-filter:none;-webkit-backdrop-filter:none}
  .admin-layout .admin-panel,.admin-layout .form-card{max-width:100%}
  .admin-layout .ka-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
  .cp-body .cp-app-layout{display:block}
