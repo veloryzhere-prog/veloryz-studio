@@ -7,7 +7,7 @@ const state=()=>window.STUDIO_STATE?.state||window.STUDIO_STATE||{};
 const entries=()=>Array.isArray(state().catalogue)?state().catalogue.filter(x=>x.enabled!==false&&x.demo&&x.source):[];
 const image=p=>p.image||'';
 const fmt=v=>'₹'+Number(v||0).toLocaleString('en-IN');
-const featuredIds=['agentura-motion','coorda-social','orbis-commerce'];
+const featuredIds=['agentura-motion','linear-platform','anon-retail'];
 const featured=()=>featuredIds.map(id=>entries().find(x=>x.id===id)).filter(Boolean);
 const link=(p)=>p.demo||p.source;
 let search='',category='All',sort='featured',active=null;
