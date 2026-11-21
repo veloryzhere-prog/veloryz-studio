@@ -48,6 +48,8 @@ jobs:
         run: node tools/test-motion-clock.mjs && node tools/test-frame-cut.mjs && node tools/test-visual-motion-v4.mjs
       - name: Verify visual-only interactions, mobile behavior, accessibility and true submission outcomes
         run: node tools/test-micro-interactions.mjs
+      - name: Verify Motion and Lottie lazy-loading and smooth-scroll isolation
+        run: node tools/test-animation-providers.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
