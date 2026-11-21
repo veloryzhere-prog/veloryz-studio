@@ -148,3 +148,30 @@ body.motion-edition .modal:not(.expert-modal) .modal-close{background:#fff;color
  body.motion-edition .ui-study-card{transition:box-shadow .22s ease,border-color .22s ease}
  body.motion-edition .ui-study-card:hover{border-color:#75614b55;box-shadow:0 16px 40px #42302612}
 }
+
+/* Small editorial refinement for navigation, project details and page guidance. */
+body.motion-edition .desktop-nav a{border-radius:7px;text-decoration:none;text-underline-offset:6px}
+body.motion-edition .desktop-nav a:hover{color:#111;background:#ede6db}
+body.motion-edition .folio-copy>p:not(.folio-meta){line-height:1.8;max-width:58ch}
+body.motion-edition .folio-copy ul{display:flex;flex-wrap:wrap;gap:8px 10px;padding:0;list-style:none;margin:22px 0}
+body.motion-edition .folio-copy li{background:#f4efe6;color:#302820;border:1px solid #ded4c6;border-radius:999px;padding:7px 12px;font-size:12px;line-height:1.4}
+body.motion-edition .folio-details{border-top:1px solid #c9bca9;border-bottom:1px solid #c9bca9;margin:20px 0;padding:0}
+body.motion-edition .folio-details summary{padding:16px 0;font-weight:600;color:#191919;cursor:pointer}
+body.motion-edition .folio-details[open]{padding-bottom:16px}
+body.motion-edition .folio-details p{line-height:1.75;color:#423a33}
+body.motion-edition .folio-copy>button{background:#211b19;color:#fff;border:1px solid #211b19;border-radius:9px;min-height:44px;padding:12px 20px;font:inherit;font-size:13px;cursor:pointer}
+body.motion-edition .studio-ai-help{background:linear-gradient(125deg,#f5f0e7,#fffcf6);border:1px solid #ded4c6;border-radius:20px;padding:32px;box-shadow:0 8px 28px #39251506;gap:28px}
+body.motion-edition .studio-ai-help-copy h2{color:#211b19;letter-spacing:-.035em;line-height:1.12}
+body.motion-edition .studio-ai-help-copy p{color:#50483f;line-height:1.7;max-width:56ch}
+body.motion-edition .studio-ai-help-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+body.motion-edition .studio-ai-help-link{color:#111;text-decoration:underline;text-underline-offset:5px;min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:700px){
+ body.motion-edition .studio-ai-help{padding:24px 20px;border-radius:16px;gap:20px}
+ body.motion-edition .studio-ai-help-actions{width:100%}
+ body.motion-edition .studio-ai-help-actions .button{flex:1;text-align:center}
+ body.motion-edition .folio-copy li{font-size:11px;padding:6px 10px}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ body.motion-edition .desktop-nav a,body.motion-edition .folio-copy>button{transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+ body.motion-edition .folio-copy>button:hover{background:#41332d;box-shadow:0 5px 15px #30201620}
+}
