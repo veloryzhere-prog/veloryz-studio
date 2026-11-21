@@ -413,3 +413,8 @@ body.v4-creator-page .v4-root{min-height:100dvh}
 @media(prefers-reduced-motion:reduce){
  .v4-root .v4-top-next:hover,.v4-root .v4-ai-toggle:hover{transform:none;transition:none}
 }
+
+/* Hide the redundant floating "Make your project" CTA inside the focused
+   Project Creator only. It remains available everywhere else on the site. */
+body.v4-creator-page a.make-project-link,
+body:has(.v4-root) a.make-project-link {display:none!important}
