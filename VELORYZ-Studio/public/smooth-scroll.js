@@ -5,7 +5,7 @@
  * Phones/tablets retain native touch inertia; no scroll-jacking of chat,
  * forms, dialogs, docs sidebars or project creation.
  *
- * Native-feeling Lenis input: lerp 0.23 on regular pages, very short 0.46 smoothing inside the cinematic scene:
+ * Balanced: lerp 0.14 and wheelMultiplier 0.94 are deliberately responsive:
  * no artificially slow, multi-second trailing scroll or acceleration.
  */
 (()=>{
@@ -15,9 +15,7 @@
  const narrow=matchMedia('(max-width: 900px)');
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  const lowPower=()=>Boolean(connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
- let lenis=null,resizeFrame=0,cinematic=false;
- const defaultLerp=.23,cinemaLerp=.46;
- const applyCinematic=()=>{if(lenis)lenis.options.lerp=cinematic?cinemaLerp:defaultLerp;};
+ let lenis=null,resizeFrame=0;
  const selectors=[
   'dialog',
   '.modal-backdrop',
@@ -62,9 +60,7 @@
  function sync(){
   if(!shouldSmooth()){
    cleanup();
-   // Native scrolling on mobile/low-power/reduced devices must not be animated twice.
-   // CSS smooth is retained for explicit anchors only, via the jump() helper.
-   root.style.scrollBehavior='auto';
+   root.style.scrollBehavior=window.StudioMotion?.level==='full'&&!reduced.matches?'smooth':'auto';
    return;
   }
   root.style.scrollBehavior='auto'; // Never combine browser smooth scroll with Lenis smoothing.
@@ -73,8 +69,8 @@
    lenis=new window.Lenis({
     autoRaf:true,
     anchors:{offset:-96},
-    lerp:defaultLerp,
-    wheelMultiplier:1,
+    lerp:0.14,
+    wheelMultiplier:0.94,
     smoothWheel:true,
     syncTouch:false,
     overscroll:true,
@@ -84,10 +80,6 @@
     respectReducedMotion:true
    });
    root.dataset.vzSmoothWheel='lenis';
-   // Dispatch from Lenis's own rAF, after scroll position has advanced,
-   // so the cinematic canvas can render during the SAME browser frame.
-   lenis.on?.('scroll',()=>window.dispatchEvent(new Event('veloryz:scroll-frame')));
-   applyCinematic();
   }catch{
    cleanup();root.style.scrollBehavior='auto'; // Keep the page navigable if vendor JS fails.
   }
@@ -113,20 +105,12 @@
  window.VeloryzScroll={
   get active(){return Boolean(lenis);},
   get engine(){return lenis;},
-  settings:{lerp:defaultLerp,wheelMultiplier:1,touch:'native',cinematicLerp:cinemaLerp},
+  settings:{lerp:0.14,wheelMultiplier:0.94,touch:'native'},
   sync,scrollTo:jump
  };
  window.StudioMotion?.addEventListener('change',sync);
  document.addEventListener('studio:motion-intro-complete',sync);
- document.addEventListener('studio:route',()=>{cinematic=false;applyCinematic();onRoute();});
- document.addEventListener('studio:cinema-focus',event=>{
-  const active=Boolean(event.detail?.active);
-  if(active===cinematic)return;
-  cinematic=active;
-  applyCinematic();
-  // Switching easing must not reset scroll or drop a wheel event on entry.
-  // The actual visual sequence still follows physical scroll position exactly.
- });
+ document.addEventListener('studio:route',onRoute);
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
  reduced.addEventListener?.('change',sync);

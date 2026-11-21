@@ -1,399 +1,105 @@
-/* VELORYZ original cinematic V -> portal -> scarf.
- * One native/Lenis scroll timeline; the authored reveal.mp4 is frame-scrubbed,
- * then the real scarf.mp4 loops. Never replaces the brand footage with a CSS fake.
- * No nested scroll controller, view timeline or continuously running rAF.
+/* VELORYZ frame-cut: one reliable rAF scroll progress for original V, rings and scarf film.
+ * No CSS view-timeline dependency; no image redraw and no scroll hijacking.
  */
 class VeloryzFrameCut extends HTMLElement {
- connectedCallback(){queueMicrotask(()=>{if(this.isConnected&&!this.cleanup)this.mount();});}
- disconnectedCallback(){this.cleanup?.();this.cleanup=null;}
- mount(){
-  const stage=this.querySelector('.frame-stage');
-  const reveal=this.querySelector('.frame-reveal');
-  const canvas=this.querySelector('.frame-reveal-canvas');
-  const scarf=this.querySelector('.frame-scarf');
-  const scarfCanvas=this.querySelector('.frame-scarf-canvas');
-  const button=this.querySelector('.frame-toggle');
-  if(!stage||!reveal||!scarf||!button)return;
-  const controller=new AbortController();
-  const on=(node,type,callback,options={})=>node?.addEventListener?.(type,callback,{...options,signal:controller.signal});
-  const clamp=value=>Math.min(1,Math.max(0,value));
-  const range=(progress,start,end)=>clamp((progress-start)/(end-start));
-  const ease=t=>t*t*(3-2*t);
-  let raf=0,near=false,ready=false,loaded=false,scarfLoaded=false;
-  let playback=false,manualPlay=false,seekTarget=0,seekPending=false,lastSeek=-1;
-  let scarfTarget=0,scarfPending=false,lastScarfSeek=-1;
-  let scarfCtx=null;
-  try{scarfCtx=scarfCanvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
-  const scarfSprites=Boolean(scarfCtx&&typeof Image==='function');
-  const lowGraphics=Boolean((typeof navigator!=='undefined'&&navigator.deviceMemory&&navigator.deviceMemory<=4)||window.matchMedia?.('(max-width: 900px), (pointer: coarse)')?.matches);
-  const scarfAtlas=lowGraphics?'scarf-frames-lite':'scarf-frames';
-  const scarfSheets=new Map();
-  const SCARF_FRAMES=222,SCARF_COLS=3,SCARF_CELL_W=lowGraphics?480:720,SCARF_CELL_H=lowGraphics?270:405;
-  let scarfSpriteError=false,scarfSpriteReady=false,scarfDrawn=-1;
-  let scarfWarm=0,scarfWarmTimer=0;
-  let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
-  let layout=null;
-  const scrollY=()=>Number(window.scrollY)||0;
-  // Layout is measured at mount/resize/route, never in the per-frame scrub.
-  // Native and Lenis both change scrollY, so the frame follows exactly.
-  const measure=()=>{
-   if(deleted||!this.isConnected)return;
-   const box=this.getBoundingClientRect();
-   const height=stage.clientHeight||window.innerHeight||1;
-   const width=stage.clientWidth||window.innerWidth||640;
-   layout={top:box.top+scrollY(),width,height,travel:Math.max(1,box.height-height)};
-  };
-  // The original reveal has 90 frames across ten 3x3 WebP sprite sheets.
-  // Drawing one source cell per scroll frame avoids expensive arbitrary MP4 seeking.
-  let ctx=null;
-  try{ctx=canvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
-  const sprites=Boolean(ctx&&typeof Image==='function');
-  let spriteFailed=false,spriteReady=false,drawnFrame=-1;
-  let portalPrefetched=false,scarfPrefetched=false;
-  const keepDecoded=typeof navigator==='undefined'||!(navigator.deviceMemory&&navigator.deviceMemory<=4);
-  const sheets=new Map();
-  let warmIndex=3,warmTimer=0;
-  const warmMore=()=>{
-   warmTimer=0;
-   if(deleted||!near||!sprites||spriteFailed)return;
-   if(warmIndex<10)loadSheet(warmIndex++);
-   if(warmIndex<10&&typeof setTimeout==='function')warmTimer=setTimeout(warmMore,105);
-  };
-  const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
-  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.49)*(TOTAL_FRAMES-1)));
-  // Load early poses before the scene arrives; avoid network/decode stalls
-  // at the exact moment the user starts scrolling.
-  const loadSheet=index=>{
-   if(!sprites||spriteFailed||index<0||index>=10||sheets.has(index)||deleted)return;
-   const img=new Image(),entry={img,ready:false};
-   sheets.set(index,entry);
-   img.onload=()=>{
-    if(deleted)return;
-    // Decode away from wheel-driven drawing so a new sheet won't block input.
-    const mark=()=>{if(deleted)return;entry.ready=true;lastProgress=-1;schedule();};
-    if(typeof img.decode==='function')img.decode().then(mark,mark);
-    else mark();
-   };
-   img.onerror=()=>{
-    if(deleted)return;
-    spriteFailed=true;sheets.clear();spriteReady=false;
-    lastProgress=-1;prefetch();schedule();
-   };
-   img.decoding='async';
-   img.src='/assets/frame-cut/frames/sheet-'+index+'.webp';
-  };
-  const drawSprite=progress=>{
-   if(!sprites||spriteFailed||!ctx)return false;
-   const current=frameAt(progress),index=Math.floor(current/9);
-   loadSheet(index);loadSheet(index+1);
-   if(progress<.16){loadSheet(0);loadSheet(1);loadSheet(2);}
-   const entry=sheets.get(index);
-   if(!entry?.ready){
-    // Keep the last decoded V pose on screen during rapid jumps instead of
-    // flashing the poster or an empty canvas while a WebP sheet decodes.
-    return spriteReady;
-   }
-   // Original cells are 768×432. Never create an enormous 4K canvas on each
-   // scroll; one bounded canvas and one sprite draw keep the main thread nimble.
-   const stageWidth=layout?.width||window.innerWidth||640;
-   const stageHeight=layout?.height||window.innerHeight||360;
-   const resolution=Math.min(1,1280/Math.max(stageWidth,stageHeight*16/9));
-   const width=Math.max(1,Math.round(stageWidth*resolution));
-   const height=Math.max(1,Math.round(stageHeight*resolution));
-   const resize=canvas.width!==width||canvas.height!==height;
-   if(resize){canvas.width=width;canvas.height=height;drawnFrame=-1;}
-   if(drawnFrame!==current){
-    const cell=current%9,sx=(cell%COLS)*CELL_W,sy=Math.floor(cell/COLS)*CELL_H;
-    const imageWidth=Math.min(width,height*16/9),imageHeight=imageWidth*9/16;
-    const x=(width-imageWidth)/2,y=(height-imageHeight)/2;
-    ctx.fillStyle='#06071a';ctx.fillRect(0,0,width,height);
-    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='medium';
-    ctx.drawImage(entry.img,sx,sy,CELL_W,CELL_H,x,y,imageWidth,imageHeight);
-    drawnFrame=current;
-   }
-   if(!spriteReady){spriteReady=true;set('--frame-canvas-ready',1);}
-   // Keep the original decoded artwork in memory on capable desktops.
-   if(!keepDecoded)for(const key of sheets.keys())if(Math.abs(key-index)>3)sheets.delete(key);
-   return true;
-  };
-  // Memoize CSS variable writes. Constant values such as the 100%-visible
-  // portal or hidden scarf should not dirty style on every scroll event.
-  const styleCache=new Map();
-  const set=(key,value)=>{
-   const next=String(value);
-   if(styleCache.get(key)===next)return;
-   styleCache.set(key,next);
-   this.style.setProperty(key,next);
-  };
-  // The real 7.4-second knitted scarf is represented at its native 30fps.
-  // Every frame is an original video sample; no video seek or continuous
-  // playback happens while the visitor is scrolling.
-  const scarfFrame=p=>Math.min(SCARF_FRAMES-1,Math.round(range(p,.43,1)*(SCARF_FRAMES-1)));
-  const loadScarfSheet=index=>{
-   if(!scarfSprites||scarfSpriteError||deleted||index<0||index>=25||scarfSheets.has(index))return;
-   const image=new Image(),item={image,ready:false};
-   scarfSheets.set(index,item);
-   image.onload=()=>{
-    const finish=()=>{if(deleted)return;item.ready=true;lastProgress=-1;schedule();};
-    if(typeof image.decode==='function')image.decode().then(finish,finish);
-    else finish();
-   };
-   image.onerror=()=>{
-    if(deleted)return;
-    scarfSpriteError=true;scarfSheets.clear();
-    // Continue using the original video if the generated frames aren't hosted.
-    prefetch();lastProgress=-1;schedule();
-   };
-   image.decoding='async';
-   image.src='/assets/frame-cut/'+scarfAtlas+'/sheet-'+String(index).padStart(2,'0')+'.webp';
-  };
-  const warmScarf=()=>{
-   scarfWarmTimer=0;
-   if(deleted||!near||scarfSpriteError||!scarfSprites)return;
-   if(scarfWarm<(lowGraphics?6:12))loadScarfSheet(scarfWarm++);
-   if(scarfWarm<(lowGraphics?6:12)&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
-  };
-  const drawScarf=progress=>{
-   if(!scarfSprites||scarfSpriteError||!scarfCtx||!scarfCanvas)return false;
-   const frame=scarfFrame(progress),index=Math.floor(frame/9);
-   loadScarfSheet(index);
-   if(index<24)loadScarfSheet(index+1);
-   const item=scarfSheets.get(index);
-   if(!item?.ready)return scarfSpriteReady;
-   const widthBase=layout?.width||window.innerWidth||640;
-   const heightBase=layout?.height||window.innerHeight||360;
-   const factor=Math.min(1,960/Math.max(widthBase,heightBase*16/9));
-   const width=Math.max(1,Math.round(widthBase*factor));
-   const height=Math.max(1,Math.round(heightBase*factor));
-   if(scarfCanvas.width!==width||scarfCanvas.height!==height){
-    scarfCanvas.width=width;scarfCanvas.height=height;scarfDrawn=-1;
-   }
-   if(frame!==scarfDrawn){
-    const cell=frame%9,sx=(cell%SCARF_COLS)*SCARF_CELL_W;
-    const sy=Math.floor(cell/SCARF_COLS)*SCARF_CELL_H;
-    const renderWidth=Math.min(width,height*16/9),renderHeight=renderWidth*9/16;
-    scarfCtx.fillStyle='#030305';
-    scarfCtx.fillRect(0,0,width,height);
-    scarfCtx.imageSmoothingEnabled=true;
-    scarfCtx.imageSmoothingQuality='medium';
-    scarfCtx.drawImage(item.image,sx,sy,SCARF_CELL_W,SCARF_CELL_H,
-     (width-renderWidth)/2,(height-renderHeight)/2,renderWidth,renderHeight);
-    scarfDrawn=frame;
-   }
-   if(!scarfSpriteReady)scarfSpriteReady=true;
-   // On low-memory devices keep just the nearby atlas textures decoded.
-   for(const key of scarfSheets.keys())if(Math.abs(key-index)>(lowGraphics?2:5))scarfSheets.delete(key);
-   return true;
-  };
-  let lastCinema=null;
-  const cinema=active=>{
-   if(lastCinema===active)return;
-   lastCinema=active;
-   document.documentElement?.setAttribute?.('data-vz-cinema-focus',active?'true':'false');
-   document.dispatchEvent?.(new CustomEvent('studio:cinema-focus',{detail:{active}}));
-  };
-  const pause=()=>{if(playback||!scarf.paused){playback=false;scarf.pause();}};
-  const label=()=>{
-   const title=scarf.paused?'Play scarf':'Pause scarf';
-   if(button.textContent!==title)button.textContent=title;
-   if(button.getAttribute?.('aria-label')!==title)button.setAttribute('aria-label',title);
-  };
-  function seekReveal(){
-   if(deleted||!loaded||reveal.seeking||!seekPending)return;
-   const length=Number.isFinite(reveal.duration)&&reveal.duration>0?reveal.duration:3;
-   const target=clamp(seekTarget/Math.max(.001,length-.033))*(length-.033);
-   // Collapse multiple wheel events into a single decode request and avoid
-   // decoder thrashing on tiny movements. Seeked schedules the latest target.
-   if(lastSeek>=0&&Math.abs(lastSeek-target)<.04){
-    seekPending=false;return;
-   }
-   try{
-    lastSeek=target;seekPending=false;reveal.currentTime=target;
-   }catch{seekPending=true;}
+  connectedCallback() {
+    queueMicrotask(() => { if (this.isConnected && !this.cleanup) this.mount(); });
   }
-  const planSeek=progress=>{
-   if(!loaded||progress>.62)return;
-   seekTarget=range(progress,0,.49)*Math.max(0,(Number.isFinite(reveal.duration)?reveal.duration:3)-.033);
-   seekPending=true;
-   seekReveal();
-  };
-  // The scarf also follows the scroll head. No automatic looping while the
-  // page is still: stopping at any scroll position freezes the actual video.
-  function seekScarf(){
-   if(deleted||!scarfLoaded||!scarfPending||scarf.seeking)return;
-   const length=Number(scarf.duration);
-   if(!Number.isFinite(length)||length<=0)return;
-   const target=range(scarfTarget,0,length-.05)*(length-.05);
-   // Avoid flooding the H.264 decoder with seeks for effectively identical
-   // frames; 30 fps footage cannot display changes smaller than 1/30 second.
-   if(lastScarfSeek>=0&&Math.abs(lastScarfSeek-target)<.055){scarfPending=false;return;}
-   try{lastScarfSeek=target;scarfPending=false;scarf.currentTime=target;}
-   catch{scarfPending=true;}
-  }
-  const planScarf=progress=>{
-   const duration=Number(scarf.duration);
-   if(!scarfLoaded||!Number.isFinite(duration)||duration<=0)return;
-   scarfTarget=range(progress,.43,1)*(duration-.05);
-   scarfPending=true;
-   seekScarf();
-  };
-  const prefetch=()=>{
-   if(!near||deleted)return;
-   if((!sprites||spriteFailed)&&!loaded){
-    loaded=true;
-    reveal.preload='auto';
-    reveal.src='/assets/frame-cut/reveal.mp4';
-    reveal.load?.();
-   }
-   if(sprites&&!spriteFailed&&!portalPrefetched){
-    portalPrefetched=true;
-    // Prefetch once. Repeatedly decoding atlases evicted on low-memory devices
-    // created a self-sustaining render loop and extreme scroll jank.
-    loadSheet(0);loadSheet(1);loadSheet(2);
-    if(warmIndex<10&&!warmTimer&&typeof setTimeout==='function')
-     warmTimer=setTimeout(warmMore,105);
-   }
-   if(scarfSprites&&!scarfSpriteError&&!scarfPrefetched){
-    scarfPrefetched=true;
-    loadScarfSheet(0);loadScarfSheet(1);loadScarfSheet(2);
-    if(!scarfWarmTimer&&scarfWarm<(lowGraphics?6:12)&&typeof setTimeout==='function')
-     scarfWarmTimer=setTimeout(warmScarf,85);
-   }
-   if((!scarfSprites||scarfSpriteError)&&!scarfLoaded){
-    scarfLoaded=true;
-    scarf.preload='auto';
-    scarf.src='/assets/frame-cut/scarf.mp4';
-    scarf.load?.();
-   }
-  };
-  const render=()=>{
-   raf=0;
-   if(deleted||!this.isConnected)return;
-   const full=window.StudioMotion?.level==='full'&&!document.hidden;
-   if(lastFull!==full){
-    lastFull=full;this.toggleAttribute('data-full',full);
-    // Enabling full motion changes scene height, so invalidate cached geometry.
-    layout=null;
-   }
-   if(!full){
-    cinema(false);pause();button.hidden=true;
-    if(lastFocus!==false){lastFocus=false;this.removeAttribute('data-focus');}
-    if(lastProgress!==0){
-     lastProgress=0;set('--frame-reveal-opacity',0);set('--scarf-film-opacity',0);
-     set('--scarf-emblem-opacity',1);set('--scarf-rings-opacity',1);
-    }
-    return;
-   }
-   if(!layout)measure();
-   if(!layout)return;
-   const y=scrollY();
-   const relativeTop=layout.top-y;
-   const progress=clamp(-relativeTop/layout.travel);
-   const visible=relativeTop<layout.height&&relativeTop+layout.height+layout.travel>0;
-   if(!visible&&!near){cinema(false);pause();button.hidden=true;return;}
-   const focus=visible&&relativeTop<=1&&relativeTop+layout.travel>=-1;
-   if(focus!==lastFocus){lastFocus=focus;this.toggleAttribute('data-focus',focus);}
-   cinema(focus);
-   if(near)prefetch();
-   // Direct pixel-to-frame timeline: V in the first 49%, quick scarf handoff
-   // between 42–62%, and scarf frame scrubbing through the remaining distance.
-   // No idle animation or easing that continues after the user's scroll stops.
-   if(Math.abs(progress-lastProgress)>.00045){
-    lastProgress=progress;
-    const arrival=ease(range(progress,0,.08));
-    const transition=ease(range(progress,.42,.62));
-    const portalLife=1-ease(range(progress,.44,.63));
-    const hasFrame=drawSprite(progress);
-    const fallback=hasFrame||ready?0:1;
-    set('--scarf-progress',progress.toFixed(5));
-    set('--frame-reveal-opacity',portalLife.toFixed(4));
-    set('--frame-reveal-ready',!hasFrame&&ready?1:0);
-    set('--frame-canvas-ready',hasFrame?1:0);
-    set('--frame-poster-opacity',hasFrame||ready?0:1);
-    set('--frame-portal-light',((.10+.6*Math.sin(Math.PI*range(progress,.03,.62)))*portalLife).toFixed(4));
-    set('--frame-portal-rotation',(-8+progress*24).toFixed(3)+'deg');
-    set('--scarf-film-opacity',transition.toFixed(4));
-    set('--scarf-film-scale',(1.055-.055*transition).toFixed(4));
-    // This compositor-only displacement remains immediately scroll-locked
-    // even when the browser's video decoder is finishing a seek.
-    const fabric=range(progress,.42,1);
-    set('--scarf-pan-x',((fabric-.5)*1.8).toFixed(3)+'%');
-    set('--scarf-pan-y',((.5-fabric)*1.5).toFixed(3)+'%');
-    set('--scarf-tilt',((fabric-.5)*.8).toFixed(3)+'deg');
-    set('--scarf-emblem-opacity',fallback*(1-transition));
-    set('--scarf-rings-opacity',(fallback*(.22+.78*arrival)*portalLife).toFixed(4));
-    set('--scarf-scale',(1.12-.12*arrival).toFixed(4));
-    set('--scarf-angle',((1-arrival)*6).toFixed(3)+'deg');
-    set('--scarf-x','0%');set('--scarf-y','0%');
-    if(!sprites||spriteFailed)planSeek(progress);
-    if(manualPlay){manualPlay=false;pause();}
-    const hasScarfFrame=drawScarf(progress);
-    set('--scarf-sprite-visible',hasScarfFrame?transition.toFixed(4):0);
-    set('--scarf-video-visible',hasScarfFrame?0:transition.toFixed(4));
-    if(!scarfSprites||scarfSpriteError)planScarf(progress);
-   }
-   const showScarf=near&&visible&&progress>=.43;
-   button.hidden=!showScarf;
-   if(!showScarf){manualPlay=false;pause();return;}
-   if(!manualPlay)pause();
-  };
-  const schedule=()=>{if(!raf&&!deleted)raf=requestAnimationFrame(render);};
-  const preference=()=>{layout=null;lastProgress=-1;schedule();};
-  let observer=null;
-  if(typeof IntersectionObserver==='function'){
-   observer=new IntersectionObserver(([entry])=>{
-    near=Boolean(entry?.isIntersecting);
-    if(near)prefetch();else pause();
+  disconnectedCallback() { this.cleanup?.(); this.cleanup=null; }
+  mount() {
+    const scarf=this.querySelector('.frame-scarf');
+    const button=this.querySelector('.frame-toggle');
+    const stage=this.querySelector('.frame-stage');
+    if(!scarf||!button||!stage)return;
+    const controller=new AbortController();
+    const listen=(target,type,fn,options={})=>target?.addEventListener?.(type,fn,{...options,signal:controller.signal});
+    const clamp=value=>Math.min(1,Math.max(0,value));
+    const mix=(a,b,t)=>a+(b-a)*t;
+    const part=(p,a,b)=>clamp((p-a)/(b-a));
+    let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false;
+    let observer;
+    const style=(name,value)=>this.style.setProperty(name,String(value));
+    const setProgress=p=>{
+      // Match the original authored choreography, including the pause before scarf reveal.
+      const intro=part(p,0,.38),outro=part(p,.47,.69);
+      const easeOut=t=>1-Math.pow(1-t,3);
+      const zoom=easeOut(intro);
+      const x=mix(0,13,outro),y=mix(0,-3,outro);
+      const scale=intro<1?mix(4.1,1,zoom):mix(1,.58,outro);
+      const angle=intro<1?mix(12,0,zoom):mix(0,17,outro);
+      style('--scarf-progress',p.toFixed(5));
+      style('--scarf-x',x.toFixed(3)+'%');
+      style('--scarf-y',y.toFixed(3)+'%');
+      style('--scarf-scale',scale.toFixed(4));
+      style('--scarf-angle',angle.toFixed(3)+'deg');
+      style('--scarf-emblem-opacity',(1-outro).toFixed(4));
+      style('--scarf-rings-opacity',part(p,.06,.32).toFixed(4));
+      style('--scarf-film-opacity',part(p,.47,.69).toFixed(4));
+      style('--scarf-film-scale',mix(1.05,1,part(p,.47,.69)).toFixed(4));
+    };
+    const label=()=>{
+      button.textContent=scarf.paused?'Play scarf':'Pause scarf';
+      button.setAttribute('aria-label',button.textContent);
+    };
+    const pause=()=>{
+      if(playing||!scarf.paused){playing=false;scarf.pause();}
+    };
+    const update=()=>{
+      frame=0;
+      if(!this.isConnected)return;
+      full=window.StudioMotion?.level==='full';
+      this.toggleAttribute('data-full',full);
+      if(!full||document.hidden){
+        pause();button.hidden=true;this.removeAttribute('data-focus');setProgress(0);return;
+      }
+      const bounds=this.getBoundingClientRect();
+      const stageHeight=stage.clientHeight||window.innerHeight||1;
+      // Sticky stage travels over the height of the entire scene minus the viewport.
+      const travel=Math.max(1,bounds.height-stageHeight);
+      const progress=clamp(-bounds.top/travel);
+      const visible=bounds.top<stageHeight&&bounds.bottom>0;
+      // The rAF controller runs only on actual scroll/resize/change events.
+      setProgress(progress);
+      this.toggleAttribute('data-focus',visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1);
+      if(near&&visible&&progress>=.22&&!videoLoadStarted){
+        videoLoadStarted=true;
+        scarf.preload='auto';
+        scarf.src='/assets/frame-cut/scarf.mp4';
+      }
+      const film=near&&visible&&progress>=.47;
+      button.hidden=!film;
+      if(!film||held){pause();return;}
+      if(!playing){
+        playing=true;
+        const promise=scarf.play();
+        promise?.catch?.(()=>{
+          if(playing){playing=false;held=true;label();}
+        });
+      }
+    };
+    const schedule=()=>{
+      if(!frame)frame=requestAnimationFrame(update);
+    };
+    const preference=()=>{schedule();};
+    if(typeof IntersectionObserver==='function'){
+      observer=new IntersectionObserver(([entry])=>{near=entry.isIntersecting; if(!near)pause();schedule();},{rootMargin:'60% 0px'});
+      observer.observe(this);
+    }else near=true;
+    listen(window,'scroll',schedule,{passive:true});
+    listen(window,'resize',schedule,{passive:true});
+    listen(window,'pageshow',schedule);
+    listen(document,'visibilitychange',schedule);
+    listen(document,'studio:route',schedule);
+    listen(button,'click',()=>{held=!scarf.paused; if(!held)playing=false; schedule();});
+    listen(scarf,'play',label);
+    listen(scarf,'pause',label);
+    window.StudioMotion?.addEventListener?.('change',preference);
     schedule();
-   },{rootMargin:'200% 0px',threshold:0});
-   observer.observe(this);
-  }else{near=true;prefetch();}
-  on(reveal,'loadedmetadata',()=>{seekPending=true;seekReveal();schedule();});
-  on(reveal,'loadeddata',()=>{if(!reveal.seeking){ready=true;lastProgress=-1;schedule();}});
-  on(reveal,'seeked',()=>{
-   if(!ready){ready=true;lastProgress=-1;schedule();}
-   if(seekPending)seekReveal();
-  });
-  on(reveal,'error',()=>{ready=false;lastProgress=-1;schedule();});
-  on(scarf,'loadedmetadata',()=>{planScarf(Math.max(0,lastProgress));schedule();});
-  on(scarf,'seeked',()=>{if(scarfPending)seekScarf();});
-  on(scarf,'play',label);on(scarf,'pause',label);
-  on(button,'click',()=>{
-   if(manualPlay){manualPlay=false;pause();schedule();return;}
-   manualPlay=true;playback=true;scarf.loop=true;
-   const promise=scarf.play();
-   promise?.catch?.(()=>{manualPlay=false;playback=false;label();});
-   label();
-  });
-  on(window,'scroll',schedule,{passive:true});
-  on(window,'veloryz:scroll-frame',()=>{
-   // When Lenis owns the scroll this callback runs in its rAF, before paint.
-   // Don't wait for a second animation frame to show the new V/scarf pose.
-   if(raf){cancelAnimationFrame(raf);raf=0;}
-   render();
-  },{passive:true});
-  on(window,'resize',()=>{layout=null;drawnFrame=-1;scarfDrawn=-1;lastProgress=-1;schedule();},{passive:true});
-  on(window,'pageshow',()=>{layout=null;schedule();});
-  on(document,'visibilitychange',schedule);
-  on(document,'studio:route',()=>{layout=null;lastProgress=-1;schedule();});
-  window.StudioMotion?.addEventListener?.('change',preference);
-  // Geometry changes asynchronously when fonts, media and page content settle.
-  let sizeObserver=null;
-  if(typeof ResizeObserver==='function'){
-   sizeObserver=new ResizeObserver(()=>{layout=null;lastProgress=-1;schedule();});
-   sizeObserver.observe(this);
-   sizeObserver.observe(stage);
+    this.cleanup=()=>{
+      controller.abort();observer?.disconnect();cancelAnimationFrame(frame);
+      window.StudioMotion?.removeEventListener?.('change',preference);
+      pause();scarf.removeAttribute('src');scarf.load();
+    };
   }
-  this.cleanup=()=>{
-   deleted=true;controller.abort();observer?.disconnect();sizeObserver?.disconnect();
-   if(warmTimer&&typeof clearTimeout==='function')clearTimeout(warmTimer);
-   if(scarfWarmTimer&&typeof clearTimeout==='function')clearTimeout(scarfWarmTimer);
-   scarfSheets.clear();
-   cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
-   cinema(false);pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
-   reveal.load?.();scarf.load?.();
-  };
-  schedule();
- }
 }
 if(!customElements.get('veloryz-frame-cut'))customElements.define('veloryz-frame-cut',VeloryzFrameCut);

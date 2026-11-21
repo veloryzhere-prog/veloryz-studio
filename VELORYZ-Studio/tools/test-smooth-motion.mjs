@@ -48,14 +48,8 @@ vm.runInNewContext(scroll,{window:mockWindow,document:mockDoc,matchMedia:getMedi
 assert.equal(FakeLenis.instances.length,1,'Full motion on desktop must instantiate Lenis once');
 assert.equal(root.dataset.vzSmoothWheel,'lenis');
 const engine=FakeLenis.instances[0];
-assert.equal(engine.options.lerp,.23,'Responsive regular-page smoothing');
-assert.equal(mockWindow.VeloryzScroll.settings.cinematicLerp,.46,'Cinematic section must smooth mouse-wheel steps without a long tail');
-assert.ok(docEvents['studio:cinema-focus'],'Cinematic scene must be able to disable Lenis inertia');
-docEvents['studio:cinema-focus']({detail:{active:true}});
-assert.equal(engine.options.lerp,.46,'Cinema should have a short, responsive easing window for silky wheel steps');
-docEvents['studio:cinema-focus']({detail:{active:false}});
-assert.equal(engine.options.lerp,.23,'Normal page smooth scrolling must be restored after the scene');
-assert.equal(engine.options.wheelMultiplier,1,'Natural wheel input without artificial slowdown');
+assert.equal(engine.options.lerp,.14,'Balanced Lenis smoothing');
+assert.equal(engine.options.wheelMultiplier,.94,'Moderate wheel distance');
 assert.equal(engine.options.syncTouch,false);
 assert.ok(engine.options.prevent({matches:s=>s.includes('dialog')}),'Nested modal should scroll natively');
 mockWindow.VeloryzScroll.sync();

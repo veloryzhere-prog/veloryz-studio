@@ -12688,7 +12688,7 @@ function nu(e, t = !1, n = null) {
 		return;
 	}
 	let c = o.domElement;
-	c.setAttribute("aria-hidden", "true"), e.append(c), o.setPixelRatio(Math.min(devicePixelRatio || 1, a ? 1 : 1.2));
+	c.setAttribute("aria-hidden", "true"), e.append(c), o.setPixelRatio(Math.min(devicePixelRatio || 1, a ? 1.15 : 1.65));
 	let l = new fn(), u = new lo(34, 1, .1, 100);
 	l.add(new Za(16771828, 7887734, 1.65));
 	for (let [e, t, n, r, i] of [
@@ -12735,7 +12735,7 @@ function nu(e, t = !1, n = null) {
 	function A(t) {
 		if (h = 0, C || !m || document.hidden) return;
 		let n = eu(), a = g ? Math.min(.08, (t - g) / 1e3) : 0;
-		if (n && !S && !i && g && t - g < (s ? 55 : a ? 38 : 30)) {
+		if (s && n && !S && !i && g && t - g < 33) {
 			T();
 			return;
 		}
@@ -12755,7 +12755,7 @@ function nu(e, t = !1, n = null) {
 			], i = x + b * .64;
 			e.position.set(n[0] + (1 - D) * (t ? 1.3 : -1.1) + i * (t % 2 ? .23 : -.23), n[1] + (1 - D) * (t ? .8 : -.5) + i * (t % 2 ? .23 : -.1), n[2] + (1 - D) * (t ? -1.5 : 1) + i * (t % 2 ? -.16 : .16)), e.rotation.set(r[0], r[1] + (1 - D) * (t ? -.8 : .7) + i * (t % 2 ? -.1 : .1), r[2]);
 			for (let t of e.children) t.userData.restZ === void 0 && (t.userData.restZ = t.position.z), t.position.z = t.userData.restZ * (1 + 1.65 * b + x * .66);
-		}), o.render(l, u), e.dataset.webgl !== (s ? "software" : "ready") && (e.dataset.webgl = s ? "software" : "ready"), n && !i && (!S || Math.abs(O - x) > .002) && T();
+		}), o.render(l, u), e.dataset.webgl = s ? "software" : "ready", n && !i && (!S || Math.abs(O - x) > .002) && T();
 	}
 	function j() {
 		g = 0, T();

@@ -1,108 +1,29 @@
-/* VELORYZ / authored 3.0 s V-portal film -> 7.4 s knitted scarf.
- * Scroll controls only opacity and composited transform; no frame-by-frame CSS
- * filters, no layout-changing properties, and no transformed sticky parent.
+/* Original VELORYZ V/scarf sequence — deterministic scroll progress from frame-cut.js.
+ * Sticky scene is not transformed or put inside an overflow scrolling ancestor.
  */
-veloryz-frame-cut{
- display:block;position:relative;background:#080b21;isolation:isolate;
- --frame-reveal-opacity:0;--frame-reveal-ready:0;--frame-poster-opacity:1;
- --frame-portal-light:.12;--frame-portal-rotation:-8deg;
- --scarf-emblem-opacity:1;--scarf-rings-opacity:1;
- --scarf-film-opacity:0;--scarf-film-scale:1.055;
-}
-veloryz-frame-cut .frame-stage{
- position:relative;height:clamp(290px,56.25vw,90svh);
- overflow:hidden;background:#06071a;isolation:isolate;
-}
-/* Short, responsive native-scroll stage: fast motion with exact stop positions. */
-veloryz-frame-cut[data-full]{height:178svh}
-veloryz-frame-cut[data-full] .frame-stage{
- position:sticky;top:0;height:100svh;overflow:hidden;
-}
-.frame-emblem{
- position:absolute;inset:0;margin:auto;
- width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;max-height:100%;
- transform-origin:center;
- transform:translate3d(var(--scarf-x,0%),var(--scarf-y,0%),0)
-  scale(var(--scarf-scale,1.12)) rotate(var(--scarf-angle,6deg));
- opacity:var(--scarf-emblem-opacity,1);pointer-events:none;
- backface-visibility:hidden;
-}
-.frame-rings{
- position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
- opacity:var(--scarf-rings-opacity,1);
-}
+veloryz-frame-cut{display:block;position:relative;background:#080b21;isolation:isolate}
+.frame-stage{height:clamp(290px,56.25vw,90svh);position:relative;overflow:hidden}
+veloryz-frame-cut[data-full]{height:340svh}
+veloryz-frame-cut[data-full] .frame-stage{position:sticky;top:0;height:100svh}
+.frame-emblem{position:absolute;inset:0;margin:auto;width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;max-height:100%;pointer-events:none;transform-origin:50% 54%;transform:translate3d(var(--scarf-x,0%),var(--scarf-y,0%),0) scale(var(--scarf-scale,4.1)) rotate(var(--scarf-angle,12deg));opacity:var(--scarf-emblem-opacity,1)}
+.frame-rings{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--scarf-rings-opacity,0)}
 .frame-mark{position:absolute;width:12%;height:auto;left:44.4%;top:44%;transform:rotate(-12deg)}
-.frame-film-plane{
- position:absolute;inset:0;overflow:hidden;pointer-events:none;
- background:#06071a;
- opacity:var(--frame-reveal-opacity,0);
- transform:translate3d(0,0,0) scale(1);
- backface-visibility:hidden;
-}
-.frame-reveal-poster,.frame-reveal,.frame-reveal-canvas{
- position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
- background:#06071a;pointer-events:none;
-}
-.frame-reveal-poster{opacity:var(--frame-poster-opacity,1)}
-.frame-reveal{
- opacity:var(--frame-reveal-ready,0);
- backface-visibility:hidden;
-}
-.frame-reveal-canvas{
- opacity:var(--frame-canvas-ready,0);
- backface-visibility:hidden;
- image-rendering:auto;
- will-change:auto;
-}
-.frame-scarf,.frame-scarf-canvas{
- position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
- background:#030305;pointer-events:none;backface-visibility:hidden;
- transform:translate3d(var(--scarf-pan-x,0%),var(--scarf-pan-y,0%),0)
-  scale(var(--scarf-film-scale,1.055)) rotate(var(--scarf-tilt,0deg));
- transform-origin:center;
-}
-.frame-scarf{opacity:var(--scarf-video-visible,var(--scarf-film-opacity,0))}
-.frame-scarf-canvas{opacity:var(--scarf-sprite-visible,0);image-rendering:auto}
-/* A light portal halo adds depth while the actual, original reveal film
- * remains the visible visual narrative. Opacity only: no GPU-expensive blur. */
-.frame-stage::after{
- content:"";position:absolute;inset:-9%;
- z-index:1;pointer-events:none;
- background:radial-gradient(ellipse at center,transparent 29%,rgba(127,123,255,.12) 56%,rgba(30,10,76,.32) 85%,transparent 100%);
- opacity:var(--frame-portal-light,.12);
- transform:none;
-}
-.frame-toggle{
- position:absolute;z-index:3;bottom:max(22px,env(safe-area-inset-bottom));
- left:clamp(20px,4vw,64px);background:#141425;color:#fff;
- border:1px solid #817988;border-radius:30px;min-height:44px;padding:10px 19px;
- cursor:pointer
-}
+.frame-scarf{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#030305;opacity:var(--scarf-film-opacity,0);transform:scale(var(--scarf-film-scale,1.05));pointer-events:none}
+.frame-toggle{position:absolute;z-index:2;bottom:max(22px,env(safe-area-inset-bottom));left:clamp(20px,4vw,64px);background:#141425;color:#fff;border:1px solid #817988;border-radius:30px;min-height:44px;padding:10px 19px;cursor:pointer}
 .frame-toggle[hidden]{display:none!important}
 veloryz-frame-cut:not([data-full]){height:auto}
 veloryz-frame-cut:not([data-full]) .frame-stage{position:relative}
-veloryz-frame-cut:not([data-full]) .frame-emblem{opacity:1!important;transform:none!important}
-veloryz-frame-cut:not([data-full]) .frame-film-plane{opacity:0!important}
-veloryz-frame-cut:not([data-full]) .frame-scarf,veloryz-frame-cut:not([data-full]) .frame-scarf-canvas{opacity:0!important}
-veloryz-frame-cut:not([data-full]) .frame-stage::after{opacity:0!important}
-html:not([data-motion-gate])[data-vz-cinema-focus="true"] body :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
-/* While scrubbing the film, reserve the compositor for it instead of
-   simultaneously running offscreen tickers and decorative orbit loops. */
-html[data-vz-cinema-focus="true"] body.motion-edition :is(.ticker-track,.orbit-track b,.vz-orbit,.render-drift){animation-play-state:paused!important}
-
+veloryz-frame-cut:not([data-full]) .frame-emblem{transform:none!important;opacity:1!important}
+veloryz-frame-cut:not([data-full]) .frame-rings{opacity:1!important}
+veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
+html:not([data-motion-gate]) body:has(veloryz-frame-cut[data-focus]) :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
 @media(max-width:900px){
- veloryz-frame-cut[data-full]{height:170svh}
+ veloryz-frame-cut[data-full]{height:280svh}
  veloryz-frame-cut[data-full] .frame-stage{height:100svh}
- .frame-reveal-poster,.frame-reveal,.frame-reveal-canvas,.frame-scarf,.frame-scarf-canvas{object-fit:contain}
- .frame-stage::after{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){
  html:not([data-motion="full"]) veloryz-frame-cut{height:auto!important}
- html:not([data-motion="full"]) veloryz-frame-cut .frame-stage{
-  position:relative!important;height:clamp(290px,56.25vw,80svh)!important;
- }
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-stage{position:relative!important;height:clamp(290px,56.25vw,80svh)!important}
  html:not([data-motion="full"]) veloryz-frame-cut .frame-emblem{transform:none!important;opacity:1!important}
- html:not([data-motion="full"]) veloryz-frame-cut .frame-film-plane,
- html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf,
- html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf-canvas{opacity:0!important}
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf{opacity:0!important}
 }
