@@ -15,6 +15,8 @@ assert.match(app,/assets\/frame-cut\/poster\.jpg/);
 assert.match(code,/assets\/frame-cut\/reveal\.mp4/);
 assert.match(code,/assets\/frame-cut\/scarf\.mp4/);
 assert.match(css,/position:sticky/);
+assert.match(css,/height:205svh/,'The V-to-scarf transition must not require three viewport scrolls');
+assert.match(code,/range\(p,0,\.46\)/,'Frame scrub must complete promptly and track real scroll position');
 assert.match(css,/frame-film-plane/);
 assert.doesNotMatch(css,/animation-timeline/);
 
@@ -67,7 +69,7 @@ reveal.dispatchEvent(new Event('loadeddata'));flush();
 const scroll=y=>{top=-y;window.dispatchEvent(new Event('scroll'));flush();};
 scroll(300);
 const early=reveal.currentTime;
-assert(early>.2&&early<1.5,'Early forward scroll should seek inside the real V film');
+assert(early>.2&&early<2.3,'Short responsive timeline should advance the real V film immediately');
 assert.equal(Number(vars.get('--scarf-film-opacity')),0,'Scarf cannot flash during the portal scene');
 scroll(710);
 assert(reveal.currentTime>early,'The V film must advance as visitor scrolls');
