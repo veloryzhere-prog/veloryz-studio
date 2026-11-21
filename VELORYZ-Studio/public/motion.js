@@ -9,12 +9,12 @@
  const listeners=new Set();
  let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='';
  try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;}catch{}
- const saver=()=>Boolean(navigator.connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
+ const saver=()=>typeof navigator!=='undefined'&&Boolean(navigator.connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
  const effective=()=>preference==='auto'?(media?.matches||saver()?'reduced':'full'):preference;
  // Only an explicit Full motion choice completes the invitation. Automatic
  // visitors see it on entry; a quiet preference also sees it after a refresh.
  const reload=window.performance?.getEntriesByType('navigation')[0]?.type==='reload';
- const needsIntro=root.dataset.guidedMotionIntro==='true' && !media?.matches && !saver() && preference!=='full' &&
+ const needsIntro=root.dataset.guidedMotionIntro==='true' && preference!=='full' &&
    (effective()!=='full' || !reload);
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
