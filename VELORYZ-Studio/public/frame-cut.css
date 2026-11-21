@@ -54,12 +54,15 @@ veloryz-frame-cut[data-full] .frame-stage{
  image-rendering:auto;
  will-change:auto;
 }
-.frame-scarf{
+.frame-scarf,.frame-scarf-canvas{
  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
- background:#030305;opacity:var(--scarf-film-opacity,0);
- transform:translate3d(var(--scarf-pan-x,0%),var(--scarf-pan-y,0%),0) scale(var(--scarf-film-scale,1.055)) rotate(var(--scarf-tilt,0deg));
- transform-origin:center;backface-visibility:hidden;pointer-events:none;
+ background:#030305;pointer-events:none;backface-visibility:hidden;
+ transform:translate3d(var(--scarf-pan-x,0%),var(--scarf-pan-y,0%),0)
+  scale(var(--scarf-film-scale,1.055)) rotate(var(--scarf-tilt,0deg));
+ transform-origin:center;
 }
+.frame-scarf{opacity:var(--scarf-video-visible,var(--scarf-film-opacity,0))}
+.frame-scarf-canvas{opacity:var(--scarf-sprite-visible,0);image-rendering:auto}
 /* A light portal halo adds depth while the actual, original reveal film
  * remains the visible visual narrative. Opacity only: no GPU-expensive blur. */
 .frame-stage::after{
@@ -80,7 +83,7 @@ veloryz-frame-cut:not([data-full]){height:auto}
 veloryz-frame-cut:not([data-full]) .frame-stage{position:relative}
 veloryz-frame-cut:not([data-full]) .frame-emblem{opacity:1!important;transform:none!important}
 veloryz-frame-cut:not([data-full]) .frame-film-plane{opacity:0!important}
-veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
+veloryz-frame-cut:not([data-full]) .frame-scarf,veloryz-frame-cut:not([data-full]) .frame-scarf-canvas{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-stage::after{opacity:0!important}
 html:not([data-motion-gate])[data-vz-cinema-focus="true"] body :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
 /* While scrubbing the film, reserve the compositor for it instead of
@@ -90,7 +93,7 @@ html[data-vz-cinema-focus="true"] body.motion-edition :is(.ticker-track,.orbit-t
 @media(max-width:900px){
  veloryz-frame-cut[data-full]{height:170svh}
  veloryz-frame-cut[data-full] .frame-stage{height:100svh}
- .frame-reveal-poster,.frame-reveal,.frame-reveal-canvas,.frame-scarf{object-fit:contain}
+ .frame-reveal-poster,.frame-reveal,.frame-reveal-canvas,.frame-scarf,.frame-scarf-canvas{object-fit:contain}
  .frame-stage::after{opacity:0}
 }
 @media(prefers-reduced-motion:reduce){
@@ -100,5 +103,6 @@ html[data-vz-cinema-focus="true"] body.motion-edition :is(.ticker-track,.orbit-t
  }
  html:not([data-motion="full"]) veloryz-frame-cut .frame-emblem{transform:none!important;opacity:1!important}
  html:not([data-motion="full"]) veloryz-frame-cut .frame-film-plane,
- html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf{opacity:0!important}
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf,
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf-canvas{opacity:0!important}
 }
