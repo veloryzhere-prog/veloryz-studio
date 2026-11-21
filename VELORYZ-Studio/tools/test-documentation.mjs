@@ -72,8 +72,9 @@ for(const path of ['public/docs-hub.js','public/docs-studio.js','public/site-map
  try{new Function(file(path));}catch(e){throw new Error('Invalid browser JavaScript in '+path+': '+e.message)}
 }
 const hub=file('public/docs-hub.js'),reader=file('public/docs-studio.js'),sitemap=file('public/site-map.js');
-for(const choice of ['docs-choice-help','docs-choice-studio','docs-choice-all'])assert.ok(hub.includes(choice),'Three-way docs portal missing '+choice);
-assert.ok(hub.includes('docs-load-more'),'Public doc directory is not paginated');
+for(const choice of ["kind:'help'","kind:'studio'","kind:'all'"])assert.ok(hub.includes(choice),'Three-way docs portal missing '+choice);
+assert.ok(hub.includes('docs-choice-'+"c.kind"),'Three-way docs cards must render CSS variants');
+assert.ok(hub.includes('data-doc-more'),'Public doc directory is not paginated');
 assert.ok(reader.includes('ensureChapter')&&reader.includes('studio-docs-index.json'),'Lazy article loading missing');
 assert.ok(reader.includes('data-studio-doc-print')&&reader.includes('ON THIS PAGE'),'Article actions/TOC missing');
 assert.ok(sitemap.includes('site-map-app')&&sitemap.includes('studio-docs-index.json'),'Human sitemap missing');
