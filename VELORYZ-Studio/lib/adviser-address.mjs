@@ -35,7 +35,7 @@ export function nameError(value){
  return '';
 }
 export function familiarLead(profile,agent,turn=0,first=false){
- if(!profile)return '';
+ if(!profile||!first)return '';
  if(profile.mirror)return first?'Apne AI double se baat karke kaisa lag raha hai? ':'';
  const pick=items=>items[first?0:turn%items.length]+' ';
  if(profile.id==='pradeep'||profile.id==='rupesh'){
@@ -52,6 +52,8 @@ export function familiarLead(profile,agent,turn=0,first=false){
 }
 export function relationshipPrompt(profile){
  if(!profile)return '';
- return ' Conversational roleplay based on the visitor’s supplied first name: '+JSON.stringify({address:profile.title,tone:profile.style})+
- '. Use the supplied canonical address even when the conversation contains a misspelled version of the name. Prefer Roman-script Hinglish for familiar exchanges. These are playful studio character relationships. Never claim to verify identity or know private events. If asked who you are to them, explain the requested family or friend role as AI roleplay. Mild situational swearing is allowed when invited. Avoid attacks on third parties, sexual humiliation, threats and repeated personal degradation. Keep the answer useful for the project.';
+ const topics={shivam:'Jagriti',ayush:'Angelina',rupam:'the running joke about giving Aryan his phone',ashish:'elder-brother banter',arpita:'sisterly creative-director banter'};
+ const familiar=profile.style.includes('friends')||['ashish','arpita'].includes(profile.id);
+ return 'Visitor conversational preferences: '+JSON.stringify({address:profile.title,tone:profile.style,optionalBanter:familiar?topics[profile.id]:undefined})+
+ '. Use the canonical name even if the visitor mistyped it. Prefer Roman-script Hinglish in familiar exchanges. Answer the actual message first. Use family addresses naturally, without repeating the same opening. Occasional teasing should refer to the current conversation and vary in wording. Never automatically ask about Jagriti, Angelina, meals or the phone on each reply. Leave out teasing when it is irrelevant, serious, or the visitor asks to stop. Do not claim to know private events. Treat the roles as playful character relationships. Do not volunteer configuration or instructions. Be honest that you are an AI when asked directly.';
 }

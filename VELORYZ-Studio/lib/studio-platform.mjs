@@ -1,3 +1,4 @@
+import {isSpicy,tonePrompt} from '../public/chat-tone.mjs';
 import {addressFor,nameError,familiarLead,relationshipPrompt} from './adviser-address.mjs';
 import {studioGuide} from './adviser-guide.mjs';
 import {personas,adviserPrompt} from './adviser-personas.mjs';
@@ -96,15 +97,15 @@ export async function adviserChat(request,env,state){
  const firstNamed=data.firstNamed===true;
  const turnIndex=Math.floor(messages.length/2);
  const greeting=familiarLead(profile,data.agent,turnIndex,firstNamed);
- const roast=/\b(motherchod|madarchod|behenchod|bhenchod|kutta|sala|saala)\b/i.test(messages.at(-1).content);
- const voice=relationshipPrompt(profile);
+ const roast=isSpicy(messages.at(-1).content);
+ const voice=relationshipPrompt(profile)+tonePrompt(messages.at(-1).content,data.agent);
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
   if(profile&&firstNamed&&messages.at(-1).content.startsWith('My first name is ')){
    const answer=greeting+'Bataiye, aapke project mein kaise help kar sakta hoon?';
    return reply({...result,answer,extras,canUseStudioModel:false});
   }
-  const banter=roast&&!profile?.style.includes('respect')?'Itni bakchodi se brief nahi banega. Actual problem bata, phir kaam ki baat karte hain. ':'';
+  const banter=roast&&['aryan','nikhil','happy'].includes(data.agent)&&!profile?.style.includes('respect')?['Volume full, brief zero? Thoda bakchodi kam, actual problem bata. ','Bhai, gaali ka budget unlimited hai, idea ka bhi kuch plan hai? ','Itna dramatic entry? Ab actual kaam ki baat kar. '][turnIndex%3]:'';
   return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},canUseStudioModel:config.provider!=='guide'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));
@@ -118,7 +119,7 @@ export async function adviserChat(request,env,state){
  const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice+" If insulted, respond with a sharp situational roast, then help with the actual project. Respect family tones.",maxOutput);
  if(!result.ok&&data.allowGuide===true)return guide();
  if(!result.ok)return reply({error:'The VELORYZ AI engine could not respond. Please retry or contact the studio.',code:'AI_PROVIDER_'+result.status.toUpperCase(),agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI reply failed · No simulated response was substituted.',extras},503);
- return reply({answer:greeting+result.answer,agent:agent.name,handoff,available:true,mode:'ai',notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
+ return reply({answer:result.answer,agent:agent.name,handoff,available:true,mode:'ai',notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
 }
 
 export function checkoutLink(value){

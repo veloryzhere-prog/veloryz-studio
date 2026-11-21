@@ -8,6 +8,8 @@ let adviserIndex=0,chatMessages=[],chatBusy=false,chatAgent='',chatSession=0;
 let visitorFirstName='',nameRequired=false;
 const introducedTo=new Set();
 const chatHistories=Object.create(null);
+const chatHeat=Object.create(null);
+const chatToneReady=import('/chat-tone.mjs?v=20261121');
 const advisers=[
  {id:'happy',name:'Happy',role:'First contact · Bold & friendly',color:'#eab04d'},
  {id:'nikhil',name:'Nikhil',role:'Senior intelligence · Strategy',color:'#56adbd'},
@@ -156,7 +158,7 @@ function askFirstName(log){
  const card=document.createElement('form');
  nameRequired=true;
  card.className='chat-name-card';
- card.innerHTML='<label for="chat-first-name">Your first name, please</label><p id="chat-name-help">Enter only your first name to continue chatting.</p><div><input id="chat-first-name" aria-label="Your first name" aria-describedby="chat-name-help" placeholder="e.g. Shivam" autocomplete="given-name" maxlength="40" required><button type="submit">Continue ↗</button></div>';
+ card.innerHTML='<label for="chat-first-name">Your first name, please</label><p id="chat-name-help">Enter only your first name to continue chatting.</p><div><input id="chat-first-name" aria-label="Your first name" aria-describedby="chat-name-help" placeholder="Your first name" autocomplete="given-name" maxlength="40" required><button type="submit">Continue ↗</button></div>';
  card.onsubmit=e=>{
   e.preventDefault();
   const field=card.querySelector('input'),name=field.value.normalize('NFC').trim();
@@ -174,6 +176,12 @@ function syncChatComposer(){
  $('button[type="submit"]',form).disabled=locked||chatBusy;
  $('textarea',form).placeholder=locked?'Enter your first name above to continue':'Message '+(advisers.find(a=>a.id===chatAgent)?.name||'the studio')+'…';
 }
+function setChatHeat(active){
+ const panel=$('.expert-modal');if(!panel)return;
+ panel.classList.toggle('chat-spicy',active);
+ const label=$('.chat-mood',panel);
+ if(label)label.textContent=active?'🌶 Spicy mode':'Studio lounge';
+}
 function chatStatus(text,error=false){const el=$('.chat-connection');if(!el)return;el.textContent=text;el.classList.toggle('offline',error);el.classList.toggle('guide-mode',error);}
 function openExpert(id=''){
  chatSession++;const connectionSession=chatSession;
@@ -181,18 +189,19 @@ function openExpert(id=''){
  chatAgent=a.id;chatMessages=chatHistories[a.id]||(chatHistories[a.id]=[]);chatBusy=false;
  clearTimeout(campaignTimer);
  openModal(`<div class="expert-chat ai-conversation" data-persona="${a.id}">
- <div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ · STUDIO AI</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Design, scope and project advice</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
+ <div class="chat-header">${avatar(a)}<div class="chat-header-copy"><div class="eyebrow">VELORYZ / CONVERSATIONS</div><h2 id="dialog-title">${a.name}<span> · ${a.role}</span></h2><p>Ideas, honest answers & a little personality.</p></div><span class="chat-online-beacon" title="Connection status is shown below" aria-hidden="true"></span></div>
  <div class="chat-personas" role="group" aria-label="Choose AI personality">${advisers.map(p=>`<button type="button" class="${p.id===a.id?'selected':''} ${p.id==='aryan'?'executive-agent':''}" data-chat-agent="${p.id}" aria-pressed="${p.id===a.id}" title="${p.id==='aryan'?'Executive escalation':p.role}">${avatar(p,true)}<span>${p.name}</span></button>`).join('')}</div>
- <div class="chat-conversation-meta"><span><span class="chat-live-dot" aria-hidden="true"></span> ${a.name} · <span data-chat-mode>Connecting…</span></span><button type="button" data-chat-clear>New chat ↺</button></div>
+ <div class="chat-conversation-meta"><span class="chat-mood" aria-live="polite">Studio lounge</span><span><span class="chat-live-dot" aria-hidden="true"></span> ${a.name} · <span data-chat-mode>Connecting…</span></span><button type="button" data-chat-clear>New chat ↺</button></div>
  <div class="chat-scroll-area"><div class="chat-log" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat with ${a.name}"></div>
  <div class="chat-suggestions" ${chatMessages.length?'hidden':''}>${['Help me choose a design','How do I request a project?','Hinglish mein baat karein'].map(t=>`<button type="button" data-chat-prompt="${esc(t)}">${esc(t)}</button>`).join('')}</div>
  </div><div class="chat-name-slot"></div>
  <div class="chat-connection" role="status">Checking VELORYZ AI connection…</div>
 
- <div class="chat-footer"><span>Fictional AI persona · Responses can be mistaken. Avoid private details. Chats stay in this browser tab.</span><a href="${wa('Hi VELORYZ! I would like to speak with the studio.')}" target="_blank" rel="noopener">Human studio ↗</a></div>
+ <div class="chat-footer"><span>AI studio adviser · Chats stay in this tab.</span><a href="${wa('Hi VELORYZ! I would like to speak with the studio.')}" target="_blank" rel="noopener">Human studio ↗</a></div>
  <form id="expert-chat-form"><label class="sr-only" for="expert-question">Message ${a.name}</label><textarea id="expert-question" name="question" maxlength="1200" required rows="2" placeholder="Message ${a.name}…"></textarea><button type="submit" class="button" aria-label="Send message to ${a.name}"><span>Send</span><span aria-hidden="true">↗</span></button></form>
  </div>`,'expert-modal');
  sizeChatViewport();
+ setChatHeat(Boolean(chatHeat[a.id]));
  const log=$('.chat-log');
  if(nameRequired)askFirstName(log);
  if(chatMessages.length){for(const message of chatMessages)log.append(chatBubble(message,a));askFirstName(log);}
@@ -202,7 +211,7 @@ function openExpert(id=''){
   if(chatAgent!==a.id||chatSession!==connectionSession||chatBusy||chatMessages.length)return;
   const configured=Boolean(d.aiConfigured);
   chatStatus(configured?'Studio AI is configured · Ask anything about the studio or your project.':'Studio guide · Answers from the published library.',!configured);
-  const mode=$('[data-chat-mode]');if(mode)mode.textContent=configured?'Ready to connect':'Studio guide';
+  const mode=$('[data-chat-mode]');if(mode)mode.textContent=configured?'Ready':'Studio guide';
  }).catch(()=>{if(chatSession===connectionSession)chatStatus('Could not check the live provider status.',true);});
 }
 async function sendChat(form){
@@ -220,6 +229,9 @@ async function sendChat(form){
  log.parentElement.scrollTop=log.offsetTop+log.offsetHeight-log.parentElement.clientHeight;$('.chat-suggestions').hidden=true;
  chatStatus(name+' is preparing a reply…');
  try{
+  const {isSpicy}=await chatToneReady;
+  if(chatSession!==session||!form.isConnected)return;
+  chatHeat[agent]=isSpicy(question);setChatHeat(chatHeat[agent]);
   const r=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({agent,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(agent),allowGuide:true,messages:history.map(({role,content})=>({role,content})),page:currentRoute}),signal:AbortSignal.timeout(36000)});
   const data=await r.json();if(chatSession!==session||chatAgent!==agent||!form.isConnected)return;
   typing.remove();
@@ -271,7 +283,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
   else if(action==='open_contact')navigate('/contact/');
   return;
  }
- if(b.hasAttribute('data-chat-clear')){if(chatBusy)return;chatHistories[chatAgent]=[];const id=chatAgent;closeModal();openExpert(id);}
+ if(b.hasAttribute('data-chat-clear')){if(chatBusy)return;chatHistories[chatAgent]=[];chatHeat[chatAgent]=false;const id=chatAgent;closeModal();openExpert(id);}
  if(b.hasAttribute('data-chat-prompt')){const prompt=b.dataset.chatPrompt;if(/bring in aryan/i.test(prompt)){closeModal();openExpert('aryan');return;}const form=$('#expert-chat-form');if(!form)return;$('textarea',form).value=prompt;sendChat(form);}
  if(b.hasAttribute('data-api-test')){const output=$('.api-result');b.disabled=true;output.textContent='Requesting…';try{const r=await fetch('/api/'+b.dataset.apiTest,{cache:'no-store'});output.textContent=r.status+' '+r.statusText+'\n'+JSON.stringify(await r.json(),null,2);}catch{output.textContent='The endpoint is temporarily unavailable.';}finally{b.disabled=false;}}
 });

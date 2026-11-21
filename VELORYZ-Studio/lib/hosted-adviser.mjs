@@ -1,5 +1,6 @@
+import {tonePrompt} from '../public/chat-tone.mjs';
 import {adviserPrompt,personas} from './adviser-personas.mjs';
-import {addressFor,familiarLead,relationshipPrompt} from './adviser-address.mjs';
+import {addressFor,relationshipPrompt} from './adviser-address.mjs';
 
 // The hosted API validates the transcript and applies its quota before enabling inference.
 export async function enhanceGuide(response,data,ai,loadState){
@@ -10,12 +11,11 @@ export async function enhanceGuide(response,data,ai,loadState){
   const {state}=await loadState();
   const profile=addressFor(data.firstName,data.agent);
   let system=adviserPrompt(data.agent,state,guide.handoff,data.messages,guide.extras.page);
-  system+=relationshipPrompt(profile);
+  system+=relationshipPrompt(profile)+tonePrompt(data.messages.at(-1).content,data.agent);
   system+=' If insulted, respond with a sharp, short situational roast and offer practical project help. Keep family interactions respectful.';
   const result=await ai.run('@cf/meta/llama-3.1-8b-instruct',{messages:[{role:'system',content:system},...data.messages],max_tokens:650});
   let answer=result?.response?.trim();
   if(!answer)return response;
-  answer=familiarLead(profile,data.agent,Math.floor(data.messages.length/2),data.firstNamed===true)+answer;
   return Response.json({...guide,answer:answer.slice(0,4500),mode:'ai',available:true,agent:personas[data.agent].name,notice:'VELORYZ Studio AI · Responses may contain mistakes.'},{headers:{'Cache-Control':'no-store'}});
  }catch(error){
   const code=String(error?.message||'').match(/\b[1-9][0-9]{3,5}\b/)?.[0]||'unavailable';

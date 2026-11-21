@@ -9,7 +9,7 @@ assert.equal(addressFor('Pradeep','aryan').title,'Bade Papa');
 assert.equal(addressFor('Pradeep','milky').title,'Papa');
 assert.equal(addressFor('Rupesh','aryan').title,'Papa');
 assert.equal(addressFor('Chiku','ritik').id,addressFor('Ashish','ritik').id);
-assert.match(familiarLead(addressFor('Arpita','milky'),'milky'),/didi/);
+assert.match(familiarLead(addressFor('Arpita','milky'),'milky',0,true),/didi/);
 assert.equal(nameError('Shivam'),'');
 assert(nameError('Aryan ka papa'));
 assert(nameError("Aryan's father"));
@@ -20,3 +20,5 @@ const response=await adviserChat(new Request('https://veloryz.online/api/adviser
 assert.equal(response.status,400);
 assert.equal((await response.json()).code,'NAME_REQUIRED');
 console.log('PASS: name gate, role-title rejection, aliases, family tone and persona-specific teasing.');
+
+assert.equal(familiarLead(addressFor('Shivam','happy'),'happy',3,false),'');
