@@ -289,11 +289,43 @@
   '<div class="v4-feature-choices">'+VeloryzPlanner.assets.map(a=>'<label class="v4-feature-card '+(data.assets.includes(a)?'is-selected':'')+'"><input type="checkbox" data-v4-asset="'+escape(a)+'" '+(data.assets.includes(a)?'checked':'')+'><span class="v4-feature-check">'+(data.assets.includes(a)?'✓':'+')+'</span><span><strong>'+escape(a)+'</strong><small>'+(a==='Brand identity'?'Logos, typography or style guides':a==='Written content'?'Drafted copy, articles or service descriptions':a==='Images & media'?'Photos, graphics, video or other visuals':'An existing site or product to improve')+'</small></span></label>').join('')+'</div>'+
   '<p class="v4-small-note">Materials can also be provided later during studio discovery.</p>';
  }
+ function teamMessage(topic='pricing'){
+  const e=estimate(),parts=[
+   'Hello VELORYZ team, I would like to discuss my '+data.category+' project.',
+   'Reference: '+(finished?.reference||'Not yet submitted'),
+   'Selected features: '+(data.features.join(', ')||'To discuss'),
+   'My budget preference: '+money(data.budget),
+   'Current planning estimate: '+money(e.low)+' – '+money(e.high),
+   'Question: '+(topic==='pricing'?'Can we discuss pricing, staged delivery and any offers I might qualify for?':'I would like help with my project brief.')
+  ];
+  return 'https://wa.me/919955326740?text='+encodeURIComponent(parts.join('\n'));
+ }
+ function teamEmail(){
+  const subject='VELORYZ project price review · '+data.category;
+  const body='Hello VELORYZ team,\n\nCould you review pricing, possible phased delivery and any eligible current offers for my project?\n\n'+
+   'Project: '+data.category+'\nBudget: '+money(data.budget)+'\nSelected features: '+data.features.join(', ')+
+   '\nEstimate: '+money(estimate().low)+' – '+money(estimate().high)+
+   '\n\nI understand that prices are preliminary until the studio confirms scope.';
+  return 'mailto:veloryz.here@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+ }
+ function activeCreatorOffer(){
+  const offers=typeof studioCMS!=='undefined'&&Array.isArray(studioCMS?.offers)?studioCMS.offers:[];
+  const now=Date.now();
+  return offers.find(o=>o?.enabled&&o.kind==='offer'&&(!o.startAt||Date.parse(o.startAt)<=now)&&(!o.endAt||Date.parse(o.endAt)>now)&&typeof o.title==='string');
+ }
+ function marketingInfo(){
+  const offer=activeCreatorOffer();
+  return '<section class="v4-price-flex"><span class="v4-price-flex-kicker">FLEXIBLE SCOPE · TEAM REVIEWED</span><h3>Let’s make the right first version.</h3>'+
+   '<p>Our team can discuss a smaller first release, phased delivery, optional services, and any active promotions you qualify for. No discount is guaranteed or automatically applied.</p>'+
+   (offer?'<div class="v4-eligible-offer"><strong>Current studio promotion</strong><span>'+escape(offer.title)+'</span><small>Ask the team to confirm eligibility, dates and terms. Not included in this estimate.</small></div>':'')+
+   '<div class="v4-price-flex-actions"><a href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Message our team ↗</a><a href="'+escape(teamEmail())+'">Request a price review ✉</a></div></section>';
+ }
  function budgetScreen(){
   const e=estimate(),below=data.budget<e.low;
   return sectionTitle('05 / THE INVESTMENT','What budget are you comfortable with?','This helps us recommend a realistic first release—not change the price to fit a number.')+
    '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="20000" max="300000" step="5000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>₹20,000</span><span>₹3,00,000+</span></div><div class="v4-budget-chips">'+budgetOptions.map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
-   '<div class="v4-budget-context"><div><span>EARLY PLANNING RANGE</span><strong>'+money(e.low)+' – '+money(e.high)+'</strong></div><p id="v4-budget-guidance">'+(below?'Your preference is below the estimated scope. We can discuss phasing, fewer screens, or optional features.':'An indicative range only. VELORYZ will review your requirements before quoting.')+'</p></div>';
+   '<div class="v4-budget-context"><div><span>EARLY PLANNING RANGE</span><strong>'+money(e.low)+' – '+money(e.high)+'</strong></div><p id="v4-budget-guidance">'+(below?'Your target is below the preliminary scope. Our team can discuss phasing, fewer screens or a leaner first release.':'Our team reviews the scope and provides an individual quote. Pricing may change with requirements, availability and delivery complexity.')+'</p></div>'+
+  '<div class="v4-budget-disclaimer">✳ The estimate is not a final price. The team can consult on scope, package options and applicable active offers. Taxes, hosting and external service fees may be additional.</div>'+marketingInfo();
  }
  function timelineScreen(){
   return sectionTitle('05 / THE TIMELINE','When would you like to launch?','Choose your preferred window. We’ll confirm actual availability and dates after reviewing the project.')+
@@ -305,9 +337,9 @@
  }
  function fieldScreen(id){
   const name=id==='name',value=name?data.name:data.email;
-  return sectionTitle('06 / ABOUT YOU',name?'What should we call you?':'Where can we reach you?',name?'We’ll use this name when discussing your project.':'Your email is required for your enquiry. If you become a client, only the studio owner can issue your private portal code.')+
+  return sectionTitle('06 / ABOUT YOU',name?'What should we call you?':'Where can we reach you?',name?'Our project team will use this name when discussing your brief.':'This email is required for your enquiry. Once a private workspace is created, our team can issue an invitation code to the same address.')+
    '<label class="v4-simple-field"><span>'+ (name?'YOUR NAME':'EMAIL ADDRESS')+' <i>*</i></span><input id="v4-entry" type="'+(name?'text':'email')+'" data-v4-field="'+id+'" value="'+escape(value)+'" '+(name?'autocomplete="name" maxlength="100"':'autocomplete="email" maxlength="180"')+' required placeholder="'+(name?'Your full name':'you@example.com')+'"></label>'+
-   '<p class="v4-small-note">'+(name?'Only a couple of details left.':'We won’t automatically generate an account or invitation when you submit.')+'</p>';
+   '<p class="v4-small-note">'+(name?'Only a couple of details left.':'Your project reference appears immediately after submission. An invitation or activation code is separate and is sent only when the team creates your private workspace.')+'</p>';
  }
  function brief(){
   const e=estimate(),rows=[
@@ -316,10 +348,10 @@
   return rows.map(([title,value])=>'<div class="v4-review-row"><span>'+escape(title)+'</span><strong>'+escape(value)+'</strong></div>').join('');
  }
  function reviewScreen(){
-  return sectionTitle('07 / YOUR PROJECT PLAN','Everything looks good?','Here is your starting brief. Download a proposal, or submit it to VELORYZ for an owner-reviewed quote.')+
+  return sectionTitle('07 / YOUR PROJECT PLAN','Everything looks good?','Review your project, save the planning proposal, or send your brief to the VELORYZ team for a personal quotation.')+
    '<div class="v4-review-layout"><div class="v4-review-sheet"><div class="v4-review-brand"><span>VELORYZ / STUDIO</span><b>YOUR PROJECT OUTLINE</b></div><div class="v4-review-title">An idea with<br><em>direction.</em></div>'+brief()+
    '<div class="v4-review-goal"><span>YOUR MAIN GOAL</span><p>'+escape(data.goal)+'</p></div></div>'+
-   '<div class="v4-review-side"><div class="v4-review-cost"><span>ILLUSTRATIVE RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>This document is a planning estimate, not a confirmed quotation or booking.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><p>The studio will review scope and requirements before issuing a final quote.</p></div></div>'+
+   '<div class="v4-review-side"><div class="v4-review-cost"><span>TEAM-REVIEWED PLANNING RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>Our team can discuss scope, pricing, relevant packages and qualified promotions. This is not a binding quote.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><a class="v4-review-team-link" href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Discuss this price with the team ↗</a><p>We will confirm final pricing and any offers after reviewing your request.</p></div></div>'+
    '<label class="v4-consent"><input id="v4-consent" type="checkbox" data-v4-consent '+(data.consent?'checked':'')+'><span>I agree to share this project brief and my contact details with VELORYZ Studio for review. I understand that submitting does not create a client account or accept a quotation.</span></label>';
  }
  function view(id){
@@ -347,7 +379,16 @@
   '<div class="v4-welcome-art" aria-hidden="true"><div class="v4-intro-paper"><div><span>VELORYZ / YOUR IDEA</span><span>01 — DISCOVER</span></div><h2>A good project starts with the right questions.</h2><div class="v4-intro-line"></div><div class="v4-intro-row"><i></i><span>01</span><b>Discover</b></div><div class="v4-intro-row"><i></i><span>02</span><b>Define</b></div><div class="v4-intro-row"><i></i><span>03</span><b>Make it real</b></div></div></div></div>';
  }
  function successScreen(){
-  return '<section class="v4-success"><div class="v4-success-check">✓</div><span class="v4-kicker">REQUEST RECEIVED</span><h1 id="v4-question-title" tabindex="-1">Your idea is<br><em>on its way.</em></h1><p>VELORYZ Studio has received your project brief. The owner will review your requirements, and contact you about scope and a formal quotation.</p><div class="v4-reference"><span>YOUR PROJECT REFERENCE</span><strong>'+escape(finished?.reference||'—')+'</strong><button type="button" data-v4-action="copy">Copy reference</button></div><p class="v4-small-note">A client portal invitation is issued separately by the studio owner after a project is created. No portal account or booking has been created automatically.</p><div class="v4-success-buttons"><button class="v4-primary" type="button" data-v4-action="pdf">Download proposal ↓</button><button class="v4-secondary" type="button" data-v4-action="restart">Start another project →</button></div></section>';
+  const code=escape(finished?.reference||'—'),email=escape(data.email||'your email');
+  return '<section class="v4-success v4-success-enhanced"><div class="v4-success-check">✓</div><span class="v4-kicker">PROJECT REQUEST CONFIRMED</span>'+
+   '<h1 id="v4-question-title" tabindex="-1">Project submitted<br><em>successfully.</em></h1>'+
+   '<p>Thank you. The VELORYZ team has received your project brief and will review the details before sharing the next steps and a tailored quotation.</p>'+
+   '<div class="v4-reference"><span>YOUR PROJECT REFERENCE · SAVE THIS</span><strong>'+code+'</strong><button type="button" data-v4-action="copy">Copy reference</button></div>'+
+   '<div class="v4-success-handoff"><span class="v4-handoff-kicker">NEXT STEPS / YOUR PRIVATE PROJECT ROOM</span><div class="v4-handoff-steps">'+
+   [['01','Request saved','Use your reference code when contacting the team. It is not a login password.'],['02','Check your email','Watch '+email+' and its spam folder for updates over the next 12 hours. Response times vary; this is not a guaranteed delivery deadline.'],['03','Receive your private invitation','After the team accepts the project and creates your workspace, a separate one-time invitation or activation code may be sent to this email. It is not generated on this screen.'],['04','Activate your client portal','Open veloryz.online/client/, paste the invitation code into the portal, and access your private project messages, milestones and files.']].map(([n,title,desc])=>'<div class="v4-handoff-step"><span>'+n+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></div>').join('')+'</div></div>'+
+   '<div class="v4-code-clarity"><strong>Reference code vs invitation code</strong><p>The reference above confirms submission. A separate secret invitation code is created by our team only after your project workspace is approved. We cannot promise it will arrive within 12 hours.</p></div>'+
+   '<div class="v4-success-buttons"><a class="v4-primary" href="/client/">Open client portal ↗</a><a class="v4-secondary" href="'+escape(teamMessage('project'))+'" target="_blank" rel="noopener noreferrer">Message the team ↗</a><button class="v4-secondary" type="button" data-v4-action="pdf">Download proposal ↓</button><button class="v4-secondary" type="button" data-v4-action="restart">Start another project →</button></div>'+
+   '<p class="v4-small-note">No payment has been taken, and no portal invitation has been issued by this submission.</p></section>';
  }
  function header(){
   const flowList=flow(),total=flowList.length,number=active==='success'?total:at()+1,group=meta(active);
@@ -375,7 +416,7 @@
  function updateBudget(){
   const text=document.getElementById('v4-budget-output');if(text)text.textContent=money(data.budget);
   const context=document.getElementById('v4-budget-guidance');const e=estimate();
-  if(context)context.textContent=data.budget<e.low?'Your preferred budget is below the illustrated scope. We can discuss a smaller first release.':'Your target is recorded. Final price requires studio approval.';
+  if(context)context.textContent=data.budget<e.low?'Your preference is below the planning range. Ask our team about phasing or a smaller first release.':'Your preference is saved. The team can discuss scope and any current offers before preparing a final quote.';
  }
  function refreshLibrary(){
   const node=document.getElementById('v4-gallery-holder');
@@ -399,6 +440,7 @@
    'Timeline: '+clean(data.timeline),'Priority: '+clean(data.priority),
    'Goal: '+clean(data.goal),
    'Review: '+(data.features.filter(n=>info[n]?.[2]).length?'Complex capabilities need technical scoping':'Studio review required'),
+   'Pricing: Team consultation and eligible promotions may be discussed; no offer applied automatically.',
    'Draft only. Official price and timeline subject to written approval.'
   ].filter(Boolean).join('\n');
   return content.slice(0,2000);
@@ -521,5 +563,5 @@
   active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
   return app();
  };
- window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route};
+ window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active};
 })();
