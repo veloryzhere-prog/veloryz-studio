@@ -5,7 +5,9 @@
   const root = document.documentElement;
   const main = document.querySelector('#main');
   if (!main) return;
-  const full = () => root.dataset.motion==='full' && !document.hidden;
+  // The cinematic V/scarf scene owns the frame budget while pinned.
+  // Unrelated section parallax will resume immediately after it leaves view.
+  const full = () => root.dataset.motion==='full' && root.dataset.vzCinemaFocus!=='true' && !document.hidden;
   const sceneSelector = [
     '.folio-shot', '.type-study', '.motion-hero .logo-stage', '.motion-manifesto', '.ui-study-card', '.project-art',
     '.design-preview', '.creator-visual', '.platform-intro', '.page-intro',
@@ -171,6 +173,7 @@
   }
 
   document.addEventListener('studio:route', refresh);
+  document.addEventListener('studio:cinema-focus', sync);
   document.addEventListener('visibilitychange', sync);
   window.StudioMotion?.addEventListener('change', sync);
   window.addEventListener('pageshow', sync);
