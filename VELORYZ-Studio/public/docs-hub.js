@@ -60,7 +60,7 @@
  }
  async function ensure(){
   if(library||loading)return loading;
-  loading=fetch('/docs-library.json?v=20261121-knowledge-hub-v1',{cache:'force-cache'}).then(async r=>{
+  loading=fetch('/docs-library.json?v=20261121-docs-library-v2',{cache:'no-cache'}).then(async r=>{
    if(!r.ok)throw Error('The documentation file could not be loaded.');
    const value=await r.json();
    if(!Array.isArray(value.documents)||value.documents.length<10)throw Error('The documentation index is incomplete.');
