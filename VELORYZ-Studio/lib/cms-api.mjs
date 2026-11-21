@@ -84,7 +84,7 @@ function upgrade(state){
  return {...state,site:{...defaults.site,...incoming,creatorPricing:{
   ...defaults.site.creatorPricing,...pricing,
   categoryBases:{...defaults.site.creatorPricing.categoryBases,...(pricing.categoryBases||{})}
- },documentation:{...defaults.site.documentation,...incoming.documentation,edits:{...defaults.site.documentation.edits,...incoming.documentation?.edits}}},catalogue:Array.isArray(state.catalogue)&&state.catalogue.some(item=>item.id==='agentura-motion')?state.catalogue:structuredClone(defaults.catalogue)};
+ },documentation:{...defaults.site.documentation,...incoming.documentation,edits:{...defaults.site.documentation.edits,...incoming.documentation?.edits}}},catalogue:Array.isArray(state.catalogue)&&!(state.catalogue.length===4&&state.catalogue.every(item=>['gaming','commerce','portfolio','editorial'].includes(item.id)))?state.catalogue:structuredClone(defaults.catalogue)};
 }
 const hostedBackend = 'https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-studio-api';
 function usesHostedBackend(env, url) {
