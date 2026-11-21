@@ -1,4 +1,6 @@
-/* The scroll timeline animates two vector layers. Only the final scarf is film. */
+/* VELORYZ frame-cut: one reliable rAF scroll progress for original V, rings and scarf film.
+ * No CSS view-timeline dependency; no image redraw and no scroll hijacking.
+ */
 class VeloryzFrameCut extends HTMLElement {
   connectedCallback() {
     queueMicrotask(() => { if (this.isConnected && !this.cleanup) this.mount(); });
@@ -7,61 +9,97 @@ class VeloryzFrameCut extends HTMLElement {
   mount() {
     const scarf=this.querySelector('.frame-scarf');
     const button=this.querySelector('.frame-toggle');
-    if (!scarf || !button) return;
-    const events=new AbortController();
-    const listen=(el,name,fn)=>el.addEventListener(name,fn,{signal:events.signal,passive:true});
-    const timeline=window.CSS?.supports('animation-timeline:view()') &&
-      window.CSS.supports('animation-range:contain 0% contain 100%');
-    let full=false, near=false, held=false, frame=0, playing=false;
-    const update=()=>{
-      frame=0;
-      if(!full||!near||document.hidden){if(playing){playing=false;scarf.pause();}button.hidden=true;this.removeAttribute('data-focus');return;}
-      const bounds=this.getBoundingClientRect();
-      const height=this.firstElementChild.clientHeight;
-      const progress=Math.max(0,Math.min(1,-bounds.top/Math.max(1,bounds.height-height)));
-      // Decode the film only shortly before its reveal. Geometry animates with CSS.
-      if(progress>=.33&&!scarf.hasAttribute('src')){
-        scarf.preload='metadata';
-        scarf.src='/assets/frame-cut/scarf.mp4';
-      }
-      const visible=full && near && !document.hidden && bounds.top<height && bounds.bottom>0;
-      this.toggleAttribute('data-focus',visible && bounds.top<=1 && bounds.bottom>=height-1);
-      if(!timeline && visible)this.style.setProperty('--frame-delay',-progress+'s');
-      const film=visible && progress>=.47;
-      button.hidden=!film;
-      if(film && !held && !playing){
-        playing=true;
-        scarf.play().catch(()=>{if(playing){held=true;playing=false;label();}});
-      }else if((!film || held) && playing){
-        playing=false;scarf.pause();
-      }
+    const stage=this.querySelector('.frame-stage');
+    if(!scarf||!button||!stage)return;
+    const controller=new AbortController();
+    const listen=(target,type,fn,options={})=>target?.addEventListener?.(type,fn,{...options,signal:controller.signal});
+    const clamp=value=>Math.min(1,Math.max(0,value));
+    const mix=(a,b,t)=>a+(b-a)*t;
+    const part=(p,a,b)=>clamp((p-a)/(b-a));
+    let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false;
+    let observer;
+    const style=(name,value)=>this.style.setProperty(name,String(value));
+    const setProgress=p=>{
+      // Match the original authored choreography, including the pause before scarf reveal.
+      const intro=part(p,0,.38),outro=part(p,.47,.69);
+      const easeOut=t=>1-Math.pow(1-t,3);
+      const zoom=easeOut(intro);
+      const x=mix(0,13,outro),y=mix(0,-3,outro);
+      const scale=intro<1?mix(4.1,1,zoom):mix(1,.58,outro);
+      const angle=intro<1?mix(12,0,zoom):mix(0,17,outro);
+      style('--scarf-progress',p.toFixed(5));
+      style('--scarf-x',x.toFixed(3)+'%');
+      style('--scarf-y',y.toFixed(3)+'%');
+      style('--scarf-scale',scale.toFixed(4));
+      style('--scarf-angle',angle.toFixed(3)+'deg');
+      style('--scarf-emblem-opacity',(1-outro).toFixed(4));
+      style('--scarf-rings-opacity',part(p,.06,.32).toFixed(4));
+      style('--scarf-film-opacity',part(p,.47,.69).toFixed(4));
+      style('--scarf-film-scale',mix(1.05,1,part(p,.47,.69)).toFixed(4));
     };
-    const schedule=()=>{if(!frame)frame=requestAnimationFrame(update);};
     const label=()=>{
       button.textContent=scarf.paused?'Play scarf':'Pause scarf';
       button.setAttribute('aria-label',button.textContent);
     };
-    const preference=()=>{
+    const pause=()=>{
+      if(playing||!scarf.paused){playing=false;scarf.pause();}
+    };
+    const update=()=>{
+      frame=0;
+      if(!this.isConnected)return;
       full=window.StudioMotion?.level==='full';
       this.toggleAttribute('data-full',full);
-      schedule();
+      if(!full||document.hidden){
+        pause();button.hidden=true;this.removeAttribute('data-focus');setProgress(0);return;
+      }
+      const bounds=this.getBoundingClientRect();
+      const stageHeight=stage.clientHeight||window.innerHeight||1;
+      // Sticky stage travels over the height of the entire scene minus the viewport.
+      const travel=Math.max(1,bounds.height-stageHeight);
+      const progress=clamp(-bounds.top/travel);
+      const visible=bounds.top<stageHeight&&bounds.bottom>0;
+      // The rAF controller runs only on actual scroll/resize/change events.
+      setProgress(progress);
+      this.toggleAttribute('data-focus',visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1);
+      if(near&&visible&&progress>=.22&&!videoLoadStarted){
+        videoLoadStarted=true;
+        scarf.preload='auto';
+        scarf.src='/assets/frame-cut/scarf.mp4';
+      }
+      const film=near&&visible&&progress>=.47;
+      button.hidden=!film;
+      if(!film||held){pause();return;}
+      if(!playing){
+        playing=true;
+        const promise=scarf.play();
+        promise?.catch?.(()=>{
+          if(playing){playing=false;held=true;label();}
+        });
+      }
     };
-    const observer=new IntersectionObserver(([entry])=>{
-      near=entry.isIntersecting;schedule();
-    },{rootMargin:'35% 0px'});
-    observer.observe(this);
-    listen(window,'scroll',()=>{if(near && full)schedule();});
-    listen(window,'resize',schedule);
+    const schedule=()=>{
+      if(!frame)frame=requestAnimationFrame(update);
+    };
+    const preference=()=>{schedule();};
+    if(typeof IntersectionObserver==='function'){
+      observer=new IntersectionObserver(([entry])=>{near=entry.isIntersecting; if(!near)pause();schedule();},{rootMargin:'60% 0px'});
+      observer.observe(this);
+    }else near=true;
+    listen(window,'scroll',schedule,{passive:true});
+    listen(window,'resize',schedule,{passive:true});
+    listen(window,'pageshow',schedule);
     listen(document,'visibilitychange',schedule);
-    listen(button,'click',()=>{held=!scarf.paused;schedule();});
-    listen(scarf,'play',label);listen(scarf,'pause',label);
-    window.StudioMotion?.addEventListener('change',preference);
-    preference();
+    listen(document,'studio:route',schedule);
+    listen(button,'click',()=>{held=!scarf.paused; if(!held)playing=false; schedule();});
+    listen(scarf,'play',label);
+    listen(scarf,'pause',label);
+    window.StudioMotion?.addEventListener?.('change',preference);
+    schedule();
     this.cleanup=()=>{
-      events.abort();observer.disconnect();cancelAnimationFrame(frame);
-      window.StudioMotion?.removeEventListener('change',preference);
-      playing=false;scarf.pause();scarf.removeAttribute('src');scarf.load();
+      controller.abort();observer?.disconnect();cancelAnimationFrame(frame);
+      window.StudioMotion?.removeEventListener?.('change',preference);
+      pause();scarf.removeAttribute('src');scarf.load();
     };
   }
 }
-customElements.define('veloryz-frame-cut',VeloryzFrameCut);
+if(!customElements.get('veloryz-frame-cut'))customElements.define('veloryz-frame-cut',VeloryzFrameCut);
