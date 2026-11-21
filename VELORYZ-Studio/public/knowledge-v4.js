@@ -120,7 +120,7 @@
       '<div class="kb-sidebar-caption">DISCOVER</div><nav class="kb-sidebar-nav">'+
       [['/docs/','Documentation','book'],['/help/studio/','Help Centre','help'],['/docs/studio/','Studio docs','layers'],['/sitemap/','Site map','map']].map(x=>'<a href="'+x[0]+'"'+(selection===x[0]?' class="is-active" aria-current="page"':'')+'>'+icon(x[2])+'<span>'+x[1]+'</span>'+icon('chevron','kb-nav-chevron')+'</a>').join('')+'</nav>'+
       (cats.length?'<div class="kb-sidebar-caption">STUDIO REFERENCE</div><nav class="kb-sidebar-nav kb-chapters">'+cats.map((x,i)=>'<a href="#kb-cat-'+slug(x)+'"><span class="kb-cat-number">'+String(i+1).padStart(2,'0')+'</span><span>'+E(x)+'</span></a>').join('')+'</nav>':'')+
-      '<div class="kb-sidebar-caption">ASK THE STUDIO</div><nav class="kb-sidebar-nav"><a href="/help/assistant/">'+icon('spark')+'<span>Ask Help AI</span></a><a href="/support/">'+icon('help')+'<span>Contact Support AI</span></a></nav><div class="kb-sidebar-caption">STUDIO LINKS</div><nav class="kb-sidebar-nav"><a href="/create/">'+icon('plus')+'<span>Start a project</span></a><a href="/contact/">'+icon('life')+'<span>Contact support</span></a><a href="/sitemap.xml">'+icon('map')+'<span>XML sitemap</span></a></nav>'+
+      '<div class="kb-sidebar-caption">ASK THE STUDIO</div><nav class="kb-sidebar-nav"><a href="/help/assistant/">'+icon('spark')+'<span>Ask Help AI</span></a><a href="/support/">'+icon('help')+'<span>Contact Support AI</span></a></nav><div class="kb-sidebar-caption">STUDIO LINKS</div><nav class="kb-sidebar-nav"><a href="/create/">'+icon('plus')+'<span>Start a project</span></a><a href="/support/">'+icon('life')+'<span>Contact Support AI</span></a><a href="/sitemap.xml">'+icon('map')+'<span>XML sitemap</span></a></nav>'+
       '<div class="kb-sidebar-help"><span>STILL NEED A HAND?</span><strong>We’re here to make it clearer.</strong><a href="/contact/">Talk to the team '+arrow()+'</a></div></aside>';
   }
   function cardFeature(type,title,description,href,label,count){
@@ -418,7 +418,7 @@
       const title=article.querySelector('h1')?.textContent||'Studio service guide';
       const subject=encodeURIComponent('VELORYZ documentation feedback: '+title);
       const body=encodeURIComponent('Article: '+location.href+'\\n\\nSuggested improvement or correction:\\n');
-      article.insertAdjacentHTML('beforeend','<aside class="kb-article-feedback"><div><span class="kb-kicker">IMPROVE THE KNOWLEDGE SYSTEM</span><h3>Need to clarify something?</h3><p>Share corrections or request help from the Studio team.</p></div><div><a href="mailto:veloryz.here@gmail.com?subject='+subject+'&body='+body+'">Suggest an edit '+icon('arrow')+'</a><a href="/contact/">Contact support '+icon('life')+'</a></div></aside>');
+      article.insertAdjacentHTML('beforeend','<aside class="kb-article-feedback"><div><span class="kb-kicker">IMPROVE THE KNOWLEDGE SYSTEM</span><h3>Need to clarify something?</h3><p>Share corrections or request help from the Studio team.</p></div><div><a href="mailto:veloryz.here@gmail.com?subject='+subject+'&body='+body+'">Suggest an edit '+icon('arrow')+'</a><a href="/support/">Contact Support AI '+icon('life')+'</a></div></aside>');
     }
     syncReaderProgress();
   }
