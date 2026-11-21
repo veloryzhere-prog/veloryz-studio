@@ -123,8 +123,18 @@ async function main(req){
   }
   if(action.startsWith("/admin/projects/")&&req.method==="PUT"){
    const pid=id(action.split("/").pop()),v=await payload(req);
-   if(!(await db("editProject",...fields(v),now,pid)).length)fail("Project not found.",404);
-   return send({ok:true,id:pid});
+   const previous=(await db("getProject",pid))[0];
+   if(!previous)fail("Project not found.",404);
+   const values=fields(v);
+   const emailChanged=previous.client_email!==values[1];
+   // Never leave an old recipient logged in after the owner reassigns a project.
+   // Revoke first: failed subsequent edits cannot accidentally preserve old access.
+   if(emailChanged){
+    await db("revokeInvites",now,pid);
+    await db("revokeSessionsByProject",now,pid);
+   }
+   if(!(await db("editProject",...values,now,pid)).length)fail("Project not found.",404);
+   return send({ok:true,id:pid,email_access_reset:emailChanged});
   }
   if(action==="/admin/items"&&req.method==="POST"){
    const v=await payload(req),pid=id(v.project_id);
