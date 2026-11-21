@@ -349,8 +349,8 @@
   return '<section class="v4-success"><div class="v4-success-check">✓</div><span class="v4-kicker">REQUEST RECEIVED</span><h1 id="v4-question-title" tabindex="-1">Your idea is<br><em>on its way.</em></h1><p>VELORYZ Studio has received your project brief. The owner will review your requirements, and contact you about scope and a formal quotation.</p><div class="v4-reference"><span>YOUR PROJECT REFERENCE</span><strong>'+escape(finished?.reference||'—')+'</strong><button type="button" data-v4-action="copy">Copy reference</button></div><p class="v4-small-note">A client portal invitation is issued separately by the studio owner after a project is created. No portal account or booking has been created automatically.</p><div class="v4-success-buttons"><button class="v4-primary" type="button" data-v4-action="pdf">Download proposal ↓</button><button class="v4-secondary" type="button" data-v4-action="restart">Start another project →</button></div></section>';
  }
  function header(){
-  const flowList=flow(),number=at()+1,total=flowList.length,group=meta(active);
-  return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home">VELORYZ<span> / STUDIO</span></a>'+
+  const flowList=flow(),total=flowList.length,number=active==='success'?total:at()+1,group=meta(active);
+  return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="134" height="40" alt="VELORYZ" decoding="async"><span>/ STUDIO</span></a>'+
    (active==='welcome'?'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>':'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>')+
    '<a class="v4-exit" href="/">Exit <span aria-hidden="true">↗</span></a></header>'+
    (active==='welcome'?'':'<div class="v4-progress-track" role="progressbar" aria-label="Project creator progress" aria-valuenow="'+number+'" aria-valuemin="0" aria-valuemax="'+total+'"><i style="width:'+Math.round(number/total*100)+'%"></i></div>');
@@ -417,7 +417,7 @@
   busy=true;error='';render();
   if(!data.requestId)data.requestId=crypto.randomUUID();
   sync();
-  const payload={kind:'project',requestId:data.requestId,name:clean(data.name),email:str(data.email).trim().toLowerCase(),phone:clean(data.phone||''),company:clean(data.company||''),budget:money(data.budget)+' preferred',message:payloadText(),consent:true,website:''};
+  const payload={kind:'project',requestId:data.requestId,name:clean(data.name),email:str(data.email).trim().toLowerCase(),phone:'',company:'',budget:money(data.budget)+' preferred',message:payloadText(),consent:true,website:''};
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),18000);
   try{
    const response=await fetch('/api/enquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal});
@@ -510,14 +510,14 @@
  window.addEventListener('popstate',()=>{
   if(!document.querySelector('.v4-root'))return;
   let candidate='welcome';try{candidate=new URL(location.href).searchParams.get('question')||'welcome';}catch{}
-  active=candidate==='welcome'||candidate==='success'||flow().includes(candidate)?candidate:'discover';
+  active=candidate==='welcome'||(candidate==='success'&&finished)||flow().includes(candidate)?candidate:'welcome';
   render();
  });
  // Persist on first use, but do not create a ghost draft on a clean welcome screen.
- if(active!=='welcome')sync();
+ if(active!=='welcome'&&active!=='success'){data.lastQuestion=active;sync();}
  createPage=function(){
   const fromURL=new URL(location.href).searchParams.get('question')||'welcome';
-  active=fromURL==='welcome'||fromURL==='success'||flow().includes(fromURL)?fromURL:'discover';
+  active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
   return app();
  };
  window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route};
