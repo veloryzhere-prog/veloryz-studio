@@ -2,7 +2,7 @@
 const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
 const OWNER=BASE+"/functions/v1/veloryz-studio-api/api/admin/state";
-const QUERIES={"listProjects":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100","getProject":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?","addProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id","editProject":"UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id","listItems":"SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150","addItem":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id","editItem":"UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id","deleteItem":"DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id","listMessages":"SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100","addMessage":"INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id","revokeInvites":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''","revokeSessionsByProject":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''","addInvite":"INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifyInvite":"SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?","addSession":"INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifySession":"SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?","revokeSession":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?","clientDecision":"UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id"};
+const QUERIES={"listProjects":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100","getProject":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?","addProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id","editProject":"UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id","listItems":"SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150","addItem":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id","editItem":"UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id","deleteItem":"DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id","listMessages":"SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100","addMessage":"INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id","revokeInvites":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''","revokeSessionsByProject":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''","addInvite":"INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","consumeInvite":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE token_hash=? AND revoked_at='' AND expires_at>? RETURNING project_id","verifyInvite":"SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?","addSession":"INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifySession":"SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?","revokeSession":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?","clientDecision":"UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id"};
 const enc=new TextEncoder(),common={"Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"};
 function send(data,status=200,extra={}){return Response.json(data,{status,headers:{...common,...extra}})}
 function fail(msg,status=400){throw Object.assign(new Error(msg),{status})}
@@ -12,6 +12,26 @@ function choice(v,options,fallback){return options.includes(v)?v:fallback}
 function link(v){const s=trim(v,1500);if(!s)return "";let u;try{u=new URL(s)}catch{fail("Enter a valid HTTPS link.");}if(u.protocol!=="https:"||u.username||u.password)fail("A secure HTTPS link is required.");return u.toString()}
 async function sha(s){const a=new Uint8Array(await crypto.subtle.digest("SHA-256",enc.encode(s)));return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
 function secret(){return Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,"0")).join("")}
+function inviteCode(){const raw=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();return "VZ-"+raw.match(/.{4}/g).join("-")}
+function normalizedInvite(value){const raw=trim(value,100).replace(/[\s-]/g,"").replace(/^VZ/i,"").toLowerCase();return /^[0-9a-f]{32}$|^[0-9a-f]{64}$/.test(raw)?raw:""}
+function htmlEsc(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function sendInvitation(project,code,url,expires){
+ const key=Deno.env.get("RESEND_API_KEY");
+ const from=Deno.env.get("PORTAL_FROM_EMAIL");
+ if(!key||!from)return {status:"manual",message:"Email delivery is not configured. Share the private invitation manually, or configure RESEND_API_KEY and PORTAL_FROM_EMAIL."};
+ const subject="Your VELORYZ Studio project invitation";
+ const client=htmlEsc(project.client_name),title=htmlEsc(project.title);
+ const safeCode=htmlEsc(code),safeUrl=htmlEsc(url);
+ const friendly=new Date(expires).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+ const html='<!doctype html><html><body style="margin:0;padding:35px 12px;background:#f1f2f3;font-family:Arial,sans-serif;color:#181818"><div style="max-width:560px;margin:auto;background:#fff;border:1px solid #e3e4e7;border-radius:16px;overflow:hidden"><header style="background:#19191b;color:#fff;padding:25px 32px;font-size:18px;font-weight:800;letter-spacing:2px">VELORYZ <span style="font-weight:400;font-size:11px;letter-spacing:1px">STUDIO</span></header><div style="padding:38px 32px"><p style="font-size:11px;letter-spacing:1.4px;color:#777">PRIVATE CLIENT INVITATION</p><h1 style="font-size:31px;margin:8px 0 20px;line-height:1.15">Your project space is ready.</h1><p>Hello '+client+',</p><p>You have been invited to the private client workspace for <strong>'+title+'</strong>. You can see milestones, files, review requests and messages in one place.</p><p style="margin:25px 0 8px;font-size:12px;color:#777">YOUR UNIQUE INVITATION CODE</p><div style="padding:16px;border:1px solid #d8dae0;background:#f7f8f9;border-radius:8px;font-size:16px;font-weight:bold;letter-spacing:1px;overflow-wrap:anywhere">'+safeCode+'</div><a href="'+safeUrl+'" style="display:block;text-align:center;padding:16px 20px;border-radius:9px;background:#161616;color:#fff;text-decoration:none;font-weight:bold;margin:25px 0">Open your VELORYZ workspace →</a><p style="font-size:12px;color:#777">This invitation expires '+htmlEsc(friendly)+'. It can be used once. Please do not forward it to anyone else.</p><p style="font-size:13px;margin-top:25px">Questions? Reply to this email or contact the studio directly.</p></div><footer style="padding:17px 32px;border-top:1px solid #eee;color:#888;font-size:11px">VELORYZ STUDIO · A BETTER WAY TO BUILD TOGETHER</footer></div></body></html>';
+ const text='Hi '+project.client_name+',\n\nYour private VELORYZ Studio workspace is ready for '+project.title+'.\n\nYour invitation code: '+code+'\nOpen your workspace: '+url+'\n\nExpires '+friendly+'. This is a one-time invitation. Do not share it.\n\nVELORYZ Studio';
+ try{
+  const response=await fetch("https://api.resend.com/emails",{method:"POST",headers:{Authorization:"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({from,to:[project.client_email],reply_to:Deno.env.get("PORTAL_REPLY_TO")||"veloryz.here@gmail.com",subject,html,text}),signal:AbortSignal.timeout(12000)});
+  if(response.ok)return {status:"sent",message:"Invitation email accepted by the email provider for "+project.client_email+"."};
+  console.error("Portal invite email provider error",response.status);
+  return {status:"failed",message:"The email provider did not accept this invitation. Please send the code manually."};
+ }catch{return {status:"failed",message:"Email delivery failed. Please send the invitation manually."};}
+}
 async function db(name,...params){
  if(!BASE||!KEY)fail("Studio client backend is not configured.",503);
  const sql=QUERIES[name];if(!sql)fail("Unsupported operation.",404);
@@ -76,9 +96,9 @@ async function main(req){
  if(req.method!=="GET")mutation(req);
  const action=path.slice("/api/client-portal".length),now=new Date().toISOString();
  if(action==="/access"&&req.method==="POST"){
-  const v=await payload(req),code=trim(v.invite,80).toLowerCase();
-  if(!/^[0-9a-f]{64}$/.test(code))fail("This invitation is invalid or expired.",401);
-  const found=await db("verifyInvite",await sha(code),now);
+  const v=await payload(req),code=normalizedInvite(v.invite);
+  if(!code)fail("This invitation is invalid or expired.",401);
+  const found=await db("consumeInvite",now,await sha(code),now);
   if(!found.length)fail("This invitation is invalid or expired.",401);
   const t=secret(),exp=new Date(Date.now()+7*86400000).toISOString();
   await db("addSession",crypto.randomUUID(),found[0].project_id,await sha(t),exp,"",now);
@@ -132,11 +152,13 @@ async function main(req){
   if(action==="/admin/invite"&&req.method==="POST"){
    const v=await payload(req),pid=id(v.project_id);
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
-   const invite=secret(),exp=new Date(Date.now()+14*86400000).toISOString();
+   const project=(await db("getProject",pid))[0];
+   const invite=inviteCode(),exp=new Date(Date.now()+14*86400000).toISOString(),url="https://veloryz.online/client/#invite="+encodeURIComponent(invite);
    await db("revokeInvites",now,pid);
    await db("revokeSessionsByProject",now,pid);
-   await db("addInvite",crypto.randomUUID(),pid,await sha(invite),exp,"",now);
-   return send({ok:true,url:"https://veloryz.online/client/#invite="+invite,expires_at:exp});
+   await db("addInvite",crypto.randomUUID(),pid,await sha(normalizedInvite(invite)),exp,"",now);
+   const delivery=await sendInvitation(project,invite,url,exp);
+   return send({ok:true,code:invite,url,email:project.client_email,expires_at:exp,one_time:true,delivery});
   }
   return send({error:"Not found."},404);
  }
