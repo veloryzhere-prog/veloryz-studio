@@ -88,7 +88,8 @@
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
 
  const oldKey='veloryz.creator.v3';
- const budgetOptions=[25000,50000,100000,200000,300000];
+ const budgetOptions=()=>isApp()?[100000,250000,500000,1000000,1500000]:data.category==='Ecommerce'?[50000,100000,250000,500000,1000000]:[25000,50000,100000,200000,300000];
+ const maxBudget=()=>isApp()?1500000:data.category==='Ecommerce'?1000000:300000;
  const palettes=[
   ['Warm white','#ffffff','#eee6df','#9a7169'],
   ['Soft sage','#f6f9f5','#c3d8cd','#36564e'],
@@ -129,12 +130,12 @@
  data.answers=data.answers&&typeof data.answers==='object'&&!Array.isArray(data.answers)?data.answers:{};
  data.assets=Array.isArray(data.assets)?data.assets.filter(a=>VeloryzPlanner.assets.includes(a)):[];
  data.pages=VeloryzPlanner.pages.includes(Number(data.pages))?Number(data.pages):4;
- data.budget=Math.min(300000,Math.max(20000,Math.round(Number(data.budget||55000)/5000)*5000));
+ data.budget=Math.min(1500000,Math.max(20000,Math.round(Number(data.budget||55000)/5000)*5000));
  if(!categories.includes(data.category))data.category='Business';
  if(!styles.some(([s])=>s===data.style))data.style='Minimal';
  let stageFromURL;
  try{stageFromURL=new URL(location.href).searchParams.get('question');}catch{stageFromURL=null;}
- let active=stageFromURL||'welcome',busy=false,finished=null,error='',search='',categoryFilter='All',galleryTab='studio',refChoice='',inlineNotice='',jumpToken=0;
+ let active=stageFromURL||'welcome',busy=false,finished=null,error='',search='',categoryFilter='All',galleryTab='studio',refChoice='',inlineNotice='',jumpToken=0,reviewVisited=active==='review';
  const lightEscape=v=>escape(str(v).slice(0,1200));
  function sync(){
   projectBrief=VeloryzPlanner.normalize({...projectBrief,purpose:data.category,pages:String(data.pages),style:data.style,features:data.features,budget:data.budget,timeline:data.timeline,goal:data.goal,assets:data.assets});
@@ -170,7 +171,7 @@
  function route(to,replace=false){
   if(busy)return;
   const id=to==='welcome'||to==='success'||flow().includes(to)?to:'discover';
-  active=id;error='';inlineNotice='';if(id!=='welcome'&&id!=='success'){data.lastQuestion=id;sync();}
+  active=id;error='';inlineNotice='';if(id==='review')reviewVisited=true;if(id!=='welcome'&&id!=='success'){data.lastQuestion=id;sync();}
   const url=new URL(location.href);
   if(id==='welcome')url.searchParams.delete('question');
   else url.searchParams.set('question',id);
@@ -198,7 +199,7 @@
  function change(key,value){
   if(key==='category'){
    categoryFilter=value;galleryTab='studio';
-   if(data.category!==value){data.category=value;data.template='';data.external='';data.features=[];data.answers={};}
+   if(data.category!==value){data.category=value;data.template='';data.external='';data.features=[];data.answers={};data.budget=Math.min(data.budget,maxBudget());}
   }else data[key]=value;
   data.requestId='';sync();
  }
@@ -323,7 +324,7 @@
  function budgetScreen(){
   const e=estimate(),below=data.budget<e.low;
   return sectionTitle('05 / THE INVESTMENT','What budget are you comfortable with?','This helps us recommend a realistic first release—not change the price to fit a number.')+
-   '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="20000" max="300000" step="5000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>₹20,000</span><span>₹3,00,000+</span></div><div class="v4-budget-chips">'+budgetOptions.map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
+   '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="20000" max="'+maxBudget()+'" step="5000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>₹20,000</span><span>'+money(maxBudget())+'+</span></div><div class="v4-budget-chips">'+budgetOptions().map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
    '<div class="v4-budget-context"><div><span>EARLY PLANNING RANGE</span><strong>'+money(e.low)+' – '+money(e.high)+'</strong></div><p id="v4-budget-guidance">'+(below?'Your target is below the preliminary scope. Our team can discuss phasing, fewer screens or a leaner first release.':'Our team reviews the scope and provides an individual quote. Pricing may change with requirements, availability and delivery complexity.')+'</p></div>'+
   '<div class="v4-budget-disclaimer">✳ The estimate is not a final price. The team can consult on scope, package options and applicable active offers. Taxes, hosting and external service fees may be additional.</div>'+marketingInfo();
  }
@@ -343,9 +344,17 @@
  }
  function brief(){
   const e=estimate(),rows=[
-   ['Project',data.category],['Starting point',preset()?.name||data.external||'From scratch'],['Visual direction',data.style+' · '+data.palette],['Pages or screens',String(data.pages)],['Selected features',data.features.join(', ')||'Core experience'],['Budget preference',money(data.budget)],['Planning range',money(e.low)+' – '+money(e.high)],['Preferred timeline',data.timeline],['Contact',data.name+' · '+data.email]
+   ['Project',data.category,'discover'],
+   ['Starting point',preset()?.name||data.external||'From scratch','template'],
+   ['Visual direction',data.style+' · '+data.palette,'style'],
+   ['Pages or screens',String(data.pages),'pages'],
+   ['Selected features',data.features.join(', ')||'Core experience','features-content'],
+   ['Budget preference',money(data.budget),'budget'],
+   ['Planning range',money(e.low)+' – '+money(e.high),'budget'],
+   ['Preferred timeline',data.timeline,'timeline'],
+   ['Contact',data.name+' · '+data.email,'email']
   ];
-  return rows.map(([title,value])=>'<div class="v4-review-row"><span>'+escape(title)+'</span><strong>'+escape(value)+'</strong></div>').join('');
+  return rows.map(([title,value,target])=>'<div class="v4-review-row"><span>'+escape(title)+'</span><strong>'+escape(value)+'</strong><button type="button" data-v4-edit="'+escape(target)+'" aria-label="Edit '+escape(title)+'">Edit ↗</button></div>').join('');
  }
  function reviewScreen(){
   return sectionTitle('07 / YOUR PROJECT PLAN','Everything looks good?','Review your project, save the planning proposal, or send your brief to the VELORYZ team for a personal quotation.')+
@@ -404,7 +413,7 @@
    (welcome?welcomeScreen():success?successScreen():
      '<section class="v4-question-view"><div class="v4-question-wrap"><div class="v4-side-number" aria-hidden="true">'+String(index).padStart(2,'0')+' / '+String(total).padStart(2,'0')+'</div>'+
       '<div class="v4-question-inner" id="v4-question-body">'+view(active)+'<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p><p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></section>'+
-     '<footer class="v4-bottom"><button type="button" class="v4-back" data-v4-action="back">← Back</button><span class="v4-shortcut">'+(active==='review'?'ONE FINAL STEP': 'PRESS ENTER TO CONTINUE')+'</span>'+
+     '<footer class="v4-bottom"><button type="button" class="v4-back" data-v4-action="back">← Back</button>'+(reviewVisited&&active!=='review'?'<button type="button" class="v4-return-review" data-v4-action="review">Back to review ↗</button>':'<span class="v4-shortcut">'+(active==='review'?'ONE FINAL STEP':'PRESS ENTER TO CONTINUE')+'</span>')+
      (active==='review'?'<button type="button" class="v4-primary" data-v4-action="submit" '+(busy?'disabled':'')+'>'+(busy?'Sending…':'Send my project →')+'</button>':
       '<button type="button" class="v4-primary" data-v4-action="next">Continue <span>→</span></button>')+'</footer>')+
    '<div id="v4-ai-slot"></div></div>';
@@ -484,6 +493,7 @@
   if(action==='resume')return route(flow().includes(data.lastQuestion)?data.lastQuestion:'discover');
   if(action==='back')return move(-1);
   if(action==='next')return move(1);
+  if(action==='review')return route('review');
   if(action==='blank'){change('template','');change('external','');return move(1);}
   if(action==='palette-open')return pick('palette','Studio decides');
   if(action==='skip-detail')return move(1);
@@ -491,14 +501,15 @@
   if(action==='submit')return submit();
   if(action==='restart'){
    const fresh=initial();Object.assign(data,fresh,{answers:{},features:[],assets:[],requestId:''});
-   finished=null;sync();return route('welcome');
+   finished=null;reviewVisited=false;sync();return route('welcome');
   }
   if(action==='copy'){const reference=finished?.reference;if(reference&&navigator.clipboard?.writeText)navigator.clipboard.writeText(reference).then(()=>toast('Copied.')).catch(()=>toast('Please select and copy the reference.'));return;}
  }
  document.addEventListener('click',event=>{
-  const b=event.target.closest('[data-v4-action],[data-v4-pick],[data-v4-template],[data-v4-external],[data-v4-gallery],[data-v4-filter],[data-v4-budget-set]');
+  const b=event.target.closest('[data-v4-action],[data-v4-pick],[data-v4-template],[data-v4-external],[data-v4-gallery],[data-v4-filter],[data-v4-budget-set],[data-v4-edit]');
   if(!b||!document.querySelector('.v4-root'))return;
   if(b.hasAttribute('data-v4-action')){handleAction(b.dataset.v4Action);return;}
+  if(b.hasAttribute('data-v4-edit')){route(b.dataset.v4Edit);return;}
   if(b.hasAttribute('data-v4-pick')){handlePick(b.dataset.v4Pick,b.dataset.value);return;}
   if(b.hasAttribute('data-v4-template')){
    const selected=presets.find(p=>p.id===b.dataset.v4Template);

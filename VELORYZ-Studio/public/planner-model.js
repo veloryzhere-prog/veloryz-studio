@@ -5,7 +5,7 @@
  const features=['Content management','Booking workflow','Payment integration','AI adviser','Member accounts','Motion direction','SEO foundations','Blog & publishing','Search & filters','Multilingual support','Email notifications','Admin dashboard','Product catalogue','Inventory management','Analytics dashboard','API integrations'];
  const assets=['Brand identity','Written content','Images & media','Existing website'];
  const styles=['Editorial','Minimal','Bold','Immersive'];
- const budgetRange={min:20000,max:300000,step:5000};
+ const budgetRange={min:20000,max:1500000,step:5000};
  const CATEGORY_BASES={"Business":17999,"Portfolio":17999,"Ecommerce":49999,"Agency":29999,"SaaS / platform":199999,"Restaurant":24999,"Editorial":22999,"Education":79999,"Community":79999,"Custom App":249999};
  const TECH_REVIEW=['Payment integration','Member accounts','API integrations','AI adviser','Admin dashboard','Inventory management'];
  const clean=(value,max)=>typeof value==='string'?value.trim().slice(0,max):'';
