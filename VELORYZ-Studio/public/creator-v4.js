@@ -196,8 +196,9 @@
   if(root){root.textContent=message;root.hidden=false;}
  }
  function change(key,value){
-  if(key==='category'&&data.category!==value){
-   data.category=value;data.template='';data.external='';data.features=[];data.answers={};categoryFilter=value;galleryTab='studio';
+  if(key==='category'){
+   categoryFilter=value;galleryTab='studio';
+   if(data.category!==value){data.category=value;data.template='';data.external='';data.features=[];data.answers={};}
   }else data[key]=value;
   data.requestId='';sync();
  }
@@ -502,7 +503,7 @@
  });
  document.addEventListener('keydown',event=>{
   if(!document.querySelector('.v4-root')||busy||active==='welcome'||active==='success')return;
-  if(event.key==='Enter'&&!event.shiftKey&&!event.ctrlKey&&!event.altKey&&!event.metaKey&&event.target.tagName!=='TEXTAREA'&&event.target.tagName!=='BUTTON'&&event.target.tagName!=='A'){
+  if(event.key==='Enter'&&!event.shiftKey&&!event.ctrlKey&&!event.altKey&&!event.metaKey&&event.target.tagName!=='TEXTAREA'&&event.target.tagName!=='BUTTON'&&event.target.tagName!=='A'&&!event.target.hasAttribute('data-v4-search')){
    event.preventDefault();if(active==='review')submit();else move(1);
   }
   if(event.key==='Escape'&&document.activeElement?.tagName!=='INPUT'&&document.activeElement?.tagName!=='TEXTAREA')move(-1);
