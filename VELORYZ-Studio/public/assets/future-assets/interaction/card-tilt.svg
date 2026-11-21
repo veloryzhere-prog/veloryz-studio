@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title desc">
+<title id="title">Card Tilt</title><desc id="desc">VELORYZ interaction motion asset 087</desc>
+<style>.a,.b{fill:none;stroke:#23BDE6;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform-origin:60px 60px}.a{stroke-dasharray:260;animation:draw 3.6s cubic-bezier(.22,.75,.2,1) infinite}.b{opacity:.36;animation:drift 4.8s ease-in-out infinite alternate}@keyframes draw{0%{stroke-dashoffset:260;opacity:.15}45%,75%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:-260;opacity:.15}}@keyframes drift{to{transform:rotate(14deg) scale(1.06);opacity:.72}}@media(prefers-reduced-motion:reduce){.a,.b{animation:none;stroke-dashoffset:0}}</style>
+<path class="a" d="M16 84 C34 30 55 91 76 38 S104 58 108 24"/><path class="b" d="M16 96H108"/></svg>
