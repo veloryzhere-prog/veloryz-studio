@@ -13,8 +13,8 @@ veloryz-frame-cut .frame-stage{
  position:relative;height:clamp(290px,56.25vw,90svh);
  overflow:hidden;background:#06071a;isolation:isolate;
 }
-/* ~1 viewport of travel, not a three-viewport slog through a 3-second film. */
-veloryz-frame-cut[data-full]{height:205svh}
+/* Short, responsive native-scroll stage: fast motion with exact stop positions. */
+veloryz-frame-cut[data-full]{height:178svh}
 veloryz-frame-cut[data-full] .frame-stage{
  position:sticky;top:0;height:100svh;overflow:hidden;
 }
@@ -52,6 +52,7 @@ veloryz-frame-cut[data-full] .frame-stage{
  opacity:var(--frame-canvas-ready,0);
  backface-visibility:hidden;
  image-rendering:auto;
+ will-change:auto;
 }
 .frame-scarf{
  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
@@ -66,8 +67,7 @@ veloryz-frame-cut[data-full] .frame-stage{
  z-index:1;pointer-events:none;
  background:radial-gradient(ellipse at center,transparent 29%,rgba(127,123,255,.12) 56%,rgba(30,10,76,.32) 85%,transparent 100%);
  opacity:var(--frame-portal-light,.12);
- transform:translate3d(0,0,0) rotate(var(--frame-portal-rotation,-8deg));
- mix-blend-mode:screen;
+ transform:none;
 }
 .frame-toggle{
  position:absolute;z-index:3;bottom:max(22px,env(safe-area-inset-bottom));
@@ -82,12 +82,12 @@ veloryz-frame-cut:not([data-full]) .frame-emblem{opacity:1!important;transform:n
 veloryz-frame-cut:not([data-full]) .frame-film-plane{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-stage::after{opacity:0!important}
-html:not([data-motion-gate]) body:has(veloryz-frame-cut[data-focus]) :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
+html:not([data-motion-gate])[data-vz-cinema-focus="true"] body :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
 @media(max-width:900px){
- veloryz-frame-cut[data-full]{height:190svh}
+ veloryz-frame-cut[data-full]{height:170svh}
  veloryz-frame-cut[data-full] .frame-stage{height:100svh}
  .frame-reveal-poster,.frame-reveal,.frame-reveal-canvas,.frame-scarf{object-fit:contain}
- .frame-stage::after{mix-blend-mode:normal}
+ .frame-stage::after{opacity:0.2}
 }
 @media(prefers-reduced-motion:reduce){
  html:not([data-motion="full"]) veloryz-frame-cut{height:auto!important}
