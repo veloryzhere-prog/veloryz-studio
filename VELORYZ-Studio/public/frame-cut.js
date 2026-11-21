@@ -15,13 +15,15 @@ class VeloryzFrameCut extends HTMLElement {
     let full=false, near=false, held=false, frame=0, playing=false;
     const update=()=>{
       frame=0;
-      if(full && near && !document.hidden && !scarf.hasAttribute('src')){
-        scarf.preload='auto';
-        scarf.src='/assets/frame-cut/scarf.mp4';
-      }
+      if(!full||!near||document.hidden){if(playing){playing=false;scarf.pause();}this.removeAttribute('data-focus');return;}
       const bounds=this.getBoundingClientRect();
       const height=this.firstElementChild.clientHeight;
       const progress=Math.max(0,Math.min(1,-bounds.top/Math.max(1,bounds.height-height)));
+      // Decode the film only shortly before its reveal. Geometry animates with CSS.
+      if(progress>=.33&&!scarf.hasAttribute('src')){
+        scarf.preload='metadata';
+        scarf.src='/assets/frame-cut/scarf.mp4';
+      }
       const visible=full && near && !document.hidden && bounds.top<height && bounds.bottom>0;
       this.toggleAttribute('data-focus',visible && bounds.top<=1 && bounds.bottom>=height-1);
       if(!timeline && visible)this.style.setProperty('--frame-delay',-progress+'s');
@@ -46,7 +48,7 @@ class VeloryzFrameCut extends HTMLElement {
     };
     const observer=new IntersectionObserver(([entry])=>{
       near=entry.isIntersecting;schedule();
-    },{rootMargin:'75% 0px'});
+    },{rootMargin:'35% 0px'});
     observer.observe(this);
     listen(window,'scroll',()=>{if(near && full)schedule();});
     listen(window,'resize',schedule);
