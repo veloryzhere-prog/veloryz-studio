@@ -581,11 +581,12 @@
  });
  // Persist on first use, but do not create a ghost draft on a clean welcome screen.
  if(active!=='welcome'&&active!=='success'){data.lastQuestion=active;sync();}
- createPage=function(){
+ function creatorPage(){
   const fromURL=new URL(location.href).searchParams.get('question')||'welcome';
   active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
   if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
- };
- window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active};
+ }
+ createPage=creatorPage;
+ window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active,renderPage:creatorPage};
 })();

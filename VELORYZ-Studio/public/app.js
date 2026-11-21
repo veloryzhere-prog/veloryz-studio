@@ -232,7 +232,7 @@ function renderRoute(route,scroll=true){
  document.title=page?.title||'Page not found — VELORYZ Studio';
  const canonical=$('link[rel="canonical"]'),canonicalOrigin=canonical?new URL(canonical.href).origin:location.origin,url=canonicalOrigin+(currentRoute==='/'?'/':currentRoute);if(canonical)canonical.href=url;const ogUrl=$('meta[property="og:url"]'),ogTitle=$('meta[property="og:title"]');if(ogUrl)ogUrl.content=url;if(ogTitle)ogTitle.content=document.title;const metaDesc=$('meta[name="description"]'),ogDesc=$('meta[property="og:description"]');const routeSummary=page?.title?('Explore '+page.title.replace(/ — VELORYZ Studio$/,'')+' at VELORYZ Studio. Design, development and considered digital experiences from Bokaro, India.'):'This page does not exist on the VELORYZ Studio website.';if(metaDesc)metaDesc.content=routeSummary;if(ogDesc)ogDesc.content=routeSummary;
  if(observer)observer.disconnect();
- $('#main').innerHTML=page?page.render():notFoundPage();
+ $('#main').innerHTML=currentRoute==='/create/'&&typeof window.VeloryzCreatorV4?.renderPage==='function'?window.VeloryzCreatorV4.renderPage():(page?page.render():notFoundPage());
  hydrateCMSPage();
  header();footer();window.StudioMotion?.sync();
  if(currentRoute==='/'){const teaser=document.createElement('section');teaser.className='container platform-teaser';teaser.innerHTML='<span class="teaser-star" aria-hidden="true">✳</span><div><div class="eyebrow">A LITTLE INSPIRATION, TO BEGIN</div><h2>Your next direction starts here.</h2><p>Explore the design library. Shape a brief. Make it yours.</p></div><a class="button" href="/design/">Explore the design library ↗</a>';$('#main').insertBefore(teaser,$('#main').querySelector('.motion-manifesto')||null);}
