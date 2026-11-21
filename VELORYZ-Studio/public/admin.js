@@ -164,14 +164,46 @@ async function chooseMedia(callback,type='image'){
  const items=mediaItems.filter(m=>m.mime.startsWith(type+'/'));
  showModal(type==='video'?'Choose a film.':'Choose an image.','Use an existing asset or upload something new.',`<div style="margin-bottom:20px"><button class="admin-button secondary" data-action="picker-upload">${icon('upload')}Upload ${type}</button></div>${items.length?`<div class="media-grid">${items.map(m=>mediaCard(m,true)).join('')}</div>`:empty(type==='video'?'film':'media','A blank canvas, for now.','Upload a file to begin your studio media collection.','','')}`,`<span class="footer-hint">${type==='video'?'MP4 or WebM up to 25 MB.':'PNG, JPG, WebP, GIF or AVIF up to 8 MB.'}</span><button class="admin-button secondary" data-action="close-modal">Cancel</button>`);
 }
-function filePrompt(accept,callback){const input=document.createElement('input');input.type='file';input.accept=accept;input.className='file-input';document.body.append(input);input.addEventListener('change',()=>{const file=input.files?.[0];input.remove();if(file)callback(file);},{once:true});input.click();}
+function filePrompt(accept,callback){
+ const input=document.createElement('input');
+ input.type='file';input.accept=accept;input.className='file-input';
+ input.setAttribute('aria-label','Choose an image or video to upload');
+ document.body.append(input);
+ const cleanup=()=>input.remove();
+ input.addEventListener('change',()=>{const file=input.files?.[0];cleanup();if(file)callback(file);},{once:true});
+ // The click is handled directly from the user's action, preserving browser file-picker permission.
+ input.click();
+}
 async function uploadFile(file,select=false){
- if(preview){toast('Uploads are available after the owner signs in.');return;}
- const isVideo=file.type.startsWith('video/');if(file.size>(isVideo?25:8)*1024*1024){toast('Keep images under 8 MB and videos under 25 MB.');return;}
- const progress=document.createElement('div');progress.className='upload-progress';progress.textContent='Uploading '+file.name+'…';($('.admin-modal-body')||$('#upload-state')||$('#admin-content')).prepend(progress);
- try{const body=new FormData();body.append('file',file,file.name);
-  const item=await api('/api/admin/media',{method:'POST',body});mediaItems.unshift(item);mediaLoaded=true;if(select&&mediaCallback){const callback=mediaCallback;closeModal();callback(item.url);}else if(section==='media')render();toast('Media uploaded and ready to use.');}
- catch(error){toast(error.message);}finally{progress.remove();}
+ if(preview){toast('Uploads require the live signed-in owner workspace, not a preview.');return;}
+ const extension=String(file.name.split('.').pop()||'').toLowerCase();
+ const types={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif',avif:'image/avif',mp4:'video/mp4',webm:'video/webm'};
+ const type=file.type||types[extension]||'';
+ if(!Object.values(types).includes(type)){toast('Choose PNG, JPG, WebP, GIF, AVIF, MP4 or WebM.');return;}
+ const isVideo=type.startsWith('video/'),limit=(isVideo?25:8)*1024*1024;
+ if(!file.size||file.size>limit){toast(isVideo?'Video exceeds 25 MB. Compress the video and try again.':'Image exceeds 8 MB. Resize or compress it and try again.');return;}
+ const progress=document.createElement('div');
+ progress.className='upload-progress';
+ progress.setAttribute('role','status');progress.setAttribute('aria-live','polite');
+ progress.textContent='Uploading '+file.name+'…';
+ (document.querySelector('.admin-modal-body')||document.querySelector('#upload-state')||document.querySelector('#admin-content')||document.querySelector('.admin-main')||document.body).prepend(progress);
+ try{
+  const body=new FormData();
+  const upload=file.type===type?file:new File([file],file.name,{type,lastModified:file.lastModified});
+  body.append('file',upload,upload.name);
+  const item=await api('/api/admin/media',{method:'POST',body,signal:AbortSignal.timeout(90000)});
+  if(!item?.id||!/^\/media\/[a-z0-9-]+$/i.test(item.url||''))throw new Error('Upload response was incomplete. Refresh Media Library before retrying, to avoid a duplicate.');
+  mediaItems.unshift(item);mediaLoaded=true;
+  if(select&&mediaCallback){const callback=mediaCallback;mediaCallback=null;closeModal();callback(item.url);}
+  else if(section==='media')render();
+  toast('Upload saved. '+(select?'Image or video selected — save and publish your changes.':'Choose this asset on a project, campaign, or showcase.'));
+ }catch(error){
+  const detail=error.name==='TimeoutError'?'Upload timed out. Please check Media Library before trying again.':error.status===413?'This file exceeds the server upload limit.':error.status===503?'Media storage is temporarily unavailable. Check Studio Control → Connections.':error.status===401?'Your admin session expired. Unlock the workspace and retry.':error.message;
+  const message='Upload failed: '+detail;
+  progress.textContent=message;
+  progress.setAttribute('role','alert');
+  toast(message);
+ }finally{if(progress.getAttribute('role')!=='alert')progress.remove();}
 }
 function applyProjectFilter(){const query=($('#project-search')?.value||'').toLowerCase(),filter=$('#project-filter')?.value||'all';$$('[data-project-row]').forEach(row=>{const p=workspace.state.projects.find(p=>p.id===row.dataset.projectRow);row.hidden=!p.name.toLowerCase().includes(query)||(filter==='featured'&&!p.featured)||(filter==='visible'&&!p.published)||(filter==='hidden'&&p.published);});}
 document.addEventListener('input',event=>{
