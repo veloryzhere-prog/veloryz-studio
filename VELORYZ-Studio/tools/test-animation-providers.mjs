@@ -13,7 +13,7 @@ assert(lottie.layers.length>=2&&lottie.op>20,'Lottie confirmation must be a real
 assert(shell.includes('/animation-providers.js')&&shell.includes('/animation-providers.css'));
 assert(shell.indexOf('/motion-clock.js')<shell.indexOf('/animation-providers.js'));
 assert(shell.indexOf('/smooth-scroll.js')<shell.indexOf('/animation-providers.js'));
-assert(source.includes('motion@14.14.0/mini/+esm'),'Motion JavaScript runtime must be pinned');
+assert(source.includes('motion@14.11.1/mini/+esm'),'Motion JavaScript runtime must be pinned');
 assert(source.includes('lottie-web@5.13.0/build/player/lottie_light.min.js'),'Lottie light runtime must be pinned');
 assert(source.includes('veloryz:creator-state')&&source.includes("state==='success'"));
 assert(source.includes("reduce.matches")&&source.includes('network?.saveData'));
