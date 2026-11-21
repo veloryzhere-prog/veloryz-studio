@@ -111,3 +111,7 @@ body.vz-ext-lock{overflow:hidden}
 @media(max-width:980px){.vz-ext-buybar>div{flex-basis:100%}.vz-home-purchase>span{flex-basis:100%}}
 @media(max-width:550px){.vz-home-purchase>span{flex-basis:100%}.vz-ext-buybar>button,.vz-home-purchase>button{flex:1;min-width:0;font-size:.73rem;padding:12px 6px}.vz-ext-cart-dialog{padding:20px}.vz-ext-cart-trigger{margin:9px 0 0}}
 @media(prefers-reduced-motion:reduce){.vz-ext-buybar button,.vz-home-purchase button{transition:none;transform:none!important}}
+
+.vz-home-create-link{display:inline-flex;align-items:center;justify-content:center;width:100%;font:700 .78rem/1.3 system-ui,sans-serif;color:#342b34;text-decoration:none;text-align:center;min-height:40px;padding:8px 12px;border:1px solid #c9c1ba;border-radius:9px;transition:background .2s}
+.vz-home-create-link:hover{background:#eee2ed}
+.vz-home-create-link:focus-visible{outline:3px solid #825abb;outline-offset:3px}
