@@ -41,6 +41,13 @@ class VeloryzFrameCut extends HTMLElement {
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
   const keepDecoded=typeof navigator==='undefined'||!(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const sheets=new Map();
+  let warmIndex=3,warmTimer=0;
+  const warmMore=()=>{
+   warmTimer=0;
+   if(deleted||!near||!sprites||spriteFailed)return;
+   if(warmIndex<10)loadSheet(warmIndex++);
+   if(warmIndex<10&&typeof setTimeout==='function')warmTimer=setTimeout(warmMore,105);
+  };
   const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
   const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.49)*(TOTAL_FRAMES-1)));
   // Load early poses before the scene arrives; avoid network/decode stalls
@@ -160,8 +167,11 @@ class VeloryzFrameCut extends HTMLElement {
     reveal.load?.();
    }
    if(sprites&&!spriteFailed){
-    // Prewarm all 10 small WebPs well before the user starts scrubbing.
-    for(let index=0;index<10;index++)loadSheet(index);
+    // Decode early film poses immediately. Stagger the other atlas requests,
+    // avoiding ten simultaneous 2304×1296 image decodes on the main thread.
+    loadSheet(0);loadSheet(1);loadSheet(2);
+    if(warmIndex<10&&!warmTimer&&typeof setTimeout==='function')
+     warmTimer=setTimeout(warmMore,105);
    }
    if(!scarfLoaded){
     scarfLoaded=true;
@@ -287,6 +297,7 @@ class VeloryzFrameCut extends HTMLElement {
   }
   this.cleanup=()=>{
    deleted=true;controller.abort();observer?.disconnect();sizeObserver?.disconnect();
+   if(warmTimer&&typeof clearTimeout==='function')clearTimeout(warmTimer);
    cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
    cinema(false);pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
    reveal.load?.();scarf.load?.();
