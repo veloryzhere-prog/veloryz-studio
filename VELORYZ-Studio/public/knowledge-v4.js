@@ -316,8 +316,8 @@
 
   let readerScrollFrame=0,readingObserver=null;
   function syncReaderProgress(){
-    const host=document.querySelector('#docs-app.studio-docs-shell');
-    const prose=host?.querySelector('.studio-docs-prose');
+    const host=document.querySelector('#docs-app.studio-docs-shell.studio-docs-reader')||document.querySelector('#docs-app .docs-reader');
+    const prose=host?.querySelector('.studio-docs-prose, .docs-prose');
     if(!prose)return;
     const rect=prose.getBoundingClientRect();
     const usable=Math.max(1,rect.height-innerHeight*.52);
@@ -340,6 +340,8 @@
     const hero=host.querySelector('.studio-docs-article-hero');
     if(!article||!hero)return;
     host.dataset.kbReaderEnhanced='yes';
+    const brandSidebar=host.querySelector('.studio-docs-sidebar');
+    if(brandSidebar&&!brandSidebar.querySelector('.kb-reader-official-brand'))brandSidebar.insertAdjacentHTML('afterbegin','<a class="kb-reader-official-brand" href="/" aria-label="VELORYZ home">'+originalLogo()+'</a>');
     const kicker=hero.querySelector('.studio-docs-kicker')?.textContent?.toLowerCase()||'';
     const family=kicker.includes('motion')?'interaction':kicker.includes('media')?'media':kicker.includes('troubleshooting')?'status':kicker.includes('help')?'help':'documentation';
     const images={interaction:['hover-lift','card-tilt','feedback-spark'],media:['image-reveal','gallery-shift','frame-focus'],status:['warning-pulse','success-bloom','info-orbit'],help:['help-beacon','guidance-compass','answer-reveal'],documentation:['page-unfold','section-marker','reading-progress','sidebar-glide','breadcrumb-flow','callout-pulse','tab-slide','accordion-breathe','media-frame','copy-confirm']};
@@ -391,6 +393,33 @@
     const family=path.includes('privacy')||path.includes('copyright')?'status':'documentation';
     const name=family==='status'?(path.includes('privacy')?'secure-lock':'info-orbit'):'page-unfold';
     header.insertAdjacentHTML('beforeend',sourceAsset(family,name,'kb-service-source-art'));
+    const root=header.closest('.docs-reader'),layout=root?.querySelector('.docs-reader-grid'),sidebar=root?.querySelector('.docs-sidebar'),article=root?.querySelector('.docs-article');
+    if(sidebar&&!sidebar.querySelector('.kb-reader-official-brand'))sidebar.insertAdjacentHTML('afterbegin','<a class="kb-reader-official-brand" href="/" aria-label="VELORYZ home">'+originalLogo()+'</a>');
+    if(root&&!root.querySelector('.kb-reader-progress')){
+      root.insertAdjacentHTML('afterbegin','<div class="kb-reader-progress" role="progressbar" aria-label="Article reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>');
+    }
+    const prose=article?.querySelector('.docs-prose');
+    if(layout&&prose&&!layout.querySelector('.kb-service-toc')){
+      const headings=[...prose.querySelectorAll('h2,h3')];
+      const existing=new Set();
+      for(const h of headings){
+        let name='reading-'+slug(h.textContent);
+        if(!name||name==='reading-')name='reading-section';
+        let final=name,n=2;
+        while(existing.has(final))final=name+'-'+n++;
+        existing.add(final);
+        h.id=final;
+      }
+      const links=headings.map(h=>'<a href="#'+E(h.id)+'">'+E(h.textContent)+'</a>').join('');
+      layout.insertAdjacentHTML('beforeend','<aside class="kb-service-toc" aria-label="On this page"><div class="kb-service-toc-label">ON THIS PAGE</div><nav>'+links+'</nav><div class="kb-service-toc-help"><a href="/docs/">All documentation ↗</a><a href="/help/studio/">Help Centre ↗</a></div></aside>');
+    }
+    if(article&&!article.querySelector('.kb-article-feedback')){
+      const title=article.querySelector('h1')?.textContent||'Studio service guide';
+      const subject=encodeURIComponent('VELORYZ documentation feedback: '+title);
+      const body=encodeURIComponent('Article: '+location.href+'\\n\\nSuggested improvement or correction:\\n');
+      article.insertAdjacentHTML('beforeend','<aside class="kb-article-feedback"><div><span class="kb-kicker">IMPROVE THE KNOWLEDGE SYSTEM</span><h3>Need to clarify something?</h3><p>Share corrections or request help from the Studio team.</p></div><div><a href="mailto:veloryz.here@gmail.com?subject='+subject+'&body='+body+'">Suggest an edit '+icon('arrow')+'</a><a href="/contact/">Contact support '+icon('life')+'</a></div></aside>');
+    }
+    syncReaderProgress();
   }
   enhanceReader();
   enhanceServiceReader();
