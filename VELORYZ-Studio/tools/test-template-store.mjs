@@ -37,6 +37,16 @@ for(const p of catalog){
  assert.ok(renderTemplate(templates.find(t=>t.id===p.id)).includes('demo-header'),'Template generation must be deterministic');
  assert.ok(coverSVG(templates.find(t=>t.id===p.id)).includes('<foreignObject'),'Original SVG cover must be generated from registry');
 }
+for(const p of catalog){
+ const kit=join(root,'private/template-kits/'+p.id+'-VELORYZ-template.zip');
+ assert.ok(fs.existsSync(kit),'Working customer source archive missing '+p.id);
+ const data=fs.readFileSync(kit);
+ assert.ok(data.length>25000,'A usable self-contained website kit should not be empty');
+ assert.equal(data.readUInt32LE(0),0x04034b50,'Invalid ZIP file header for '+p.id);
+ assert.equal(data.readUInt32LE(data.length-22),0x06054b50,'Invalid ZIP directory footer for '+p.id);
+ const zipText=data.toString('utf8');
+ assert.ok(zipText.includes('index.html')&&zipText.includes('styles.css')&&zipText.includes('interactions.js')&&zipText.includes('LICENSE.txt'),'Kit must include real site, scripts, styling and licensing');
+}
 assert.ok(store.includes('data-enquiry'),'Template purchase requests must reach existing studio inbox');
 assert.ok(store.includes('name="kind" value="project"'),'Use validated Studio project enquiry endpoint');
 assert.ok(store.includes("data-request-id="),'Idempotent order request must include a UUID');
