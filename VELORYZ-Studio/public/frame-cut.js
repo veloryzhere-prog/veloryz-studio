@@ -28,7 +28,7 @@ class VeloryzFrameCut extends HTMLElement {
   try{ctx=canvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
   const sprites=Boolean(ctx&&typeof Image==='function');
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
-  const keepDecoded=!(navigator.deviceMemory&&navigator.deviceMemory<=4);
+  const keepDecoded=typeof navigator==='undefined'||!(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const sheets=new Map();
   const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
   const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.49)*(TOTAL_FRAMES-1)));
