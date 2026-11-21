@@ -1,0 +1,121 @@
+'use strict';
+/* VELORYZ Documentation Hub: uses actual source Markdown, rendered as escaped HTML. */
+(function(){
+ const defaults={heading:'Clear answers. Better projects.',introduction:'Browse the studio’s real guides to project creation, pricing, your client portal, copyright planning and technical delivery.',navLabel:'Documentation'};
+ let library=null,loading=null,error='',term='',group='All';
+ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const docs=()=>library?.documents||[];
+ const url=id=>'/docs/'+id+'/';
+ const config=()=>({...defaults,...(typeof studioCMS!=='undefined'?studioCMS?.site?.documentation||{}:{})});
+ const slug=()=>location.pathname.match(/^\/docs\/([a-z0-9-]+)\/?$/)?.[1]||'';
+ function href(value){
+  const str=String(value||'').trim(),m=str.match(/(?:^|\/)([\w-]+\.md)(#[a-z0-9_-]+)?$/i);
+  if(m){const d=docs().find(x=>x.filename===m[1]);if(d)return url(d.id)+(m[2]||'');}
+  return /^https?:\/\//i.test(str)||str.startsWith('/docs/')||/^#[a-z0-9_-]+$/i.test(str)?str:'#';
+ }
+ function inline(raw){
+  const tokens=[],tick=String.fromCharCode(96),re=new RegExp(tick+'([^'+tick+'\\n]+)'+tick,'g');
+  let s=String(raw).replace(re,(_,x)=>{let k=tokens.push('<code>'+esc(x)+'</code>');return '\uE000'+(k-1)+'\uE001';});
+  s=s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,(_,name,to)=>{
+   const dest=href(to),external=/^https?:\/\//.test(dest);
+   let n=tokens.push('<a href="'+esc(dest)+'"'+(external?' rel="noopener noreferrer" target="_blank"':'')+'>'+esc(name)+'</a>');
+   return '\uE000'+(n-1)+'\uE001';
+  });
+  return esc(s).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g,'<em>$1</em>').replace(/\uE000(\d+)\uE001/g,(_,i)=>tokens[Number(i)]||'');
+ }
+ function markdown(markdown){
+  const lines=String(markdown||'').replace(/\r/g,'').split('\n'),html=[];let i=0;
+  const boundary=s=>/^(?:#{1,6}\s|>\s?|[-*+]\s|\d+[.)]\s|\|.+\||---+\s*$)/.test(s.trim());
+  while(i<lines.length){
+   const line=lines[i].trim();if(!line){i++;continue;}
+   const fence=String.fromCharCode(96,96,96);
+   if(line.startsWith(fence)||line.startsWith('~~~')){
+    const marker=line.slice(0,3),code=[];i++;
+    while(i<lines.length&&!lines[i].trim().startsWith(marker))code.push(lines[i++]);
+    i++;html.push('<pre><code>'+esc(code.join('\n'))+'</code></pre>');continue;
+   }
+   const h=line.match(/^(#{1,6})\s+(.+)$/);
+   if(h){const level=Math.min(h[1].length+1,6),id=h[2].toLowerCase().replace(/[^a-z0-9 -]/g,'').trim().replace(/\s+/g,'-');html.push('<h'+level+' id="'+esc(id)+'">'+inline(h[2])+'</h'+level+'>');i++;continue;}
+   if(/^[-*_]{3,}$/.test(line)){html.push('<hr>');i++;continue;}
+   if(line.startsWith('>')){const out=[];while(i<lines.length&&lines[i].trim().startsWith('>'))out.push(lines[i++].trim().replace(/^>\s?/,''));html.push('<blockquote>'+out.map(inline).join('<br>')+'</blockquote>');continue;}
+   const tableRow=s=>s.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(x=>x.trim());
+   if(line.includes('|')&&i+1<lines.length&&/^\|?\s*:?-{3,}/.test(lines[i+1].trim())){
+    const titles=tableRow(line),rows=[];i+=2;
+    while(i<lines.length&&lines[i].trim().includes('|'))rows.push(tableRow(lines[i++]));
+    html.push('<div class="docs-table-scroll"><table><thead><tr>'+titles.map(x=>'<th>'+inline(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+titles.map((_,j)=>'<td>'+inline(r[j]||'')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>');continue;
+   }
+   if(/^([-*+]\s|\d+[.)]\s)/.test(line)){
+    const ordered=/^\d+[.)]\s/.test(line),out=[];
+    while(i<lines.length){
+     const m=lines[i].trim().match(ordered?/^\d+[.)]\s+(.+)$/:/^[-*+]\s+(.+)$/);
+     if(!m)break;out.push('<li>'+inline(m[1])+'</li>');i++;
+    }
+    html.push('<'+(ordered?'ol':'ul')+'>'+out.join('')+'</'+(ordered?'ol':'ul')+'>');continue;
+   }
+   const paragraph=[line];i++;
+   while(i<lines.length&&lines[i].trim()&&!boundary(lines[i]))paragraph.push(lines[i++].trim());
+   html.push('<p>'+inline(paragraph.join(' '))+'</p>');
+  }
+  return html.join('\n');
+ }
+ async function ensure(){
+  if(library||loading)return loading;
+  loading=fetch('/docs-library.json?v=20261121-knowledge-hub-v1',{cache:'force-cache'}).then(async r=>{
+   if(!r.ok)throw Error('The documentation file could not be loaded.');
+   const value=await r.json();
+   if(!Array.isArray(value.documents)||value.documents.length<10)throw Error('The documentation index is incomplete.');
+   const ids=new Set();
+   for(const d of value.documents){if(!/^[a-z0-9-]{2,40}$/.test(d.id)||typeof d.markdown!=='string'||ids.has(d.id))throw Error('Invalid documentation source.');ids.add(d.id);}
+   library=value;error='';return value;
+  }).catch(err=>{error=err.message;return null}).finally(()=>{
+   loading=null;
+   if(location.pathname.startsWith('/docs/')&&document.getElementById('docs-app'))refresh();
+  });
+  return loading;
+ }
+ function filtered(){
+  const q=term.toLowerCase().trim();
+  return docs().filter(d=>(group==='All'||d.category===group)&&(!q||[d.label,d.description,d.category,d.markdown].join(' ').toLowerCase().includes(q)));
+ }
+ function cards(){
+  const list=filtered();
+  return '<div class="docs-card-grid">'+(list.length?list.map(d=>
+   '<a class="docs-item" href="'+url(d.id)+'"><span class="docs-item-top">'+esc(d.category)+' <span aria-hidden="true">↗</span></span><strong>'+esc(d.label)+'</strong><p>'+esc(d.description)+'</p><span class="docs-read">Read guide →</span></a>').join(''):
+   '<div class="docs-empty"><h3>No matching articles.</h3><p>Try a different search or category.</p><button type="button" data-doc-reset>Clear filters</button></div>')+'</div><p class="docs-results-count" aria-live="polite">'+list.length+' guide'+(list.length===1?'':'s')+' found</p>';
+ }
+ function hub(){
+  const site=config(),groups=['All',...[...new Set(docs().map(d=>d.category))]];
+  return '<div class="docs-shell"><section class="docs-hero"><div class="docs-eyebrow">VELORYZ STUDIO / KNOWLEDGE BASE</div><div class="docs-hero-grid"><div><h1>'+esc(site.heading)+'</h1><p>'+esc(site.introduction)+'</p></div><div class="docs-hero-side"><span>REAL DOCUMENTATION</span><strong>'+String(docs().length).padStart(2,'0')+'</strong><small>Source-grounded guides</small></div></div></section>'+
+   '<section class="docs-content"><div class="docs-search-heading"><div><span>EXPLORE</span><h2>Documentation library.</h2></div><label class="docs-search"><span class="sr-only">Search documentation</span><input type="search" id="docs-search" value="'+esc(term)+'" placeholder="Search guides, pricing, copyright..." autocomplete="off"></label></div>'+
+   '<div class="docs-category-row" role="group" aria-label="Documentation topics">'+groups.map(c=>'<button type="button" data-doc-category="'+esc(c)+'" aria-pressed="'+(group===c)+'" class="'+(group===c?'active':'')+'">'+esc(c)+'</button>').join('')+'</div><div id="docs-results">'+cards()+'</div></section>'+
+   '<div class="docs-note"><strong>Understand what is documented.</strong><p>Planning and technical guidance describes the implementation and review process. Copyright or privacy checklists are not signed agreements or certifications.</p></div></div>';
+ }
+ function article(id){
+  const doc=docs().find(d=>d.id===id);
+  if(!doc)return '<div class="docs-shell docs-not-found"><h1>Guide not found.</h1><a href="/docs/">← Back to all documentation</a></div>';
+  const index=docs().indexOf(doc),prev=docs()[index-1],next=docs()[index+1];
+  return '<div class="docs-shell docs-reader"><div class="docs-breadcrumbs"><a href="/docs/">Documentation</a><span>/</span><span>'+esc(doc.label)+'</span></div>'+
+   '<div class="docs-reader-grid"><aside class="docs-sidebar"><div class="docs-sidebar-label">STUDIO GUIDES</div><nav aria-label="Documentation chapters">'+docs().map(d=>
+   '<a href="'+url(d.id)+'" class="'+(d.id===id?'active':'')+'" '+(d.id===id?'aria-current="page"':'')+'>'+esc(d.label)+'</a>').join('')+'</nav><a class="docs-back-all" href="/docs/">← All documentation</a></aside>'+
+   '<article class="docs-article"><header class="docs-article-head"><span>'+esc(doc.category)+' / KNOWLEDGE BASE</span><h1>'+esc(doc.label)+'</h1><p>'+esc(doc.description)+'</p><div class="docs-meta"><span>VELORYZ source documentation</span><button type="button" data-doc-print>Print / Save PDF ↗</button></div></header>'+
+   '<div class="docs-prose">'+markdown(doc.markdown)+'</div><footer class="docs-article-footer"><p>Source-controlled reference. Technical, copyright and privacy plans do not by themselves certify compliance or transfer rights.</p>'+
+   '<div class="docs-next-prev">'+(prev?'<a href="'+url(prev.id)+'"><small>PREVIOUS</small><strong>← '+esc(prev.label)+'</strong></a>':'<span></span>')+(next?'<a href="'+url(next.id)+'"><small>NEXT</small><strong>'+esc(next.label)+' →</strong></a>':'<span></span>')+'</div></footer></article></div></div>';
+ }
+ function render(){
+  if(!library&&!error)ensure();
+  if(!library)return '<div id="docs-app" class="docs-shell"><div class="docs-loading" role="status"><span>VELORYZ / DOCUMENTATION</span><h1>'+(error?'Documentation unavailable.':'Loading documentation…')+'</h1><p>'+esc(error||'Preparing the full guides and references.')+'</p>'+(error?'<button type="button" data-doc-retry>Retry</button>':'')+'</div></div>';
+  return '<div id="docs-app">'+(slug()?article(slug()):hub())+'</div>';
+ }
+ function refresh(){const root=document.getElementById('docs-app');if(root)root.outerHTML=render();}
+ document.addEventListener('input',e=>{
+  if(e.target.id==='docs-search'){term=e.target.value.slice(0,140);const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();}
+ });
+ document.addEventListener('click',e=>{
+  const cat=e.target.closest('[data-doc-category]');
+  if(cat){group=cat.dataset.docCategory;document.querySelectorAll('[data-doc-category]').forEach(b=>{const yes=b.dataset.docCategory===group;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',String(yes));});const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();return;}
+  if(e.target.closest('[data-doc-reset]')){group='All';term='';refresh();}
+  if(e.target.closest('[data-doc-retry]')){error='';loading=null;refresh();}
+  if(e.target.closest('[data-doc-print]'))window.print();
+ });
+ window.VeloryzDocs={render,refresh,list:()=>docs().map(d=>({id:d.id,title:d.label,category:d.category}))};
+})();
