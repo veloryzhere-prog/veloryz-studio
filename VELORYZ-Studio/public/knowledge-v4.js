@@ -97,6 +97,8 @@
     };
     return '<svg class="'+E(cls)+'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[name]||shapes.book)+'</svg>';
   };
+  const originalLogo=()=>'<img class="kb-official-logo" src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="VELORYZ Studio" decoding="async" width="880" height="263">';
+  const sourceAsset=(family,name,cls='')=>'<img class="kb-source-asset '+E(cls)+'" src="/assets/future-assets/'+family+'/'+name+'.svg" alt="" aria-hidden="true" loading="lazy" decoding="async" width="120" height="120">';
   const arrow=()=>icon('arrow','kb-arrow');
   const searchTrigger=(compact=false)=>'<button type="button" class="kb-search-trigger'+(compact?' kb-search-compact':'')+'" data-kb-search aria-haspopup="dialog">'+icon('search')+'<span>Search documentation, questions, resources...</span><kbd>⌘ K</kbd></button>';
   const trail=items=>'<nav class="kb-trail" aria-label="Breadcrumb">'+items.map((a,i)=>i===items.length-1?'<span aria-current="page">'+E(a[0])+'</span>':'<a href="'+E(a[1])+'">'+E(a[0])+'</a>').join('<span class="kb-trail-divider">/</span>')+'</nav>';
@@ -113,7 +115,7 @@
   function sidebar(type,items){
     const selection=type==='studio'?'/docs/studio/':type==='help'?'/help/studio/':'/docs/';
     const cats=type==='studio'?categories(items.filter(x=>x.kind==='studio')).slice(0,11):[];
-    return '<aside class="kb-sidebar" aria-label="Documentation navigation"><div class="kb-sidebar-brand"><span class="kb-sidebar-mark">'+icon('layers')+'</span><span><strong>VELORYZ</strong><small>Knowledge system · Edition 01</small></span></div>'+
+    return '<aside class="kb-sidebar" aria-label="Documentation navigation"><div class="kb-sidebar-brand"><a href="/" class="kb-official-brand" aria-label="VELORYZ Studio homepage">'+originalLogo()+'</a><span><strong>STUDIO / DOCUMENTATION</strong><small>Living Knowledge System</small></span></div>'+
       searchTrigger(true)+
       '<div class="kb-sidebar-caption">DISCOVER</div><nav class="kb-sidebar-nav">'+
       [['/docs/','Documentation','book'],['/help/studio/','Help Centre','help'],['/docs/studio/','Studio docs','layers'],['/sitemap/','Site map','map']].map(x=>'<a href="'+x[0]+'"'+(selection===x[0]?' class="is-active" aria-current="page"':'')+'>'+icon(x[2])+'<span>'+x[1]+'</span>'+icon('chevron','kb-nav-chevron')+'</a>').join('')+'</nav>'+
@@ -122,7 +124,7 @@
       '<div class="kb-sidebar-help"><span>STILL NEED A HAND?</span><strong>We’re here to make it clearer.</strong><a href="/contact/">Talk to the team '+arrow()+'</a></div></aside>';
   }
   function cardFeature(type,title,description,href,label,count){
-    return '<a class="kb-feature kb-feature-'+type+'" href="'+href+'"><div class="kb-feature-top"><span>'+icon(type==='help'?'help':type==='map'?'map':'layers')+' '+E(label)+'</span><span>'+String(count)+' resources</span></div>'+art(type)+
+    return '<a class="kb-feature kb-feature-'+type+'" href="'+href+'"><div class="kb-feature-top"><span>'+icon(type==='help'?'help':type==='map'?'map':'layers')+' '+E(label)+'</span><span>'+String(count)+' resources</span></div>'+art(type)+sourceAsset(type==='help'?'help':type==='map'?'sitemap':'documentation',type==='help'?'help-beacon':type==='map'?'route-draw':'page-unfold','kb-feature-supplied-asset')+
       '<div class="kb-feature-body"><h3>'+E(title)+'</h3><p>'+E(description)+'</p><span class="kb-feature-action">Explore collection '+arrow()+'</span></div></a>';
   }
   function docsHome(items){
@@ -130,7 +132,7 @@
     const picks=['D-004','D-079','D-086','D-094','D-107','H-003','H-014','H-016'].map(id=>items.find(a=>a.id===id)).filter(Boolean);
     const cat=categories(studio).filter(x=>x!=='Product overview and onboarding').slice(0,6);
     return '<div id="docs-app" class="kb-v4 kb-home"><div class="kb-grid-shell">'+sidebar('all',items)+'<main class="kb-main">'+trail([['Knowledge base','/docs/'],['Overview']])+
-      '<section class="kb-intro"><div class="kb-eyebrow"><span class="kb-live-dot"></span> THE VELORYZ KNOWLEDGE SYSTEM <span class="kb-sparkline">✳</span></div><h1>Find your way.<br><em>Make something remarkable.</em></h1><p>The home for everything VELORYZ Studio. Clear answers, deep references, and every route connected—beautifully and intentionally.</p>'+searchTrigger()+
+      '<section class="kb-intro kb-figma-intro">'+sourceAsset('ambient','aurora-drift','kb-intro-art')+sourceAsset('ambient','orbital-halo','kb-intro-art-two')+'<div class="kb-eyebrow"><span class="kb-live-dot"></span> THE VELORYZ KNOWLEDGE SYSTEM <span class="kb-sparkline">✳</span></div><h1>Find your way.<br><em>Make something remarkable.</em></h1><p>The home for everything VELORYZ Studio. Clear answers, deep references, and every route connected—beautifully and intentionally.</p>'+searchTrigger()+
       '<div class="kb-intro-stats"><span><b>'+items.length+'</b> articles</span><span><b>'+categories(studio).length+'</b> reference topics</span><span><b>01</b> connected system</span></div></section>'+
       '<section class="kb-section"><div class="kb-section-heading"><div><span class="kb-kicker">START HERE / 001</span><h2>Choose your way in.</h2></div><p>One connected knowledge experience, three clear paths.</p></div>'+
       '<div class="kb-feature-grid">'+cardFeature('help','Help Centre','Find answers, solve problems, and get support.', '/help/studio/','SUPPORT',help.length)+
