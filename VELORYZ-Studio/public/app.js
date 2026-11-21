@@ -571,7 +571,7 @@ function startVisitorCampaigns(initial=true){
   const o=offers[index],delay=initial?Math.max(50,(Number(o.delay)||4.7)*1000-performance.now()):250;
   campaignTimer=setTimeout(()=>{if(!modalOpen&&!document.querySelector('veloryz-frame-cut[data-focus]')&&!document.activeElement?.matches('input,select,textarea'))openOffer(index);},delay);
  }else if(initial&&!offers.some(o=>campaignPlacement(o)==='popup')&&studioCMS?.site.consultationEnabled&&!['/book/','/contact/','/create/'].includes(currentRoute)&&!consultationSuppressed()){
-  popupTimer=setTimeout(()=>{if(!modalOpen&&!document.querySelector('veloryz-frame-cut[data-focus]')&&!document.activeElement?.matches('input,select,textarea'))openBooking();},studioCMS.site.consultationDelay*1000);
+  popupTimer=setTimeout(()=>{if(!consultationSuppressed()&&!modalOpen&&!document.querySelector('veloryz-frame-cut[data-focus]')&&!document.activeElement?.matches('input,select,textarea'))openBooking();},studioCMS.site.consultationDelay*1000);
  }
  campaignRotation=setInterval(()=>{if(!document.hidden&&!modalOpen&&!$('#site-pin')?.contains(document.activeElement)&&!$('#offer-dock')?.contains(document.activeElement)){if(!reduced.matches&&!document.body.classList.contains('motion-paused'))offerIndex++;renderOfferDock();}},9000);
  const boundaries=(studioCMS?.offers||[]).filter(o=>o.enabled).flatMap(o=>[o.startAt,o.endAt]).map(x=>Date.parse(x)).filter(x=>Number.isFinite(x)&&x>Date.now());
