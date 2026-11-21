@@ -103,6 +103,13 @@
     if(!catalog&&!error)load();
     if(!catalog)return '<div id="docs-app" class="studio-docs-shell studio-docs-loading"><h1>'+(error?'Documentation unavailable':'Loading Studio documentation…')+'</h1><p>'+esc(error||'Preparing the category index and guides.')+'</p>'+(error?'<button type="button" data-studio-doc-retry>Retry</button>':'')+'</div>';
     const path=normalized(location.pathname);
+    const current=entries().find(a=>normalized(a.path)===path);
+    const title=current?.title||(isHelp()?'Help Centre':'Studio Documentation');
+    document.title=title+' — VELORYZ Studio';
+    const meta=document.querySelector('meta[name="description"]');
+    if(meta)meta.content=(current?.summary||(isHelp()?'Answers and practical help for working with VELORYZ Studio.':'The Studio operations, product and design documentation library.')).slice(0,300);
+    const ogTitle=document.querySelector('meta[property="og:title"]'),ogDesc=document.querySelector('meta[property="og:description"]');
+    if(ogTitle)ogTitle.content=document.title;if(ogDesc&&meta)ogDesc.content=meta.content;
     if(path==='/docs/studio'||path==='/help/studio')return index();
     return article(path);
   }
