@@ -161,7 +161,7 @@
   function siteEntries(){
     const pub=library().map(a=>({...a,group:a.kind==='help'?'Help Centre':a.kind==='studio'?'Studio docs · '+a.category:'Service guides',type:a.kind}));
     const site=staticPages.map(([path,title,group,summary])=>({path,title,summary,group,type:'site'}));
-    return [...site,...pub];
+    const seen=new Set();return [...site,...pub].filter(a=>{const p=a.path.replace(/\/+$/,'')||'/';if(seen.has(p))return false;seen.add(p);return true});
   }
   const networks=[
     {id:'studio',title:'VELORYZ Studio',sub:'Work, services and the team',href:'/studio/',kind:'site',count:'SITE'},
@@ -311,5 +311,68 @@
     }
   });
   document.addEventListener('studio:route',()=>{if(palette?.open)palette.close();renderFooterLinks();});
+
+  let readerScrollFrame=0,readingObserver=null;
+  function syncReaderProgress(){
+    const host=document.querySelector('#docs-app.studio-docs-shell');
+    const prose=host?.querySelector('.studio-docs-prose');
+    if(!prose)return;
+    const rect=prose.getBoundingClientRect();
+    const usable=Math.max(1,rect.height-innerHeight*.52);
+    const progress=Math.max(0,Math.min(100,Math.round((innerHeight*.42-rect.top)/usable*100)));
+    const progressBar=host.querySelector('.kb-reader-progress');
+    if(progressBar){progressBar.style.width=progress+'%';progressBar.setAttribute('aria-valuenow',String(progress));}
+    const headings=Array.from(prose.querySelectorAll('h2[id],h3[id]'));
+    let current=headings[0]?.id||'';
+    for(const h of headings){if(h.getBoundingClientRect().top<innerHeight*.32)current=h.id;else break;}
+    host.querySelectorAll('.studio-docs-right nav a[href^="#"]').forEach(a=>{
+      const active=a.getAttribute('href')==='#'+current;
+      a.classList.toggle('kb-toc-active',active);
+      if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');
+    });
+  }
+  function enhanceReader(){
+    const host=document.querySelector('#docs-app.studio-docs-shell.studio-docs-reader');
+    if(!host||host.dataset.kbReaderEnhanced==='yes')return;
+    const article=host.querySelector('.studio-docs-article');
+    const hero=host.querySelector('.studio-docs-article-hero');
+    if(!article||!hero)return;
+    host.dataset.kbReaderEnhanced='yes';
+    const progress=document.createElement('div');
+    progress.className='kb-reader-progress';
+    progress.setAttribute('role','progressbar');
+    progress.setAttribute('aria-label','Article reading progress');
+    progress.setAttribute('aria-valuemin','0');
+    progress.setAttribute('aria-valuemax','100');
+    progress.setAttribute('aria-valuenow','0');
+    host.prepend(progress);
+    const controls=document.createElement('div');
+    controls.className='kb-reader-tools';
+    controls.innerHTML='<button type="button" class="kb-reader-search" data-kb-search>'+icon('search')+' Search in knowledge <kbd>⌘ K</kbd></button><button type="button" class="kb-rail-toggle" data-kb-rail-toggle aria-expanded="true">'+icon('menu')+' Toggle sidebar</button>';
+    article.insertBefore(controls,hero);
+    const notes=document.createElement('aside');notes.className='kb-article-feedback';
+    const pageTitle=article.querySelector('h1')?.textContent?.trim()||'VELORYZ guide';
+    const subject=encodeURIComponent('VELORYZ documentation feedback: '+pageTitle);
+    const body=encodeURIComponent('Article: '+location.href+'\n\nSuggested improvement or issue:\n');
+    notes.innerHTML='<div><span class="kb-kicker">HELP IMPROVE THIS GUIDE</span><h3>Was this information useful?</h3><p>Your corrections help keep the knowledge system clear and accurate.</p></div><div><a href="mailto:veloryz.here@gmail.com?subject='+subject+'&body='+body+'">Suggest an improvement '+icon('arrow')+'</a><a href="/help/studio/contact/">Need more help? '+icon('life')+'</a></div>';
+    article.appendChild(notes);
+    syncReaderProgress();
+  }
+  document.addEventListener('click',ev=>{
+    const toggle=ev.target.closest?.('[data-kb-rail-toggle]');
+    if(toggle){const host=document.querySelector('#docs-app.studio-docs-shell.studio-docs-reader');if(host){const collapsed=host.classList.toggle('kb-reader-rail-collapsed');toggle.setAttribute('aria-expanded',String(!collapsed));}}
+  });
+  window.addEventListener('scroll',()=>{
+    if(readerScrollFrame)return;
+    readerScrollFrame=requestAnimationFrame(()=>{readerScrollFrame=0;syncReaderProgress()});
+  },{passive:true});
+  window.addEventListener('resize',syncReaderProgress,{passive:true});
+  document.addEventListener('studio:route',()=>{enhanceReader();syncReaderProgress()});
+  if(typeof MutationObserver==='function'){
+    readingObserver=new MutationObserver(()=>enhanceReader());
+    const main=document.getElementById('main');
+    if(main)readingObserver.observe(main,{childList:true,subtree:true});
+  }
+  enhanceReader();
   window.VeloryzKnowledgeV4={render:docsRender,siteMap:mapRender,search:openPalette,getArticles:library};
 })();
