@@ -65,7 +65,7 @@ export function validateState(value){
   const markdown=String(entry.markdown??'').trim();
   if(markdown.length>25000||/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(markdown))fail('Documentation Markdown is too long or contains invalid characters.');
   docEdits[docPath]={title:text(entry.title,160),summary:text(entry.summary,900),markdown,
-   status:entry.status==='reviewed'?'reviewed':'blueprint',visible:entry.visible!==false};
+   status:['reviewed','draft'].includes(entry.status)?entry.status:'guide',visible:entry.visible!==false};
  }
  site.documentation.edits=docEdits;
  const branding={};for(const key of ['headerLogo','footerLogo','favicon','productLogo','heroLogo','showreel'])branding[key]=url(b[key],true);
@@ -163,7 +163,7 @@ async function authorize(request,env,defaultLoginMode){
  }
  return {id:userId,name:'Aryan Raj Singh'};
 }
-async function body(request){if(!request.headers.get('content-type')?.includes('application/json'))fail('Send a JSON document.',415);const value=await request.text();if(value.length>900000)fail('The document is too large.',413);try{return JSON.parse(value);}catch{fail('The document could not be read.');}}
+async function body(request){if(!request.headers.get('content-type')?.includes('application/json'))fail('Send a JSON document.',415);const value=await request.text();if(value.length>6000000)fail('The document is too large.',413);try{return JSON.parse(value);}catch{fail('The document could not be read.');}}
 async function stateResponse(env,user){await ensureState(env);const row=await env.DB.prepare('SELECT * FROM cms_state WHERE id=1').first();return {state:upgrade(JSON.parse(row.draft)),draftVersion:row.draft_version,publishedVersion:row.published_version,hasDraft:row.draft!==row.published,updatedAt:row.updated_at,user};}
 function mutationOrigin(request){if(['GET','HEAD'].includes(request.method))return;const origin=request.headers.get('origin');if((origin&&origin!==new URL(request.url).origin)||request.headers.get('sec-fetch-site')==='cross-site')fail('This request must come from the studio website.',403);}
 async function saveDraft(env,state,expected){
