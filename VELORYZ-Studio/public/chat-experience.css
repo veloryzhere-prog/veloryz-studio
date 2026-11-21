@@ -104,3 +104,10 @@ body.motion-edition #modal-root .expert-modal.chat-spicy {
 @media(prefers-reduced-motion:reduce){
  #modal-root .expert-modal,#modal-root .expert-modal *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Keep theme contrast consistent with legacy global text rules. */
+body.motion-edition #modal-root .expert-modal .chat-header p,
+body.motion-edition #modal-root .expert-modal .chat-connection,
+body.motion-edition #modal-root .expert-modal .chat-footer {color:var(--chat-muted)!important;background:var(--chat-paper)}
+body.motion-edition #modal-root .expert-modal .chat-header p{background:transparent}
+body.motion-edition #modal-root .expert-modal #expert-question{scrollbar-width:thin;scrollbar-color:var(--chat-line) var(--chat-paper)}
