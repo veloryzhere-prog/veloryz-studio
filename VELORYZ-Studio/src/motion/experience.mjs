@@ -24,7 +24,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   const canvas=renderer.domElement;
   canvas.setAttribute('aria-hidden','true');
   container.append(canvas);
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1.05:1.35));
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1:1.2));
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);
   scene.add(new THREE.HemisphereLight(0xffeaf4,0x785b76,1.65));
   for (const [color,power,x,y,z] of [[0xfff4ed,3.7,-3,5,6],[0x9ebdff,2.5,4,2,-2],[0xff94c4,1.6,-3,-2,-3]]) {
@@ -61,7 +61,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
     if (disposed||!visible||document.hidden) return;
     const active=motion(),dt=last?Math.min(.08,(time-last)/1000):0;
     // Keep high-frequency updates for direct inspection, limit idle GPU work.
-    const interval=manual?16:software?55:economical?34:26;
+    const interval=manual?16:software?55:economical?38:30;
     if(last&&time-last<interval){if(active||manual||story)wake();return;}
     last=time;
     if(active)elapsed+=dt*speed;
@@ -90,7 +90,8 @@ function mount(container,softwareOnly=false,previousPose=null) {
       }
     });
     renderer.render(scene,camera);
-    container.dataset.webgl=software?'software':'ready';
+    const mode=software?'software':'ready';
+    if(container.dataset.webgl!==mode)container.dataset.webgl=mode;
     if(active&&!story&&(!manual||Math.abs(wanted-explosion)>.002))wake();
   }
   function changed(){last=0;wake();}
