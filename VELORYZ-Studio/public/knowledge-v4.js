@@ -340,6 +340,14 @@
     const hero=host.querySelector('.studio-docs-article-hero');
     if(!article||!hero)return;
     host.dataset.kbReaderEnhanced='yes';
+    const kicker=hero.querySelector('.studio-docs-kicker')?.textContent?.toLowerCase()||'';
+    const family=kicker.includes('motion')?'interaction':kicker.includes('media')?'media':kicker.includes('troubleshooting')?'status':kicker.includes('help')?'help':'documentation';
+    const images={interaction:['hover-lift','card-tilt','feedback-spark'],media:['image-reveal','gallery-shift','frame-focus'],status:['warning-pulse','success-bloom','info-orbit'],help:['help-beacon','guidance-compass','answer-reveal'],documentation:['page-unfold','section-marker','reading-progress','sidebar-glide','breadcrumb-flow','callout-pulse','tab-slide','accordion-breathe','media-frame','copy-confirm']};
+    const routeKey=location.pathname.split('/').filter(Boolean).join('-');
+    const seed=[...routeKey].reduce((sum,char)=>sum+char.charCodeAt(0),0);
+    const visual=images[family][seed%images[family].length];
+    const oldArt=hero.querySelector('svg.docs-article-art');
+    if(oldArt)oldArt.outerHTML=sourceAsset(family,visual,'kb-article-source-art');
     const progress=document.createElement('div');
     progress.className='kb-reader-progress';
     progress.setAttribute('role','progressbar');
@@ -369,12 +377,22 @@
     readerScrollFrame=requestAnimationFrame(()=>{readerScrollFrame=0;syncReaderProgress()});
   },{passive:true});
   window.addEventListener('resize',syncReaderProgress,{passive:true});
-  document.addEventListener('studio:route',()=>{enhanceReader();syncReaderProgress()});
+  document.addEventListener('studio:route',()=>{enhanceReader();enhanceServiceReader();syncReaderProgress()});
   if(typeof MutationObserver==='function'){
-    readingObserver=new MutationObserver(()=>enhanceReader());
+    readingObserver=new MutationObserver(()=>{enhanceReader();enhanceServiceReader();});
     const main=document.getElementById('main');
     if(main)readingObserver.observe(main,{childList:true,subtree:true});
   }
+  function enhanceServiceReader(){
+    const header=document.querySelector('#docs-app .docs-reader .docs-article-head');
+    if(!header||header.dataset.kbFigmaArt==='yes')return;
+    header.dataset.kbFigmaArt='yes';
+    const path=location.pathname.toLowerCase();
+    const family=path.includes('privacy')||path.includes('copyright')?'status':'documentation';
+    const name=family==='status'?(path.includes('privacy')?'secure-lock':'info-orbit'):'page-unfold';
+    header.insertAdjacentHTML('beforeend',sourceAsset(family,name,'kb-service-source-art'));
+  }
   enhanceReader();
+  enhanceServiceReader();
   window.VeloryzKnowledgeV4={render:docsRender,siteMap:mapRender,search:openPalette,getArticles:library};
 })();
