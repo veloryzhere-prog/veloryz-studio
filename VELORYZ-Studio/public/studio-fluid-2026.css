@@ -23,7 +23,7 @@
  color-scheme:light;
 }
 html{scroll-padding-top:clamp(78px,8vw,120px);-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:clip}
-body.motion-edition{overflow-x:clip;min-width:320px;text-rendering:optimizeLegibility}
+body.motion-edition{overflow-x:clip;min-width:0;text-rendering:optimizeLegibility}
 :is(#main,#footer,.container,.section,.hero-layout,.section-head,.work-grid,.feature-grid,.split-section,.form-grid,.footer-directory,.studio-docs-grid,.kb-grid-shell,.v4-root,.vz-chat){min-width:0}
 :is(#main,#footer) :is(img,video,svg,picture){max-width:100%}
 :is(.section-head,.hero-copy,.hero-actions,.work-grid,.footer-directory,.feature-grid,.contact-layout)>*{min-width:0}
