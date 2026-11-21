@@ -7,6 +7,10 @@ context.window.VeloryzPlanner=context.VeloryzPlanner;
 const model=context.VeloryzPlanner;
 assert.equal(model.restore('not JSON').pages,'4');
 assert.equal(model.restore('null').purpose,'Portfolio');
+assert.equal(model.restore('null').style,'Editorial');
+assert.equal(model.restore('null').budget,50000);
+assert.equal(model.normalize({style:'Bold',budget:200000}).style,'Bold');
+assert.equal(model.normalize({budget:9999999}).budget,300000);
 const normal=model.normalize({pages:999,features:['AI adviser','AI adviser','Unknown'],assets:['Brand identity','Invalid'],timeline:'Yesterday',goal:'  A considered goal  '});
 assert.equal(normal.pages,'4');assert.deepEqual([...normal.features],['AI adviser']);assert.equal(normal.timeline,'Flexible');assert.equal(normal.goal,'A considered goal');
 const estimate=model.estimate({pages:'8',features:['Booking workflow']},{price:20000});
@@ -31,15 +35,15 @@ console.log('PASS: bounded planning inputs, restored drafts, transparent estimat
 // Exercise the actual controller against a small DOM adapter. No browser or network side effects.
 const listeners=new Map(),raf=[];
 const attributes=()=>({attrs:{},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]??null;},classList:{toggle(){}},focus(){this.focused=true;}});
-const panels=[0,1,2].map(()=>({...attributes(),hidden:false,querySelector:()=>({focus(){}})}));
-const next={hidden:false},back={disabled:false},submit={hidden:false},progress={style:{}},status={textContent:''},review={innerHTML:''},saveStatus={textContent:''},goal={...attributes(),value:'short'},goalError={hidden:true,textContent:''};
-const stepButtons=[0,1,2].map(i=>({...attributes(),dataset:{plannerGo:String(i)}}));
+const panels=[0,1,2,3].map(()=>({...attributes(),hidden:false,querySelector:()=>({focus(){}})}));
+const next={hidden:false},back={disabled:false},submit={hidden:false},progress={style:{}},status={textContent:''},review={innerHTML:''},saveStatus={textContent:''},goal={...attributes(),value:'short'},goalError={hidden:true,textContent:''},contact={value:'client@example.com',validity:{valid:true},focus(){this.focused=true;},reportValidity(){return true}},contactError={hidden:true,textContent:''};
+const stepButtons=[0,1,2,3].map(i=>({...attributes(),dataset:{plannerGo:String(i)}}));
 const root={querySelectorAll:s=>s==='[data-planner-panel]'?panels:[],querySelector:s=>({'[data-planner-back]':back,'[data-planner-next]':next,'[data-planner-submit]':submit,'.planner-progress span':progress,'.planner-step-status':status}[s]||panels[Number(s.match(/"(\d)"/)?.[1])]),scrollIntoView(){}};
 const chapters=[0,1,2,3,4].map(()=>({...attributes(),hidden:false,scrollIntoView(){},getBoundingClientRect:()=>({top:200,height:300})}));
 const stageButtons=[0,1,2,3,4].map(i=>({...attributes(),dataset:{journeySelect:String(i)}}));
 const caption={textContent:''},story={dataset:{},style:{setProperty(){}},querySelectorAll:s=>s==='[data-journey-chapter]'?chapters:stageButtons,querySelector:()=>caption,getBoundingClientRect:()=>({top:2000,bottom:3800})};
 const media={matches:true,addEventListener(name,fn){this.change=fn;}};
-context.document={querySelector:s=>({'#guided-project-planner':root,'[data-planner-review-copy]':review,'[data-planner-save-status]':saveStatus,'[data-planner-goal]':goal,'#planner-goal-error':goalError}[s]??null),querySelectorAll:s=>s==='[data-project-journey]'?[story]:s==='[data-planner-go]'?stepButtons:[],addEventListener:(name,fn)=>listeners.set(name,fn)};
+context.document={querySelector:s=>({'#guided-project-planner':root,'[data-planner-review-copy]':review,'[data-planner-save-status]':saveStatus,'[data-planner-goal]':goal,'#planner-goal-error':goalError,'[data-planner-contact-email]':contact,'#planner-contact-error':contactError}[s]??null),querySelectorAll:s=>s==='[data-project-journey]'?[story]:s==='[data-planner-go]'?stepButtons:[],addEventListener:(name,fn)=>listeners.set(name,fn)};
 let stored='',destination='';
 context.sessionStorage={setItem:(key,value)=>{stored=value;},removeItem:()=>{stored='';}};
 context.matchMedia=()=>media;context.requestAnimationFrame=fn=>{raf.push(fn);return raf.length;};
@@ -51,8 +55,9 @@ vm.runInContext(fs.readFileSync(new URL('../public/journey-planner.js',import.me
 assert.equal(panels[0].hidden,false);assert.equal(panels[1].hidden,true);assert.equal(submit.hidden,true);
 assert.equal(chapters.filter(c=>!c.hidden).length,1,'Compact story should show one readable chapter.');
 function controllerClick(name,dataset={}){const button={dataset,hasAttribute:key=>key===name,closest:()=>story};listeners.get('click')({target:{closest:()=>button}});}
-controllerClick('data-planner-next');assert.equal(panels[1].hidden,false);assert.equal(status.textContent,'Step 2 of 3 · Scope');
-controllerClick('data-planner-next');assert.equal(panels[2].hidden,false);assert.equal(next.hidden,true);assert.equal(submit.hidden,false);
+controllerClick('data-planner-next');assert.equal(panels[1].hidden,false);assert.equal(status.textContent,'Step 2 of 4 · Visual style');
+controllerClick('data-planner-next');assert.equal(panels[2].hidden,false);assert.equal(next.hidden,false);assert.equal(submit.hidden,true);
+controllerClick('data-planner-next');assert.equal(panels[3].hidden,false);assert.equal(next.hidden,true);assert.equal(submit.hidden,false);
 let prevented=false;
 listeners.get('submit')({target:{id:'guided-project-planner'},preventDefault(){prevented=true;}});
 assert(prevented);assert.equal(destination,'');assert.equal(goalError.hidden,false);assert(goal.focused);
