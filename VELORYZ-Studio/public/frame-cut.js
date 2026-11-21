@@ -9,6 +9,7 @@ class VeloryzFrameCut extends HTMLElement {
  mount(){
   const stage=this.querySelector('.frame-stage');
   const reveal=this.querySelector('.frame-reveal');
+  const canvas=this.querySelector('.frame-reveal-canvas');
   const scarf=this.querySelector('.frame-scarf');
   const button=this.querySelector('.frame-toggle');
   if(!stage||!reveal||!scarf||!button)return;
@@ -20,6 +21,60 @@ class VeloryzFrameCut extends HTMLElement {
   let raf=0,near=false,ready=false,loaded=false,scarfLoaded=false;
   let playback=false,held=false,seekTarget=0,seekPending=false,lastSeek=-1;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
+  // The original reveal has 90 frames across ten 3x3 WebP sprite sheets.
+  // Drawing one source cell per scroll frame avoids expensive arbitrary MP4 seeking.
+  let ctx=null;
+  try{ctx=canvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
+  const sprites=Boolean(ctx&&typeof Image==='function');
+  let spriteFailed=false,spriteReady=false,drawnFrame=-1;
+  const sheets=new Map();
+  const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
+  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(ease(range(p,0,.62))*(TOTAL_FRAMES-1)));
+  const loadSheet=index=>{
+   if(!sprites||spriteFailed||index<0||index>=10||sheets.has(index)||deleted)return;
+   const img=new Image(),entry={img,ready:false};
+   sheets.set(index,entry);
+   img.onload=()=>{
+    if(deleted)return;
+    entry.ready=true;lastProgress=-1;schedule();
+   };
+   img.onerror=()=>{
+    if(deleted)return;
+    spriteFailed=true;sheets.clear();spriteReady=false;
+    lastProgress=-1;prefetch();schedule();
+   };
+   img.decoding='async';
+   img.src='/assets/frame-cut/frames/sheet-'+index+'.webp';
+  };
+  const drawSprite=progress=>{
+   if(!sprites||spriteFailed||!ctx)return false;
+   const current=frameAt(progress),index=Math.floor(current/9);
+   loadSheet(index);loadSheet(index+1);
+   if(progress<.2)loadSheet(0);
+   const entry=sheets.get(index);
+   if(!entry?.ready){
+    if(spriteReady){spriteReady=false;set('--frame-canvas-ready',0);}
+    return false;
+   }
+   const ratio=Math.min(window.devicePixelRatio||1,1.5);
+   const width=Math.max(1,Math.round((stage.clientWidth||window.innerWidth||640)*ratio));
+   const height=Math.max(1,Math.round((stage.clientHeight||window.innerHeight||360)*ratio));
+   const resize=canvas.width!==width||canvas.height!==height;
+   if(resize){canvas.width=width;canvas.height=height;drawnFrame=-1;}
+   if(drawnFrame!==current){
+    const cell=current%9,sx=(cell%COLS)*CELL_W,sy=Math.floor(cell/COLS)*CELL_H;
+    const imageWidth=Math.min(width,height*16/9),imageHeight=imageWidth*9/16;
+    const x=(width-imageWidth)/2,y=(height-imageHeight)/2;
+    ctx.fillStyle='#06071a';ctx.fillRect(0,0,width,height);
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.drawImage(entry.img,sx,sy,CELL_W,CELL_H,x,y,imageWidth,imageHeight);
+    drawnFrame=current;
+   }
+   if(!spriteReady){spriteReady=true;set('--frame-canvas-ready',1);}
+   // Only active and nearby sheets are kept in decoded memory.
+   for(const key of sheets.keys())if(Math.abs(key-index)>2)sheets.delete(key);
+   return true;
+  };
   const set=(key,value)=>this.style.setProperty(key,String(value));
   const pause=()=>{if(playback||!scarf.paused){playback=false;scarf.pause();}};
   const label=()=>{
@@ -48,7 +103,7 @@ class VeloryzFrameCut extends HTMLElement {
   };
   const prefetch=()=>{
    if(!near||deleted)return;
-   if(!loaded){
+   if((!sprites||spriteFailed)&&!loaded){
     loaded=true;
     reveal.preload='auto';
     reveal.src='/assets/frame-cut/reveal.mp4';
@@ -92,11 +147,13 @@ class VeloryzFrameCut extends HTMLElement {
     const arrival=ease(range(progress,0,.12));
     const transition=ease(range(progress,.58,.72));
     const portalLife=1-ease(range(progress,.60,.75));
-    const fallback=ready?0:1;
+    const hasFrame=drawSprite(progress);
+    const fallback=hasFrame||ready?0:1;
     set('--scarf-progress',progress.toFixed(5));
     set('--frame-reveal-opacity',portalLife.toFixed(4));
-    set('--frame-reveal-ready',ready?1:0);
-    set('--frame-poster-opacity',(ready?0:portalLife).toFixed(4));
+    set('--frame-reveal-ready',!hasFrame&&ready?1:0);
+    set('--frame-canvas-ready',hasFrame?1:0);
+    set('--frame-poster-opacity',hasFrame||ready?0:1);
     set('--frame-portal-light',((.12+.72*Math.sin(Math.PI*range(progress,.04,.72)))*portalLife).toFixed(4));
     set('--frame-portal-rotation',(-8+progress*24).toFixed(3)+'deg');
     set('--scarf-film-opacity',transition.toFixed(4));
@@ -106,7 +163,7 @@ class VeloryzFrameCut extends HTMLElement {
     set('--scarf-scale',(1.12-.12*arrival).toFixed(4));
     set('--scarf-angle',((1-arrival)*6).toFixed(3)+'deg');
     set('--scarf-x','0%');set('--scarf-y','0%');
-    planSeek(progress);
+    if(!sprites||spriteFailed)planSeek(progress);
    }
    const showScarf=near&&visible&&progress>=.60;
    button.hidden=!showScarf;
@@ -142,7 +199,7 @@ class VeloryzFrameCut extends HTMLElement {
    schedule();
   });
   on(window,'scroll',schedule,{passive:true});
-  on(window,'resize',schedule,{passive:true});
+  on(window,'resize',()=>{drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
   on(window,'pageshow',schedule);
   on(document,'visibilitychange',schedule);
   on(document,'studio:route',schedule);
@@ -150,7 +207,7 @@ class VeloryzFrameCut extends HTMLElement {
   this.cleanup=()=>{
    deleted=true;controller.abort();observer?.disconnect();
    cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
-   pause();reveal.pause?.();reveal.removeAttribute('src');scarf.removeAttribute('src');
+   pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
    reveal.load?.();scarf.load?.();
   };
   schedule();
