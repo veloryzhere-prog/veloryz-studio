@@ -28,12 +28,12 @@
  }
  function editorMarkup(){
   const a=current();if(!a)return '<div class="docs-cms-placeholder">Select a documentation page to edit.</div>';
-  const status=a.status==='reviewed'?'reviewed':'blueprint';
+  const status=['reviewed','draft'].includes(a.status)?a.status:'guide';
   return '<div class="docs-cms-editor-grid">'+
     '<div class="admin-field full"><label for="docs-cms-title">Article title</label><input id="docs-cms-title" type="text" data-doc-cms-field="title" maxlength="160" value="'+esc(a.title)+'"></div>'+
     '<div class="admin-field full"><label for="docs-cms-summary">Description / search summary</label><textarea id="docs-cms-summary" data-doc-cms-field="summary" maxlength="900" rows="3">'+esc(a.summary)+'</textarea></div>'+
     '<div class="admin-field full"><label for="docs-cms-markdown">Article content (Markdown)</label><textarea id="docs-cms-markdown" data-doc-cms-field="markdown" maxlength="25000" rows="16" spellcheck="true">'+esc(a.markdown)+'</textarea><small>Use # headings, **bold**, numbered steps and /docs/studio/... links. HTML is not accepted.</small></div>'+
-    '<div class="admin-field"><label for="docs-cms-review">Editorial status</label><select id="docs-cms-review" data-doc-cms-field="status"><option value="blueprint" '+(status==='blueprint'?'selected':'')+'>Blueprint / not yet verified</option><option value="reviewed" '+(status==='reviewed'?'selected':'')+'>Reviewed and verified</option></select></div>'+
+    '<div class="admin-field"><label for="docs-cms-review">Editorial status</label><select id="docs-cms-review" data-doc-cms-field="status"><option value="guide" '+(status==='guide'?'selected':'')+'>Published operational guide</option><option value="draft" '+(status==='draft'?'selected':'')+'>Under editorial review</option><option value="reviewed" '+(status==='reviewed'?'selected':'')+'>Verified by Studio team</option></select></div>'+
     '<label class="docs-cms-visibility"><input type="checkbox" data-doc-cms-field="visible" '+(a.visible!==false?'checked':'')+'> Publicly visible</label>'+
     '</div><div class="docs-cms-actions"><button class="admin-button secondary" type="button" data-doc-cms-reset>Restore source content</button><a class="admin-button secondary" href="'+esc(a.path)+'" target="_blank" rel="noopener noreferrer">View public article ↗</a></div>';
  }
@@ -65,7 +65,7 @@
   if(!['title','summary','markdown','status','visible'].includes(field))return;
   const docs=settings();
   if(!docs.edits)docs.edits={};
-  const p=key(a.path),change=docs.edits[p]||{title:a.title,summary:a.summary,markdown:a.markdown,status:a.status||'blueprint',visible:true};
+  const p=key(a.path),change=docs.edits[p]||{title:a.title,summary:a.summary,markdown:a.markdown,status:a.status||'guide',visible:true};
   change[field]=el.type==='checkbox'?el.checked:el.value;
   docs.edits[p]=change;
   markDirty();
