@@ -79,3 +79,62 @@ assert.ok(reader.includes('data-studio-doc-print')&&reader.includes('ON THIS PAG
 assert.ok(sitemap.includes('site-map-app')&&sitemap.includes('studio-docs-index.json'),'Human sitemap missing');
 for(const stylesheet of ['public/docs-hub.css','public/docs-studio.css','public/site-map.css'])assert.ok(file(stylesheet).includes('prefers-reduced-motion'),'Reduced motion handling missing: '+stylesheet);
 console.log('Documentation quality checks passed: 141 Studio/Help articles, 11 service guides, 19 lazy chapters, working internal links, site map, accessible UI and CMS wiring.');
+
+
+/* Living Blueprint design-contract tests: browser-script syntax + functional route output. */
+const ui=file('public/knowledge-v4.js');
+const design=file('public/knowledge-v4.css');
+assert.doesNotThrow(()=>new Function(ui),'Living Blueprint browser script must parse');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.js?v=20261121-living-blueprint-v4'),'Design script not loaded');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.css?v=20261121-living-blueprint-v4'),'Design stylesheet not loaded');
+assert.ok(app.includes("['/docs/','Docs']"),'Top navigation must use only Docs label');
+const header=app.slice(app.indexOf('function header(){'),app.indexOf('function footer(){'));
+assert.ok(!header.includes('Useful Links'),'Header must not duplicate Docs with Useful Links');
+const footer=app.slice(app.indexOf('function footer(){'),app.indexOf('function motionGlyph(){'));
+assert.ok(footer.includes("['https://veloryz.online/docs','Useful Links']"),'Useful Links should remain available in footer');
+assert.ok(footer.includes('footer-knowledge-index'),'Footer must have expandable complete article index');
+for(const link of ['/docs/studio/','/help/studio/','/sitemap/','/sitemap.xml','/docs/privacy/','/docs/copyright/'])assert.ok(footer.includes(link),'Footer directory link missing '+link);
+assert.ok(ui.includes('data-kb-map-zoom')&&ui.includes('data-kb-map-node')&&ui.includes('data-kb-map-filter'),'Site-map zoom and node interactions missing');
+assert.ok(ui.includes('data-kb-search')&&ui.includes('kb-command-input'),'Command search UI is missing');
+assert.ok(ui.includes('kb-reader-progress')&&ui.includes('kb-reader-rail-collapsed'),'Reading progress / collapsible sidebar missing');
+assert.ok(design.includes('prefers-reduced-motion'),'UI must respect reduced-motion settings');
+assert.ok(design.includes('@media(max-width:520px)'),'Mobile design breakpoint missing');
+
+const mockListeners=new Map();
+const mockDocument={
+ addEventListener(name,fn){mockListeners.set(name,fn)},
+ getElementById(){return null},
+ querySelector(){return null}
+};
+const mockLocation={pathname:'/docs/',href:'https://veloryz.online/docs/'};
+const mockWindow={
+ VeloryzDocs:{render:()=>'<div id="docs-app">existing article reader</div>'},
+ VeloryzSiteMap:{render:()=>'<div id="site-map-app">existing site map</div>'},
+ addEventListener(){}
+};
+const fetchMock=async path=>({ok:true,json:async()=>path.includes('studio-docs-index.json')?index:service});
+new Function('window','document','fetch','location','studioCMS',ui)(
+ mockWindow,mockDocument,fetchMock,mockLocation,{site:{documentation:{edits:{}}}}
+);
+assert.match(mockWindow.VeloryzDocs.render(),/Opening the knowledge system/,'Loading feedback must appear');
+await new Promise(resolve=>setImmediate(resolve));
+const home=mockWindow.VeloryzDocs.render();
+assert.equal((home.match(/class="kb-feature kb-feature-/g)||[]).length,3,'Three primary Docs destinations required');
+assert.match(home,/kb-sidebar/,'Documentation workspace sidebar missing');
+assert.match(home,/data-kb-search/,'Prominent search trigger missing');
+mockLocation.pathname='/help/studio/';
+const help=mockWindow.VeloryzDocs.render();
+assert.match(help,/How can we/,'Support hero missing');
+assert.equal((help.match(/class="kb-help-topic kb-help-topic-/g)||[]).length,8,'Support quick-find cards missing');
+assert.match(help,/kb-faq-list/,'FAQ section missing');
+mockLocation.pathname='/docs/studio/';
+const studio=mockWindow.VeloryzDocs.render();
+assert.equal((studio.match(/class="kb-studio-category"/g)||[]).length,18,'Studio category explorer incomplete');
+mockLocation.pathname='/sitemap/';
+const visualMap=mockWindow.VeloryzSiteMap.render();
+assert.equal((visualMap.match(/data-kb-map-node=/g)||[]).length,4,'Interactive site map cluster count');
+assert.match(visualMap,/\/help\/studio\/create-project\//,'Help articles absent from human sitemap');
+assert.match(visualMap,/\/docs\/studio\/seo\/indexing\//,'Studio articles absent from human sitemap');
+mockLocation.pathname='/docs/studio/seo/indexing/';
+assert.match(mockWindow.VeloryzDocs.render(),/existing article reader/,'Existing content reader must remain intact');
+console.log('Living Blueprint visual routing passed: docs, help, Studio topics, searchable network, full footer and existing articles.');
