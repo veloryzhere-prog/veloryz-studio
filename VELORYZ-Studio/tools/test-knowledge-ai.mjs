@@ -19,7 +19,7 @@ assert.ok(backend.includes('AES-GCM')&&backend.includes('HKDF'),'Per-agent secre
 assert.ok(!backend.includes('console.log('),'Backend must not log transcripts');
 assert.ok(backend.includes('store:false'),'OpenAI calls must explicitly disable response storage');
 assert.ok(backend.includes('max_output_tokens:550'),'Bound external response size');
-assert.ok(backend.includes('messages.length'),'Bound input conversation length');
+assert.ok(backend.includes('raw.length>18'),'Bound input conversation length');
 assert.ok(backend.includes('deeperEvidence('),'Use public article excerpts as grounding');
 assert.ok(backend.includes('mode:\'guide\''),'Preserve clear non-AI fallback');
 assert.ok(backend.includes('veloryz_knowledge_ai_rate'),'Enforce distributed rate limiting');
