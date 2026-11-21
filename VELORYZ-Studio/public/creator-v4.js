@@ -149,28 +149,28 @@
  function preset(){return presets.find(p=>p.id===data.template)||null;}
  function isApp(){return ['SaaS / platform','Custom App','Community','Education'].includes(data.category);}
  function flow(){
-  const base=['discover','template','style','palette','pages','goal'];
+  const base=['discover','template','style','palette','reference','pages','goal'];
   for(const group of Object.keys(groupCopy)){
    if(featureGroups[group].includes(data.category))base.push('features-'+group.toLowerCase().replace(/[^a-z]+/g,'-'));
   }
   for(const name of Object.keys(questions)){
    if(data.features.includes(name))base.push('detail-'+encodeURIComponent(name));
   }
-  return [...base,'budget','timeline','priority','name','email','review'];
+  return [...base,'assets','budget','timeline','priority','name','email','review'];
  }
  function meta(id){
   if(id==='welcome')return ['Welcome','A new beginning'];
   if(id==='success')return ['Complete','Request received'];
   if(id.startsWith('features-'))return ['Capabilities','Feature choices'];
   if(id.startsWith('detail-'))return ['Capabilities','A little detail'];
-  const map={discover:['Discover','Project type'],template:['Discover','Starting point'],style:['Design','Visual direction'],palette:['Design','Color mood'],pages:['Scope','Pages and screens'],goal:['Scope','Your goal'],budget:['Budget','Your investment'],timeline:['Timeline','Preferred launch'],priority:['Timeline','Project priorities'],name:['Your details','Your name'],email:['Your details','Your email'],review:['Proposal','Review and send']};
+  const map={discover:['Discover','Project type'],template:['Discover','Starting point'],style:['Design','Visual direction'],palette:['Design','Color mood'],reference:['Design','Your inspiration'],pages:['Scope','Pages and screens'],goal:['Scope','Your goal'],assets:['Capabilities','Materials ready'],budget:['Budget','Your investment'],timeline:['Timeline','Preferred launch'],priority:['Timeline','Project priorities'],name:['Your details','Your name'],email:['Your details','Your email'],review:['Proposal','Review and send']};
   return map[id]||['Discover','Project type'];
  }
  function at(){return Math.max(0,flow().indexOf(active));}
  function route(to,replace=false){
   if(busy)return;
   const id=to==='welcome'||to==='success'||flow().includes(to)?to:'discover';
-  active=id;error='';inlineNotice='';
+  active=id;error='';inlineNotice='';if(id!=='welcome'&&id!=='success'){data.lastQuestion=id;sync();}
   const url=new URL(location.href);
   if(id==='welcome')url.searchParams.delete('question');
   else url.searchParams.set('question',id);
@@ -197,7 +197,7 @@
  }
  function change(key,value){
   if(key==='category'&&data.category!==value){
-   data.category=value;data.template='';data.external='';data.features=[];data.answers={};
+   data.category=value;data.template='';data.external='';data.features=[];data.answers={};categoryFilter=value;galleryTab='studio';
   }else data[key]=value;
   data.requestId='';sync();
  }
@@ -253,6 +253,11 @@
   '<div class="v4-palette-grid">'+palettes.map(([name,...colors])=>'<button type="button" class="v4-palette-card '+(data.palette===name?'is-selected':'')+'" data-v4-pick="palette" data-value="'+name+'" aria-pressed="'+(data.palette===name)+'"><span class="v4-palette-sample"><i style="background:'+colors[0]+'"></i><i style="background:'+colors[1]+'"></i><i style="background:'+colors[2]+'"></i></span><span class="v4-palette-name">'+name+' <b>'+(data.palette===name?'✓':'→')+'</b></span></button>').join('')+'</div>'+
   '<button type="button" class="v4-link-action" data-v4-action="palette-open">I’m happy for VELORYZ to decide →</button>';
  }
+ function referenceScreen(){
+  return sectionTitle('02 / YOUR INSPIRATION','Any website you love?','Share a link to something you like. We’ll use it as a creative reference, never copy a third-party design or asset.','OPTIONAL')+
+   '<label class="v4-simple-field"><span>INSPIRATION LINK</span><input id="v4-entry" type="url" data-v4-field="reference" maxlength="200" value="'+escape(data.reference)+'" placeholder="https://example.com"></label>'+
+   '<p class="v4-small-note">You can leave this blank and continue. The original template rights remain with their creator.</p>';
+ }
  function pagesScreen(){
   return sectionTitle('03 / THE SCOPE','How many pages or major screens?','Think homepage, about, services, contact—or app screens. We’ll clarify the final count together.')+
   '<div class="v4-number-grid">'+VeloryzPlanner.pages.map(n=>'<button type="button" data-v4-pick="pages" data-value="'+n+'" aria-pressed="'+(Number(data.pages)===n)+'" class="v4-number-card '+(Number(data.pages)===n?'is-selected':'')+'"><strong>'+n+'</strong><span>'+ (n===1?'Landing page':n===4?'Small website':n===6?'Growing business':n===8?'Larger experience':'Complex project')+'</span><i>→</i></button>').join('')+'</div>'+
@@ -277,6 +282,11 @@
   return sectionTitle('04 / A FEW DETAILS',question[0]+'?', 'Just one detail about '+feature.toLowerCase()+' helps us plan the right solution.','OPTIONAL')+
    '<div class="v4-detail-options">'+question[1].map(option=>cardSelect(option,'','answer:'+feature,option,data.answers[feature]===option,'')).join('')+'</div>'+
    '<button type="button" class="v4-link-action" data-v4-action="skip-detail">I’m not sure yet →</button>';
+ }
+ function assetsScreen(){
+  return sectionTitle('04 / PROJECT MATERIALS','What do you already have?','Select any materials you can share. It’s fine to start from zero.','OPTIONAL')+
+  '<div class="v4-feature-choices">'+VeloryzPlanner.assets.map(a=>'<label class="v4-feature-card '+(data.assets.includes(a)?'is-selected':'')+'"><input type="checkbox" data-v4-asset="'+escape(a)+'" '+(data.assets.includes(a)?'checked':'')+'><span class="v4-feature-check">'+(data.assets.includes(a)?'✓':'+')+'</span><span><strong>'+escape(a)+'</strong><small>'+(a==='Brand identity'?'Logos, typography or style guides':a==='Written content'?'Drafted copy, articles or service descriptions':a==='Images & media'?'Photos, graphics, video or other visuals':'An existing site or product to improve')+'</small></span></label>').join('')+'</div>'+
+  '<p class="v4-small-note">Materials can also be provided later during studio discovery.</p>';
  }
  function budgetScreen(){
   const e=estimate(),below=data.budget<e.low;
@@ -316,8 +326,10 @@
   if(id==='template')return templateScreen();
   if(id==='style')return styleScreen();
   if(id==='palette')return paletteScreen();
+  if(id==='reference')return referenceScreen();
   if(id==='pages')return pagesScreen();
   if(id==='goal')return goalScreen();
+  if(id==='assets')return assetsScreen();
   if(id.startsWith('features-'))return featureScreen(id);
   if(id.startsWith('detail-'))return detailScreen(id);
   if(id==='budget')return budgetScreen();
@@ -348,8 +360,8 @@
   const index=at()+1,total=flow().length;
   return '<div class="v4-root">'+header()+
    (welcome?welcomeScreen():success?successScreen():
-     '<main class="v4-question-view"><div class="v4-question-wrap"><div class="v4-side-number" aria-hidden="true">'+String(index).padStart(2,'0')+' / '+String(total).padStart(2,'0')+'</div>'+
-      '<div class="v4-question-inner" id="v4-question-body">'+view(active)+'<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p><p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></main>'+
+     '<section class="v4-question-view"><div class="v4-question-wrap"><div class="v4-side-number" aria-hidden="true">'+String(index).padStart(2,'0')+' / '+String(total).padStart(2,'0')+'</div>'+
+      '<div class="v4-question-inner" id="v4-question-body">'+view(active)+'<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p><p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></section>'+
      '<footer class="v4-bottom"><button type="button" class="v4-back" data-v4-action="back">← Back</button><span class="v4-shortcut">'+(active==='review'?'ONE FINAL STEP': 'PRESS ENTER TO CONTINUE')+'</span>'+
      (active==='review'?'<button type="button" class="v4-primary" data-v4-action="submit" '+(busy?'disabled':'')+'>'+(busy?'Sending…':'Send my project →')+'</button>':
       '<button type="button" class="v4-primary" data-v4-action="next">Continue <span>→</span></button>')+'</footer>')+
@@ -376,6 +388,7 @@
    'Template: '+clean(preset()?.name||'Custom'),
    data.external?'External inspiration: '+clean(data.external):'',
    'Visual style: '+clean(data.style)+' / '+clean(data.palette),
+   data.reference?'Reference URL: '+clean(data.reference):'',
    'Pages / screens: '+data.pages,
    'Features: '+(data.features.join(', ')||'Core experience'),
    ...Object.entries(data.answers).filter(([key])=>data.features.includes(key)).map(([key,value])=>clean(key)+': '+clean(value)),
@@ -399,7 +412,7 @@
  async function submit(){
   if(busy||finished)return;
   for(const step of ['goal','name','email','review']){
-   if(!validateStep(step)){if(step!==active)route(step);return;}
+   if(!validateStep(step)){if(step!==active){const message=error;route(step);error=message;render();}return;}
   }
   busy=true;error='';render();
   if(!data.requestId)data.requestId=crypto.randomUUID();
@@ -425,7 +438,7 @@
  }
  function handleAction(action){
   if(action==='start')return route('discover');
-  if(action==='resume')return route(data.goal?'goal':'discover');
+  if(action==='resume')return route(flow().includes(data.lastQuestion)?data.lastQuestion:'discover');
   if(action==='back')return move(-1);
   if(action==='next')return move(1);
   if(action==='blank'){change('template','');change('external','');return move(1);}
@@ -447,12 +460,12 @@
   if(b.hasAttribute('data-v4-template')){
    const selected=presets.find(p=>p.id===b.dataset.v4Template);
    if(!selected)return;
-   data.template=selected.id;data.external='';data.style=selected.style;data.pages=selected.pages;data.features=selected.features.slice();data.requestId='';sync();return move(1);
+   data.template=selected.id;data.external='';data.category=selected.category;data.style=selected.style;data.pages=selected.pages;data.features=selected.features.slice();data.requestId='';sync();return move(1);
   }
   if(b.hasAttribute('data-v4-external')){
    const ref=refs.find(r=>r.name===b.dataset.v4External);if(!ref)return;
    data.template='';data.external=ref.name+' ('+ref.source+'): '+ref.url;
-   data.style=ref.style;data.requestId='';sync();return move(1);
+   data.category=ref.category;data.style=ref.style;data.requestId='';sync();return move(1);
   }
   if(b.hasAttribute('data-v4-gallery')){galleryTab=b.dataset.v4Gallery;render();return;}
   if(b.hasAttribute('data-v4-filter')){categoryFilter=b.dataset.v4Filter;refreshLibrary();const strip=document.querySelector('.v4-filter-strip');if(strip){strip.querySelectorAll('button').forEach(el=>{const yes=el.dataset.v4Filter===categoryFilter;el.classList.toggle('active',yes);el.setAttribute('aria-pressed',String(yes));});}return;}
@@ -476,6 +489,12 @@
   if(b.hasAttribute('data-v4-feature')){
    const name=b.dataset.v4Feature,has=b.checked;
    data.features=has?[...new Set([...data.features,name])]:data.features.filter(n=>n!==name);
+   data.requestId='';sync();
+   const card=b.closest('.v4-feature-card');if(card){card.classList.toggle('is-selected',has);const indicator=card.querySelector('.v4-feature-check');if(indicator)indicator.textContent=has?'✓':'+';}
+  }
+  if(b.hasAttribute('data-v4-asset')){
+   const name=b.dataset.v4Asset,has=b.checked;
+   data.assets=has?[...new Set([...data.assets,name])]:data.assets.filter(x=>x!==name);
    data.requestId='';sync();
    const card=b.closest('.v4-feature-card');if(card){card.classList.toggle('is-selected',has);const indicator=card.querySelector('.v4-feature-check');if(indicator)indicator.textContent=has?'✓':'+';}
   }
