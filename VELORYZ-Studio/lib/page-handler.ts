@@ -5,7 +5,7 @@ import adminShell from './admin-shell';
 import { secureHtml,pageMetadata } from './response-security';
 import { publicOrigin,canonicalPath } from './site-origin.mjs';
 import { getPublished, handleApi } from './cms-api.mjs';
-import { studioDocsRoutes } from './studio-docs-routes.mjs';
+import { studioDocsRoutes, studioDocsSummaries, studioDocsCategories } from './studio-docs-routes.mjs';
 export const dynamic = 'force-dynamic';
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
@@ -85,7 +85,27 @@ export async function GET(request: Request) {
  };
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise(data)};</script><script src="/app.js" defer></script>`);
- html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description:(routeDescriptions[normal]||data.state.site.description).slice(0,300),url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
+ const description=(override?.summary||studioDocsSummaries[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
+ html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ if(known&&(normal==='/sitemap'||normal.startsWith('/docs/')||normal.startsWith('/help/studio/')||normal==='/docs')){
+  const crumbs=[{name:'VELORYZ Studio',item:base+'/'}];
+  if(normal==='/sitemap')crumbs.push({name:'Site map',item:base+'/sitemap/'});
+  else {
+   crumbs.push({name:'Documentation',item:base+'/docs/'});
+   if(normal.startsWith('/docs/studio'))crumbs.push({name:'Studio documentation',item:base+'/docs/studio/'});
+   if(normal.startsWith('/help/studio'))crumbs.push({name:'Help Centre',item:base+'/help/studio/'});
+   const current=pages[normal]||'Documentation';
+   const at=base+canonicalPath(normal);
+   if(crumbs[crumbs.length-1].item!==at)crumbs.push({name:current,item:at});
+  }
+  const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:crumbs.map((c,i)=>({'@type':'ListItem',position:i+1,name:c.name,item:c.item}))};
+  const structured=[breadcrumb];
+  if(studioDocsRoutes[normal]||normal.startsWith('/docs/')&&normal!=='/docs/studio'){
+   structured.push({'@context':'https://schema.org','@type':normal.startsWith('/help/')?'Article':'TechArticle',headline:pages[normal],description,articleSection:studioDocsCategories[normal]||'Documentation',publisher:{'@type':'Organization',name:'VELORYZ Studio'},mainEntityOfPage:base+canonicalPath(normal)} as any);
+  }
+  html=html.replace('</head>',`<script type="application/ld+json">${serialise(structured)}</script></head>`);
+ }
  const response=secureHtml(html,known?200:404);
  if(!import.meta.env.DEV&&base!==new URL(request.url).origin)response.headers.set('X-Robots-Tag','noindex, nofollow');
  return response;
