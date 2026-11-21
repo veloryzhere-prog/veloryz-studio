@@ -58,3 +58,13 @@ The JavaScript was syntax checked, the dynamic questionnaire and enquiry path si
 - Optional creator promotions can be published in Studio Control, with eligibility text, optional code and percentage, and expiry. They are OFF by default and NEVER automatically deducted from the estimate. The visitor can request offer review in the eventual quote.
 - Separate VELORYZ Project AI appears inside the wizard. Its /api/project-ai route calls a real configured Gemini/OpenAI or Workers AI model. It is independent of all persona bots, rate limited, scope restricted and does not receive visitors' email. It reports unavailable instead of inventing replies when providers are not connected.
 - Run npm run test:creator and npm run test:project-ai, or npm run test:all from VELORYZ-Studio. The deployed backend and actual email delivery are not certified by source-level checks.
+
+
+## V4.3 repair: controls, isolated route, AI position
+
+- `/create/` calls the Creator V4 renderer explicitly; the original guided planner is not the primary renderer when V4 is loaded.
+- Each question has **Back/Continue** (or **Send**) in the sticky **top bar**, not a bottom action footer. Creator click handling is isolated from legacy global event handlers.
+- The `v4-creator-page` class prevents legacy project panels, footer, persona launchers, inline campaigns and delayed campaign popups from interfering with the wizard. CMS refresh no longer replaces an active creator mid-form.
+- Project AI appears bottom-left from the welcome screen and remounts on site-route and wizard changes. A missing live provider produces **clearly labeled prewritten guidance** rather than fabricated AI responses.
+- The source-level click simulation passed Start → top Continue and AI open. **Live browser deployment and real provider inference are not verified by that simulation.**
+- The detailed operational, copyright, security, privacy, pricing, QA and support documentation is indexed at [docs/project-creator/README.md](./docs/project-creator/README.md).
