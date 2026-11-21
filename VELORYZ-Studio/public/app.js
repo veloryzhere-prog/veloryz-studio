@@ -211,7 +211,7 @@ function homePage(){const settings=studioCMS?.site||{};return `
 ${settings.showWork!==false?` <section id="selected-work" class="section container"><div class="section-head reveal"><div><div class="eyebrow">Featured real-world design references</div><h2>${esc(settings.showcaseTitle||'Ideas, made tangible.')}</h2></div><a href="/work/" class="text-link">Explore the design library ${arrow}</a></div>${projectShowcase()}</section>`:''}
 ${settings.showScarf!==false?` <veloryz-frame-cut aria-label="Scroll-controlled VELORYZ logo, portal reveal and animated scarf"><div class="frame-stage">
    <div class="frame-emblem" aria-hidden="true"><img class="frame-rings" src="/assets/frame-cut/portal-rings.svg" alt="" decoding="async"><img class="frame-mark" src="/assets/brand/veloryz-mark.svg" alt="" decoding="async"></div>
-   <div class="frame-film-plane" aria-hidden="true"><img class="frame-reveal-poster" src="/assets/frame-cut/poster.jpg" alt="" decoding="async"><video class="frame-reveal" muted playsinline preload="none" poster="/assets/frame-cut/poster.jpg" aria-hidden="true" tabindex="-1"></video></div>
+   <div class="frame-film-plane" aria-hidden="true"><img class="frame-reveal-poster" src="/assets/frame-cut/poster.jpg" alt="" decoding="async"><video class="frame-reveal" muted playsinline preload="none" poster="/assets/frame-cut/poster.jpg" aria-hidden="true" tabindex="-1"></video><canvas class="frame-reveal-canvas" aria-hidden="true"></canvas></div>
    <video class="frame-scarf" preload="none" muted loop playsinline poster="/assets/frame-cut/scarf.jpg" aria-label="VELORYZ animated scarf"></video>
    <button type="button" class="frame-toggle" hidden aria-label="Pause VELORYZ scarf animation">Pause scarf</button>
  </div></veloryz-frame-cut>`:''}
