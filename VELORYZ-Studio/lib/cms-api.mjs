@@ -69,6 +69,22 @@ async function forwardStudioRequest(request) {
  }
  return new Response(response.body,{status:response.status,headers:outgoing});
 }
+// The separate private client room is intentionally not part of the public CMS.
+const clientPortalOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-client-portal-api';
+async function forwardClientPortal(request){
+ const url=new URL(request.url),headers=new Headers();
+ for(const name of ['cookie','content-type','origin','sec-fetch-site']){
+  const value=request.headers.get(name);if(value)headers.set(name,value);
+ }
+ const response=await fetch(clientPortalOrigin+url.pathname+url.search,{
+  method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:request.body,redirect:'manual'
+ });
+ const outgoing=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+ const contentType=response.headers.get('content-type');if(contentType)outgoing.set('Content-Type',contentType);
+ for(const cookie of response.headers.getSetCookie())if(cookie.startsWith('vz_portal='))outgoing.append('Set-Cookie',cookie);
+ return new Response(response.body,{status:response.status,headers:outgoing});
+}
+
 export async function getPublished(env, requestUrl){
  if (usesHostedBackend(env,requestUrl)) {
   const response=await fetch(hostedBackend+'/api/site');
@@ -116,6 +132,7 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
     mutationOrigin(request);
