@@ -23,6 +23,9 @@
   let frame = 0;
   let previousTime = 0;
   let cameraY = window.scrollY;
+  const economical=matchMedia('(max-width:850px), (pointer:coarse)').matches||(navigator.deviceMemory||8)<=4;
+  const frameBudget=economical?46:29;
+  let lastPaint=0;
 
   let backdrop;
   function atmosphere() {
@@ -54,6 +57,8 @@
   function tick(time) {
     frame = 0;
     if (!full()) return;
+    if(lastPaint&&time-lastPaint<frameBudget){schedule();return;}
+    lastPaint=time;
     const actualY = window.scrollY;
     const elapsed = previousTime ? Math.min(64, time - previousTime) : 16;
     previousTime = time;
@@ -75,10 +80,11 @@
     backdrop?.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
     backdrop?.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
     for (const [el, progress, assembly] of values) {
-      if (assembly!==null && assembly!==el.assemblyProgress) {
+      if(assembly!==null && (el.assemblyProgress===undefined||Math.abs(assembly-el.assemblyProgress)>.006)){
         el.assemblyProgress=assembly;
-        el.style.setProperty('--assembly-progress',assembly.toFixed(4));
-        el.dataset.chapter=String(Math.min(2,Math.floor(assembly*3)));
+        el.style.setProperty('--assembly-progress',assembly.toFixed(3));
+        const chapter=String(Math.min(2,Math.floor(assembly*3)));
+        if(el.dataset.chapter!==chapter)el.dataset.chapter=chapter;
         el.dispatchEvent(new Event('studio:assembly'));
       }
       el.style.setProperty('--scene-progress', progress.toFixed(4));
@@ -138,6 +144,7 @@
     cancelAnimationFrame(frame);
     frame = 0;
     previousTime = 0;
+    lastPaint = 0;
     cameraY = window.scrollY;
     if (full()) { schedule(); return; }
     if (document.hidden) return;

@@ -11,7 +11,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   if (scenes.has(container) || !container.isConnected) return;
   const target=container.closest('.logo-stage');
   const story=container.closest('.assembly-sequence');
-  const economical=navigator.hardwareConcurrency<=4 || navigator.deviceMemory<=4;
+  const economical=(navigator.hardwareConcurrency||8)<=4 || (navigator.deviceMemory||8)<=4 || matchMedia('(max-width:850px), (pointer:coarse)').matches;
   let renderer, software=softwareOnly;
   if (!softwareOnly) {
     try {
@@ -24,7 +24,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   const canvas=renderer.domElement;
   canvas.setAttribute('aria-hidden','true');
   container.append(canvas);
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1.15:1.65));
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1.05:1.35));
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);
   scene.add(new THREE.HemisphereLight(0xffeaf4,0x785b76,1.65));
   for (const [color,power,x,y,z] of [[0xfff4ed,3.7,-3,5,6],[0x9ebdff,2.5,4,2,-2],[0xff94c4,1.6,-3,-2,-3]]) {
@@ -60,7 +60,9 @@ function mount(container,softwareOnly=false,previousPose=null) {
     frame=0;
     if (disposed||!visible||document.hidden) return;
     const active=motion(),dt=last?Math.min(.08,(time-last)/1000):0;
-    if (software && active && !manual && !story && last && time-last<33){wake();return;}
+    // Keep high-frequency updates for direct inspection, limit idle GPU work.
+    const interval=manual?16:software?55:economical?34:26;
+    if(last&&time-last<interval){if(active||manual||story)wake();return;}
     last=time;
     if(active)elapsed+=dt*speed;
     const p=story&&active?(story.assemblyProgress??0):0;

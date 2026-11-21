@@ -43,3 +43,18 @@
 @media(max-width:850px){.planner-starters-heading{grid-template-columns:1fr;gap:10px}}
 @media(max-width:600px){.planner-starters{padding:19px;border-radius:15px}.planner-starter-grid{grid-template-columns:1fr}.planner-starter{padding:15px}.planner-starters-heading h2{font-size:29px}}
 @media(prefers-reduced-motion:reduce){.planner-starter,.planner-starter-action b,.campaign-design,.campaign-design .campaign-art{animation:none!important;transition:none!important;transform:none!important}}
+
+/* Performance layer: keep input, scrolling and touch responsive. */
+@media(max-width:850px){
+ .vz-atmosphere{display:none!important}
+ .site-header{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fbfaf7f5}
+ .campaign-grain,.campaign-art .campaign-orbit,.campaign-art .campaign-art-card{animation:none!important}
+ .hero-motion-graphic .motion-fragment{animation:none!important}
+ .render-cover-label,.render-cover-bottom,.render-art .project-arrow,.product-art-note,.architecture-material-note{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+.vz-atmosphere-ray{filter:none;opacity:.28}
+html[data-motion-suspended] .vz-atmosphere,
+html[data-motion-suspended] .vz-atmosphere *,
+html[data-motion-suspended] .campaign-design,
+html[data-motion-suspended] .campaign-design *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.vz-atmosphere{display:none!important}}
