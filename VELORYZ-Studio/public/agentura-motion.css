@@ -11,7 +11,7 @@ html[data-vz-rhythm="off"] .vz-motion-pending{opacity:1!important;transform:none
 html[data-vz-rhythm="on"] #selected-work .vz-home-featured img{transition:transform .75s cubic-bezier(.22,1,.36,1);transform-origin:center}
 html[data-vz-rhythm="on"] #selected-work .vz-home-featured article:hover img{transform:scale(1.045)}
 /* Gentle viewport reveal: the scene is pinned by CSS only, media decoding is lazy. */
-veloryz-frame-cut{contain:layout style;overflow:clip}
+veloryz-frame-cut{contain:style;overflow:clip}
 veloryz-frame-cut .frame-stage{isolation:isolate;backface-visibility:hidden}
 veloryz-frame-cut .frame-emblem,veloryz-frame-cut .frame-rings,veloryz-frame-cut .frame-scarf{backface-visibility:hidden;transform-origin:center;will-change:auto}
 veloryz-frame-cut[data-focus] .frame-emblem,
