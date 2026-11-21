@@ -5,7 +5,7 @@
  * Phones/tablets retain native touch inertia; no scroll-jacking of chat,
  * forms, dialogs, docs sidebars or project creation.
  *
- * Native-feeling Lenis input: lerp 0.23 on regular pages, direct 1 inside the cinematic scene:
+ * Native-feeling Lenis input: lerp 0.23 on regular pages, very short 0.46 smoothing inside the cinematic scene:
  * no artificially slow, multi-second trailing scroll or acceleration.
  */
 (()=>{
@@ -16,8 +16,8 @@
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  const lowPower=()=>Boolean(connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
  let lenis=null,resizeFrame=0,cinematic=false;
- const defaultLerp=.23;
- const applyCinematic=()=>{if(lenis)lenis.options.lerp=cinematic?1:defaultLerp;};
+ const defaultLerp=.23,cinemaLerp=.46;
+ const applyCinematic=()=>{if(lenis)lenis.options.lerp=cinematic?cinemaLerp:defaultLerp;};
  const selectors=[
   'dialog',
   '.modal-backdrop',
@@ -113,7 +113,7 @@
  window.VeloryzScroll={
   get active(){return Boolean(lenis);},
   get engine(){return lenis;},
-  settings:{lerp:defaultLerp,wheelMultiplier:1,touch:'native',cinematicLerp:1},
+  settings:{lerp:defaultLerp,wheelMultiplier:1,touch:'native',cinematicLerp:cinemaLerp},
   sync,scrollTo:jump
  };
  window.StudioMotion?.addEventListener('change',sync);
@@ -124,9 +124,8 @@
   if(active===cinematic)return;
   cinematic=active;
   applyCinematic();
-  // Cancel any previous trailing Lenis animation when entering the film.
-  // Keep the current position, not the target, so there is no visual jump.
-  if(active&&lenis&&Number.isFinite(window.scrollY))lenis.scrollTo(window.scrollY,{immediate:true,force:true});
+  // Switching easing must not reset scroll or drop a wheel event on entry.
+  // The actual visual sequence still follows physical scroll position exactly.
  });
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
