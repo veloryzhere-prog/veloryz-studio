@@ -45,7 +45,7 @@ function cpEditor(p={}){
  return '<section class="cpm-card cpm-edit-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">'+(edit?'EDIT CLIENT WORKSPACE':'NEW CLIENT WORKSPACE')+'</span><h2>'+(edit?'Update project details':'Start a new client project')+'</h2><p>'+(cpNewDraft?'These details are prefilled from the client enquiry. Verify the email before creating access.':'Add the essentials first. You can refine progress and milestones later.')+'</p></div><button class="admin-button secondary" data-cpm="cancel">Cancel</button></div>'+
  '<form data-cpm-form="project" class="cpm-form-grid"><div class="cpm-form-group cpm-wide"><span class="cpm-form-section">01 / CLIENT DETAILS</span></div>'+
  cpInput('Client name *','client_name',p.client_name,'required maxlength="100" autocomplete="name"')+
- cpInput('Invitation email *','client_email',p.client_email,'required type="email" maxlength="180" autocomplete="email"','Use the address where the client will receive their private invitation.')+
+ cpInput('Invitation email *','client_email',p.client_email,'required type="email" maxlength="180" autocomplete="email"','Changing this email revokes earlier invitations and signs out existing client sessions.')+
  '<div class="cpm-form-group cpm-wide"><span class="cpm-form-section">02 / PROJECT DETAILS</span></div>'+
  cpInput('Project title *','title',p.title,'required maxlength="160"')+
  '<label class="cpm-field"><span>Current phase</span>'+cpSelect('phase',cpPhases,p.phase||'Discover')+'</label>'+
@@ -87,7 +87,7 @@ function cpOverview(p){
  return '<div class="cpm-overview-grid"><section class="cpm-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">QUICK PROJECT UPDATE</span><h3>Keep progress current</h3><p>Change the essentials and save in one click.</p></div></div>'+
  '<form data-cpm-form="quick" class="cpm-quick-form"><div class="cpm-quick-row"><label>Current phase'+cpSelect('phase',cpPhases,p.phase)+'</label><label>Status'+cpSelect('status',cpStatuses,p.status)+'</label></div>'+
  '<label class="cpm-progress-label" for="cpm-progress-slider">Completion <output data-cpm-progress-output>'+Number(p.progress||0)+'%</output></label>'+
- '<input id="cpm-progress-slider" type="range" name="progress" min="0" max="100" step="5" value="'+Number(p.progress||0)+'" data-cpm-progress>'+
+ '<input id="cpm-progress-slider" type="range" name="progress" min="0" max="100" step="1" value="'+Number(p.progress||0)+'" data-cpm-progress>'+
  '<div class="cpm-progress-scale"><span>0% / Started</span><span>100% / Finished</span></div>'+
  '<label class="cpm-quick-note">Next action for the client<textarea name="next_step" maxlength="1200" rows="3" placeholder="What should happen next?">'+cpE(p.next_step)+'</textarea></label>'+
  '<div class="cpm-quick-footer"><button class="admin-button" type="submit">Save progress ↗</button><small>Private project updates save immediately.</small></div></form></section>'+
@@ -101,8 +101,8 @@ function cpOverview(p){
 function cpItems(type){
  const items=(cpWorkspace?.items||[]).filter(x=>x.type===type);
  const name=type==='milestone'?'milestone':type==='file'?'deliverable':'approval request';
- return '<section class="cpm-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">'+cpE(name.toUpperCase())+'S</span><h3>'+cpE(type==='milestone'?'Project milestones':type==='file'?'Shared deliverables':'Review requests')+'</h3><p>'+cpE(type==='milestone'?'Plan the work in clear stages.':type==='file'?'Add private handover links and update their status.':'Give your client one clear decision at a time.')+'</p></div><button type="button" class="admin-button" data-cpm="add-item" data-type="'+type+'">+ Add '+cpE(name)+'</button></div>'+
- (items.length?'<div class="cpm-item-list">'+items.map(i=>'<article class="cpm-item"><span class="cpm-item-mark '+(i.state==='done'||i.state==='approved'?'done':'')+'">'+(i.state==='done'||i.state==='approved'?'✓':type==='file'?'↗':type==='approval'?'◇':'◌')+'</span><div class="cpm-item-main"><div><strong>'+cpE(i.title)+'</strong><span class="cpm-item-state cpm-item-'+cpE(i.state)+'">'+cpE(cpStates.find(s=>s[0]===i.state)?.[1]||i.state)+'</span></div><p>'+cpE(i.details||'No notes added.')+'</p><small>'+(i.due_date?'Date: '+cpDate(i.due_date):'Date not set')+'</small>'+(type==='file'&&i.url?'<a href="'+cpE(i.url)+'" target="_blank" rel="noopener noreferrer">Open shared file ↗</a>':'')+'</div><div class="cpm-item-actions"><button type="button" data-cpm="edit-item" data-id="'+cpE(i.id)+'">Edit</button><button type="button" class="is-danger" data-cpm="remove-item" data-id="'+cpE(i.id)+'">Remove</button></div></article>').join('')+'</div>':
+ return '<section class="cpm-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">'+cpE(name.toUpperCase())+'S</span><h3>'+cpE(type==='milestone'?'Project milestones':type==='file'?'Shared deliverables':'Review requests')+'</h3><p>'+cpE(type==='milestone'?'Plan the work in clear stages.':type==='file'?'Add private handover links and update their status.':'Give your client one clear decision at a time.')+'</p></div><div class="cpm-item-head-actions"><button type="button" class="admin-button" data-cpm="add-item" data-type="'+type+'">+ Add '+cpE(name)+'</button>'+(type==='milestone'?'<button type="button" class="admin-button secondary" data-cpm="starter-plan">Use starter plan</button>':'')+'</div></div>'+
+ (items.length?'<div class="cpm-item-list">'+items.map(i=>'<article class="cpm-item"><span class="cpm-item-mark '+(i.state==='done'||i.state==='approved'?'done':'')+'">'+(i.state==='done'||i.state==='approved'?'✓':type==='file'?'↗':type==='approval'?'◇':'◌')+'</span><div class="cpm-item-main"><div><strong>'+cpE(i.title)+'</strong><span class="cpm-item-state cpm-item-'+cpE(i.state)+'">'+cpE(cpStates.find(s=>s[0]===i.state)?.[1]||i.state)+'</span></div><p>'+cpE(i.details||'No notes added.')+'</p><small>'+(i.due_date?'Date: '+cpDate(i.due_date):'Date not set')+'</small>'+(type==='file'&&i.url?'<a href="'+cpE(i.url)+'" target="_blank" rel="noopener noreferrer">Open shared file ↗</a>':'')+'</div><div class="cpm-item-actions">'+(type==='milestone'&&i.state!=='done'?'<button type="button" class="cpm-advance" data-cpm="advance-item" data-id="'+cpE(i.id)+'">'+(i.state==='upcoming'?'Start':'✓ Complete')+'</button>':'')+'<button type="button" data-cpm="edit-item" data-id="'+cpE(i.id)+'">Edit</button><button type="button" class="is-danger" data-cpm="remove-item" data-id="'+cpE(i.id)+'">Remove</button></div></article>').join('')+'</div>':
  '<div class="cpm-tab-empty"><span>✳</span><h4>No '+cpE(name)+'s yet.</h4><p>Start by adding your first '+cpE(name)+'. Your client will see it in their portal.</p><button class="admin-button secondary" type="button" data-cpm="add-item" data-type="'+type+'">+ Add now</button></div>')+'</section>';
 }
 function cpMessages(){
@@ -219,13 +219,51 @@ document.addEventListener('click',async e=>{
  if(section!=='client-portal')return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
- if(action==='new'){cpNewProject=true;cpNewDraft=null;cpEditMode='project';cpEditingItem='';document.getElementById('cpm-detail')?.replaceChildren();document.getElementById('cpm-detail').innerHTML=cpDetail();return;}
+ if(action==='new'){cpNewProject=true;cpNewDraft=null;cpEditMode='project';cpEditingItem='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();else {cpLoaded=true;render();}return;}
  if(action==='cancel'){cpNewProject=false;cpNewDraft=null;cpEditingItem='';cpEditMode='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();return;}
  if(action==='edit-project'){cpNewProject=false;cpEditMode='project';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();return;}
  if(action==='add-item'){cpEditItem(b.dataset.type||'milestone');return;}
  if(action==='edit-item'){const item=(cpWorkspace?.items||[]).find(i=>i.id===b.dataset.id);if(item)cpEditItem(item.type,item.id);return;}
  if(action==='select'){if(cpBusy)return;cpSelected=b.dataset.id;cpNewProject=false;cpEditMode='';cpTab='overview';cpWorkspace=null;const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML='<div class="cpm-loading">Opening selected client…</div>';cpRefreshDirectory();await cpLoad(cpSelected);return;}
  if(action==='reload'){if(cpBusy)return;cpLoaded=false;await cpLoad();return;}
+ if(action==='starter-plan'){
+  if(cpBusy||!cpWorkspace?.project)return;
+  const starter=[
+   ['Discovery & scope','Review goals, audience, requirements and the agreed scope.'],
+   ['Visual direction','Share creative references and agree the visual approach.'],
+   ['Design & feedback','Create layouts and refine the design with client feedback.'],
+   ['Development','Build the agreed website or product experience.'],
+   ['Testing & handover','Review quality, prepare the final files and launch.']
+  ];
+  const existing=new Set((cpWorkspace.items||[]).filter(i=>i.type==='milestone').map(i=>i.title.toLowerCase()));
+  const remaining=starter.filter(([name])=>!existing.has(name.toLowerCase()));
+  if(!remaining.length){toast('Starter milestones are already in this project.');return;}
+  if(!window.confirm('Add '+remaining.length+' editable starter milestones to this client project?'))return;
+  cpBusy=true;b.disabled=true;let added=0;
+  try{
+   for(const [title,details] of remaining){
+    await cpReq('/items',{method:'POST',body:JSON.stringify({project_id:cpSelected,type:'milestone',title,details,state:'upcoming',due_date:'',url:''})});
+    added++;
+   }
+   cpTab='milestone';toast('Added '+added+' starter milestones. You can edit each one.');
+  }catch(error){toast(added+' milestones added before an error: '+error.message);}
+  finally{cpBusy=false;b.disabled=false;await cpLoad(cpSelected);}
+  return;
+ }
+ if(action==='advance-item'){
+  if(cpBusy)return;
+  const item=(cpWorkspace?.items||[]).find(i=>i.id===b.dataset.id&&i.type==='milestone');
+  if(!item)return;
+  cpBusy=true;b.disabled=true;
+  try{
+   const next=item.state==='upcoming'?'in-progress':'done';
+   await cpReq('/items',{method:'POST',body:JSON.stringify({...item,state:next})});
+   cpTab='milestone';await cpLoad(cpSelected);
+   toast(next==='done'?'Milestone completed.':'Milestone started.');
+  }catch(error){toast(error.message);}
+  finally{cpBusy=false;b.disabled=false;}
+  return;
+ }
  if(cpBusy)return;
  try{
   cpBusy=true;b.disabled=true;
