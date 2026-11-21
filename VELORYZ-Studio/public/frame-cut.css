@@ -1,31 +1,29 @@
+/* Original VELORYZ V/scarf sequence — deterministic scroll progress from frame-cut.js.
+ * Sticky scene is not transformed or put inside an overflow scrolling ancestor.
+ */
 veloryz-frame-cut{display:block;position:relative;background:#080b21;isolation:isolate}
 .frame-stage{height:clamp(290px,56.25vw,90svh);position:relative;overflow:hidden}
-veloryz-frame-cut[data-full]{height:340svh;view-timeline-name:--scarf;view-timeline-axis:block}
+veloryz-frame-cut[data-full]{height:340svh}
 veloryz-frame-cut[data-full] .frame-stage{position:sticky;top:0;height:100svh}
-.frame-emblem{position:absolute;inset:0;margin:auto;width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;max-height:100%;pointer-events:none}
-.frame-rings{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.frame-emblem{position:absolute;inset:0;margin:auto;width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;max-height:100%;pointer-events:none;transform-origin:50% 54%;transform:translate3d(var(--scarf-x,0%),var(--scarf-y,0%),0) scale(var(--scarf-scale,4.1)) rotate(var(--scarf-angle,12deg));opacity:var(--scarf-emblem-opacity,1)}
+.frame-rings{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:var(--scarf-rings-opacity,0)}
 .frame-mark{position:absolute;width:12%;height:auto;left:44.4%;top:44%;transform:rotate(-12deg)}
-.frame-scarf{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#030305;opacity:0}
-.frame-toggle{position:absolute;z-index:2;bottom:max(22px,env(safe-area-inset-bottom));left:clamp(20px,4vw,64px);background:#141425;color:#fff;border:1px solid #817988;border-radius:30px;min-height:44px;padding:10px 19px}
-.frame-toggle[hidden]{display:none}
-@keyframes scarf-zoom{
-  0%{transform:scale(4.1) rotate(12deg);opacity:1}
-  38%{transform:scale(1) rotate(0deg);opacity:1}
-  47%{transform:scale(1) rotate(0deg);opacity:1}
-  69%,100%{transform:translate(13%,-3%) scale(.58) rotate(17deg);opacity:0}
-}
-@keyframes scarf-rings{0%,6%{opacity:0}32%,100%{opacity:1}}
-@keyframes scarf-film{0%,47%{opacity:0;transform:scale(1.05)}69%,100%{opacity:1;transform:scale(1)}}
-veloryz-frame-cut[data-full] :is(.frame-emblem,.frame-rings,.frame-scarf){
-  animation:1s linear both paused;animation-delay:var(--frame-delay,0s);
-}
-veloryz-frame-cut[data-full] .frame-emblem{animation-name:scarf-zoom;transform-origin:50% 54%}
-veloryz-frame-cut[data-full] .frame-rings{animation-name:scarf-rings}
-veloryz-frame-cut[data-full] .frame-scarf{animation-name:scarf-film}
-@supports (animation-timeline:view()) and (animation-range:contain 0% contain 100%){
-  veloryz-frame-cut[data-full] :is(.frame-emblem,.frame-rings,.frame-scarf){
-    animation-duration:auto;animation-delay:0s;animation-play-state:running;
-    animation-timeline:--scarf;animation-range:contain 0% contain 100%;
-  }
-}
+.frame-scarf{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#030305;opacity:var(--scarf-film-opacity,0);transform:scale(var(--scarf-film-scale,1.05));pointer-events:none}
+.frame-toggle{position:absolute;z-index:2;bottom:max(22px,env(safe-area-inset-bottom));left:clamp(20px,4vw,64px);background:#141425;color:#fff;border:1px solid #817988;border-radius:30px;min-height:44px;padding:10px 19px;cursor:pointer}
+.frame-toggle[hidden]{display:none!important}
+veloryz-frame-cut:not([data-full]){height:auto}
+veloryz-frame-cut:not([data-full]) .frame-stage{position:relative}
+veloryz-frame-cut:not([data-full]) .frame-emblem{transform:none!important;opacity:1!important}
+veloryz-frame-cut:not([data-full]) .frame-rings{opacity:1!important}
+veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
 html:not([data-motion-gate]) body:has(veloryz-frame-cut[data-focus]) :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
+@media(max-width:900px){
+ veloryz-frame-cut[data-full]{height:280svh}
+ veloryz-frame-cut[data-full] .frame-stage{height:100svh}
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion="full"]) veloryz-frame-cut{height:auto!important}
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-stage{position:relative!important;height:clamp(290px,56.25vw,80svh)!important}
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-emblem{transform:none!important;opacity:1!important}
+ html:not([data-motion="full"]) veloryz-frame-cut .frame-scarf{opacity:0!important}
+}
