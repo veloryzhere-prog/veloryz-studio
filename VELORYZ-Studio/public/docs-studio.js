@@ -52,7 +52,7 @@
     chapterLoading.set(slug,promise);
   }
   const contentLink=(label,to)=>{
-    const safe=/^\/(?:docs|help)\/[a-z0-9/_-]+\/?$/.test(to)||/^https:\/\//.test(to)||/^#[a-z0-9_-]+$/.test(to);
+    const safe=/^\/(?!\/)[a-z0-9/_-]+(?:\.[a-z0-9]+)?\/?(?:#[a-z0-9_-]+)?$/.test(to)||/^https:\/\//i.test(to)||/^#[a-z0-9_-]+$/i.test(to);
     return safe?'<a href="'+esc(to)+'"'+(/^https:\/\//.test(to)?' target="_blank" rel="noopener noreferrer"':'')+'>'+esc(label)+'</a>':esc(label);
   };
   function inline(t){
