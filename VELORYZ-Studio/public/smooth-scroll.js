@@ -33,6 +33,12 @@
   '.studio-docs-sidebar',
   '.studio-docs-toc',
   '.v4-ai-messages',
+  '.chat-scroll-area',
+  '.chat-log',
+  '.chat-name-slot',
+  '.expert-chat',
+  '.chat-personas',
+  '[role="log"]',
   '.v4-steps',
   '.v4-step-nav',
   '.booking-main',
@@ -53,6 +59,7 @@
  const prevent=node=>Boolean(node?.matches?.(selectors));
  function cleanup(){
   if(!lenis)return;
+  window.VeloryzMotionClock?.detachLenis(lenis);
   lenis.destroy();
   lenis=null;
   root.removeAttribute('data-vz-smooth-wheel');
@@ -67,7 +74,7 @@
   if(lenis)return;
   try{
    lenis=new window.Lenis({
-    autoRaf:true,
+    autoRaf:!window.VeloryzMotionClock,
     anchors:{offset:-96},
     lerp:0.14,
     wheelMultiplier:0.94,
@@ -80,6 +87,7 @@
     respectReducedMotion:true
    });
    root.dataset.vzSmoothWheel='lenis';
+   window.VeloryzMotionClock?.attachLenis(lenis);
   }catch{
    cleanup();root.style.scrollBehavior='auto'; // Keep the page navigable if vendor JS fails.
   }
@@ -105,7 +113,7 @@
  window.VeloryzScroll={
   get active(){return Boolean(lenis);},
   get engine(){return lenis;},
-  settings:{lerp:0.14,wheelMultiplier:0.94,touch:'native'},
+  settings:{lerp:0.14,wheelMultiplier:0.94,touch:'native',clock:'shared'},
   sync,scrollTo:jump
  };
  window.StudioMotion?.addEventListener('change',sync);
