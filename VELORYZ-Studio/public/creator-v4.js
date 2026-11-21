@@ -82,7 +82,7 @@
  'Admin dashboard':['Management users',['Team admin only','Small team','Multiple roles','Not sure']],
  'Multilingual support':['Languages',['Two','Three or four','Five+','Not sure']]
  };
- const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,features:['Content management','SEO foundations'],answers:{},assets:[],timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',name:'',email:'',phone:'',company:'',notes:'',consent:false,reference:'',external:'',requestId:''});
+ const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,features:['Content management','SEO foundations'],answers:{},assets:[],timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',name:'',email:'',phone:'',company:'',notes:'',consent:false,reference:'',external:'',requestId:'',promoRequested:false});
  const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const clean=s=>String(s??'').replace(/[<>\x00-\x1f]/g,' ').trim();
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
@@ -310,15 +310,17 @@
   return 'mailto:veloryz.here@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
  }
  function activeCreatorOffer(){
-  const offers=typeof studioCMS!=='undefined'&&Array.isArray(studioCMS?.offers)?studioCMS.offers:[];
-  const now=Date.now();
-  return offers.find(o=>o?.enabled&&o.kind==='offer'&&(!o.startAt||Date.parse(o.startAt)<=now)&&(!o.endAt||Date.parse(o.endAt)>now)&&typeof o.title==='string');
+  const promotion=typeof studioCMS!=='undefined'?studioCMS?.site?.creatorPricing?.promotion:null;
+  const expiry=promotion?.expiresAt?new Date(promotion.expiresAt+'T23:59:59').getTime():0;
+  if(promotion?.enabled&&(!expiry||expiry>Date.now())&&promotion.title&&promotion.details)
+   return {title:promotion.title,details:promotion.details,code:promotion.code||'',percent:promotion.percent||0,expiresAt:promotion.expiresAt||''};
+  return null;
  }
  function marketingInfo(){
   const offer=activeCreatorOffer();
   return '<section class="v4-price-flex"><span class="v4-price-flex-kicker">FLEXIBLE SCOPE · TEAM REVIEWED</span><h3>Let’s make the right first version.</h3>'+
    '<p>Our team can discuss a smaller first release, phased delivery, optional services, and any active promotions you qualify for. No discount is guaranteed or automatically applied.</p>'+
-   (offer?'<div class="v4-eligible-offer"><strong>Current studio promotion</strong><span>'+escape(offer.title)+'</span><small>Ask the team to confirm eligibility, dates and terms. Not included in this estimate.</small></div>':'')+
+   (offer?'<div class="v4-eligible-offer"><strong>Current studio promotion</strong><span>'+escape(offer.title)+'</span><p>'+escape(offer.details)+'</p>'+(offer.code?'<code>'+escape(offer.code)+'</code>':'')+(offer.percent?'<small>'+offer.percent+'% advertised · eligibility confirmed by the studio</small>':'')+(offer.expiresAt?'<small>Ends '+escape(offer.expiresAt)+'</small>':'')+'<label class="v4-promo-request"><input type="checkbox" data-v4-promo-request '+(data.promoRequested?'checked':'')+'> Ask our team to consider this offer for my project.</label><small>Discount is never automatically applied to the planning estimate.</small></div>':'')+
    '<div class="v4-price-flex-actions"><a href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Message our team ↗</a><a href="'+escape(teamEmail())+'">Request a price review ✉</a></div></section>';
  }
  function budgetScreen(){
@@ -350,6 +352,7 @@
    ['Pages or screens',String(data.pages),'pages'],
    ['Selected features',data.features.join(', ')||'Core experience','features-content'],
    ['Budget preference',money(data.budget),'budget'],
+   ...(data.promoRequested&&activeCreatorOffer()?[['Offer to review',activeCreatorOffer().title+' · team approval required','budget']]:[]),
    ['Planning range',money(e.low)+' – '+money(e.high),'budget'],
    ['Preferred timeline',data.timeline,'timeline'],
    ['Contact',data.name+' · '+data.email,'email']
@@ -450,6 +453,7 @@
    'Goal: '+clean(data.goal),
    'Review: '+(data.features.filter(n=>info[n]?.[2]).length?'Complex capabilities need technical scoping':'Studio review required'),
    'Pricing: Team consultation and eligible promotions may be discussed; no offer applied automatically.',
+   data.promoRequested&&activeCreatorOffer()?'Promotion to review: '+clean(activeCreatorOffer().title)+' ('+clean(activeCreatorOffer().code||'no code')+') - eligibility pending team approval.':'',
    'Draft only. Official price and timeline subject to written approval.'
   ].filter(Boolean).join('\n');
   return content.slice(0,2000);
@@ -552,6 +556,7 @@
    data.requestId='';sync();
    const card=b.closest('.v4-feature-card');if(card){card.classList.toggle('is-selected',has);const indicator=card.querySelector('.v4-feature-check');if(indicator)indicator.textContent=has?'✓':'+';}
   }
+  if(b.hasAttribute('data-v4-promo-request')){change('promoRequested',b.checked);}
   if(b.hasAttribute('data-v4-consent')){change('consent',b.checked);}
  });
  document.addEventListener('keydown',event=>{

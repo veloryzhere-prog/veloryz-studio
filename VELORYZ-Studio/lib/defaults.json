@@ -58,6 +58,14 @@
         "Education": 79999,
         "Community": 79999,
         "Custom App": 249999
+      },
+      "promotion": {
+        "enabled": false,
+        "title": "",
+        "details": "",
+        "code": "",
+        "percent": 0,
+        "expiresAt": ""
       }
     }
   },
