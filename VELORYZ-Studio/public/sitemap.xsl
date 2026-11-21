@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9">
 <xsl:output method="html" encoding="UTF-8" indent="yes"/>
 <xsl:template match="/">
-<!DOCTYPE html>
+
 <html lang="en">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Website sitemap | VELORYZ Studio</title>
