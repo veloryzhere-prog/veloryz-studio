@@ -72,9 +72,9 @@ function shell(){
  '<nav class="cp-app-nav" aria-label="Client workspace navigation">'+nav.map(([id,label,icon])=>'<button type="button" data-cp-tab="'+id+'" class="'+(tab===id?'is-active':'')+'" '+(tab===id?'aria-current="page"':'')+'>'+navIcon(icon)+'<span>'+label+'</span>'+(id==="reviews"&&actionCount?'<b class="cp-nav-count">'+actionCount+'</b>':'')+'</button>').join('')+'</nav>'+
  '<div class="cp-app-sidebar-footer"><div class="cp-security"><span>◉</span><p>Private & secure<br><small>Shared by VELORYZ Studio</small></p></div><button class="cp-exit" data-cp-exit>'+(isDemo?'Exit preview':'Sign out')+' <span>↗</span></button></div></aside>'+
  '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><span class="cp-app-live"><i></i> YOUR WORKSPACE</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
- '<main class="cp-app-content" id="cp-view">'+
+ '<section class="cp-app-content" id="cp-view">'+
  (isDemo?'<div class="cp-demo-alert"><strong>ILLUSTRATIVE DEMO</strong><span>Example content only. No project changes or client messages are sent from this preview.</span></div>':'')+
- views[tab](p)+'</main><footer class="cp-app-bottom"><span>VELORYZ STUDIO · CLIENT COLLABORATION</span><a href="mailto:veloryz.here@gmail.com">Need help? Contact us ↗</a></footer></div></div>';
+ views[tab](p)+'</section><footer class="cp-app-bottom"><span>VELORYZ STUDIO · CLIENT COLLABORATION</span><a href="mailto:veloryz.here@gmail.com">Need help? Contact us ↗</a></footer></div></div>';
 }
 const statusCard=(label,num,note)=>'<div class="cp-metric"><span>'+esc(label)+'</span><strong>'+esc(num)+'</strong><small>'+esc(note)+'</small></div>';
 function overview(p){
