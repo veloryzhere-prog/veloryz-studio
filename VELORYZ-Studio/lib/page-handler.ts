@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import siteShell from './site-shell';
+import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import { secureHtml,pageMetadata } from './response-security';
 import { publicOrigin,canonicalPath } from './site-origin.mjs';
@@ -8,6 +9,7 @@ export const dynamic = 'force-dynamic';
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
   const views:Record<string,string>={home:'/',work:'/work/',design:'/design/',studio:'/studio/',book:'/book/',create:'/create/',pricing:'/pricing/',developers:'/developers/'};
