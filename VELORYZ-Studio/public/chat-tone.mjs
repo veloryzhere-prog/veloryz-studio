@@ -1,9 +1,10 @@
-const spicyWords = /(?:^|[^\p{L}\p{N}])(?:ch[uio]t[iy]+[aey]+|chitiya|bho?s[ad]*[i]+k[ae]|bsdk|lund|l[aou]+d[ae]|m[ao]dh?[ae]r?ch[oau]+d|motherchod|b[ae]h?[ae]nch[oau]+d|bhenchod|gandu|gaandu|gand[uoi]|kutta|saala|sala|fuck(?:ing|er)?|shit|asshole|bitch|चूतिया|भोसड़ीके|मादरचोद|बहनचोद)(?=$|[^\p{L}\p{N}])/iu;
-export function isSpicy(message){
- return spicyWords.test(String(message||'').normalize('NFKC'));
-}
-export function tonePrompt(message,agent){
- if(!isSpicy(message))return 'Match the current message naturally. When the visitor becomes calm, return to a normal helpful tone.';
- if(!['aryan','nikhil','happy'].includes(agent))return 'The visitor used profanity. Be firm and composed, then answer their actual question.';
- return 'SPICY RESPONSE: Give one sharp, witty Hinglish comeback about the visitor’s current words or situation, then address their actual request. Sound confident and irreverent. Mild profanity such as bakchodi is fine. Vary the comeback using the conversation, never repeat a stock roast. Do not sexually insult relatives, attack third parties, threaten, or degrade protected groups. If there is distress, danger or a serious personal issue, prioritize support. Keep respectful family-role conversations respectful.';
+// Shared browser/server signal: strong Hinglish profanity, phonetic variants and Devanagari.
+const words=/(?:^|[^\p{L}\p{N}])(?:chutiy+a+|chutiy[ae]|chitiya|chutiya|chutye|c+h+u+t+i+y+a+|bh[oau]s[ad]?[i]+k[ae]|bhosdike|bhosdi|bhosda|bsdk|bskd|bkl|b[ae]h?nch[oau]+d|behenchod|bhenchod|behnchod|m[ao]dh?[ae]r?ch[oau]+d|madarchod|madherchod|motherchod|maa\s*k[iy]\s*chut|teri\s*maa|gandu|gaandu|gand[uoi]|l[uoa]nd|l[aou]+d[ae]|laude|loude|loda|lund|kutta|saala|sala|harami|bakchod[iy]?|fuck(?:ing|er|ed)?|shit|asshole|bitch|mf|mc|bc|मादरचोद|मादरचोद|बहनचोद|भोसड़ीके|भोसडीके|चूतिया|चुतिया|लौड़े|लौडा|गांडू|साला|हरामी|बकचोदी)(?=$|[^\p{L}\p{N}])/iu;
+export function isSpicy(message){return words.test(String(message||'').normalize('NFKC'));}
+export function tonePrompt(message,agent,role='visitor'){
+ const spicy=isSpicy(message);
+ if(!spicy)return '\nTONE: Mirror the latest message, not earlier anger. Speak naturally; do not recycle fixed introductions. Handle actual intent first.';
+ if(['father','elder-uncle','uncle'].includes(role))return '\nTONE: The message contains harsh words but this is an elder family role. Stay warm, respectful and practical. Respond without insulting them.';
+ if(!['aryan','nikhil','happy'].includes(agent))return '\nTONE: The visitor is swearing. You may be spirited and lightly sarcastic, but stay composed, grounded and useful.';
+ return '\nTONE: SPICY HINGLISH. The visitor is directly swearing; respond with a sharp, informal, assertive roast in Roman Hinglish, not a timid apology. Contextual strong everyday insults like saala, chutiya, bhosdike, bakchodi are allowed when appropriate, but do NOT threaten violence, sexually attack family members or invent attacks on third parties. React differently each time, with timing, wit and topic-specific wording; do not quote a fixed comeback. Follow through with an actual useful answer if they asked a substantive question. If there is genuine emotional distress or danger, immediately switch to support. If the latest message calms down, drop the spicy persona.';
 }
