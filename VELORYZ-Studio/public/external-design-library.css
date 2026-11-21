@@ -69,3 +69,45 @@ body.vz-ext-lock{overflow:hidden}
 @media(max-width:1050px){.vz-ext-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vz-external-hero{grid-template-columns:1fr 1fr}.vz-ext-head{align-items:start}}
 @media(max-width:720px){.vz-external-hero{grid-template-columns:1fr}.vz-external-hero-image{transform:none;aspect-ratio:1.5}.vz-external-disclaimer,.vz-ext-head{display:block}.vz-external-disclaimer span{display:block;margin-top:8px}.vz-ext-grid,.vz-home-featured{grid-template-columns:1fr}.vz-external-detail p{min-height:0}.vz-ext-dialog header{align-items:start;flex-direction:column}.vz-ext-dialog{height:93dvh;width:98vw}.vz-ext-legal{padding:24px}.vz-ext-find{width:100%}.vz-ext-find input{flex:1;min-width:0}.vz-external-store{padding-top:46px}}
 @media(prefers-reduced-motion:reduce){.vz-external-card,.vz-external-visual img,.vz-home-featured img,.vz-external-hero-image img{transition:none!important;transform:none!important}}
+
+/* VELORYZ / shoppable design collection — responsive pricing + request cart */
+.vz-ext-buybar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:18px;border-top:1px solid #e8e3dd;padding-top:15px}
+.vz-ext-buybar>div{display:flex;flex-direction:column;flex:1;min-width:100px;gap:2px}
+.vz-ext-buybar>div span,.vz-home-purchase>span{color:#6d6560;font-size:.73rem}
+.vz-ext-buybar>div strong,.vz-home-purchase b{font-size:clamp(1.12rem,1.45vw,1.46rem);letter-spacing:-.045em;color:#222}
+.vz-ext-buybar>button,.vz-home-purchase>button,.vz-ext-cart-trigger,.vz-home-cart-link button{font:700 .77rem/1.2 system-ui,sans-serif;padding:11px 13px;border-radius:10px;cursor:pointer;white-space:nowrap;min-height:42px;border:1px solid #302b29;background:transparent;color:#252020;transition:background .2s,color .2s,transform .2s}
+.vz-ext-buybar>button[data-ext-buy],.vz-home-purchase>button[data-ext-buy]{background:#292323;color:white}
+.vz-ext-buybar>button:hover,.vz-home-purchase>button:hover{background:#b87ca7;color:white;border-color:#b87ca7;transform:translateY(-2px)}
+.vz-ext-buybar button:focus-visible,.vz-home-purchase button:focus-visible,.vz-ext-cart button:focus-visible{outline:3px solid #825abb;outline-offset:3px}
+.vz-home-purchase{padding:12px 17px 17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vz-home-purchase>span{display:flex;flex-direction:column;flex:1}
+.vz-home-cart-link{display:flex;justify-content:flex-end;margin:18px 0}
+.vz-ext-cart-trigger{margin-left:14px;padding:8px 12px;min-height:34px}
+.vz-ext-cart[hidden]{display:none!important}
+.vz-ext-cart{position:fixed;inset:0;z-index:100003;display:flex;align-items:stretch;justify-content:flex-end}
+.vz-ext-cart .vz-ext-backdrop{position:absolute;inset:0;background:#151017a1;backdrop-filter:blur(5px)}
+.vz-ext-cart-dialog{position:relative;background:#fcfaf6;color:#242021;width:min(100%,520px);height:100dvh;overflow-y:auto;box-shadow:-18px 0 80px #0004;padding:clamp(22px,3vw,38px);overscroll-behavior:contain}
+.vz-ext-cart-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #ddd6cf;padding-bottom:20px;margin-bottom:18px}
+.vz-ext-cart-dialog h2{font-size:clamp(1.6rem,3vw,2.5rem);margin:5px 0 0;letter-spacing:-.05em}
+.vz-ext-cart-dialog header small{font-size:.67rem;letter-spacing:.12em}
+.vz-ext-cart-dialog header>button,.vz-ext-cart-line>button{border:1px solid #d2c9bf;background:white;border-radius:50%;width:42px;height:42px;font-size:1.5rem;cursor:pointer}
+.vz-ext-cart-list{display:grid;gap:14px}
+.vz-ext-cart-line{display:grid;grid-template-columns:90px 1fr 35px;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #e8e0d8}
+.vz-ext-cart-line img{width:90px;height:76px;border-radius:8px;object-fit:cover;object-position:top}
+.vz-ext-cart-line div{display:flex;flex-direction:column;gap:6px}
+.vz-ext-cart-line strong{font-size:.92rem;line-height:1.35}
+.vz-ext-cart-line small{font-size:.74rem;color:#666}
+.vz-ext-cart-line>button{height:35px;width:35px;font-size:1.2rem}
+.vz-ext-cart-total{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 0;border-bottom:1px solid #ddd6cf}
+.vz-ext-cart-total strong{font-size:1.5rem;letter-spacing:-.04em}
+.vz-ext-checkout-note{font-size:.79rem;line-height:1.65;color:#6a625e;margin:18px 0 24px}
+.vz-ext-cart-form{display:grid;gap:14px}
+.vz-ext-cart-form>label:not(.vz-ext-consent){display:grid;gap:6px;font-size:.8rem;font-weight:700}
+.vz-ext-cart-form>label input:not([type="checkbox"]){border-radius:10px;border:1px solid #cec6bf;background:white;color:#222;padding:12px;min-height:45px;width:100%;box-sizing:border-box}
+.vz-ext-consent{display:flex;gap:10px;align-items:flex-start;font-size:.78rem;line-height:1.5}
+.vz-ext-consent input{min-width:18px;min-height:18px}
+.vz-ext-cart-form>button{min-height:49px;border-radius:10px;background:#292323;color:white;cursor:pointer;border:0;font:700 .9rem system-ui}
+.vz-ext-cart-form>button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:980px){.vz-ext-buybar>div{flex-basis:100%}.vz-home-purchase>span{flex-basis:100%}}
+@media(max-width:550px){.vz-home-purchase>span{flex-basis:100%}.vz-ext-buybar>button,.vz-home-purchase>button{flex:1;min-width:0;font-size:.73rem;padding:12px 6px}.vz-ext-cart-dialog{padding:20px}.vz-ext-cart-trigger{margin:9px 0 0}}
+@media(prefers-reduced-motion:reduce){.vz-ext-buybar button,.vz-home-purchase button{transition:none;transform:none!important}}
