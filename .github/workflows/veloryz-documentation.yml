@@ -46,6 +46,8 @@ jobs:
         run: node tools/test-smooth-motion.mjs
       - name: Check shared scroll clock, reversible scarf and scroll scenes
         run: node tools/test-motion-clock.mjs && node tools/test-frame-cut.mjs && node tools/test-visual-motion-v4.mjs
+      - name: Verify visual-only interactions, mobile behavior, accessibility and true submission outcomes
+        run: node tools/test-micro-interactions.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
