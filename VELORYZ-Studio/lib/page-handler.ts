@@ -55,12 +55,12 @@ export async function GET(request: Request) {
  for(const [docPath,docTitle] of Object.entries(studioDocsRoutes))pages[docPath]=docTitle;
  const docEdits=data.state.site.documentation?.edits||{};
  for(const [rawPath,edit] of Object.entries(docEdits)){
-  const p=rawPath.replace(/\\/+$/,'')||'/';
+  const p=rawPath.replace(/\/+$/,'')||'/';
   if(!Object.hasOwn(pages,p))continue;
   if((edit as {visible?:boolean}).visible===false)delete pages[p];
   else if((edit as {title?:string}).title)pages[p]=(edit as {title:string}).title;
  }
- if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
+ if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /client/\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  if(normal==='/sitemap.xml'){
   const escapeXml=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const urls=Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)).map(p=>{
