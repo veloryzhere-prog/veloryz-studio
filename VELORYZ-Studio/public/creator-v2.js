@@ -69,6 +69,8 @@
   html=html.replace(/<nav class="planner-step-nav"[\s\S]*?<\/nav>/,
    '<nav class="planner-step-nav creator-step-nav" aria-label="Creator stages">'+stepNames.map((t,i)=>'<button type="button" data-planner-go="'+i+'" aria-current="'+(i===0?'step':'false')+'"><span>0'+(i+1)+'</span><b>'+t+'</b><i aria-hidden="true">✓</i></button>').join('')+'</nav>');
   html=html.replace('Step 1 of 3 · Direction','Step 1 of 4 · Vision');
+  html=html.replace('<div class="planner-step-status"',
+   '<div class="creator-mobile-price" role="status" aria-live="polite"><span>YOUR ESTIMATED PLANNING RANGE</span><strong data-creator-mobile-range>'+INR(plannerEstimate().low)+' – '+INR(plannerEstimate().high)+'</strong></div><div class="planner-step-status"');
   html=html.replace('data-planner-panel="2"','data-planner-panel="3"').replace('data-planner-panel="1"','data-planner-panel="2"');
   html=html.replace('<fieldset data-planner-panel="2" hidden>',stylePanel()+'<fieldset data-planner-panel="2" hidden>');
   html=html.replace('What are we<br>creating together?','What are we<br><em>building?</em>');
@@ -82,7 +84,8 @@
    '<button type="button" data-planner-go="3" class="creator-review-button">Review full project ↗</button>'+
    '<button type="button" data-brief-download class="creator-brief-button">Download brief as text ↓</button></div>'+
    '<details class="creator-estimate-notes"><summary>How is this calculated?</summary><p>Up to 4 pages are included. Extra pages: ₹1,500 each. Each feature allowance: ₹2,500. Upper range adds rounded 25% contingency. Hosting, licenses, provider fees, subscriptions and taxes are excluded. Complex applications and third-party integrations require studio review.</p></details></aside>');
-  html=html.replace('<label class="guided-goal"',roadmap()+'<label class="guided-goal"');
+  html=html.replace('<label class="guided-goal"',
+   roadmap()+'<div class="creator-review-download"><span>✳ &nbsp; TAKE YOUR PLAN WITH YOU</span><div><strong>Your proposal is ready to keep.</strong><button type="button" data-creator-pdf>Download proposal PDF ↓</button></div><p>This is a private planning draft, not a studio quotation. You can download it without submitting a request.</p></div><label class="guided-goal"');
   html=html.replace('data-planner-submit hidden>Review request','data-planner-submit hidden>Review and send request');
   return html;
  };
@@ -113,6 +116,9 @@
   const node=document.querySelector('[data-creator-budget-status]');if(node)node.innerHTML=budgetResult();
   updateBrief();
  });
- document.addEventListener('studio:brief',()=>{const node=document.querySelector('[data-creator-budget-status]');if(node)node.innerHTML=budgetResult();});
+ document.addEventListener('studio:brief',()=>{
+  const node=document.querySelector('[data-creator-budget-status]');if(node)node.innerHTML=budgetResult();
+  const mini=document.querySelector('[data-creator-mobile-range]');if(mini){const e=plannerEstimate();mini.textContent=INR(e.low)+' – '+INR(e.high);}
+ });
  globalThis.VeloryzCreatorV2={styles,stepNames};
 })();
