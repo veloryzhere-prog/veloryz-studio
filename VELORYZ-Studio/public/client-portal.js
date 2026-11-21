@@ -36,7 +36,7 @@ function entry(error=""){
  '<form id="cp-login" class="cp-auth-form"><label for="cp-invite">Invitation code <span>*</span></label><input id="cp-invite" name="invite" type="text" placeholder="VZ-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" autocomplete="one-time-code" spellcheck="false" required minlength="32" maxlength="100" aria-describedby="cp-code-help"><p id="cp-code-help" class="cp-auth-hint">Your private code is issued by the studio, expires after 14 days and can be used once.</p><button class="cp-button" type="submit">Open my workspace <span>↗</span></button></form>'+
  (error?'<p class="cp-error" role="alert">'+esc(error)+'</p>':'')+
  '<div class="cp-auth-under"><span>HAVE A PROJECT IN MIND?</span><a href="/create/">Start a project ↗</a></div></div>'+
- '<p class="cp-auth-support">Not received an invitation? <a href="mailto:veloryz.here@gmail.com?subject=VELORYZ%20Client%20Portal%20Access">Contact your studio project manager ↗</a></p></section>'+
+ '<p class="cp-auth-support">Not received an invitation? <a href="/support/">Ask Contact Support AI ↗</a> · <a href="mailto:veloryz.here@gmail.com?subject=VELORYZ%20Client%20Portal%20Access">Contact your studio project manager ↗</a></p></section>'+
  '<aside class="cp-auth-preview"><div class="cp-auth-preview-top"><span>VELORYZ / A CONNECTED EXPERIENCE</span><span>✳</span></div><div class="cp-preview-wrap"><div class="cp-preview-app"><div class="cp-preview-side"><b>V.</b><i></i><i></i><i></i><i></i></div><div class="cp-preview-content"><small>CLIENT VIEW / PREVIEW</small><strong>Everything, in sync.</strong><p>Project timeline</p><div class="cp-preview-steps"><i class="done"></i><i class="done"></i><i class="current"></i><i></i><i></i></div><div class="cp-preview-metrics"><span><b>2/5</b>Milestones</span><span><b>3</b>Deliverables</span><span><b>1</b>To review</span></div><div class="cp-preview-deliverable"><strong>Deliverables</strong><p>Brand direction <span>Shared</span></p><p>Homepage concept <span>In review</span></p></div></div></div></div><div class="cp-auth-preview-foot"><p>A calmer way to collaborate, from first idea to final handover.</p><button type="button" data-cp-demo>Explore an interactive demo ↗</button></div></aside></div>';
  const hash=location.hash.match(/(?:^#|&)invite=([^&]+)/i);
  if(hash){
@@ -51,7 +51,7 @@ async function signIn(code){
  try{await api("/access",{method:"POST",body:JSON.stringify({invite:code})});history.replaceState(null,"",location.pathname);await refresh();}
  catch(e){entry(e.message)}finally{busy=false;}
 }
-const nav=[["overview","Dashboard","grid"],["timeline","Project Plan","map"],["reviews","Action Items","check"],["files","Deliverables","file"],["messages","Messages","chat"]];
+const nav=[["overview","Dashboard","grid"],["timeline","Project Plan","map"],["reviews","Action Items","check"],["files","Deliverables","file"],["messages","Messages","chat"],["ai","AI Guide","chat"]];
 function navIcon(name){
  const shapes={
  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -125,8 +125,13 @@ function messages(){
  '<div class="cp-conversation" role="log" aria-label="Project conversation">'+(list.length?list.map(m=>'<article class="cp-message '+(m.sender==="client"?"is-client":"is-studio")+'"><div class="cp-message-top"><span>'+esc(m.sender==="client"?"You":"VELORYZ Studio")+'</span><time>'+esc(date(m.created_at))+'</time></div><p>'+esc(m.body).replace(/\n/g,"<br>")+'</p></article>').join(''):'<p class="cp-empty-small">No messages yet. This is where the conversation will begin.</p>')+'</div>'+
  '<form id="cp-message-form" class="cp-message-form"><label for="cp-message">Send a message</label><textarea id="cp-message" name="body" rows="4" maxlength="2000" required placeholder="Write a message to your VELORYZ project team…" '+(isDemo?'disabled':'')+'></textarea><div><small>'+(isDemo?"Messaging is disabled in this demonstration.":"Your message is visible only in this project workspace.")+'</small><button class="cp-button" type="submit" '+(isDemo?'disabled':'')+'>Send message ↗</button></div></form></section>';
 }
-const views={overview,timeline,files,reviews,messages};
-function render(){document.body.classList.toggle('cp-logged',!!state);if(!state)return entry(notice);root.innerHTML=shell();document.title=(isDemo?"Preview":"Your project")+" — VELORYZ Client Workspace";}
+function aiGuide(){
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">YOUR PROJECT COMPANION</span><h1>Studio AI Guide</h1><p>Ask questions about your portal, milestones, approvals and communication. This is a guidance assistant and cannot read confidential project details.</p></div>'+
+ (window.VeloryzSupportChat?.render('client',{embed:true})||'<p>AI Guide is loading. You can still <a href="/support/">contact support</a>.</p>')+
+ '<div class="cp-ai-disclaimer">This assistant does not access your private client records. For a project-specific decision or update, use <button type="button" data-cp-tab="messages">Messages</button> to contact the team.</div>';
+}
+const views={overview,timeline,files,reviews,messages,ai:aiGuide};
+function render(){document.body.classList.toggle('cp-logged',!!state);if(!state)return entry(notice);root.innerHTML=shell();if(tab==='ai')window.VeloryzSupportChat?.mount(root);document.title=(isDemo?"Preview":"Your project")+" — VELORYZ Client Workspace";}
 async function refresh(){
  try{state=await api("/session");isDemo=false;render();}
  catch(e){if(e.status===401)entry();else entry("The client workspace could not be loaded. Please try again.");}
