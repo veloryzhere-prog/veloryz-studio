@@ -2,7 +2,7 @@
 /* Dependency-free three-page, vector PDF proposal created entirely in the browser.
    Budget and timeline are clearly marked as a client-side draft, not a quote. */
 (function(){
- const W=595,H=842,INK=[.15,.13,.13],MUTED=[.46,.43,.41],TERRA=[.72,.35,.24],CREAM=[.978,.961,.938],SOFT=[.942,.920,.888],WHITE=[1,1,1],LINE=[.88,.85,.82];
+ const W=595,H=842,INK=[.14,.18,.15],MUTED=[.46,.53,.48],TERRA=[.26,.45,.32],CREAM=[1,1,1],SOFT=[.958,.976,.957],WHITE=[1,1,1],LINE=[.88,.92,.88];
  const nums=c=>c.map(v=>Number(v).toFixed(3)).join(' ');
  function plain(value){
   return String(value??'').replace(/₹/g,'INR ').replace(/[–—−]/g,'-').replace(/[“”]/g,'"').replace(/[‘’]/g,"'")
@@ -50,11 +50,11 @@
   const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   const docs=[page(),page(),page(),...(creator?[page()]:[])];const p1=docs[0],p2=docs[1],p3=docs[2];
   // Cover and project definition
-  p1.rect(0,0,W,H,CREAM);p1.rect(0,0,W,236,INK);p1.rect(42,35,8,8,TERRA);
-  p1.text('VELORYZ / STUDIO',62,30,13,true,WHITE);
-  p1.text('A PROJECT STARTS HERE',42,76,9,true,[.78,.7,.68]);
-  p1.text('An idea,',40,102,40,true,WHITE);p1.text('made possible.',40,151,40,true,WHITE);
-  p1.text('PERSONAL PROJECT OUTLINE     /     '+now.toUpperCase(),42,205,9,false,[.90,.83,.78]);
+  p1.rect(0,0,W,H,CREAM);p1.rect(0,0,W,8,TERRA);p1.rect(42,35,8,8,TERRA);
+  p1.text('VELORYZ / STUDIO',62,30,13,true,INK);
+  p1.text('A PROJECT STARTS HERE',42,76,9,true,TERRA);
+  p1.text('An idea,',40,102,40,true,INK);p1.text('made possible.',40,151,40,true,INK);
+  p1.text('PERSONAL PROJECT OUTLINE     /     '+now.toUpperCase(),42,205,9,false,MUTED);
   p1.text('CLIENT-SIDE DRAFT - NOT A STUDIO QUOTATION',42,252,9,true,TERRA);
   p1.text('Your project at a glance.',42,278,23,true,INK);p1.line(42,322,553,322,LINE,1);
   const summary=[['PROJECT DIRECTION',b.purpose||'Portfolio'],['VISUAL DIRECTION',b.style||'Editorial'],['CORE PAGES',String(b.pages||4)],['PREFERRED LAUNCH',b.timeline||'Flexible']];
@@ -71,10 +71,10 @@
   p2.rect(0,0,W,H,CREAM);p2.rect(42,43,8,8,TERRA);p2.text('VELORYZ  /  SCOPE & BUDGET',61,38,10,true,MUTED);
   p2.text('Budget, explained.',42,86,29,true,INK);
   p2.text('Transparent planning assumptions. No hidden certainty.',42,126,11,false,MUTED);
-  p2.rect(42,165,510,144,INK);
-  p2.text('ILLUSTRATIVE PROJECT RANGE',60,184,10,true,[.87,.81,.78]);
-  p2.text(formatMoney(e.low)+'  -  '+formatMoney(e.high),60,222,24,true,WHITE);
-  p2.text('The upper estimate includes a rounded 25% scope contingency.',60,276,9,false,[.88,.82,.78]);
+  p2.rect(42,165,510,144,SOFT);
+  p2.text('ILLUSTRATIVE PROJECT RANGE',60,184,10,true,TERRA);
+  p2.text(formatMoney(e.low)+'  -  '+formatMoney(e.high),60,222,24,true,INK);
+  p2.text('Upper range includes a planning contingency; the actual rate is configured by the studio.',60,276,9,false,MUTED);
   p2.text('WHAT MAKES UP THE RANGE',42,337,10,true,TERRA);
   const costs=[
    ['Starting point',e.base],['Additional pages beyond four',e.additionalPages],
