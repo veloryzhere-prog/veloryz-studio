@@ -28,6 +28,7 @@ class VeloryzFrameCut extends HTMLElement {
   try{ctx=canvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
   const sprites=Boolean(ctx&&typeof Image==='function');
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
+  const keepDecoded=!(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const sheets=new Map();
   const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
   const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.49)*(TOTAL_FRAMES-1)));
@@ -39,7 +40,10 @@ class VeloryzFrameCut extends HTMLElement {
    sheets.set(index,entry);
    img.onload=()=>{
     if(deleted)return;
-    entry.ready=true;lastProgress=-1;schedule();
+    // Decode away from wheel-driven drawing so a new sheet won't block input.
+    const mark=()=>{if(deleted)return;entry.ready=true;lastProgress=-1;schedule();};
+    if(typeof img.decode==='function')img.decode().then(mark,mark);
+    else mark();
    };
    img.onerror=()=>{
     if(deleted)return;
@@ -74,13 +78,13 @@ class VeloryzFrameCut extends HTMLElement {
     const imageWidth=Math.min(width,height*16/9),imageHeight=imageWidth*9/16;
     const x=(width-imageWidth)/2,y=(height-imageHeight)/2;
     ctx.fillStyle='#06071a';ctx.fillRect(0,0,width,height);
-    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='medium';
     ctx.drawImage(entry.img,sx,sy,CELL_W,CELL_H,x,y,imageWidth,imageHeight);
     drawnFrame=current;
    }
    if(!spriteReady){spriteReady=true;set('--frame-canvas-ready',1);}
-   // Only active and nearby sheets are kept in decoded memory.
-   for(const key of sheets.keys())if(Math.abs(key-index)>3)sheets.delete(key);
+   // Keep the original decoded artwork in memory on capable desktops.
+   if(!keepDecoded)for(const key of sheets.keys())if(Math.abs(key-index)>3)sheets.delete(key);
    return true;
   };
   const set=(key,value)=>this.style.setProperty(key,String(value));
@@ -142,7 +146,10 @@ class VeloryzFrameCut extends HTMLElement {
     reveal.src='/assets/frame-cut/reveal.mp4';
     reveal.load?.();
    }
-   if(sprites&&!spriteFailed){loadSheet(0);loadSheet(1);loadSheet(2);}
+   if(sprites&&!spriteFailed){
+    // Prewarm all 10 small WebPs well before the user starts scrubbing.
+    for(let index=0;index<10;index++)loadSheet(index);
+   }
    if(!scarfLoaded){
     scarfLoaded=true;
     scarf.preload='auto';
@@ -216,7 +223,7 @@ class VeloryzFrameCut extends HTMLElement {
     near=Boolean(entry?.isIntersecting);
     if(near)prefetch();else pause();
     schedule();
-   },{rootMargin:'125% 0px',threshold:0});
+   },{rootMargin:'200% 0px',threshold:0});
    observer.observe(this);
   }else{near=true;prefetch();}
   on(reveal,'loadedmetadata',()=>{seekPending=true;seekReveal();schedule();});
