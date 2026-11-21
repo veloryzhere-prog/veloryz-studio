@@ -74,10 +74,23 @@
  document.addEventListener('pointermove',e=>{
   if(e.pointerType!=='mouse'||coarse.matches)return;
   point={x:e.clientX,y:e.clientY};
-  const el=e.target instanceof Element?e.target.closest(selector):null;
+  // Avoid an expensive DOM closest() lookup on every raw mousemove;
+  // hover targeting is maintained by pointerover/out.
+  if(cursor)scheduleCursor();
+ },{passive:true});
+ document.addEventListener('pointerover',e=>{
+  if(e.pointerType!=='mouse'||coarse.matches||!(e.target instanceof Element))return;
+  const el=e.target.closest(selector);
   hovered=Boolean(el&&!el.closest('[inert]'));
   if(hovered&&!cursor)setupCursor();
   if(cursor)scheduleCursor();
+ },{passive:true});
+ document.addEventListener('pointerout',e=>{
+  if(e.pointerType!=='mouse'||coarse.matches)return;
+  // If leaving a clickable element, hide the halo until the next pointerover.
+  if(!(e.relatedTarget instanceof Element)||!e.relatedTarget.closest(selector)){
+   hovered=false;if(cursor)scheduleCursor();
+  }
  },{passive:true});
  document.addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'){down=true;scheduleCursor();}
