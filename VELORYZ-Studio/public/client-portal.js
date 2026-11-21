@@ -27,21 +27,23 @@ function toast(message){const el=$("#cp-toast");el.textContent=message;el.classL
 function badge(s){const labels={"planning":"Planning","in-progress":"In progress","in-review":"In review","launched":"Launched","on-hold":"On hold","done":"Complete","waiting":"Needs your review","approved":"Approved","changes":"Changes requested","upcoming":"Coming up"};return '<span class="cp-badge cp-badge-'+esc(s)+'">'+esc(labels[s]||s)+'</span>'}
 function sample(){isDemo=true;state=demo;tab="overview";render();}
 function entry(error=""){
- isDemo=false;state=null;
- root.innerHTML='<section class="cp-entry"><div class="cp-entry-intro">'+
- '<div class="cp-kicker"><span>VELORYZ / YOUR PROJECT SPACE</span><span>AN OPEN LINE BETWEEN IDEA & LAUNCH</span></div>'+
- '<div class="cp-entry-display"><span class="cp-overline">PRIVATE CLIENT ROOM — 001</span><h1>Good things<br>take <em>shape.</em><br>Together.</h1>'+
- '<p>Everything we are building, gathered in one thoughtful place. A clear timeline, decisions to review, files to keep, and a conversation that keeps moving.</p></div>'+
- '<div class="cp-entry-footnote"><span class="cp-flower" aria-hidden="true">✳</span><span>Made for the people behind every project.<br>Thoughtfully designed by VELORYZ Studio.</span></div></div>'+
- '<div class="cp-entry-card"><span class="cp-card-index">THE CLIENT ROOM <span>01 / ACCESS</span></span><div class="cp-key-icon" aria-hidden="true">↗</div>'+
- '<h2>A personal place<br>for your project.</h2><p>We create your private workspace when a project begins. Enter the invitation code shared by our studio.</p>'+
- '<form id="cp-login" class="cp-login"><label for="cp-invite">Your private access code</label><input id="cp-invite" name="invite" placeholder="Paste your invitation code" autocomplete="off" spellcheck="false" required minlength="64" maxlength="64"><button class="cp-button" type="submit">Open my workspace <span aria-hidden="true">↗</span></button></form>'+
+ isDemo=false;state=null;document.body.classList.remove('cp-logged');
+ root.innerHTML='<div class="cp-auth-shell"><section class="cp-auth-main">'+
+ '<div class="cp-auth-logo"><span class="cp-auth-flower">✳</span> PRIVATE CLIENT PORTAL</div>'+
+ '<div class="cp-auth-head"><span class="cp-auth-eyebrow">GOOD WORK. ONE PLACE.</span><h1>Welcome to your<br>project workspace<span class="cp-auth-stop">.</span></h1>'+
+ '<p>See exactly where your project stands, review shared work, approve decisions, and keep every important conversation in one calm space.</p></div>'+
+ '<div class="cp-auth-card"><div class="cp-auth-card-head"><span class="cp-auth-key">↗</span><div><h2>Open your client portal</h2><p>Enter the one-time invitation code sent by VELORYZ Studio.</p></div></div>'+
+ '<form id="cp-login" class="cp-auth-form"><label for="cp-invite">Invitation code <span>*</span></label><input id="cp-invite" name="invite" type="text" placeholder="VZ-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" autocomplete="one-time-code" spellcheck="false" required minlength="32" maxlength="100" aria-describedby="cp-code-help"><p id="cp-code-help" class="cp-auth-hint">Your private code is issued by the studio, expires after 14 days and can be used once.</p><button class="cp-button" type="submit">Open my workspace <span>↗</span></button></form>'+
  (error?'<p class="cp-error" role="alert">'+esc(error)+'</p>':'')+
- '<div class="cp-entry-divider"><span></span>FIRST TIME HERE?<span></span></div><p class="cp-invite-help">Invitation missing? <a href="mailto:veloryz.here@gmail.com?subject=Client%20workspace%20access">Ask your project contact ↗</a></p>'+
- '<button type="button" class="cp-plain-link" data-cp-demo>Explore an illustrative preview <span aria-hidden="true">↗</span></button></div></section>'+
- '<section class="cp-value"><span>01 / TRANSPARENT PROGRESS</span><span>02 / THOUGHTFUL REVIEWS</span><span>03 / ONE PLACE TO COLLABORATE</span></section>';
- const hash=location.hash.match(/(?:^#|&)invite=([0-9a-f]{64})/i);
- if(hash){history.replaceState(null,"",location.pathname+location.search);const input=$("#cp-invite");input.value=hash[1];signIn(hash[1]);}
+ '<div class="cp-auth-under"><span>HAVE A PROJECT IN MIND?</span><a href="/create/">Start a project ↗</a></div></div>'+
+ '<p class="cp-auth-support">Not received an invitation? <a href="mailto:veloryz.here@gmail.com?subject=VELORYZ%20Client%20Portal%20Access">Contact your studio project manager ↗</a></p></section>'+
+ '<aside class="cp-auth-preview"><div class="cp-auth-preview-top"><span>VELORYZ / A CONNECTED EXPERIENCE</span><span>✳</span></div><div class="cp-preview-wrap"><div class="cp-preview-app"><div class="cp-preview-side"><b>V.</b><i></i><i></i><i></i><i></i></div><div class="cp-preview-content"><small>CLIENT VIEW / PREVIEW</small><strong>Everything, in sync.</strong><p>Project timeline</p><div class="cp-preview-steps"><i class="done"></i><i class="done"></i><i class="current"></i><i></i><i></i></div><div class="cp-preview-metrics"><span><b>2/5</b>Milestones</span><span><b>3</b>Deliverables</span><span><b>1</b>To review</span></div><div class="cp-preview-deliverable"><strong>Deliverables</strong><p>Brand direction <span>Shared</span></p><p>Homepage concept <span>In review</span></p></div></div></div></div><div class="cp-auth-preview-foot"><p>A calmer way to collaborate, from first idea to final handover.</p><button type="button" data-cp-demo>Explore an interactive demo ↗</button></div></aside></div>';
+ const hash=location.hash.match(/(?:^#|&)invite=([^&]+)/i);
+ if(hash){
+  const token=decodeURIComponent(hash[1]);
+  history.replaceState(null,"",location.pathname+location.search);
+  const input=$("#cp-invite");input.value=token;signIn(token);
+ }
 }
 async function signIn(code){
  if(busy)return;busy=true;
@@ -49,57 +51,82 @@ async function signIn(code){
  try{await api("/access",{method:"POST",body:JSON.stringify({invite:code})});history.replaceState(null,"",location.pathname);await refresh();}
  catch(e){entry(e.message)}finally{busy=false;}
 }
-const nav=[["overview","Overview","✳"],["timeline","Timeline","⌁"],["files","Deliverables","↗"],["reviews","Reviews","◇"],["messages","Messages","↳"]];
-function header(p){
- const initials=(p.client_name||"C").split(/\s+/).slice(0,2).map(s=>s[0]).join("").toUpperCase();
- return '<div class="cp-dashboard-top"><span class="cp-overline">A PRIVATE COLLABORATION / VELORYZ</span><div class="cp-top-greeting"><span>Welcome, <strong>'+esc(p.client_name)+'</strong></span><div class="cp-avatar">'+esc(initials)+'</div></div></div>';
+const nav=[["overview","Dashboard","grid"],["timeline","Project Plan","map"],["reviews","Action Items","check"],["files","Deliverables","file"],["messages","Messages","chat"]];
+function navIcon(name){
+ const shapes={
+ grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+ map:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/>',
+ check:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 12 3 3 6-6"/>',
+ file:'<path d="M6 2h9l4 4v16H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm9 0v5h4M8 12h8M8 16h8"/>',
+ chat:'<path d="M20 11a8 8 0 0 1-8 8 8 8 0 0 1-4-.9L3 20l1.9-5A8 8 0 1 1 20 11Z"/>'
+ };
+ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+shapes[name]+'</svg>';
 }
 function shell(){
  const p=state.project;
- return '<div class="cp-workspace">'+header(p)+'<div class="cp-dashboard-layout"><aside class="cp-sidebar"><div class="cp-side-project"><span>YOUR PROJECT</span><strong>'+esc(p.title)+'</strong>'+badge(p.status)+'</div>'+
- '<nav class="cp-side-nav" aria-label="Client workspace sections">'+nav.map(([id,label,mark])=>'<button type="button" data-cp-tab="'+id+'" class="'+(tab===id?'is-active':'')+'" aria-current="'+(tab===id?'page':'false')+'"><span class="cp-nav-mark">'+mark+'</span>'+label+'<span class="cp-nav-arrow">↗</span></button>').join('')+'</nav>'+
- '<div class="cp-sidebar-lower"><span class="cp-flower" aria-hidden="true">✳</span><p>A good collaboration makes room for questions.</p><a href="mailto:veloryz.here@gmail.com?subject=VELORYZ%20project%20question">Contact the studio ↗</a></div>'+
- '<button class="cp-exit" data-cp-exit>'+(isDemo?'Leave preview':'Sign out securely')+' <span>↗</span></button></aside>'+
- '<section class="cp-view" id="cp-view">'+(isDemo?'<div class="cp-demo-alert"><strong>ILLUSTRATIVE PREVIEW</strong><span>No real client details or active project are shown here.</span></div>':'')+views[tab](p)+'</section></div></div>';
+ const initials=(p.client_name||"C").split(/\s+/).slice(0,2).map(s=>s[0]?.[0]||"").join("").toUpperCase();
+ const actionCount=state.items.filter(i=>i.type==="approval"&&i.state==="waiting").length;
+ return '<div class="cp-app-layout"><aside class="cp-app-sidebar">'+
+ '<a class="cp-app-brand" href="/"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="VELORYZ" width="880" height="263"><span>CLIENT PORTAL</span></a>'+
+ '<div class="cp-app-client"><div class="cp-app-client-icon">'+esc(initials)+'</div><span><strong>'+esc(p.client_name)+'</strong><small>'+esc(p.title)+'</small></span></div>'+
+ '<nav class="cp-app-nav" aria-label="Client workspace navigation">'+nav.map(([id,label,icon])=>'<button type="button" data-cp-tab="'+id+'" class="'+(tab===id?'is-active':'')+'" '+(tab===id?'aria-current="page"':'')+'>'+navIcon(icon)+'<span>'+label+'</span>'+(id==="reviews"&&actionCount?'<b class="cp-nav-count">'+actionCount+'</b>':'')+'</button>').join('')+'</nav>'+
+ '<div class="cp-app-sidebar-footer"><div class="cp-security"><span>◉</span><p>Private & secure<br><small>Shared by VELORYZ Studio</small></p></div><button class="cp-exit" data-cp-exit>'+(isDemo?'Exit preview':'Sign out')+' <span>↗</span></button></div></aside>'+
+ '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><span class="cp-app-live"><i></i> YOUR WORKSPACE</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
+ '<main class="cp-app-content" id="cp-view">'+
+ (isDemo?'<div class="cp-demo-alert"><strong>ILLUSTRATIVE DEMO</strong><span>Example content only. No project changes or client messages are sent from this preview.</span></div>':'')+
+ views[tab](p)+'</main><footer class="cp-app-bottom"><span>VELORYZ STUDIO · CLIENT COLLABORATION</span><a href="mailto:veloryz.here@gmail.com">Need help? Contact us ↗</a></footer></div></div>';
 }
 const statusCard=(label,num,note)=>'<div class="cp-metric"><span>'+esc(label)+'</span><strong>'+esc(num)+'</strong><small>'+esc(note)+'</small></div>';
 function overview(p){
- const milestones=state.items.filter(i=>i.type==="milestone"),finished=milestones.filter(i=>i.state==="done").length,pending=state.items.filter(i=>i.type==="approval"&&i.state==="waiting").length;
- return '<div class="cp-section-head"><span class="cp-overline">YOUR PROJECT / AT A GLANCE</span><h1>Progress with<br><em>perspective.</em></h1><p>'+esc(p.summary||"A thoughtfully planned space for the work ahead.")+'</p></div>'+
- '<div class="cp-feature"><div class="cp-feature-top"><span>THE CURRENT CHAPTER / '+esc(p.phase||"Discover")+'</span>'+badge(p.status)+'</div>'+
- '<div class="cp-feature-middle"><strong>'+esc(p.progress)+'<small>%</small></strong><div><span>Overall progress</span><p>Each step brings your project closer to the finish.</p></div></div>'+
- '<div class="cp-track" role="progressbar" aria-label="Project progress" aria-valuenow="'+esc(p.progress)+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.max(0,Math.min(100,Number(p.progress)||0))+'%"></span></div>'+
- '<div class="cp-feature-foot"><span>CURRENT STAGE · '+esc(p.phase||"Discover")+'</span><span>ESTIMATED FINISH · '+esc(date(p.due_date))+'</span></div></div>'+
- '<div class="cp-metrics">'+statusCard("Milestones complete",finished+" / "+milestones.length,"Follow along with every chapter")+
- statusCard("Items to review",pending,"Your input helps us move")+
- statusCard("Shared deliverables",state.items.filter(i=>i.type==="file").length,"Files and important links")+'</div>'+
- '<div class="cp-two-col"><section class="cp-panel cp-next"><span class="cp-panel-kicker">COMING UP / THE NEXT STEP</span><span class="cp-big-symbol" aria-hidden="true">↗</span><h2>'+esc(p.next_step||"We’ll share the next step when it is ready.")+'</h2><button type="button" class="cp-text-button" data-cp-tab="timeline">Explore the timeline ↗</button></section>'+
- '<section class="cp-panel"><div class="cp-panel-top"><span class="cp-panel-kicker">A QUICK LOOK</span><button type="button" data-cp-tab="timeline">All milestones ↗</button></div>'+
- '<div class="cp-mini-steps">'+milestones.slice(0,4).map((i,n)=>'<div><span class="cp-step-number">0'+(n+1)+'</span><span>'+esc(i.title)+'</span>'+badge(i.state)+'</div>').join('')+'</div></section></div>';
+ const steps=state.items.filter(i=>i.type==="milestone");
+ const files=state.items.filter(i=>i.type==="file");
+ const delivered=files.filter(i=>i.state==="done"&&safeLink(i.url)).length;
+ const approvals=state.items.filter(i=>i.type==="approval"&&i.state==="waiting");
+ const done=steps.filter(i=>i.state==="done").length;
+ const phaseOrder=["Discover","Define","Design","Develop","Review","Launch"];
+ const effectiveSteps=steps.length?steps:phaseOrder.map(s=>({title:s,state:s===p.phase?"in-progress":"upcoming"}));
+ const stage=Number(p.progress)||0;
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">PROJECT DASHBOARD / LIVE SNAPSHOT</span><h1>Welcome to '+esc(p.title)+'</h1><p>A clear snapshot of your project — milestones, deliverables, and anything that needs your attention.</p></div>'+
+ '<section class="cp-surface cp-progress-card"><div class="cp-card-top"><div class="cp-card-title"><span class="cp-mini-icon">▥</span><div><h2>Project timeline</h2><p>'+esc(p.phase)+' · '+esc(p.status.replaceAll("-"," "))+'</p></div></div><span class="cp-progress-percent">'+Math.round(stage)+'% complete</span></div>'+
+ '<div class="cp-phase-grid">'+effectiveSteps.slice(0,7).map((step,i)=>'<div class="cp-phase"><div class="cp-phase-bar '+(step.state==="done"?'is-done':step.state==="in-progress"?'is-current':'')+'"></div><span>'+esc(step.title)+'</span>'+(step.state==="done"?'<small>✓</small>':'')+'</div>').join('')+'</div>'+
+ '<div class="cp-progress-caption"><span>Current phase: <strong>'+esc(p.phase)+'</strong></span><span>Expected finish: '+esc(date(p.due_date))+'</span></div></section>'+
+ '<div class="cp-stats"><div class="cp-stat"><strong class="cp-stat-green">'+done+'<small> / '+steps.length+'</small></strong><span>MILESTONES</span></div><div class="cp-stat"><strong class="cp-stat-blue">'+delivered+'<small> / '+files.length+'</small></strong><span>DELIVERABLES</span></div><div class="cp-stat"><strong class="cp-stat-orange">'+approvals.length+'</strong><span>ACTION ITEMS</span></div></div>'+
+ '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-green">◇</span><div><h2>Deliverables</h2><p>Files and links shared for your review.</p></div></div><button data-cp-tab="files">View all ↗</button></div>'+
+ (files.length?files.slice(0,5).map(item=>'<div class="cp-doc-group"><div class="cp-doc-title"><strong>'+esc(item.title)+'</strong>'+badge(item.state)+'</div><div class="cp-doc-file"><span class="cp-doc-icon">▤</span><div><strong>'+esc(item.title)+'</strong><small>'+esc(item.details||"Shared by VELORYZ Studio")+'</small></div>'+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ &nbsp; Open file</a>':'<span class="cp-doc-pending">Awaiting file</span>')+'</div></div>').join(''):'<div class="cp-empty-small">No deliverables have been shared yet. Your studio will add them here as the project progresses.</div>')+'</section>'+
+ '<div class="cp-dashboard-duo"><section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-lime">✓</span><div><h2>Waiting on you</h2><p>Approvals requiring your decision.</p></div></div></div>'+
+ (approvals.length?approvals.slice(0,3).map(item=>'<button class="cp-action-row" data-cp-tab="reviews"><span class="cp-alert-circle">!</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(item.details||"Please review this direction.")+'</small></span><b>Review ↗</b></button>').join(''):'<div class="cp-empty-small">You’re all caught up. No approvals waiting.</div>')+'</section>'+
+ '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-blue">↗</span><div><h2>What’s next</h2><p>The next step in our collaboration.</p></div></div></div>'+
+ '<div class="cp-next-copy"><strong>'+esc(p.next_step||"We will share the next step as soon as it is confirmed.")+'</strong><p>Stay connected with the studio and keep an eye on this dashboard.</p><button data-cp-tab="messages">View conversation ↗</button></div></section></div>';
 }
 function timeline(){
- const list=state.items.filter(i=>i.type==="milestone");
- return '<div class="cp-section-head"><span class="cp-overline">01 / THE ROAD AHEAD</span><h1>Every step,<br><em>accounted for.</em></h1><p>From initial thinking to the finishing touches, here is where everything stands.</p></div>'+
- (list.length?'<div class="cp-timeline">'+list.map((i,n)=>'<article class="cp-timeline-row"><span class="cp-timeline-number">'+String(n+1).padStart(2,"0")+'</span><span class="cp-timeline-marker '+(i.state==="done"?"is-done":"")+'"></span><div><div class="cp-timeline-title"><h2>'+esc(i.title)+'</h2>'+badge(i.state)+'</div><p>'+esc(i.details||"Details to follow.")+'</p><small>'+esc(i.due_date?date(i.due_date):"To be scheduled")+'</small></div></article>').join('')+'</div>':'<div class="cp-empty">Your timeline is being prepared. We will share milestones as soon as the scope is agreed.</div>');
+ const p=state.project,steps=state.items.filter(i=>i.type==="milestone");
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">PLANNING & MILESTONES</span><h1>Project Plan</h1><p>Every stage of '+esc(p.title)+' in one clear timeline. See what is complete and what comes next.</p></div>'+
+ '<section class="cp-surface cp-plan-head"><div><span class="cp-mini-kicker">CURRENT STAGE</span><h2>'+esc(p.phase)+'</h2><p>'+esc(p.next_step||"The studio will confirm the next project step.")+'</p></div>'+badge(p.status)+'</section>'+
+ '<div class="cp-plan-list">'+(steps.length?steps.map((item,i)=>'<article class="cp-plan-step"><div class="cp-plan-dot '+(item.state==="done"?'done':'')+'">'+(item.state==="done"?'✓':String(i+1).padStart(2,"0"))+'</div><div class="cp-plan-item"><div><span>PHASE '+String(i+1).padStart(2,"0")+'</span>'+badge(item.state)+'</div><h2>'+esc(item.title)+'</h2><p>'+esc(item.details||"The studio will add details as this phase begins.")+'</p><small>'+esc(date(item.due_date))+'</small></div></article>').join(''):'<div class="cp-empty-small cp-surface">Your project plan will be added by the studio. You will see each stage and its status here.</div>')+'</div>';
 }
 function files(){
  const list=state.items.filter(i=>i.type==="file");
- return '<div class="cp-section-head"><span class="cp-overline">02 / YOUR DELIVERABLES</span><h1>Everything,<br><em>in its place.</em></h1><p>Important links and handovers, collected here as the work progresses.</p></div>'+
- (list.length?'<div class="cp-files">'+list.map((i,n)=>'<article class="cp-file"><span class="cp-file-icon" aria-hidden="true">↗</span><div><strong>'+esc(i.title)+'</strong><p>'+esc(i.details||"Shared by the studio.")+'</p><small>'+esc(date(i.due_date))+'</small></div>'+ (safeLink(i.url)?'<a href="'+esc(safeLink(i.url))+'" target="_blank" rel="noopener noreferrer" aria-label="Open '+esc(i.title)+' in a new tab">Open ↗</a>':'<span class="cp-file-wait">Awaiting file</span>')+'</article>').join('')+'</div><p class="cp-small-note">Linked files open on their original host. Access and download permissions are controlled by that provider.</p>':'<div class="cp-empty">Nothing shared yet. This space will fill with the deliverables we prepare together.</div>');
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">SHARED FILES & LINKS</span><h1>Deliverables</h1><p>Everything shared with you, organized by project. No lost files or scattered email threads.</p></div>'+
+ '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-green">◇</span><div><h2>Project files</h2><p>'+list.length+' deliverable'+(list.length===1?'':'s')+' in your workspace.</p></div></div></div>'+
+ (list.length?list.map((item,i)=>'<div class="cp-file-list-row"><span class="cp-file-type">▤</span><div class="cp-file-meta"><strong>'+esc(item.title)+'</strong><p>'+esc(item.details||"File supplied by VELORYZ Studio")+'</p><small>'+esc(item.due_date?date(item.due_date):"No due date")+'</small></div>'+badge(item.state)+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ Open file</a>':'<span class="cp-doc-pending">Not shared yet</span>')+'</div>').join(''):'<div class="cp-empty-small">There are no shared files yet. We will add deliverables here as they are ready.</div>')+'</section><p class="cp-file-caution">Linked deliverables open on the original file provider. Their own access permissions apply.</p>';
 }
 function reviews(){
- const list=state.items.filter(i=>i.type==="approval");
- return '<div class="cp-section-head"><span class="cp-overline">03 / YOUR APPROVALS</span><h1>A voice in<br><em>every detail.</em></h1><p>When a decision needs your attention, you will find it here. Your feedback goes straight into the project conversation.</p></div>'+
- (list.length?'<div class="cp-reviews">'+list.map(i=>'<article class="cp-review"><div class="cp-review-top"><span>REVIEW REQUEST</span>'+badge(i.state)+'</div><h2>'+esc(i.title)+'</h2><p>'+esc(i.details)+'</p>'+ (i.state==="waiting"?'<form class="cp-review-form" data-cp-review="'+esc(i.id)+'"><label for="cp-note-'+esc(i.id)+'">Optional context or changes</label><textarea id="cp-note-'+esc(i.id)+'" name="note" rows="3" maxlength="1000" placeholder="Add your thoughts…"></textarea><div class="cp-review-actions"><button type="submit" name="decision" value="approved" class="cp-button" '+(isDemo?'disabled':'')+'>Approve this direction ↗</button><button type="submit" name="decision" value="changes" class="cp-outline" '+(isDemo?'disabled':'')+'>Request changes</button></div></form>':'<p class="cp-review-resolved">This review has been recorded.</p>')+'</article>').join('')+'</div>':'<div class="cp-empty">No reviews are waiting. We will ask for your perspective when a decision is ready.</div>');
+ const list=state.items.filter(i=>i.type==="approval"),waiting=list.filter(i=>i.state==="waiting");
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">DECISIONS THAT MOVE WORK FORWARD</span><h1>Action Items</h1><p>Review work that needs your input. Approve a direction or request changes with clear notes.</p></div>'+
+ '<div class="cp-action-count"><span>'+waiting.length+'</span> item'+(waiting.length===1?'':'s')+' waiting on you</div>'+
+ '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-lime">✓</span><div><h2>Approvals</h2><p>Decisions needing your sign-off.</p></div></div></div>'+
+ (list.length?list.map(item=>'<article class="cp-approval"><div class="cp-approval-heading"><div><span class="cp-file-type">▤</span><strong>'+esc(item.title)+'</strong></div>'+badge(item.state)+'</div><p>'+esc(item.details||"Please review the proposed direction.")+'</p>'+
+ (item.state==="waiting"?'<form data-cp-review="'+esc(item.id)+'" class="cp-review-form"><label for="cp-note-'+esc(item.id)+'">Feedback or change request (optional)</label><textarea id="cp-note-'+esc(item.id)+'" name="note" rows="3" maxlength="1000" placeholder="Share your thoughts…"></textarea><div class="cp-approval-actions"><button class="cp-approve-button" type="submit" name="decision" value="approved" '+(isDemo?'disabled':'')+'>✓ &nbsp; Approve</button><button class="cp-secondary-button" type="submit" name="decision" value="changes" '+(isDemo?'disabled':'')+'>Request changes</button></div></form>':'<div class="cp-approval-recorded">✓ Decision recorded for this review.</div>')+'</article>').join(''):'<div class="cp-empty-small">There are no action items right now. You are all caught up.</div>')+'</section>';
 }
 function messages(){
  const list=state.messages;
- return '<div class="cp-section-head"><span class="cp-overline">04 / THE CONVERSATION</span><h1>Stay in<br><em>the loop.</em></h1><p>A shared conversation for questions, progress notes and project decisions. Messages stay connected to this project.</p></div>'+
- '<div class="cp-messages"><div class="cp-conversation" role="log" aria-label="Project conversation">'+(list.length?list.map(m=>'<article class="cp-message '+(m.sender==="client"?"is-client":"is-studio")+'"><div class="cp-message-top"><span>'+esc(m.sender==="client"?"You":"VELORYZ Studio")+'</span><time>'+esc(date(m.created_at))+'</time></div><p>'+esc(m.body).replace(/\n/g,"<br>")+'</p></article>').join(''):'<p class="cp-empty">Your conversation begins here.</p>')+'</div>'+
- '<form id="cp-message-form" class="cp-message-form"><label for="cp-message">Leave a note for the studio</label><textarea id="cp-message" name="body" rows="4" maxlength="2000" required placeholder="Share an update, a question, or your feedback…" '+(isDemo?'disabled':'')+'></textarea><div><small>'+(isDemo?"Messaging is disabled in the illustrative preview.":"Only this project’s team can view your message.")+'</small><button type="submit" class="cp-button" '+(isDemo?'disabled':'')+'>Send a message ↗</button></div></form></div>';
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">THE CONVERSATION</span><h1>Messages</h1><p>Keep questions and updates connected to the project. No more searching through separate email threads.</p></div>'+
+ '<section class="cp-surface cp-chat-card"><div class="cp-chat-title"><span class="cp-section-dot cp-dot-green">↗</span><div><strong>VELORYZ Studio</strong><small>Your shared project conversation</small></div><span class="cp-chat-live">PRIVATE THREAD</span></div>'+
+ '<div class="cp-conversation" role="log" aria-label="Project conversation">'+(list.length?list.map(m=>'<article class="cp-message '+(m.sender==="client"?"is-client":"is-studio")+'"><div class="cp-message-top"><span>'+esc(m.sender==="client"?"You":"VELORYZ Studio")+'</span><time>'+esc(date(m.created_at))+'</time></div><p>'+esc(m.body).replace(/\n/g,"<br>")+'</p></article>').join(''):'<p class="cp-empty-small">No messages yet. This is where the conversation will begin.</p>')+'</div>'+
+ '<form id="cp-message-form" class="cp-message-form"><label for="cp-message">Send a message</label><textarea id="cp-message" name="body" rows="4" maxlength="2000" required placeholder="Write a message to your VELORYZ project team…" '+(isDemo?'disabled':'')+'></textarea><div><small>'+(isDemo?"Messaging is disabled in this demonstration.":"Your message is visible only in this project workspace.")+'</small><button class="cp-button" type="submit" '+(isDemo?'disabled':'')+'>Send message ↗</button></div></form></section>';
 }
 const views={overview,timeline,files,reviews,messages};
-function render(){if(!state)return entry(notice);root.innerHTML=shell();document.title=(isDemo?"Preview":"Your project")+" — VELORYZ Client Workspace";}
+function render(){document.body.classList.toggle('cp-logged',!!state);if(!state)return entry(notice);root.innerHTML=shell();document.title=(isDemo?"Preview":"Your project")+" — VELORYZ Client Workspace";}
 async function refresh(){
  try{state=await api("/session");isDemo=false;render();}
  catch(e){if(e.status===401)entry();else entry("The client workspace could not be loaded. Please try again.");}
