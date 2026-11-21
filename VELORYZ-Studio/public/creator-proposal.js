@@ -108,6 +108,8 @@
    p3.paragraph(item[2],102,y+25,440,10,15,3,MUTED);
    if(i<4)p3.line(102,y+62,553,y+62,LINE,.8);
   });
+  p3.text('REFERENCE: '+(ref?.name||'To be agreed'),42,570,9,true,MUTED);
+  p3.text('MATERIALS: '+((b.assets||[]).join(', ')||'To be discussed'),42,590,9,false,MUTED);
   p3.rect(42,615,510,154,SOFT);p3.text('BEFORE ANY PROJECT BEGINS',58,630,10,true,TERRA);
   p3.paragraph('CLIENT-SIDE DRAFT - NOT A STUDIO QUOTATION. Scope, schedule, total price, payment terms, final deliverables, hosting, third-party providers, licenses, taxes and support must be reviewed and confirmed in writing by VELORYZ Studio. No purchase or booking is created by this document.',58,653,477,10,17,7,INK);
   p3.text('Contact: veloryz.here@gmail.com   /   veloryz.online',58,744,9,true,INK);

@@ -45,6 +45,10 @@
  function hero(){
   return '<section class="creator-hero"><div class="container creator-hero-inner"><div class="creator-hero-copy"><span class="creator-hero-eyebrow"><i></i> PROJECT CREATOR 2.0 <b>/ A BETTER BEGINNING</b></span><h1>Make it <em>real.</em><br>Start with the <span>right brief.</span></h1><p>Pick a direction. Find a visual language. Choose the essentials. Leave with a project plan you can actually use.</p><div class="creator-hero-benefits"><span>✳ &nbsp; Four simple stages</span><span>⌁ &nbsp; A transparent range</span><span>↗ &nbsp; Your own proposal PDF</span></div></div><div class="creator-hero-scene" aria-hidden="true"><div class="creator-scene-window"><div>VELORYZ <span>● ● ●</span></div><section><small>INDEPENDENT CREATIVE STUDIO</small><strong>Ideas that <em>move</em> people.</strong><i></i><b>EXPLORE THE STORY ↗</b></section></div><span class="creator-floating-label creator-float-left">01 / DEFINE</span><span class="creator-floating-label creator-float-right">02 / DESIGN ✓</span></div></div></section>';
  }
+ function roadmap(){
+  const stages=[['01','Discover','Align on goals and priorities.'],['02','Define','Agree a written scope and quote.'],['03','Design','Review the direction together.'],['04','Build','Implement and test the agreed work.'],['05','Handover','Deliver and prepare for launch.']];
+  return '<div class="creator-roadmap"><div class="creator-roadmap-title"><span class="eyebrow">A CLEARER ROAD AHEAD</span><h3>How the project takes shape.</h3><p>Suggested stages for '+escapeText(projectBrief.timeline).toLowerCase()+' timing. The actual dates and deliverables are confirmed with the studio.</p></div><div class="creator-roadmap-grid">'+stages.map(([n,name,description])=>'<div><span>'+n+'</span><strong>'+name+'</strong><small>'+description+'</small></div>').join('')+'</div></div>';
+ }
  function sideSummary(){
   const e=plannerEstimate(),target=Number(projectBrief.budget)||50000;
   return '<div class="creator-side-head"><span>YOUR PROJECT / LIVE SUMMARY</span><span class="creator-side-live">● LIVE</span></div><h2>A thoughtful start.<br><em>Not a final quote.</em></h2>'+
@@ -78,6 +82,7 @@
    '<button type="button" data-planner-go="3" class="creator-review-button">Review full project ↗</button>'+
    '<button type="button" data-brief-download class="creator-brief-button">Download brief as text ↓</button></div>'+
    '<details class="creator-estimate-notes"><summary>How is this calculated?</summary><p>Up to 4 pages are included. Extra pages: ₹1,500 each. Each feature allowance: ₹2,500. Upper range adds rounded 25% contingency. Hosting, licenses, provider fees, subscriptions and taxes are excluded. Complex applications and third-party integrations require studio review.</p></details></aside>');
+  html=html.replace('<label class="guided-goal"',roadmap()+'<label class="guided-goal"');
   html=html.replace('data-planner-submit hidden>Review request','data-planner-submit hidden>Review and send request');
   return html;
  };
