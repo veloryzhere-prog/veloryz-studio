@@ -132,3 +132,8 @@
 @media(max-width:520px){#docs-app .studio-docs-article-hero{display:block}#docs-app .docs-article-art{max-width:150px;margin:16px auto 0}#docs-app .docs-article-meta span+span::before{display:none}#docs-app .studio-docs-prose{font-size:14px}#docs-app .studio-docs-finish{padding:22px}}
 @media(prefers-reduced-motion:reduce){#docs-app .docs-article-art .docs-art-float{animation:none}}
 @media print{#docs-app .studio-docs-sidebar,#docs-app .studio-docs-right,#docs-app .docs-mobile-toc,#docs-app .docs-article-actions,#docs-app .studio-docs-prevnext,#docs-app .studio-docs-finish,#footer,#header{display:none!important}#docs-app .studio-docs-grid{display:block}#docs-app .studio-docs-reader{max-width:none;padding:0}#docs-app .studio-docs-prose{font-size:12px}#docs-app .docs-article-art{max-width:120px}#docs-app .studio-docs-prose h2{break-after:avoid}}
+
+
+#docs-app .studio-docs-more{display:flex;align-items:center;justify-content:center;gap:18px;margin:26px auto 12px;min-width:240px;padding:14px 25px;background:#eaf6ff;color:#0879bc;border:1px solid #9dc9e4;border-radius:4px;font:inherit;font-weight:800;font-size:13px;cursor:pointer}
+#docs-app .studio-docs-more:hover{background:#d9f0ff}
+#docs-app .studio-docs-more span{font-size:11px;font-weight:500;color:#567a94}
