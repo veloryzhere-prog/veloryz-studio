@@ -19,7 +19,8 @@ class VeloryzFrameCut extends HTMLElement {
   const range=(progress,start,end)=>clamp((progress-start)/(end-start));
   const ease=t=>t*t*(3-2*t);
   let raf=0,near=false,ready=false,loaded=false,scarfLoaded=false;
-  let playback=false,held=false,seekTarget=0,seekPending=false,lastSeek=-1;
+  let playback=false,manualPlay=false,seekTarget=0,seekPending=false,lastSeek=-1;
+  let scarfTarget=0,scarfPending=false,lastScarfSeek=-1;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
   // The original reveal has 90 frames across ten 3x3 WebP sprite sheets.
   // Drawing one source cell per scroll frame avoids expensive arbitrary MP4 seeking.
@@ -29,7 +30,9 @@ class VeloryzFrameCut extends HTMLElement {
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
   const sheets=new Map();
   const TOTAL_FRAMES=90,COLS=3,CELL_W=768,CELL_H=432;
-  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.46)*(TOTAL_FRAMES-1)));
+  const frameAt=p=>Math.min(TOTAL_FRAMES-1,Math.round(range(p,0,.49)*(TOTAL_FRAMES-1)));
+  // Load early poses before the scene arrives; avoid network/decode stalls
+  // at the exact moment the user starts scrolling.
   const loadSheet=index=>{
    if(!sprites||spriteFailed||index<0||index>=10||sheets.has(index)||deleted)return;
    const img=new Image(),entry={img,ready:false};
@@ -50,7 +53,7 @@ class VeloryzFrameCut extends HTMLElement {
    if(!sprites||spriteFailed||!ctx)return false;
    const current=frameAt(progress),index=Math.floor(current/9);
    loadSheet(index);loadSheet(index+1);
-   if(progress<.16)loadSheet(0);
+   if(progress<.16){loadSheet(0);loadSheet(1);loadSheet(2);}
    const entry=sheets.get(index);
    if(!entry?.ready){
     // Keep the last decoded V pose on screen during rapid jumps instead of
@@ -81,6 +84,13 @@ class VeloryzFrameCut extends HTMLElement {
    return true;
   };
   const set=(key,value)=>this.style.setProperty(key,String(value));
+  let lastCinema=null;
+  const cinema=active=>{
+   if(lastCinema===active)return;
+   lastCinema=active;
+   document.documentElement?.setAttribute?.('data-vz-cinema-focus',active?'true':'false');
+   document.dispatchEvent?.(new CustomEvent('studio:cinema-focus',{detail:{active}}));
+  };
   const pause=()=>{if(playback||!scarf.paused){playback=false;scarf.pause();}};
   const label=()=>{
    const title=scarf.paused?'Play scarf':'Pause scarf';
@@ -101,10 +111,28 @@ class VeloryzFrameCut extends HTMLElement {
    }catch{seekPending=true;}
   }
   const planSeek=progress=>{
-   if(!loaded||progress>.72)return;
-   seekTarget=range(progress,0,.46)*Math.max(0,(Number.isFinite(reveal.duration)?reveal.duration:3)-.033);
+   if(!loaded||progress>.62)return;
+   seekTarget=range(progress,0,.49)*Math.max(0,(Number.isFinite(reveal.duration)?reveal.duration:3)-.033);
    seekPending=true;
    seekReveal();
+  };
+  // The scarf also follows the scroll head. No automatic looping while the
+  // page is still: stopping at any scroll position freezes the actual video.
+  function seekScarf(){
+   if(deleted||!scarfLoaded||!scarfPending||scarf.seeking)return;
+   const length=Number(scarf.duration);
+   if(!Number.isFinite(length)||length<=0)return;
+   const target=range(scarfTarget,0,length-.05)*(length-.05);
+   if(lastScarfSeek>=0&&Math.abs(lastScarfSeek-target)<.035){scarfPending=false;return;}
+   try{lastScarfSeek=target;scarfPending=false;scarf.currentTime=target;}
+   catch{scarfPending=true;}
+  }
+  const planScarf=progress=>{
+   const duration=Number(scarf.duration);
+   if(!scarfLoaded||!Number.isFinite(duration)||duration<=0)return;
+   scarfTarget=range(progress,.43,1)*(duration-.05);
+   scarfPending=true;
+   seekScarf();
   };
   const prefetch=()=>{
    if(!near||deleted)return;
@@ -114,6 +142,7 @@ class VeloryzFrameCut extends HTMLElement {
     reveal.src='/assets/frame-cut/reveal.mp4';
     reveal.load?.();
    }
+   if(sprites&&!spriteFailed){loadSheet(0);loadSheet(1);loadSheet(2);}
    if(!scarfLoaded){
     scarfLoaded=true;
     scarf.preload='auto';
@@ -129,7 +158,7 @@ class VeloryzFrameCut extends HTMLElement {
     lastFull=full;this.toggleAttribute('data-full',full);
    }
    if(!full){
-    pause();button.hidden=true;
+    cinema(false);pause();button.hidden=true;
     if(lastFocus!==false){lastFocus=false;this.removeAttribute('data-focus');}
     if(lastProgress!==0){
      lastProgress=0;set('--frame-reveal-opacity',0);set('--scarf-film-opacity',0);
@@ -141,18 +170,19 @@ class VeloryzFrameCut extends HTMLElement {
    const total=Math.max(1,bounds.height-stageHeight);
    const progress=clamp(-bounds.top/total);
    const visible=bounds.top<stageHeight&&bounds.bottom>0;
-   if(!visible&&!near){pause();button.hidden=true;return;}
+   if(!visible&&!near){cinema(false);pause();button.hidden=true;return;}
    const focus=visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1;
    if(focus!==lastFocus){lastFocus=focus;this.toggleAttribute('data-focus',focus);}
+   cinema(focus);
    if(near)prefetch();
-   // Fast, immediately responsive timeline: original portal over the first
-   // 46% of the now-short scene; scarf crossfade at 40–57%; hold scarf.
-   // No slow easing on frame position: every wheel tick advances the artwork.
+   // Direct pixel-to-frame timeline: V in the first 49%, quick scarf handoff
+   // between 42–62%, and scarf frame scrubbing through the remaining distance.
+   // No idle animation or easing that continues after the user's scroll stops.
    if(Math.abs(progress-lastProgress)>.00045){
     lastProgress=progress;
     const arrival=ease(range(progress,0,.08));
-    const transition=ease(range(progress,.40,.57));
-    const portalLife=1-ease(range(progress,.43,.60));
+    const transition=ease(range(progress,.42,.62));
+    const portalLife=1-ease(range(progress,.44,.63));
     const hasFrame=drawSprite(progress);
     const fallback=hasFrame||ready?0:1;
     set('--scarf-progress',progress.toFixed(5));
@@ -160,7 +190,7 @@ class VeloryzFrameCut extends HTMLElement {
     set('--frame-reveal-ready',!hasFrame&&ready?1:0);
     set('--frame-canvas-ready',hasFrame?1:0);
     set('--frame-poster-opacity',hasFrame||ready?0:1);
-    set('--frame-portal-light',((.12+.72*Math.sin(Math.PI*range(progress,.03,.57)))*portalLife).toFixed(4));
+    set('--frame-portal-light',((.10+.6*Math.sin(Math.PI*range(progress,.03,.62)))*portalLife).toFixed(4));
     set('--frame-portal-rotation',(-8+progress*24).toFixed(3)+'deg');
     set('--scarf-film-opacity',transition.toFixed(4));
     set('--scarf-film-scale',(1.055-.055*transition).toFixed(4));
@@ -170,15 +200,13 @@ class VeloryzFrameCut extends HTMLElement {
     set('--scarf-angle',((1-arrival)*6).toFixed(3)+'deg');
     set('--scarf-x','0%');set('--scarf-y','0%');
     if(!sprites||spriteFailed)planSeek(progress);
+    if(manualPlay){manualPlay=false;pause();}
+    planScarf(progress);
    }
    const showScarf=near&&visible&&progress>=.43;
    button.hidden=!showScarf;
-   if(!showScarf||held){pause();return;}
-   if(!playback){
-    playback=true;
-    const promise=scarf.play();
-    promise?.catch?.(()=>{if(playback){playback=false;held=true;label();}});
-   }
+   if(!showScarf){manualPlay=false;pause();return;}
+   if(!manualPlay)pause();
   };
   const schedule=()=>{if(!raf&&!deleted)raf=requestAnimationFrame(render);};
   const preference=()=>{lastProgress=-1;schedule();};
@@ -198,11 +226,15 @@ class VeloryzFrameCut extends HTMLElement {
    if(seekPending)seekReveal();
   });
   on(reveal,'error',()=>{ready=false;lastProgress=-1;schedule();});
+  on(scarf,'loadedmetadata',()=>{planScarf(Math.max(0,lastProgress));schedule();});
+  on(scarf,'seeked',()=>{if(scarfPending)seekScarf();});
   on(scarf,'play',label);on(scarf,'pause',label);
   on(button,'click',()=>{
-   held=!scarf.paused;
-   if(!held)playback=false;
-   schedule();
+   if(manualPlay){manualPlay=false;pause();schedule();return;}
+   manualPlay=true;playback=true;scarf.loop=true;
+   const promise=scarf.play();
+   promise?.catch?.(()=>{manualPlay=false;playback=false;label();});
+   label();
   });
   on(window,'scroll',schedule,{passive:true});
   on(window,'resize',()=>{drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
@@ -213,7 +245,7 @@ class VeloryzFrameCut extends HTMLElement {
   this.cleanup=()=>{
    deleted=true;controller.abort();observer?.disconnect();
    cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
-   pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
+   cinema(false);pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
    reveal.load?.();scarf.load?.();
   };
   schedule();
