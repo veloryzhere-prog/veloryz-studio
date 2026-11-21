@@ -25,8 +25,10 @@ class VeloryzFrameCut extends HTMLElement {
   let scarfCtx=null;
   try{scarfCtx=scarfCanvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
   const scarfSprites=Boolean(scarfCtx&&typeof Image==='function');
+  const lowGraphics=Boolean((typeof navigator!=='undefined'&&navigator.deviceMemory&&navigator.deviceMemory<=4)||window.matchMedia?.('(max-width: 900px), (pointer: coarse)')?.matches);
+  const scarfAtlas=lowGraphics?'scarf-frames-lite':'scarf-frames';
   const scarfSheets=new Map();
-  const SCARF_FRAMES=222,SCARF_COLS=3,SCARF_CELL_W=576,SCARF_CELL_H=324;
+  const SCARF_FRAMES=222,SCARF_COLS=3,SCARF_CELL_W=lowGraphics?480:720,SCARF_CELL_H=lowGraphics?270:405;
   let scarfSpriteError=false,scarfSpriteReady=false,scarfDrawn=-1;
   let scarfWarm=0,scarfWarmTimer=0;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
@@ -142,13 +144,13 @@ class VeloryzFrameCut extends HTMLElement {
     prefetch();lastProgress=-1;schedule();
    };
    image.decoding='async';
-   image.src='/assets/frame-cut/scarf-frames/sheet-'+String(index).padStart(2,'0')+'.webp';
+   image.src='/assets/frame-cut/'+scarfAtlas+'/sheet-'+String(index).padStart(2,'0')+'.webp';
   };
   const warmScarf=()=>{
    scarfWarmTimer=0;
    if(deleted||!near||scarfSpriteError||!scarfSprites)return;
-   if(scarfWarm<(keepDecoded?25:6))loadScarfSheet(scarfWarm++);
-   if(scarfWarm<(keepDecoded?25:6)&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
+   if(scarfWarm<(lowGraphics?6:12))loadScarfSheet(scarfWarm++);
+   if(scarfWarm<(lowGraphics?6:12)&&typeof setTimeout==='function')scarfWarmTimer=setTimeout(warmScarf,85);
   };
   const drawScarf=progress=>{
    if(!scarfSprites||scarfSpriteError||!scarfCtx||!scarfCanvas)return false;
@@ -179,7 +181,7 @@ class VeloryzFrameCut extends HTMLElement {
    }
    if(!scarfSpriteReady)scarfSpriteReady=true;
    // On low-memory devices keep just the nearby atlas textures decoded.
-   if(!keepDecoded)for(const key of scarfSheets.keys())if(Math.abs(key-index)>2)scarfSheets.delete(key);
+   for(const key of scarfSheets.keys())if(Math.abs(key-index)>(lowGraphics?2:5))scarfSheets.delete(key);
    return true;
   };
   let lastCinema=null;
@@ -251,7 +253,7 @@ class VeloryzFrameCut extends HTMLElement {
    }
    if(scarfSprites&&!scarfSpriteError){
     loadScarfSheet(0);loadScarfSheet(1);loadScarfSheet(2);
-    if(!scarfWarmTimer&&scarfWarm<(keepDecoded?25:6)&&typeof setTimeout==='function')
+    if(!scarfWarmTimer&&scarfWarm<(lowGraphics?6:12)&&typeof setTimeout==='function')
      scarfWarmTimer=setTimeout(warmScarf,85);
    }
    if((!scarfSprites||scarfSpriteError)&&!scarfLoaded){
