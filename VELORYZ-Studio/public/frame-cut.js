@@ -49,6 +49,7 @@ class VeloryzFrameCut extends HTMLElement {
   try{ctx=canvas?.getContext?.('2d',{alpha:false,desynchronized:true})||null;}catch{}
   const sprites=Boolean(ctx&&typeof Image==='function');
   let spriteFailed=false,spriteReady=false,drawnFrame=-1;
+  let portalPrefetched=false,scarfPrefetched=false;
   const keepDecoded=typeof navigator==='undefined'||!(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const sheets=new Map();
   let warmIndex=3,warmTimer=0;
@@ -244,14 +245,16 @@ class VeloryzFrameCut extends HTMLElement {
     reveal.src='/assets/frame-cut/reveal.mp4';
     reveal.load?.();
    }
-   if(sprites&&!spriteFailed){
-    // Decode early film poses immediately. Stagger the other atlas requests,
-    // avoiding ten simultaneous 2304×1296 image decodes on the main thread.
+   if(sprites&&!spriteFailed&&!portalPrefetched){
+    portalPrefetched=true;
+    // Prefetch once. Repeatedly decoding atlases evicted on low-memory devices
+    // created a self-sustaining render loop and extreme scroll jank.
     loadSheet(0);loadSheet(1);loadSheet(2);
     if(warmIndex<10&&!warmTimer&&typeof setTimeout==='function')
      warmTimer=setTimeout(warmMore,105);
    }
-   if(scarfSprites&&!scarfSpriteError){
+   if(scarfSprites&&!scarfSpriteError&&!scarfPrefetched){
+    scarfPrefetched=true;
     loadScarfSheet(0);loadScarfSheet(1);loadScarfSheet(2);
     if(!scarfWarmTimer&&scarfWarm<(lowGraphics?6:12)&&typeof setTimeout==='function')
      scarfWarmTimer=setTimeout(warmScarf,85);
