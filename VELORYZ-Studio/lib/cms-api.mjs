@@ -62,7 +62,9 @@ export function validateState(value){
   const docPath=rawPath.replace(/\/$/,'');
   if(docPath.length>180||!/^\/(?:docs|help)\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test(docPath))fail('Choose a valid Studio documentation route.');
   const entry=object(rawEdits[rawPath]);
-  docEdits[docPath]={title:text(entry.title,160),summary:text(entry.summary,900),markdown:text(entry.markdown,25000),
+  const markdown=String(entry.markdown??'').trim();
+  if(markdown.length>25000||/[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(markdown))fail('Documentation Markdown is too long or contains invalid characters.');
+  docEdits[docPath]={title:text(entry.title,160),summary:text(entry.summary,900),markdown,
    status:entry.status==='reviewed'?'reviewed':'blueprint',visible:entry.visible!==false};
  }
  site.documentation.edits=docEdits;
