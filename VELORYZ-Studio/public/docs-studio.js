@@ -4,6 +4,7 @@
   const prior=window.VeloryzDocs;
   if(!prior||!prior.render)return;
   let catalog=null,loading=null,error='',search='',category='All',visibleCount=24,lastIndexKind='';
+  const chapterCache=new Map(),chapterLoading=new Map(),chapterErrors=new Map();
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const normalized=p=>String(p||'/').replace(/\/+$/,'')||'/';
   const isStudio=()=>/^\/(?:docs|help)\/studio(?:\/.*)?$/.test(normalized(location.pathname));
@@ -14,22 +15,41 @@
     return s&&typeof s.edits==='object'&&!Array.isArray(s.edits)?s.edits:{};
   };
   function entries(){
+    const changes=overrides();
     return (catalog?.articles||[]).map(a=>{
-      const change=overrides()[normalized(a.path)]||{};
-      return {...a,...change,path:a.path,
-        title:change.title||a.title,summary:change.summary||a.summary,
-        markdown:change.markdown||a.markdown,
-        status:change.status||a.status,
-        visible:change.visible!==false};
+      const edit=changes[normalized(a.path)]||{};
+      const source=chapterCache.get(a.categorySlug)?.[a.id]||a.markdown||'';
+      return {...a,...edit,path:a.path,
+        title:edit.title||a.title,summary:edit.summary||a.summary,
+        markdown:edit.markdown||source,
+        status:edit.status||a.status,
+        visible:edit.visible!==false};
     }).filter(a=>a.visible);
   }
   function load(){
     if(catalog||loading)return;
-    loading=fetch('/studio-docs-catalog.json?v=20261121-handbook-2',{cache:'no-cache'})
-      .then(r=>{if(!r.ok)throw Error('Could not load the Studio documentation index.');return r.json();})
-      .then(data=>{if(!Array.isArray(data.articles)||data.articles.length<141)throw Error('Studio documentation registry is incomplete.');catalog=data;error='';})
+    loading=fetch('/studio-docs-index.json?v=20261121-handbook-2',{cache:'no-cache'})
+      .then(r=>{if(!r.ok)throw Error('The Studio documentation index could not be loaded.');return r.json();})
+      .then(data=>{
+        if(!Array.isArray(data.articles)||data.articles.length!==141)throw Error('The product and Help Centre index is incomplete.');
+        if(data.articles.some(a=>!a.categorySlug||!/^[a-z0-9-]+$/.test(a.categorySlug)))throw Error('A documentation chapter has an invalid identifier.');
+        catalog=data;error='';
+      })
       .catch(e=>{error=e.message})
       .finally(()=>{loading=null;refresh();});
+  }
+  function ensureChapter(a){
+    const slug=a?.categorySlug;
+    if(!slug||chapterCache.has(slug)||chapterLoading.has(slug)||chapterErrors.has(slug))return;
+    const promise=fetch('/studio-docs-content/'+slug+'.json?v=20261121-handbook-2',{cache:'no-cache'})
+      .then(async r=>{if(!r.ok)throw Error('The selected guide is temporarily unavailable.');return r.json()})
+      .then(data=>{
+        if(data.category!==slug||!Array.isArray(data.articles)||data.articles.some(x=>typeof x.markdown!=='string'||!x.id))throw Error('The selected guide could not be verified.');
+        chapterCache.set(slug,Object.fromEntries(data.articles.map(x=>[x.id,x.markdown])));
+        chapterErrors.delete(slug);
+      }).catch(e=>{chapterErrors.set(slug,e.message)})
+      .finally(()=>{chapterLoading.delete(slug);refresh()});
+    chapterLoading.set(slug,promise);
   }
   const contentLink=(label,to)=>{
     const safe=/^\/(?:docs|help)\/[a-z0-9/_-]+\/?$/.test(to)||/^https:\/\//.test(to)||/^#[a-z0-9_-]+$/.test(to);
@@ -111,6 +131,12 @@
     const ogTitle=document.querySelector('meta[property="og:title"]'),ogDesc=document.querySelector('meta[property="og:description"]');
     if(ogTitle)ogTitle.content=document.title;if(ogDesc&&meta)ogDesc.content=meta.content;
     if(path==='/docs/studio'||path==='/help/studio')return index();
+    if(current&&!current.markdown){
+      ensureChapter(current);
+      const problem=chapterErrors.get(current.categorySlug)||'Loading the complete article and related references…';
+      return '<div id="docs-app" class="studio-docs-shell studio-docs-loading"><h1>'+esc(current.title)+'</h1><p role="status">'+esc(problem)+'</p>'+
+        (chapterErrors.has(current.categorySlug)?'<button type="button" data-studio-chapter-retry>Retry article</button>':'')+'</div>';
+    }
     return article(path);
   }
   function refresh(){if(!isStudio())return;const container=document.getElementById('docs-app');if(container)container.outerHTML=render();}
@@ -129,6 +155,7 @@
     const cat=ev.target?.closest?.('[data-studio-doc-category]');
     if(cat){category=cat.dataset.studioDocCategory;visibleCount=24;document.querySelectorAll('[data-studio-doc-category]').forEach(b=>{b.classList.toggle('active',b===cat);b.setAttribute('aria-pressed',String(b===cat))});updateList();}
     if(ev.target?.closest?.('[data-studio-doc-retry]')){error='';load();}
+    if(ev.target?.closest?.('[data-studio-chapter-retry]')){const item=entries().find(a=>normalized(a.path)===normalized(location.pathname));if(item){chapterErrors.delete(item.categorySlug);ensureChapter(item);}}
     if(ev.target?.closest?.('[data-studio-doc-more]')){visibleCount+=24;updateList();}
     if(ev.target?.closest?.('[data-studio-doc-print]'))window.print();
     const copy=ev.target?.closest?.('[data-studio-doc-copy]');
