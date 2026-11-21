@@ -241,3 +241,79 @@ body:has(.v4-root) .v4-root{--v4-ink:#242927;--v4-ink-soft:#3c4843;--v4-sub:#7d8
 .v4-logo img{display:block;width:134px;height:40px;object-fit:contain;object-position:left center}
 .v4-logo span{margin-left:2px}
 @media(max-width:530px){.v4-logo img{width:104px;height:35px}.v4-logo span{font-size:7px}}
+
+/* VELORYZ Project Creator V4.2 — team-led pricing consultation */
+.v4-budget-disclaimer{max-width:790px;margin:15px 0 0;border-left:3px solid #8bad8f;background:#f7faf6;border-radius:0 8px 8px 0;padding:13px 17px;font-size:11px;line-height:1.8;color:#6e8a76}
+.v4-price-flex{max-width:790px;margin:18px 0 5px;border:1px solid #e4eae4;background:linear-gradient(145deg,#fcfdfb,#f3f9f2);border-radius:15px;padding:clamp(19px,3vw,29px)}
+.v4-price-flex-kicker{display:block;font-size:10px;font-weight:750;letter-spacing:1.1px;color:#739378}
+.v4-price-flex h3{font-size:clamp(22px,2.4vw,29px);font-weight:580;margin:12px 0 8px;color:#344c39;letter-spacing:-.048em}
+.v4-price-flex>p{font-size:12px;line-height:1.76;color:#7c9280}
+.v4-price-flex-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:18px}
+.v4-price-flex-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border:1px solid #b2cbb7;border-radius:8px;color:#446e4d;background:white;text-decoration:none;font-weight:690;font-size:11px;transition:background .15s,border-color .15s}
+.v4-price-flex-actions a:first-child{background:#315b40;color:white;border-color:#315b40}
+.v4-price-flex-actions a:hover{background:#e8f3e9;border-color:#82ae89;color:#345b40}
+.v4-price-flex-actions a:first-child:hover{background:#3c694d;color:white}
+.v4-eligible-offer{display:grid;gap:5px;background:#fff;border:1px solid #e0e9db;padding:13px 15px;border-radius:9px;margin:14px 0 0}
+.v4-eligible-offer strong{font-size:10px;letter-spacing:.5px;color:#4d7c57}
+.v4-eligible-offer span{font-size:14px;color:#3b593e;font-weight:620}
+.v4-eligible-offer small{font-size:10px;line-height:1.65;color:#8a9d8b}
+.v4-review-team-link{display:block;font-size:12px;font-weight:680;color:#477c56;text-decoration:underline!important;text-underline-offset:4px;line-height:1.6;margin-bottom:13px}
+.v4-success.v4-success-enhanced{width:min(860px,calc(100% - 36px));padding:clamp(45px,6vw,85px) 0 65px}
+.v4-success-enhanced>p{max-width:640px}
+.v4-success-handoff{margin:32px 0 16px;text-align:left;border:1px solid #dee9dd;background:#fff;border-radius:16px;padding:clamp(22px,3.2vw,32px);box-shadow:0 18px 40px #39694b0a}
+.v4-handoff-kicker{color:#7b9c80;font-size:10px;letter-spacing:1.1px;font-weight:790}
+.v4-handoff-steps{margin-top:23px}
+.v4-handoff-step{display:grid;grid-template-columns:45px minmax(0,1fr);gap:15px;padding:0 0 22px;position:relative}
+.v4-handoff-step:last-child{padding-bottom:0}
+.v4-handoff-step:before{content:"";position:absolute;left:21px;top:30px;bottom:-4px;border-left:1px solid #dbe6dc}
+.v4-handoff-step:last-child:before{display:none}
+.v4-handoff-step>span{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#588667;background:#eef6ee;border:1px solid #c8ddcc;z-index:1;font-weight:780}
+.v4-handoff-step>div{padding-top:3px}
+.v4-handoff-step strong{display:block;font-size:15px;font-weight:680;color:#3a5743}
+.v4-handoff-step p{font-size:12px;line-height:1.73;color:#84988b;margin-top:6px}
+.v4-code-clarity{text-align:left;background:#f5f8f5;border-radius:11px;border:1px solid #dde8dc;padding:18px 20px}
+.v4-code-clarity strong{font-size:12px;color:#426e4b}
+.v4-code-clarity p{font-size:11px;color:#849587;line-height:1.75;margin-top:6px}
+.v4-success-enhanced .v4-success-buttons{margin:23px 0 0}
+.v4-success-enhanced .v4-success-buttons a,.v4-success-enhanced .v4-success-buttons button{margin:0;display:inline-flex;align-items:center;text-decoration:none;justify-content:center;min-height:47px}
+.v4-success-enhanced>.v4-small-note{margin-top:23px!important}
+
+/* Context-sensitive VELORYZ Project AI: separate from the public persona chats. */
+.v4-root .v4-ai-dock{position:fixed;right:clamp(15px,3.6vw,54px);bottom:clamp(98px,11vh,119px);z-index:25;max-width:calc(100vw - 24px);font-family:Inter,'Helvetica Neue',Arial,sans-serif}
+.v4-root .v4-ai-toggle{display:flex;align-items:center;gap:10px;background:#355c43;color:white;min-height:48px;border:1px solid #355c43;border-radius:999px;box-shadow:0 10px 32px #173d2d25;padding:9px 17px 9px 11px;letter-spacing:-.01em;font-size:12px;font-weight:720}
+.v4-root .v4-ai-toggle:hover{background:#477553}
+.v4-ai-sparkle{height:27px;width:27px;display:grid;place-items:center;background:#f3fcf0;color:#4b7954;border-radius:50%;font-size:16px}
+.v4-root .v4-ai-toggle b{font-size:17px;font-weight:410}
+.v4-root .v4-ai-panel{position:absolute;right:0;bottom:calc(100% + 13px);width:min(390px,calc(100vw - 25px));max-height:min(620px,calc(100dvh - 175px));border:1px solid #dce8dc;background:white;border-radius:17px;box-shadow:0 22px 80px #284b3729;display:flex;flex-direction:column;overflow:hidden;color:#2e4936}
+.v4-root .v4-ai-panel[hidden]{display:none!important}
+.v4-ai-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:21px 22px 17px;background:linear-gradient(125deg,#eff8f0,#fbfefb);border-bottom:1px solid #e1ece2}
+.v4-ai-heading span{display:block;font-size:9px;letter-spacing:1px;font-weight:770;color:#628e69}
+.v4-ai-heading h2{font-size:23px;font-weight:620;letter-spacing:-.04em;margin:7px 0 5px}
+.v4-ai-heading p{font-size:11px;color:#829887;line-height:1.55}
+.v4-ai-heading button{border:0;background:transparent;color:#617e68;font-size:27px;font-weight:400;line-height:1;padding:0 2px}
+.v4-ai-history{padding:14px 18px 5px;overflow:auto;min-height:95px;max-height:248px;display:grid;gap:12px;align-content:start}
+.v4-ai-message{border:1px solid #e2e9e3;border-radius:11px;padding:11px 13px;background:#f8faf8;max-width:96%;overflow-wrap:anywhere}
+.v4-ai-message.is-user{background:#eaf4eb;border-color:#cde1cf;justify-self:end}
+.v4-ai-message span{display:block;font-size:8px;color:#7b9a81;letter-spacing:.7px;font-weight:780;margin-bottom:5px}
+.v4-ai-message p{font-size:12px;white-space:pre-wrap;line-height:1.65;color:#3b5240}
+.v4-ai-prompts{display:flex;gap:7px;flex-wrap:wrap;padding:10px 18px}
+.v4-ai-prompts[hidden]{display:none!important}
+.v4-ai-prompts button{border:1px solid #dce7dc;background:white;color:#477450;border-radius:8px;padding:9px 11px;font-size:10px;font-weight:600}
+.v4-ai-prompts button:hover{background:#f1f8f1}
+#v4-ai-form{padding:10px 16px;display:flex;gap:8px;border-top:1px solid #e5ece5;align-items:flex-end}
+#v4-ai-form textarea{resize:vertical;width:100%;min-height:54px;max-height:115px;padding:11px 13px;border:1px solid #d9e7da;border-radius:9px;color:#2f5237;background:#fff;font-size:12px;line-height:1.5}
+#v4-ai-form button{flex:0 0 39px;width:39px;height:39px;display:grid;place-items:center;border-radius:9px;background:#365c43;border:0;color:white;font-size:18px;margin-bottom:6px}
+.v4-ai-status{font-size:11px;color:#6c8972;margin:3px 17px 10px;line-height:1.5}
+.v4-ai-status:empty{display:none}
+.v4-ai-status.is-error{color:#ac614e}
+.v4-ai-privacy{padding:10px 17px 15px;margin:0!important;font-size:9px;color:#93a296;line-height:1.6}
+.v4-ai-privacy a{color:#4c8158;text-decoration:underline!important;text-underline-offset:2px}
+@media(max-width:750px){
+ .v4-root .v4-ai-dock{bottom:95px;right:14px}
+ .v4-root .v4-ai-toggle{min-height:43px;padding:8px 12px 8px 8px;font-size:11px}
+ .v4-root .v4-ai-panel{max-height:min(540px,calc(100dvh - 165px))}
+ .v4-ai-heading{padding:18px}
+ .v4-success-enhanced{padding-top:42px}
+}
+@media(max-width:530px){.v4-root .v4-ai-dock{bottom:88px;right:10px}.v4-handoff-step{gap:10px;grid-template-columns:37px 1fr}.v4-handoff-step>span{height:35px;width:35px}.v4-handoff-step:before{left:17px;top:27px}.v4-root .v4-ai-toggle span:nth-child(2){font-size:10px}.v4-price-flex-actions a{flex:1;white-space:nowrap}.v4-success-handoff{padding:19px}.v4-ai-history{max-height:185px}}
+@media(prefers-reduced-motion:reduce){.v4-root .v4-ai-toggle{transition:none}.v4-root .v4-price-flex-actions a{transition:none}}
