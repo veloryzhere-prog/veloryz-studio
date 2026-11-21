@@ -13,7 +13,8 @@ veloryz-frame-cut .frame-stage{
  position:relative;height:clamp(290px,56.25vw,90svh);
  overflow:hidden;background:#06071a;isolation:isolate;
 }
-veloryz-frame-cut[data-full]{height:340svh}
+/* ~1 viewport of travel, not a three-viewport slog through a 3-second film. */
+veloryz-frame-cut[data-full]{height:205svh}
 veloryz-frame-cut[data-full] .frame-stage{
  position:sticky;top:0;height:100svh;overflow:hidden;
 }
@@ -83,7 +84,7 @@ veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-stage::after{opacity:0!important}
 html:not([data-motion-gate]) body:has(veloryz-frame-cut[data-focus]) :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
 @media(max-width:900px){
- veloryz-frame-cut[data-full]{height:300svh}
+ veloryz-frame-cut[data-full]{height:190svh}
  veloryz-frame-cut[data-full] .frame-stage{height:100svh}
  .frame-reveal-poster,.frame-reveal,.frame-reveal-canvas,.frame-scarf{object-fit:contain}
  .frame-stage::after{mix-blend-mode:normal}
