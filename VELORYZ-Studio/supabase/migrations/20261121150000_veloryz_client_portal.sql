@@ -46,23 +46,23 @@ REVOKE ALL ON veloryz_studio.studio_client_sessions FROM PUBLIC,anon,authenticat
 GRANT SELECT,INSERT,UPDATE,DELETE ON veloryz_studio.studio_client_sessions TO service_role;
 INSERT INTO veloryz_studio.query_contracts(key,query)
 SELECT encode(sha256(convert_to(q,'UTF8')),'hex'),q FROM (VALUES
- ($portal$SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100$portal$) -- listProjects,
- ($portal$SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?$portal$) -- getProject,
- ($portal$INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id$portal$) -- addProject,
- ($portal$UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id$portal$) -- editProject,
- ($portal$SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150$portal$) -- listItems,
- ($portal$INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id$portal$) -- addItem,
- ($portal$UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id$portal$) -- editItem,
- ($portal$DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id$portal$) -- deleteItem,
- ($portal$SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100$portal$) -- listMessages,
- ($portal$INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id$portal$) -- addMessage,
- ($portal$UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''$portal$) -- revokeInvites,
- ($portal$UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''$portal$) -- revokeSessionsByProject,
- ($portal$INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id$portal$) -- addInvite,
- ($portal$SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?$portal$) -- verifyInvite,
- ($portal$INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id$portal$) -- addSession,
- ($portal$SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?$portal$) -- verifySession,
- ($portal$UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?$portal$) -- revokeSession,
- ($portal$UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id$portal$) -- clientDecision
+ ($portal$SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100$portal$), -- listProjects
+ ($portal$SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?$portal$), -- getProject
+ ($portal$INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id$portal$), -- addProject
+ ($portal$UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id$portal$), -- editProject
+ ($portal$SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150$portal$), -- listItems
+ ($portal$INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id$portal$), -- addItem
+ ($portal$UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id$portal$), -- editItem
+ ($portal$DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id$portal$), -- deleteItem
+ ($portal$SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100$portal$), -- listMessages
+ ($portal$INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id$portal$), -- addMessage
+ ($portal$UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''$portal$), -- revokeInvites
+ ($portal$UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''$portal$), -- revokeSessionsByProject
+ ($portal$INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id$portal$), -- addInvite
+ ($portal$SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?$portal$), -- verifyInvite
+ ($portal$INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id$portal$), -- addSession
+ ($portal$SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?$portal$), -- verifySession
+ ($portal$UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?$portal$), -- revokeSession
+ ($portal$UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id$portal$)
 ) AS contracts(q)
 ON CONFLICT(key) DO UPDATE SET query=EXCLUDED.query;
