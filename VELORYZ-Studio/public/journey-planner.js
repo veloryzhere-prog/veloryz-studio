@@ -24,7 +24,7 @@
   root.querySelector('.planner-progress span').style.width=((step+1)/3*100)+'%';
   root.querySelector('.planner-step-status').textContent='Step '+(step+1)+' of 3 · '+stepNames[step];
   persist();
-  if(focus){const panel=root.querySelector('[data-planner-panel="'+step+'"]');panel.querySelector('[data-planner-heading]').focus({preventScroll:true});root.scrollIntoView({block:'start',behavior:window.StudioMotion?.matches?'auto':'smooth'});}
+  if(focus){const panel=root.querySelector('[data-planner-panel="'+step+'"]');panel.querySelector('[data-planner-heading]').focus({preventScroll:true});panel.scrollIntoView({block:'start',behavior:window.StudioMotion?.matches?'auto':'smooth'});}
  }
  function validateGoal(){
   const input=document.querySelector('[data-planner-goal]');if(!input)return false;
@@ -62,6 +62,22 @@
  document.addEventListener('studio:brief',persist);
  document.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button)return;
+  if(button.hasAttribute('data-planner-template')){
+   const starter=projectStarters.find(item=>item.id===button.dataset.plannerTemplate);
+   if(!starter)return;
+   projectBrief=VeloryzPlanner.normalize({...projectBrief,purpose:starter.purpose,pages:starter.pages,features:starter.features,goal:starter.goal,referenceId:''});
+   chosenDesign=null;
+   const form=document.querySelector('#guided-project-planner');if(!form)return;
+   form.querySelectorAll('[data-purpose]').forEach(el=>{const ok=el.dataset.purpose===projectBrief.purpose;el.classList.toggle('selected',ok);el.setAttribute('aria-pressed',String(ok));});
+   form.querySelector('[data-brief-pages]').value=projectBrief.pages;
+   form.querySelectorAll('[data-brief-feature]').forEach(el=>{el.checked=projectBrief.features.includes(el.dataset.briefFeature);});
+   const goal=form.querySelector('[data-planner-goal]');goal.value=projectBrief.goal;goal.setAttribute('aria-invalid','false');
+   form.querySelector('#planner-goal-error').hidden=true;
+   form.querySelector('[data-goal-count]').textContent=projectBrief.goal.length+'/1000';
+   updateBrief();chooseStep(1);
+   const status=form.querySelector('[data-planner-save-status]');if(status)status.textContent=starter.name+' starter selected. You can edit any choice; nothing has been sent.';
+   return;
+  }
   if(button.hasAttribute('data-planner-go'))chooseStep(button.dataset.plannerGo);
   if(button.hasAttribute('data-planner-next'))chooseStep(step+1);
   if(button.hasAttribute('data-planner-back'))chooseStep(step-1);

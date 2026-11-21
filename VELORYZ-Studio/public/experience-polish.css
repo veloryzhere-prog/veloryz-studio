@@ -1,0 +1,45 @@
+/* Live VELORYZ experience refinements; original branding and sculptures untouched. */
+:root{scroll-padding-top:110px}
+.desktop-nav{gap:clamp(9px,1.05vw,20px)}
+.desktop-nav>a{font-size:clamp(10px,.85vw,12px);white-space:nowrap}
+.desktop-nav>a[href^="https://chat.veloryz.online"]{color:#793d69;font-weight:650}
+.mobile-nav>a[href^="https://chat.veloryz.online"]{color:#7f386b}
+.studio-platform-links>a[href^="https://chat.veloryz.online"]{text-decoration:underline;text-underline-offset:4px}
+#guided-project-planner [data-planner-panel]{scroll-margin-top:130px}
+.planner-starters{position:relative;isolation:isolate;overflow:hidden;border:1px solid #9e71927a;border-radius:20px;background:radial-gradient(ellipse at 100% 0%,#64375b70,transparent 62%),linear-gradient(145deg,#25162e,#1b1526);box-shadow:0 15px 50px #100c162e;padding:clamp(20px,3vw,32px);margin:0 0 32px;color:#f9eafa}
+.planner-starters:before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(120deg,#0007,transparent 80%);pointer-events:none}
+.planner-starters-heading{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:end;margin-bottom:23px}
+.planner-starters-heading .eyebrow{color:#e0a3cd}
+.planner-starters-heading h2{font:400 clamp(26px,2.5vw,38px)/1.1 Georgia,serif;letter-spacing:-.04em;margin:12px 0 0;color:#fff5fb}
+.planner-starters-heading h2 em{color:#eba6cc}
+.planner-starters-heading p{font-size:12px;line-height:1.8;margin:0;color:#e3cfe7}
+.planner-starter-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.planner-starter{display:flex;min-width:0;flex-direction:column;gap:8px;text-align:left;cursor:pointer;padding:18px;border:1px solid #cba0bb4a;border-radius:13px;background:#ffffff0a;color:#fff1fb;transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s,background .3s,box-shadow .3s}
+.planner-starter:hover{transform:translateY(-4px);border-color:#eda6ce;background:#ffffff15;box-shadow:0 12px 24px #12091c35}
+.planner-starter:focus-visible{outline:3px solid #efa7d5;outline-offset:4px}
+.planner-starter-num{font-size:9px;letter-spacing:.14em;color:#f0b9d8}
+.planner-starter strong{font-size:18px;line-height:1.25;font-weight:600;letter-spacing:-.025em}
+.planner-starter-subtitle{font-size:11px;color:#ebd5eb;line-height:1.6}
+.planner-starter small{font-size:9px;line-height:1.55;color:#c3b0cd}
+.planner-starter-action{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:auto;padding-top:13px;color:#f3b1d2;font-size:10px}
+.planner-starter-action b{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#d290b52b;font-size:17px;font-weight:400;transition:transform .24s}
+.planner-starter:hover .planner-starter-action b{transform:translate(2px,-2px)}
+.planner-starters-note{font-size:10px;line-height:1.7;margin:17px 0 0;color:#d0bbda}
+.planner-starters-note strong{color:#f6e4fb}
+.guided-planner .purpose-card{border-radius:12px;transition:transform .3s,border-color .3s,box-shadow .3s}
+.guided-planner .purpose-card:hover{border-color:#c17cae;box-shadow:0 10px 22px #1a092442}
+.guided-planner .purpose-card.selected{box-shadow:inset 0 0 0 1px #d07ca5,0 11px 25px #401e433b}
+.guided-planner .guided-summary{border-radius:17px;box-shadow:0 18px 55px #10091a33}
+.campaign-design{border-radius:19px;box-shadow:0 24px 65px #17150e2b,inset 0 1px #ffffff48;transition:box-shadow .4s,border-color .3s}
+.campaign-design h2,.campaign-design h3{letter-spacing:-.05em;line-height:1.08}
+.campaign-design .campaign-primary{transition:transform .3s,box-shadow .3s}
+.campaign-design .campaign-primary:hover{transform:translateY(-3px);box-shadow:0 12px 28px #2118072b}
+.campaign-design .campaign-secondary{text-underline-offset:5px}
+.campaign-modal .campaign-design{box-shadow:0 34px 94px #09090a52}
+.campaign-modal .campaign-design-body{gap:28px}
+#site-pin{box-shadow:0 4px 22px #31200c17}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){html[data-motion="full"] .campaign-design .campaign-art{transition:transform .45s cubic-bezier(.22,1,.36,1)}html[data-motion="full"] .campaign-design:hover .campaign-art{transform:translateY(-4px)}}
+@media(max-width:1100px){.desktop-nav{gap:9px}.desktop-nav>a{font-size:10px}.header-end{gap:10px}}
+@media(max-width:850px){.planner-starters-heading{grid-template-columns:1fr;gap:10px}}
+@media(max-width:600px){.planner-starters{padding:19px;border-radius:15px}.planner-starter-grid{grid-template-columns:1fr}.planner-starter{padding:15px}.planner-starters-heading h2{font-size:29px}}
+@media(prefers-reduced-motion:reduce){.planner-starter,.planner-starter-action b,.campaign-design,.campaign-design .campaign-art{animation:none!important;transition:none!important;transform:none!important}}
