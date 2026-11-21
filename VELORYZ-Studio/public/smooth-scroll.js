@@ -5,7 +5,7 @@
  * Phones/tablets retain native touch inertia; no scroll-jacking of chat,
  * forms, dialogs, docs sidebars or project creation.
  *
- * Balanced: lerp 0.14 and wheelMultiplier 0.94 are deliberately responsive:
+ * Responsive inertial input: lerp 0.18 and wheelMultiplier 1 are deliberately responsive:
  * no artificially slow, multi-second trailing scroll or acceleration.
  */
 (()=>{
@@ -60,7 +60,9 @@
  function sync(){
   if(!shouldSmooth()){
    cleanup();
-   root.style.scrollBehavior=window.StudioMotion?.level==='full'&&!reduced.matches?'smooth':'auto';
+   // Native scrolling on mobile/low-power/reduced devices must not be animated twice.
+   // CSS smooth is retained for explicit anchors only, via the jump() helper.
+   root.style.scrollBehavior='auto';
    return;
   }
   root.style.scrollBehavior='auto'; // Never combine browser smooth scroll with Lenis smoothing.
@@ -69,8 +71,8 @@
    lenis=new window.Lenis({
     autoRaf:true,
     anchors:{offset:-96},
-    lerp:0.14,
-    wheelMultiplier:0.94,
+    lerp:0.18,
+    wheelMultiplier:1,
     smoothWheel:true,
     syncTouch:false,
     overscroll:true,
@@ -105,7 +107,7 @@
  window.VeloryzScroll={
   get active(){return Boolean(lenis);},
   get engine(){return lenis;},
-  settings:{lerp:0.14,wheelMultiplier:0.94,touch:'native'},
+  settings:{lerp:0.18,wheelMultiplier:1,touch:'native'},
   sync,scrollTo:jump
  };
  window.StudioMotion?.addEventListener('change',sync);
