@@ -53,6 +53,19 @@ export function validateState(value){
   navLabel:text(incomingDocs.navLabel??fallbackDocs.navLabel,35,true),
   heading:text(incomingDocs.heading??fallbackDocs.heading,125,true),
   introduction:text(incomingDocs.introduction??fallbackDocs.introduction,800,true)};
+
+ const rawEdits=incomingDocs.edits??{};
+ if(!rawEdits||typeof rawEdits!=='object'||Array.isArray(rawEdits))fail('Documentation edits must be a keyed object.');
+ const docEdits={},docKeys=Object.keys(rawEdits);
+ if(docKeys.length>180)fail('The documentation change list is too large.');
+ for(const rawPath of docKeys){
+  const docPath=rawPath.replace(/\/$/,'');
+  if(docPath.length>180||!/^\/(?:docs|help)\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test(docPath))fail('Choose a valid Studio documentation route.');
+  const entry=object(rawEdits[rawPath]);
+  docEdits[docPath]={title:text(entry.title,160),summary:text(entry.summary,900),markdown:text(entry.markdown,25000),
+   status:entry.status==='reviewed'?'reviewed':'blueprint',visible:entry.visible!==false};
+ }
+ site.documentation.edits=docEdits;
  const branding={};for(const key of ['headerLogo','footerLogo','favicon','productLogo','heroLogo','showreel'])branding[key]=url(b[key],true);
  const projects=unique(list(input.projects,100).map((p,i)=>({id:slug(p.id),name:text(p.name,120,true),category:text(p.category,100),type:['product','web','brand','motion'].includes(p.type)?p.type:'web',status:text(p.status,100),year:text(p.year,100),description:text(p.description,7000),scope:list(p.scope||[],30).map(x=>text(x,250)),approach:text(p.approach,7000),note:text(p.note,2000),published:!!p.published,featured:!!p.featured,order:Number.isFinite(Number(p.order))?Number(p.order):i,cover:url(p.cover,true),video:url(p.video,true),website:url(p.website)})));
  const services=list(input.services,20).map(p=>({name:text(p.name,120,true),short:text(p.short,500),description:text(p.description,4000),tags:list(p.tags||[],25).map(x=>text(x,100)),deliverables:text(p.deliverables,2500)}));
@@ -69,7 +82,7 @@ function upgrade(state){
  return {...state,site:{...defaults.site,...incoming,creatorPricing:{
   ...defaults.site.creatorPricing,...pricing,
   categoryBases:{...defaults.site.creatorPricing.categoryBases,...(pricing.categoryBases||{})}
- },documentation:{...defaults.site.documentation,...incoming.documentation}},catalogue:state.catalogue||structuredClone(defaults.catalogue)};
+ },documentation:{...defaults.site.documentation,...incoming.documentation,edits:{...defaults.site.documentation.edits,...incoming.documentation?.edits}}},catalogue:state.catalogue||structuredClone(defaults.catalogue)};
 }
 const hostedBackend = 'https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-studio-api';
 function usesHostedBackend(env, url) {
