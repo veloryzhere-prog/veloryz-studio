@@ -67,7 +67,7 @@ export async function GET(request: Request) {
    const href=base+canonicalPath(p);
    return `<url><loc>${escapeXml(href)}</loc></url>`;
   }).join('');
-  return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
+  return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  }
  const routeDescriptions:Record<string,string>={
   '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from Bokaro, India.',
