@@ -12,6 +12,6 @@ assert(shell.includes('content=\\"#f7f0e4\\"')||shell.includes('content="#f7f0e4
 assert(css.includes('.guided-summary h2')&&css.includes('.comparison-after p'),'Known dark/light contrast regressions must remain covered');
 assert(css.includes('.heading-word')&&css.includes('.project-art.render-art'),'Gradient headline and mobile overflow regressions must remain covered');
 assert(css.includes('html[data-motion=reduced]')&&css.includes('html[data-motion=paused]'));
-assert(js.includes("document.addEventListener('studio:route'")&&js.includes('requestAnimationFrame(tick)'));
+assert(js.includes("document.addEventListener('studio:route'")&&js.includes('requestFrame(tick)')&&js.includes('clock?.subscribeScroll(schedule)'));
 assert(js.includes("root.dataset.motion==='full'"),'Decorative motion must obey shared preference');
 console.log('PASS: warm final CSS precedence, motion assets, known contrast/overflow fixes, route refresh, reduced/pause respect.');
