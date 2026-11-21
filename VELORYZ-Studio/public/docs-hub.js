@@ -2,7 +2,7 @@
 /* VELORYZ Documentation Hub: uses actual source Markdown, rendered as escaped HTML. */
 (function(){
  const defaults={heading:'Clear answers. Better projects.',introduction:'Browse the studio’s real guides to project creation, pricing, your client portal, copyright planning and technical delivery.',navLabel:'Documentation'};
- let library=null,studioCatalog=null,loading=null,error='',term='',group='All';
+ let library=null,studioCatalog=null,loading=null,error='',term='',group='All',visibleCount=24;
  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const serviceDocs=()=>library?.documents||[];
  const productDocs=()=>{
@@ -99,10 +99,12 @@
   return docs().filter(d=>(group==='All'||d.category===group)&&(!q||[d.label,d.description,d.category,d.markdown.slice(0,1300)].join(' ').toLowerCase().includes(q)));
  }
  function cards(){
-  const list=filtered();
+  const all=filtered(),list=all.slice(0,visibleCount);
   return '<div class="docs-card-grid">'+(list.length?list.map(d=>
    '<a class="docs-item" href="'+url(d.id)+'"><span class="docs-item-top">'+esc(d.category)+' <span aria-hidden="true">↗</span></span><strong>'+esc(d.label)+'</strong><p>'+esc(d.description)+'</p><span class="docs-read">Read guide →</span></a>').join(''):
-   '<div class="docs-empty"><h3>No matching articles.</h3><p>Try a different search or category.</p><button type="button" data-doc-reset>Clear filters</button></div>')+'</div><p class="docs-results-count" aria-live="polite">'+list.length+' guide'+(list.length===1?'':'s')+' found</p>';
+   '<div class="docs-empty"><h3>No matching articles.</h3><p>Try a different search or category.</p><button type="button" data-doc-reset>Clear filters</button></div>')+'</div>'+
+   (all.length>visibleCount?'<button type="button" class="docs-load-more" data-doc-more>Show more guides <span>'+visibleCount+' of '+all.length+'</span></button>':'')+
+   '<p class="docs-results-count" aria-live="polite">Showing '+list.length+' of '+all.length+' guides</p>';
  }
  function cardArt(kind){
   const open='<svg class="docs-choice-art docs-choice-art-'+kind+'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220" role="img" aria-label="'+(kind==='help'?'Helpful conversation':kind==='studio'?'Website design and development':'Connected documentation pages')+'"><g fill="none" stroke="#078fea" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">';
@@ -145,12 +147,13 @@
  }
  function refresh(){const root=document.getElementById('docs-app');if(root)root.outerHTML=render();}
  document.addEventListener('input',e=>{
-  if(e.target.id==='docs-search'){term=e.target.value.slice(0,140);const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();}
+  if(e.target.id==='docs-search'){term=e.target.value.slice(0,140);visibleCount=24;const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();}
  });
  document.addEventListener('click',e=>{
   const cat=e.target.closest('[data-doc-category]');
-  if(cat){group=cat.dataset.docCategory;document.querySelectorAll('[data-doc-category]').forEach(b=>{const yes=b.dataset.docCategory===group;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',String(yes));});const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();return;}
-  if(e.target.closest('[data-doc-reset]')){group='All';term='';refresh();}
+  if(cat){group=cat.dataset.docCategory;visibleCount=24;document.querySelectorAll('[data-doc-category]').forEach(b=>{const yes=b.dataset.docCategory===group;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',String(yes));});const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();return;}
+  if(e.target.closest('[data-doc-reset]')){group='All';term='';visibleCount=24;refresh();}
+  if(e.target.closest('[data-doc-more]')){visibleCount+=24;const results=document.getElementById('docs-results');if(results)results.innerHTML=cards();}
   if(e.target.closest('[data-doc-retry]')){error='';loading=null;refresh();}
   if(e.target.closest('[data-doc-print]'))window.print();
  });
