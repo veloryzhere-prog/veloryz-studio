@@ -3,7 +3,7 @@
   'use strict';
   const prior=window.VeloryzDocs;
   if(!prior||!prior.render)return;
-  let catalog=null,loading=null,error='',search='',category='All';
+  let catalog=null,loading=null,error='',search='',category='All',visibleCount=24,lastIndexKind='';
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const normalized=p=>String(p||'/').replace(/\/+$/,'')||'/';
   const isStudio=()=>/^\/(?:docs|help)\/studio(?:\/.*)?$/.test(normalized(location.pathname));
@@ -58,11 +58,13 @@
   }
   function cards(items){
     if(!items.length)return '<p class="studio-docs-empty">No matching documentation. Try another search or category.</p>';
-    return '<div class="studio-docs-cards">'+items.map(d=>
-      '<a class="studio-docs-card" href="'+esc(d.path)+'"><small>'+esc(d.category)+'</small><h3>'+esc(d.title)+'</h3><p>'+esc(d.summary)+'</p><span>Read guide ↗</span></a>').join('')+'</div>';
+    const visible=items.slice(0,visibleCount);
+    return '<div class="studio-docs-cards">'+visible.map(d=>
+      '<a class="studio-docs-card" href="'+esc(d.path)+'"><small>'+esc(d.category)+'</small><h3>'+esc(d.title)+'</h3><p>'+esc(d.summary)+'</p><span>Read guide ↗</span></a>').join('')+'</div>'+
+      (items.length>visibleCount?'<button type="button" class="studio-docs-more" data-studio-doc-more>Show more guides <span>'+visible.length+' of '+items.length+'</span></button>':'');
   }
   function index(){
-    const help=isHelp(),items=entries().filter(a=>help?a.id.startsWith('H-'):a.id.startsWith('D-'));
+    const help=isHelp(),kind=help?'help':'studio';if(kind!==lastIndexKind){search='';category='All';visibleCount=24;lastIndexKind=kind;}const items=entries().filter(a=>help?a.id.startsWith('H-'):a.id.startsWith('D-'));
     const groups=['All',...new Set(items.map(x=>x.category))];
     const filtered=items.filter(a=>(category==='All'||a.category===category)&&(!search||[a.title,a.summary,a.category].join(' ').toLowerCase().includes(search.toLowerCase())));
     return '<div id="docs-app" class="studio-docs-shell"><div class="studio-docs-hero"><div class="studio-docs-kicker">VELORYZ STUDIO / '+(help?'HELP CENTRE':'PRODUCT DOCUMENTATION')+'</div><h1>'+(help?'How can we help?':'Studio documentation.')+'</h1><p>'+(help?'Quick answers, onboarding and troubleshooting for VELORYZ Studio.':'Browse the complete Studio documentation map, from first project to publishing, governance and developer reference.')+'</p><div class="studio-docs-switch"><a class="'+(!help?'active':'')+'" href="/docs/studio/">Product docs</a><a class="'+(help?'active':'')+'" href="/help/studio/">Help Centre</a><a href="/docs/">All documentation</a></div></div>'+
@@ -114,12 +116,13 @@
     const count=document.querySelector('.studio-docs-tools p');if(count)count.textContent=items.length+' of '+(help?20:121)+' guides';
   }
   document.addEventListener('input',ev=>{
-    if(ev.target?.id==='studio-doc-search'){search=ev.target.value.slice(0,120);updateList();}
+    if(ev.target?.id==='studio-doc-search'){search=ev.target.value.slice(0,120);visibleCount=24;updateList();}
   });
   document.addEventListener('click',ev=>{
     const cat=ev.target?.closest?.('[data-studio-doc-category]');
-    if(cat){category=cat.dataset.studioDocCategory;document.querySelectorAll('[data-studio-doc-category]').forEach(b=>{b.classList.toggle('active',b===cat);b.setAttribute('aria-pressed',String(b===cat))});updateList();}
+    if(cat){category=cat.dataset.studioDocCategory;visibleCount=24;document.querySelectorAll('[data-studio-doc-category]').forEach(b=>{b.classList.toggle('active',b===cat);b.setAttribute('aria-pressed',String(b===cat))});updateList();}
     if(ev.target?.closest?.('[data-studio-doc-retry]')){error='';load();}
+    if(ev.target?.closest?.('[data-studio-doc-more]')){visibleCount+=24;updateList();}
     if(ev.target?.closest?.('[data-studio-doc-print]'))window.print();
     const copy=ev.target?.closest?.('[data-studio-doc-copy]');
     if(copy){const original=copy.textContent;navigator.clipboard?.writeText(location.href).then(()=>{copy.textContent='Article link copied ✓';setTimeout(()=>{if(copy.isConnected)copy.textContent=original},2200)}).catch(()=>{copy.textContent='Copy URL from address bar';setTimeout(()=>{if(copy.isConnected)copy.textContent=original},3000)});}
