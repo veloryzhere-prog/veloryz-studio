@@ -111,6 +111,7 @@ async function main(req){
  }
  if(action.startsWith("/admin/")){
   if(!await admin(req))return send({error:"Studio owner login required."},401);
+  if(action==="/admin/delivery"&&req.method==="GET")return send({configured:!!(Deno.env.get("RESEND_API_KEY")&&Deno.env.get("PORTAL_FROM_EMAIL")),provider:"Resend",senderConfigured:!!Deno.env.get("PORTAL_FROM_EMAIL")});
   if(action==="/admin/projects"&&req.method==="GET"){
    const projects=await db("listProjects"),pid=u.searchParams.get("id");
    return send(pid?{projects,workspace:await view(id(pid))}:{projects});

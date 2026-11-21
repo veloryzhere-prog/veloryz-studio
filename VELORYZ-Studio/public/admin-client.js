@@ -1,5 +1,5 @@
 'use strict';
-let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpEditMode='',cpError='',cpNewDraft=null;
+let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpEditMode='',cpError='',cpNewDraft=null,cpDelivery={configured:false,provider:"Resend"};
 const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
 const cpEsc=v=>E(v??'');
 const cpOption=(v,name,current)=>'<option value="'+cpEsc(v)+'" '+(v===current?'selected':'')+'>'+cpEsc(name)+'</option>';
@@ -39,6 +39,8 @@ function cpDashboard(){
 function clientPortalAdmin(){
  const p=cpWorkspace?.project;
  return heading('VELORYZ / private collaboration','Client portal','Manage individual client projects without publishing private records to the public portfolio.')+
+ '<div class="cp-workflow-steps"><div><span>01 / NEW ENQUIRY</span><strong>Client submits a brief</strong><p>The project creator requires a valid email.</p></div><div><span>02 / OWNER APPROVAL</span><strong>Open their private room</strong><p>Confirm the scope, then set stages and deliverables.</p></div><div><span>03 / CLIENT INVITE</span><strong>Issue a private code</strong><p>One-time access, valid for 14 days.</p></div></div>'+
+ '<div class="cp-delivery-state '+(cpDelivery.configured?'ready':'manual')+'"><div><strong>'+(cpDelivery.configured?'Invitation email integration enabled':'Email delivery not configured')+'</strong><p>'+(cpDelivery.configured?'New invitations are submitted through the email provider when you generate them. Always check the actual delivery result.':'You can generate private codes now, but automatic email delivery requires RESEND_API_KEY and PORTAL_FROM_EMAIL in Supabase Edge Function secrets. Until then, copy the invitation or send the prepared email draft yourself.')+'</p></div>'+(cpDelivery.configured?'✓':'!')+'</div>'+
  '<div class="cp-main-actions"><span>'+cpProjects.length+' client project(s)</span><a class="admin-button secondary" href="/client/" target="_blank" rel="noopener">Client entrance ↗</a><button class="admin-button" data-cp-action="new">New client project +</button></div>'+
  (cpError?'<p class="cp-error" role="alert">'+cpEsc(cpError)+' <button data-cp-action="reload">Retry</button></p>':'')+
  (!cpLoaded?'<p class="cp-admin-card" role="status">Loading private client projects…</p>':
@@ -53,7 +55,8 @@ async function cpLoad(selected=''){
  if(cpLoading)return;
  cpLoading=true;cpError='';
  try{
-  const data=await cpReq('/projects'+(selected?'?id='+encodeURIComponent(selected):''));
+  const [data,delivery]=await Promise.all([cpReq('/projects'+(selected?'?id='+encodeURIComponent(selected):'')),cpReq('/delivery').catch(()=>({configured:false,provider:'Resend'}))]);
+  cpDelivery=delivery;
   cpProjects=data.projects;cpSelected=selected||cpSelected||cpProjects[0]?.id||'';
   cpWorkspace=data.workspace||null;cpLoaded=true;
   if(cpSelected&&!cpWorkspace){cpLoading=false;return await cpLoad(cpSelected)}
@@ -105,7 +108,7 @@ document.addEventListener('submit',async e=>{
   if(f.dataset.cpForm==='project'){
    const edit=!cpNewProject&&Boolean(cpSelected);
    const result=await cpReq(edit?'/projects/'+cpSelected:'/projects',{method:edit?'PUT':'POST',body:JSON.stringify(data)});
-   cpSelected=result.id;cpEditMode='';cpNewProject=false;cpNewDraft=null;cpWorkspace=null;await cpLoad(result.id);toast('Client project saved.');
+   cpSelected=result.id;cpEditMode='';cpNewProject=false;cpNewDraft=null;cpWorkspace=null;await cpLoad(result.id);toast('Client project saved. Add milestones and issue the invitation when ready.');
   }
   if(f.dataset.cpForm==='item'){
    await cpReq('/items',{method:'POST',body:JSON.stringify({...data,id:cpEditingItem||undefined,project_id:cpSelected})});
