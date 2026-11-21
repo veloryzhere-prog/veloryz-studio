@@ -1,0 +1,17 @@
+
+.docs-cms-panel{margin-top:24px}
+.docs-cms-panel #docs-cms-select{display:block;width:100%;margin-top:12px;padding:14px 16px;border:1px solid #cac2b2;background:#fff;color:#17130e;border-radius:6px;font:inherit}
+.docs-cms-panel .docs-cms-location{padding:12px 0 20px;color:#766c60;font-size:13px;overflow-wrap:anywhere}
+.docs-cms-panel .docs-cms-location code{font-size:12px;background:#f1ecdf;padding:5px 8px}
+.docs-cms-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.docs-cms-editor-grid .admin-field.full{grid-column:1/-1}
+.docs-cms-editor-grid :is(textarea,input,select){width:100%;min-width:0;max-width:100%;border:1px solid #beb6a8;border-radius:6px;background:white;padding:11px 13px;font:inherit;color:#15120d;box-sizing:border-box}
+.docs-cms-editor-grid textarea{line-height:1.55;resize:vertical}
+.docs-cms-editor-grid textarea[data-doc-cms-field=markdown]{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;min-height:330px}
+.docs-cms-editor-grid small{display:block;padding-top:7px;color:#665e53}
+.docs-cms-visibility{display:flex;align-items:center;gap:10px;font-size:14px;align-self:center}
+.docs-cms-visibility input{width:auto}
+.docs-cms-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.docs-cms-panel :is(input,select,textarea,button):focus-visible{outline:3px solid #8a6a3d;outline-offset:2px}
+.docs-cms-error{color:#9b3323}
+@media(max-width:690px){.docs-cms-editor-grid{grid-template-columns:1fr}.docs-cms-editor-grid .admin-field.full{grid-column:auto}}
