@@ -1,0 +1,81 @@
+/* VELORYZ documentation release gates — run with node tools/test-documentation.mjs */
+import assert from 'node:assert/strict';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { studioDocsRoutes, studioDocsSummaries, studioDocsCategories } from '../lib/studio-docs-routes.mjs';
+
+const root=resolve(import.meta.dirname,'..');
+const file=p=>readFileSync(resolve(root,p),'utf8');
+const json=p=>JSON.parse(file(p));
+const full=json('public/studio-docs-catalog.json');
+const index=json('public/studio-docs-index.json');
+const service=json('public/docs-library.json');
+const norm=p=>p.replace(/\/+$/,'')||'/';
+const topic=a=>a.category.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+assert.equal(full.articles.length,141,'Full handbook needs 141 product/help routes');
+assert.equal(index.articles.length,141,'Navigation index needs 141 product/help routes');
+assert.equal(service.documents.length,11,'The original Studio service guides must be preserved');
+assert.equal(full.articles.filter(x=>x.id.startsWith('H-')).length,20,'Help Centre count');
+assert.equal(full.articles.filter(x=>x.id.startsWith('D-')).length,121,'Studio docs count');
+assert.equal(new Set(full.articles.map(x=>x.id)).size,141,'Duplicate documentation IDs');
+assert.equal(new Set(full.articles.map(x=>norm(x.path))).size,141,'Duplicate paths');
+assert.deepEqual(index.articles.map(x=>x.id),full.articles.map(x=>x.id),'Index order and content order must agree');
+const chapters=new Map();
+for(const a of full.articles){
+ assert.match(a.path,/^\/(?:docs|help)\/studio(?:\/[a-z0-9-]+)*\/$/);
+ assert.ok(a.markdown.length>=4500,'Article too short: '+a.id);
+ assert.ok(a.markdown.includes('## Topic-specific operating procedure'),'Missing subject-specific instructions: '+a.id);
+ assert.ok(a.markdown.includes('## Troubleshooting and recovery'),'Missing recovery guidance: '+a.id);
+ assert.ok(!a.markdown.includes('**Documentation status:** Product documentation blueprint.'),'Blueprint placeholder in '+a.id);
+ assert.notEqual(a.status,'blueprint','Old editorial status for '+a.id);
+ assert.equal(studioDocsRoutes[norm(a.path)],a.title,'Server route title not registered: '+a.path);
+ assert.equal(studioDocsSummaries[norm(a.path)],a.summary,'SEO description does not match '+a.id);
+ assert.equal(studioDocsCategories[norm(a.path)],a.category,'SEO category missing '+a.id);
+ const indexRecord=index.articles.find(x=>x.id===a.id);
+ assert.equal(indexRecord.categorySlug,topic(a),'Topic file index mismatch: '+a.id);
+ if(!chapters.has(indexRecord.categorySlug))chapters.set(indexRecord.categorySlug,[]);
+ chapters.get(indexRecord.categorySlug).push(a);
+}
+assert.equal(chapters.size,19,'Expected 19 documentation categories');
+for(const [name,entries] of chapters){
+ const p='public/studio-docs-content/'+name+'.json';
+ assert.ok(existsSync(resolve(root,p)),'Missing lazy-loaded chapter '+name);
+ const chunk=json(p);
+ assert.equal(chunk.category,name,'Chapter slug mismatch: '+name);
+ assert.deepEqual(chunk.articles.map(x=>x.id),entries.map(x=>x.id),'Article order mismatch: '+name);
+ for(const chapter of chunk.articles){
+  const original=entries.find(x=>x.id===chapter.id);
+  assert.equal(chapter.markdown,original.markdown,'Chapter content drift: '+chapter.id);
+ }
+}
+const staticRoutes=['/','/docs/','/docs/studio/','/help/studio/','/sitemap/','/sitemap.xml','/create/','/pricing/','/book/','/contact/','/client/','/developers/','/design/','/motion/','/work/','/services/','/studio/','/teamjob/','/payments/','/veloryz/','/process/','/journey/'];
+const known=new Set([...staticRoutes,...full.articles.map(a=>a.path),...service.documents.map(d=>'/docs/'+d.id+'/')].map(norm));
+const missing=[];
+for(const entry of [...full.articles,...service.documents]){
+ for(const m of String(entry.markdown).matchAll(/\[[^\]]+\]\(([^)\s]+)\)/g)){
+  const target=m[1].split('#')[0];
+  if(target.startsWith('/')&&!known.has(norm(target)))missing.push(entry.id+' → '+target);
+ }
+}
+assert.deepEqual(missing,[],'Documentation contains broken internal links');
+const app=file('public/app.js');
+assert.ok(app.includes('https://veloryz.online/docs'),'Useful Links target must be VELORYZ docs');
+assert.ok(!app.includes('https://chat.veloryz.online/us#veloryz'),'Old Useful Links target must be removed');
+for(const p of ['/docs/','/docs/studio/','/help/studio/','/sitemap/','/sitemap.xml'])assert.ok(app.includes(p),'Footer missing '+p);
+const server=file('lib/page-handler.ts');
+assert.ok(server.includes('studioDocsRoutes')&&server.includes('studioDocsSummaries'),'Server must register documentation routes and metadata');
+assert.ok(server.includes("normal==='/sitemap.xml'"),'XML sitemap route missing');
+assert.ok(server.includes('visible===false')&&server.includes('delete pages[p]'),'CMS-hidden pages must not enter sitemap');
+assert.ok(server.includes('window.STUDIO_STATE'),'CMS initial state missing');
+assert.ok(server.includes('app\\.js'),'CMS initial state must match cache-busted app JS');
+for(const path of ['public/docs-hub.js','public/docs-studio.js','public/site-map.js','public/admin-docs.js','public/app.js','public/admin.js']){
+ try{new Function(file(path));}catch(e){throw new Error('Invalid browser JavaScript in '+path+': '+e.message)}
+}
+const hub=file('public/docs-hub.js'),reader=file('public/docs-studio.js'),sitemap=file('public/site-map.js');
+for(const choice of ['docs-choice-help','docs-choice-studio','docs-choice-all'])assert.ok(hub.includes(choice),'Three-way docs portal missing '+choice);
+assert.ok(hub.includes('docs-load-more'),'Public doc directory is not paginated');
+assert.ok(reader.includes('ensureChapter')&&reader.includes('studio-docs-index.json'),'Lazy article loading missing');
+assert.ok(reader.includes('data-studio-doc-print')&&reader.includes('ON THIS PAGE'),'Article actions/TOC missing');
+assert.ok(sitemap.includes('site-map-app')&&sitemap.includes('studio-docs-index.json'),'Human sitemap missing');
+for(const stylesheet of ['public/docs-hub.css','public/docs-studio.css','public/site-map.css'])assert.ok(file(stylesheet).includes('prefers-reduced-motion'),'Reduced motion handling missing: '+stylesheet);
+console.log('Documentation quality checks passed: 141 Studio/Help articles, 11 service guides, 19 lazy chapters, working internal links, site map, accessible UI and CMS wiring.');
