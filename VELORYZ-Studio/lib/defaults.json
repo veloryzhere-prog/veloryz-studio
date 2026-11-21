@@ -67,6 +67,12 @@
         "percent": 0,
         "expiresAt": ""
       }
+    },
+    "documentation": {
+      "enabled": true,
+      "navLabel": "Documentation",
+      "heading": "Clear answers. Better projects.",
+      "introduction": "Explore real VELORYZ guides for creating a project, pricing, private client access, copyright and licensing, and technical delivery."
     }
   },
   "branding": {
