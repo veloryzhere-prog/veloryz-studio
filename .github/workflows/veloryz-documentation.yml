@@ -44,6 +44,8 @@ jobs:
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
         run: node tools/test-smooth-motion.mjs
+      - name: Check shared scroll clock, reversible scarf and scroll scenes
+        run: node tools/test-motion-clock.mjs && node tools/test-frame-cut.mjs && node tools/test-visual-motion-v4.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
