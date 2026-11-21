@@ -84,6 +84,9 @@
     respectReducedMotion:true
    });
    root.dataset.vzSmoothWheel='lenis';
+   // Dispatch from Lenis's own rAF, after scroll position has advanced,
+   // so the cinematic canvas can render during the SAME browser frame.
+   lenis.on?.('scroll',()=>window.dispatchEvent(new Event('veloryz:scroll-frame')));
    applyCinematic();
   }catch{
    cleanup();root.style.scrollBehavior='auto'; // Keep the page navigable if vendor JS fails.
