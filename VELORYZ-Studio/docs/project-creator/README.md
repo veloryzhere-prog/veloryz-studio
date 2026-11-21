@@ -36,3 +36,9 @@ This library documents the **implemented Creator V4 wizard**, its supporting ser
 ## Update procedure
 
 When changing a feature, update the corresponding document in the same commit, adjust tests, and record any behavioral change in the pull-request or commit description. Claims of delivery or rights ownership require evidence rather than marketing language.
+
+## Public CMS-linked documentation
+
+The website provides a searchable knowledge hub at **https://veloryz.online/docs/** with one URL per chapter, including `/docs/experience/`, `/docs/pricing/` and `/docs/copyright/`.
+
+In **Studio Control → Documentation**, the team can update the navigation label, heading and introduction; choose **Save draft → Publish**. Full articles remain source-controlled in the Markdown files in this folder and are copied to `public/docs-library.json` by `npm run build:docs` during deployment. Hiding a menu link does not restrict access to its public URL. Copyright and legal documents are planning guides, not signed agreements.

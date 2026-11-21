@@ -68,3 +68,7 @@ The JavaScript was syntax checked, the dynamic questionnaire and enquiry path si
 - Project AI appears bottom-left from the welcome screen and remounts on site-route and wizard changes. A missing live provider produces **clearly labeled prewritten guidance** rather than fabricated AI responses.
 - The source-level click simulation passed Start → top Continue and AI open. **Live browser deployment and real provider inference are not verified by that simulation.**
 - The detailed operational, copyright, security, privacy, pricing, QA and support documentation is indexed at [docs/project-creator/README.md](./docs/project-creator/README.md).
+
+## Public documentation and CMS link
+
+The public documentation hub is at **/docs/**. The site header/footer link and its overview introduction are managed in **Studio Control → Documentation**. Save draft, then publish. Article text remains in **docs/project-creator/**; run `npm run build:docs` after source edits to synchronize `public/docs-library.json`. Hiding a menu link is not access control.
