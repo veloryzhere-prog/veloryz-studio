@@ -39,6 +39,7 @@ assert(html.includes('data-v3-root'));
 assert(html.includes('data-v3-category="Business"'));
 assert(html.includes('data-v3-step="4"'));
 assert(html.includes('ILLUSTRATIVE PLANNING RANGE'));
+assert(html.includes('v3-mobile-estimate'));
 assert(html.includes('creator')===false || html.includes('v3-hero'));
 assert.equal(creator.estimate().low,21999);
 assert(creator.format().startsWith('PROJECT CREATOR V3'));
