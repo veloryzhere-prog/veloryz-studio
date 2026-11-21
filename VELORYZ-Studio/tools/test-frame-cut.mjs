@@ -73,6 +73,10 @@ reveal.dispatchEvent(new Event('loadedmetadata'));
 reveal.dispatchEvent(new Event('loadeddata'));flush();
 const scroll=y=>{top=-y;window.scrollY=y;window.dispatchEvent(new Event('scroll'));flush();};
 scroll(300);
+// Lenis delivers its own scroll event inside rAF: there must be no extra frame.
+window.scrollY=340;top=-340;
+window.dispatchEvent(new Event('veloryz:scroll-frame'));
+assert.equal(frames.size,0,'Lenis motion must render in the same frame, not another rAF');
 const early=reveal.currentTime;
 assert(early>.2&&early<2.3,'Short responsive timeline should advance the real V film immediately');
 assert.equal(Number(vars.get('--scarf-film-opacity')),0,'Scarf cannot flash during the portal scene');
