@@ -34,6 +34,8 @@ jobs:
         run: node tools/test-documentation.mjs
       - name: Validate AI agents, provider security and support UI
         run: node tools/test-knowledge-ai.mjs
+      - name: Verify responsive visual system and animation performance
+        run: node tools/test-studio-fluid.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
