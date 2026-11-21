@@ -31,7 +31,7 @@ vm.runInContext("let projectBrief=VeloryzPlanner.normalize(),chosenDesign=null;c
 vm.runInContext(file('creator-v3.js'),ctx);
 const model=ctx.VeloryzPlanner,creator=ctx.window.VeloryzCreatorV3;
 assert.equal(creator.templates.length,12);
-assert.equal(creator.external.length,20);
+assert.equal(creator.external.length,26);
 assert(creator.external.every(x=>x.url.startsWith('https://')));
 assert.equal(model.features.length,16);
 let html=vm.runInContext("createPage()",ctx);
@@ -74,4 +74,4 @@ function checkPDF(bytes,count){
 }
 checkPDF(basic,3);checkPDF(rich,4);
 assert(new TextDecoder().decode(rich).includes('Private client portal'));
-console.log('PASS: Creator V3, twelve starters, twenty marketplace references, sixteen features, five stages, pricing, enquiry gate and proposal PDF.');
+console.log('PASS: Creator V3, twelve starters, twenty-six marketplace references, sixteen features, five stages, pricing, enquiry gate and proposal PDF.');
