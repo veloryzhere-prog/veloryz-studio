@@ -5,7 +5,7 @@
  * Decorative effects never signify a successful server action by themselves.
  */
 (()=>{
- if(window.VeloryzMicroMotion)return;
+ if(window.VeloryzMicroMotion||window.VeloryzKineticSite)return; // New global layer supersedes this legacy controller.
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const coarse=matchMedia('(pointer: coarse)');
  const root=document.documentElement;
