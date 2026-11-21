@@ -17,6 +17,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+      - name: Install FFmpeg for original video frame extraction
+        run: sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg
       - name: Verify FFmpeg is available
         run: ffmpeg -version | head -n 2
       - name: Generate exact original scarf frames
