@@ -22,7 +22,7 @@ class VeloryzFrameCut extends HTMLElement {
     const frameKey=Symbol('scarf-frame');
     const requestFrame=callback=>clock?clock.request(frameKey,callback):requestAnimationFrame(callback);
     const cancelFrame=()=>clock?clock.cancel(frameKey):cancelAnimationFrame(frame);
-    const unsubscribeScroll=clock?.subscribeScroll(schedule);
+    let unsubscribeScroll;
     const style=(name,value)=>this.style.setProperty(name,String(value));
     const setProgress=p=>{
       // Match the original authored choreography, including the pause before scarf reveal.
@@ -85,6 +85,7 @@ class VeloryzFrameCut extends HTMLElement {
     const schedule=()=>{
       if(!frame)frame=requestFrame(update);
     };
+    unsubscribeScroll=clock?.subscribeScroll(schedule);
     const preference=()=>{schedule();};
     if(typeof IntersectionObserver==='function'){
       observer=new IntersectionObserver(([entry])=>{near=entry.isIntersecting; if(!near)pause();schedule();},{rootMargin:'60% 0px'});
