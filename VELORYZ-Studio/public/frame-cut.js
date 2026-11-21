@@ -22,6 +22,17 @@ class VeloryzFrameCut extends HTMLElement {
   let playback=false,manualPlay=false,seekTarget=0,seekPending=false,lastSeek=-1;
   let scarfTarget=0,scarfPending=false,lastScarfSeek=-1;
   let lastProgress=-1,lastFull=null,lastFocus=null,deleted=false;
+  let layout=null,lastScrollY=NaN,lastMeasureAt=0;
+  const scrollY=()=>Number(window.scrollY)||0;
+  // Layout is measured at mount/resize/route, never in the per-frame scrub.
+  // Native and Lenis both change scrollY, so the frame follows exactly.
+  const measure=()=>{
+   if(deleted||!this.isConnected)return;
+   const box=this.getBoundingClientRect();
+   const height=stage.clientHeight||window.innerHeight||1;
+   layout={top:box.top+scrollY(),height,travel:Math.max(1,box.height-height)};
+   lastMeasureAt=Date.now();
+  };
   // The original reveal has 90 frames across ten 3x3 WebP sprite sheets.
   // Drawing one source cell per scroll frame avoids expensive arbitrary MP4 seeking.
   let ctx=null;
@@ -107,7 +118,7 @@ class VeloryzFrameCut extends HTMLElement {
    const target=clamp(seekTarget/Math.max(.001,length-.033))*(length-.033);
    // Collapse multiple wheel events into a single decode request and avoid
    // decoder thrashing on tiny movements. Seeked schedules the latest target.
-   if(lastSeek>=0&&Math.abs(lastSeek-target)<.028){
+   if(lastSeek>=0&&Math.abs(lastSeek-target)<.04){
     seekPending=false;return;
    }
    try{
@@ -127,7 +138,9 @@ class VeloryzFrameCut extends HTMLElement {
    const length=Number(scarf.duration);
    if(!Number.isFinite(length)||length<=0)return;
    const target=range(scarfTarget,0,length-.05)*(length-.05);
-   if(lastScarfSeek>=0&&Math.abs(lastScarfSeek-target)<.035){scarfPending=false;return;}
+   // Avoid flooding the H.264 decoder with seeks for effectively identical
+   // frames; 30 fps footage cannot display changes smaller than 1/30 second.
+   if(lastScarfSeek>=0&&Math.abs(lastScarfSeek-target)<.055){scarfPending=false;return;}
    try{lastScarfSeek=target;scarfPending=false;scarf.currentTime=target;}
    catch{scarfPending=true;}
   }
@@ -163,6 +176,8 @@ class VeloryzFrameCut extends HTMLElement {
    const full=window.StudioMotion?.level==='full'&&!document.hidden;
    if(lastFull!==full){
     lastFull=full;this.toggleAttribute('data-full',full);
+    // Enabling full motion changes scene height, so invalidate cached geometry.
+    layout=null;
    }
    if(!full){
     cinema(false);pause();button.hidden=true;
@@ -173,12 +188,14 @@ class VeloryzFrameCut extends HTMLElement {
     }
     return;
    }
-   const bounds=this.getBoundingClientRect(),stageHeight=stage.clientHeight||window.innerHeight||1;
-   const total=Math.max(1,bounds.height-stageHeight);
-   const progress=clamp(-bounds.top/total);
-   const visible=bounds.top<stageHeight&&bounds.bottom>0;
+   if(!layout)measure();
+   if(!layout)return;
+   const y=scrollY();
+   const relativeTop=layout.top-y;
+   const progress=clamp(-relativeTop/layout.travel);
+   const visible=relativeTop<layout.height&&relativeTop+layout.height+layout.travel>0;
    if(!visible&&!near){cinema(false);pause();button.hidden=true;return;}
-   const focus=visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1;
+   const focus=visible&&relativeTop<=1&&relativeTop+layout.travel>=-1;
    if(focus!==lastFocus){lastFocus=focus;this.toggleAttribute('data-focus',focus);}
    cinema(focus);
    if(near)prefetch();
@@ -201,6 +218,12 @@ class VeloryzFrameCut extends HTMLElement {
     set('--frame-portal-rotation',(-8+progress*24).toFixed(3)+'deg');
     set('--scarf-film-opacity',transition.toFixed(4));
     set('--scarf-film-scale',(1.055-.055*transition).toFixed(4));
+    // This compositor-only displacement remains immediately scroll-locked
+    // even when the browser's video decoder is finishing a seek.
+    const fabric=range(progress,.42,1);
+    set('--scarf-pan-x',((fabric-.5)*1.8).toFixed(3)+'%');
+    set('--scarf-pan-y',((.5-fabric)*1.5).toFixed(3)+'%');
+    set('--scarf-tilt',((fabric-.5)*.8).toFixed(3)+'deg');
     set('--scarf-emblem-opacity',fallback*(1-transition));
     set('--scarf-rings-opacity',(fallback*(.22+.78*arrival)*portalLife).toFixed(4));
     set('--scarf-scale',(1.12-.12*arrival).toFixed(4));
@@ -216,7 +239,7 @@ class VeloryzFrameCut extends HTMLElement {
    if(!manualPlay)pause();
   };
   const schedule=()=>{if(!raf&&!deleted)raf=requestAnimationFrame(render);};
-  const preference=()=>{lastProgress=-1;schedule();};
+  const preference=()=>{layout=null;lastProgress=-1;schedule();};
   let observer=null;
   if(typeof IntersectionObserver==='function'){
    observer=new IntersectionObserver(([entry])=>{
@@ -244,13 +267,20 @@ class VeloryzFrameCut extends HTMLElement {
    label();
   });
   on(window,'scroll',schedule,{passive:true});
-  on(window,'resize',()=>{drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
-  on(window,'pageshow',schedule);
+  on(window,'resize',()=>{layout=null;drawnFrame=-1;lastProgress=-1;schedule();},{passive:true});
+  on(window,'pageshow',()=>{layout=null;schedule();});
   on(document,'visibilitychange',schedule);
-  on(document,'studio:route',schedule);
+  on(document,'studio:route',()=>{layout=null;lastProgress=-1;schedule();});
   window.StudioMotion?.addEventListener?.('change',preference);
+  // Geometry changes asynchronously when fonts, media and page content settle.
+  let sizeObserver=null;
+  if(typeof ResizeObserver==='function'){
+   sizeObserver=new ResizeObserver(()=>{layout=null;lastProgress=-1;schedule();});
+   sizeObserver.observe(this);
+   sizeObserver.observe(stage);
+  }
   this.cleanup=()=>{
-   deleted=true;controller.abort();observer?.disconnect();
+   deleted=true;controller.abort();observer?.disconnect();sizeObserver?.disconnect();
    cancelAnimationFrame(raf);window.StudioMotion?.removeEventListener?.('change',preference);
    cinema(false);pause();reveal.pause?.();sheets.clear();reveal.removeAttribute('src');scarf.removeAttribute('src');
    reveal.load?.();scarf.load?.();
