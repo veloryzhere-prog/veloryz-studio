@@ -11,7 +11,13 @@ assert.match(app,/class="frame-reveal"/);
 assert.match(app,/class="frame-reveal-canvas"/);
 assert.match(code,/frames\/sheet-/);
 assert.match(code,/TOTAL_FRAMES=90/);
-assert.match(code,/SCARF_FRAMES=178/,'Original scarf must use frame atlas, not a video seek for low-GPU devices');
+assert.match(code,/SCARF_FRAMES=222/,'Original scarf must use all 30fps frames, not a video seek');
+for(let index=0;index<25;index++){
+ const name='sheet-'+String(index).padStart(2,'0')+'.webp';
+ const url=new URL('../public/assets/frame-cut/scarf-frames/'+name,import.meta.url);
+ assert(fs.existsSync(url),'Required low-GPU scarf atlas missing: '+name);
+ assert(fs.statSync(url).size>1024,'Invalid scarf atlas: '+name);
+}
 assert.match(app,/assets\/frame-cut\/poster\.jpg/);
 assert.match(code,/assets\/frame-cut\/reveal\.mp4/);
 assert.match(code,/assets\/frame-cut\/scarf\.mp4/);
