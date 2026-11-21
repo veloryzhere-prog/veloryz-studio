@@ -18,6 +18,11 @@ class VeloryzFrameCut extends HTMLElement {
     const part=(p,a,b)=>clamp((p-a)/(b-a));
     let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false;
     let observer;
+    const clock=window.VeloryzMotionClock;
+    const frameKey=Symbol('scarf-frame');
+    const requestFrame=callback=>clock?clock.request(frameKey,callback):requestAnimationFrame(callback);
+    const cancelFrame=()=>clock?clock.cancel(frameKey):cancelAnimationFrame(frame);
+    const unsubscribeScroll=clock?.subscribeScroll(schedule);
     const style=(name,value)=>this.style.setProperty(name,String(value));
     const setProgress=p=>{
       // Match the original authored choreography, including the pause before scarf reveal.
@@ -78,7 +83,7 @@ class VeloryzFrameCut extends HTMLElement {
       }
     };
     const schedule=()=>{
-      if(!frame)frame=requestAnimationFrame(update);
+      if(!frame)frame=requestFrame(update);
     };
     const preference=()=>{schedule();};
     if(typeof IntersectionObserver==='function'){
@@ -96,7 +101,7 @@ class VeloryzFrameCut extends HTMLElement {
     window.StudioMotion?.addEventListener?.('change',preference);
     schedule();
     this.cleanup=()=>{
-      controller.abort();observer?.disconnect();cancelAnimationFrame(frame);
+      controller.abort();observer?.disconnect();cancelFrame();unsubscribeScroll?.();
       window.StudioMotion?.removeEventListener?.('change',preference);
       pause();scarf.removeAttribute('src');scarf.load();
     };
