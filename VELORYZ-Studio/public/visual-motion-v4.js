@@ -24,11 +24,15 @@
   let previousTime = 0;
   let cameraY = window.scrollY;
   const economical=matchMedia('(max-width:850px), (pointer:coarse)').matches||(navigator.deviceMemory||8)<=4;
-  const frameBudget=economical?46:29;
+  // Aim for 30fps on touch/low-memory devices and up to 50fps on desktops.
+  // Reduced motion and background tabs are handled by full().
+  const frameBudget=economical?32:19;
   let lastPaint=0;
 
   let backdrop;
   function atmosphere() {
+    // The ambient DOM is decorative and costly on handhelds; keep the V sculpture itself.
+    if (economical || navigator.connection?.saveData) return;
     if (document.querySelector('.vz-atmosphere')) return;
     const layer = document.createElement('div');
     layer.className = 'vz-atmosphere';
@@ -40,6 +44,8 @@
 
   // Both optical planes use the same source and crop, so the magnifier follows the sculpture.
   function mountStudy() {
+    // The duplicate magnifying-lens image is a desktop enhancement only.
+    if (economical || navigator.connection?.saveData) return;
     const manifesto = main.querySelector('.motion-manifesto');
     if (!manifesto || manifesto.querySelector('.sculpture-study')) return;
     const stage = document.createElement('div');
@@ -77,8 +83,10 @@
       values.push([el, progress, assembly]);
     }
 
-    backdrop?.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
-    backdrop?.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
+    if (backdrop) {
+      backdrop.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
+      backdrop.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
+    }
     for (const [el, progress, assembly] of values) {
       if(assembly!==null && (el.assemblyProgress===undefined||Math.abs(assembly-el.assemblyProgress)>.006)){
         el.assemblyProgress=assembly;
@@ -87,8 +95,12 @@
         if(el.dataset.chapter!==chapter)el.dataset.chapter=chapter;
         el.dispatchEvent(new Event('studio:assembly'));
       }
-      el.style.setProperty('--scene-progress', progress.toFixed(4));
-      el.style.setProperty('--vz-in-view', ((progress * 2 - 1) * 14).toFixed(2) + 'px');
+      // Ignore sub-pixel progress changes to avoid needless style recalculation.
+      if(el.vzSceneProgress===undefined || Math.abs(el.vzSceneProgress-progress)>0.003){
+        el.vzSceneProgress=progress;
+        el.style.setProperty('--scene-progress',progress.toFixed(3));
+        el.style.setProperty('--vz-in-view',((progress * 2 - 1) * 14).toFixed(2) + 'px');
+      }
     }
     if (cameraY !== actualY) schedule();
     else previousTime = 0;
@@ -154,6 +166,7 @@
       if(el.classList.contains('assembly-sequence')){
         delete el.assemblyProgress;delete el.dataset.chapter;el.style.removeProperty('--assembly-progress');
       }
+      delete el.vzSceneProgress;
       el.style.removeProperty('--scene-progress');
       el.style.removeProperty('--vz-in-view');
     }
