@@ -342,20 +342,20 @@ body:has(.v4-root) .v4-root{--v4-ink:#242927;--v4-ink-soft:#3c4843;--v4-sub:#7d8
    campaign widgets and footer out of the new full-screen wizard.
    ============================================================= */
 body.v4-creator-page:has(.v4-root) #main > :not(.v4-root),
-body.v4-creator-page #header,
-body.v4-creator-page #footer,
-body.v4-creator-page #expert-launcher,
-body.v4-creator-page #site-pin,
-body.v4-creator-page #offer-dock,
-body.v4-creator-page #ad-slider,
-body.v4-creator-page .whatsapp-float,
-body.v4-creator-page .site-announcement,
-body.v4-creator-page .platform-intro,
-body.v4-creator-page .guided-planner,
-body.v4-creator-page .creator-v2,
-body.v4-creator-page #site-progress,
-body.v4-creator-page .mailbox-float,
-body.v4-creator-page .platform-teaser{
+body.v4-creator-page:has(.v4-root) #header,
+body.v4-creator-page:has(.v4-root) #footer,
+body.v4-creator-page:has(.v4-root) #expert-launcher,
+body.v4-creator-page:has(.v4-root) #site-pin,
+body.v4-creator-page:has(.v4-root) #offer-dock,
+body.v4-creator-page:has(.v4-root) #ad-slider,
+body.v4-creator-page:has(.v4-root) .whatsapp-float,
+body.v4-creator-page:has(.v4-root) .site-announcement,
+body.v4-creator-page:has(.v4-root) .platform-intro,
+body.v4-creator-page:has(.v4-root) .guided-planner,
+body.v4-creator-page:has(.v4-root) .creator-v2,
+body.v4-creator-page:has(.v4-root) #site-progress,
+body.v4-creator-page:has(.v4-root) .mailbox-float,
+body.v4-creator-page:has(.v4-root) .platform-teaser{
   display:none!important;
 }
 body.v4-creator-page #main{padding:0!important;margin:0!important;max-width:none!important;width:100%;min-height:100dvh}
