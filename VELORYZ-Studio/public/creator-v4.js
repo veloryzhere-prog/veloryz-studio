@@ -410,6 +410,7 @@
   return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="134" height="40" alt="VELORYZ" decoding="async"><span>/ STUDIO</span></a>'+
    (isStep?'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>':'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>')+
    '<nav class="v4-top-actions" aria-label="Project navigation">'+
+   '<a class="v4-help-docs" href="/docs/">Help & guides ↗</a>'+
    (isStep?'<button type="button" class="v4-top-back" data-v4-action="back">← Back</button>'+
     (reviewVisited&&active!=='review'?'<button type="button" class="v4-top-review" data-v4-action="review">Review ↗</button>':'')+
     '<button type="button" class="v4-primary v4-top-next" data-v4-action="'+next+'" '+(busy?'disabled aria-busy="true"':'')+'>'+(busy?'Sending…':label)+'</button>':

@@ -16,3 +16,17 @@
 .owner-password-dialog{max-width:440px;width:calc(100% - 48px);border:1px solid #d8d3c7;padding:32px;background:#faf9f6;color:#25241f}
 .owner-password-dialog::backdrop{background:#25241faa}
 .owner-password-dialog form{display:grid;gap:20px}
+
+/* Studio Control · documentation CMS directory. */
+.docs-admin-toggle{margin-bottom:22px;padding:13px 15px;border:1px solid #e0e7db;border-radius:8px;background:#f8fbf6}
+.docs-admin-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:22px}
+.docs-admin-entry{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 17px;border:1px solid #dee6dc;border-radius:9px;text-decoration:none;background:#fbfdfb;color:#445945}
+.docs-admin-entry:hover{background:#eef6ed;border-color:#9cbd9f}
+.docs-admin-entry>span:first-child{display:grid;gap:5px;min-width:0}
+.docs-admin-entry strong{font-size:13px;line-height:1.4;font-weight:680}
+.docs-admin-entry small{font-size:10px;line-height:1.6;color:#859688}
+.docs-admin-entry>span:last-child{white-space:nowrap;font-size:11px;color:#5c805e;font-weight:700}
+.docs-admin-note{border-left:3px solid #84a486;background:#f4f8f1;border-radius:0 8px 8px 0;margin:19px 0 0;padding:15px 20px}
+.docs-admin-note strong{font-size:12px;color:#527455}
+.docs-admin-note p{margin-top:6px;font-size:11px;line-height:1.75;color:#7b8d7d}
+@media(max-width:860px){.docs-admin-list{grid-template-columns:1fr}}

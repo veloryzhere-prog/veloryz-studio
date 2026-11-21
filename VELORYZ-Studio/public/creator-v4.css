@@ -418,3 +418,8 @@ body.v4-creator-page .v4-root{min-height:100dvh}
    Project Creator only. It remains available everywhere else on the site. */
 body.v4-creator-page a.make-project-link,
 body:has(.v4-root) a.make-project-link {display:none!important}
+
+/* Readable creator help link to the CMS-linked documentation hub. */
+.v4-root .v4-help-docs{display:inline-flex;align-items:center;justify-content:center;min-height:41px;white-space:nowrap;color:#4e7359;font-size:11px;font-weight:680;padding:9px 11px;border-radius:7px;text-decoration:none;border:1px solid #e2ebe3;background:#f9fcf9}
+.v4-root .v4-help-docs:hover{background:#ebf6ed;border-color:#a5c5aa}
+@media(max-width:450px){.v4-root .v4-help-docs{font-size:10px;padding:8px 9px}.v4-root .v4-top-actions{gap:5px}}
