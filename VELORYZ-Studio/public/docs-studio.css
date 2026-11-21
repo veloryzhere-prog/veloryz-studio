@@ -64,3 +64,71 @@
 .docs-root-path-links a{color:#17140f!important;background:#f8f1e3;padding:13px 15px;font-size:12px;font-weight:750;text-decoration:none;border:1px solid #e5d8bf;white-space:normal}
 .docs-root-path-links a:hover{background:#e7d4ae}
 @media(max-width:750px){.docs-root-pathways{flex-direction:column;align-items:flex-start}.docs-root-path-links{width:100%}.docs-root-path-links a{flex:1 1 220px}}
+
+
+/* Studio field-guide edition: technical editorial reading, accessible motion, original blue SVG illustrations. */
+#docs-app.studio-docs-shell{--docs-ink:#1b2b39;--docs-muted:#596e82;--docs-line:#d5e5f1;--docs-paper:#f9fcff;color:#192b3c;background:#fff}
+#docs-app .studio-docs-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 95% 15%,#d4ebff 0,transparent 38%),linear-gradient(150deg,#fff 25%,#f3f9ff);border-bottom:1px solid #cbe2f2}
+#docs-app .studio-docs-hero .studio-docs-kicker{color:#037bc7}
+#docs-app .studio-docs-switch a.active{background:#047dce;color:#fff;border-color:#047dce}
+#docs-app .studio-docs-switch a:hover{border-color:#0791e7}
+#docs-app .studio-docs-card{border-color:#d5e3ef;box-shadow:0 3px 12px #06365b08}
+#docs-app .studio-docs-card:hover{border-color:#72b8e6;background:#f8fcff}
+#docs-app .studio-docs-card small{color:#037dce}
+#docs-app .studio-docs-footlinks{display:flex;flex-wrap:wrap;gap:24px;border-top:1px solid #d4e3ef;padding:27px 23px;margin:0 auto;max-width:1192px;font-size:13px}
+#docs-app .studio-docs-footlinks a{color:#087ed0;font-weight:750}
+#docs-app .studio-docs-reader{max-width:1530px;margin:auto;padding:38px 25px 115px}
+#docs-app .studio-docs-grid{display:grid;grid-template-columns:220px minmax(0,790px) 200px;gap:clamp(20px,2.8vw,44px);align-items:start}
+#docs-app .studio-docs-sidebar{position:sticky;top:100px;max-height:calc(100vh - 125px);overflow:auto;border-right:1px solid #d9e6f1;padding:10px 16px 28px 0;background:#fff}
+#docs-app .studio-docs-side-title{color:#087ccc}
+#docs-app .studio-docs-sidebar a.active,#docs-app .studio-docs-sidebar a:hover{border-left-color:#028ee7;background:#f0f8ff;color:#113b60}
+#docs-app .studio-docs-side-utils{border-top:1px solid #d9e6f1;padding-top:12px;margin-top:15px;display:flex;flex-direction:column;gap:4px}
+#docs-app .studio-docs-side-utils a{color:#1276b9}
+#docs-app .studio-docs-article{min-width:0}
+#docs-app .studio-docs-article-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,185px);gap:16px;align-items:center;padding:22px 0 40px;border-bottom:1px solid #d5e4f0;min-width:0}
+#docs-app .studio-docs-article-hero h1{font-size:clamp(35px,4vw,56px);letter-spacing:-.058em;color:#12293b;margin:15px 0 21px;line-height:1.07}
+#docs-app .studio-docs-article-hero .studio-docs-lede{font-size:17px;line-height:1.7;color:#627488;padding:0;border:0;margin:0 0 20px}
+#docs-app .studio-docs-article-hero .studio-docs-kicker{font-size:10px;letter-spacing:.14em;color:#047fcf;font-weight:750}
+#docs-app .docs-article-art{width:100%;max-width:190px;display:block;overflow:visible;justify-self:end}
+#docs-app .docs-article-art .docs-art-float{animation:docs-art-glide 5s ease-in-out infinite alternate}
+#docs-app .docs-article-meta{display:flex;flex-wrap:wrap;gap:8px 20px;color:#61788a;font-size:11px;font-weight:700;letter-spacing:.035em}
+#docs-app .docs-article-meta span+span::before{content:"·";margin-right:18px;color:#bad2e6}
+#docs-app .docs-article-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+#docs-app .docs-article-actions button{font:inherit;font-size:12px;font-weight:750;padding:10px 13px;background:white;border:1px solid #b4d5eb;color:#086eae;border-radius:3px;cursor:pointer}
+#docs-app .docs-article-actions button:hover{background:#e9f5ff}
+#docs-app .studio-docs-prose{color:#2a3744;font-size:15px;line-height:1.84;padding:32px 0 25px;overflow-wrap:anywhere}
+#docs-app .studio-docs-prose h2{font-size:clamp(23px,2.8vw,29px);line-height:1.28;font-weight:750;letter-spacing:-.032em;color:#173550;margin:45px 0 17px;padding-top:0;scroll-margin-top:110px}
+#docs-app .studio-docs-prose h3{font-size:19px;line-height:1.3;font-weight:700;color:#19517a;scroll-margin-top:110px}
+#docs-app .studio-docs-prose h2:first-child{margin-top:13px}
+#docs-app .studio-docs-prose ol,#docs-app .studio-docs-prose ul{padding-left:28px;margin:18px 0 26px}
+#docs-app .studio-docs-prose li{padding:6px 0;max-width:74ch}
+#docs-app .studio-docs-prose li::marker{color:#0789d5;font-weight:700}
+#docs-app .studio-docs-prose p{max-width:78ch;margin:14px 0}
+#docs-app .studio-docs-prose blockquote{background:#eef7ff;border-left:3px solid #068be5;color:#21506f;padding:18px 23px}
+#docs-app .studio-docs-prose code{background:#e8f3fa;border-radius:3px;color:#175178;padding:2px 5px;overflow-wrap:anywhere}
+#docs-app .studio-docs-prose a{color:#087fc7;text-underline-offset:4px}
+#docs-app .studio-docs-right{position:sticky;top:105px;max-height:calc(100vh - 140px);overflow:auto;border-left:1px solid #d4e4ef;padding:11px 0 10px 17px}
+#docs-app .studio-docs-right-title{color:#4b7390;font-size:10px;letter-spacing:.12em;font-weight:800;padding:0 0 14px}
+#docs-app .studio-docs-right nav{display:flex;flex-direction:column;gap:1px}
+#docs-app .studio-docs-right nav a{color:#506a81;font-size:12px;padding:8px 0;line-height:1.45;text-decoration:none}
+#docs-app .studio-docs-right nav a:hover{color:#047fcf}
+#docs-app .studio-docs-right-support{display:flex;flex-direction:column;gap:12px;border-top:1px solid #d4e4ef;padding-top:18px;margin-top:22px}
+#docs-app .studio-docs-right-support a{font-size:12px;color:#087cc4;font-weight:750}
+#docs-app .docs-mobile-toc{display:none;border:1px solid #d3e3ee;padding:10px 18px;margin:25px 0 0}
+#docs-app .docs-mobile-toc summary{font-size:13px;font-weight:750;cursor:pointer}
+#docs-app .docs-mobile-toc nav{display:flex;flex-direction:column;gap:9px;padding:15px 0 9px}
+#docs-app .docs-mobile-toc nav a{font-size:13px;color:#087ac4}
+#docs-app .studio-docs-finish{padding:28px 30px;margin:32px 0 18px;border:1px solid #bcdaf0;background:linear-gradient(145deg,#f6fbff,#eaf5ff)}
+#docs-app .studio-docs-finish h2{font-size:25px;line-height:1.25;letter-spacing:-.035em;margin:0 0 9px;color:#153c5c}
+#docs-app .studio-docs-finish p{font-size:13px;line-height:1.65;color:#567187;margin:0 0 15px}
+#docs-app .studio-docs-finish a{display:inline-block;color:#0077c0;font-size:12px;font-weight:750;margin:6px 18px 4px 0}
+#docs-app .studio-docs-prevnext{display:flex;justify-content:space-between;gap:22px;padding-top:20px;border-top:1px solid #d6e5f0}
+#docs-app .studio-docs-prevnext a{font-size:12px;color:#007cc8;text-decoration:none;max-width:48%;font-weight:700}
+#docs-app .studio-docs-prevnext small{display:block;color:#677e8f;font-size:10px;letter-spacing:.12em;margin-bottom:7px}
+#docs-app .studio-docs-reader :is(a,button,summary):focus-visible{outline:3px solid #0d87d4;outline-offset:3px}
+@keyframes docs-art-glide{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+@media(max-width:1280px){#docs-app .studio-docs-grid{grid-template-columns:210px minmax(0,1fr)}#docs-app .studio-docs-right{display:none}#docs-app .docs-mobile-toc{display:block}}
+@media(max-width:790px){#docs-app .studio-docs-grid{display:block}#docs-app .studio-docs-sidebar{position:static;max-height:220px;overflow:auto;border:1px solid #d6e5f0;padding:14px;margin:0 0 30px}#docs-app .studio-docs-reader{padding:25px 18px 65px}#docs-app .studio-docs-article-hero{grid-template-columns:minmax(0,1fr) 120px}#docs-app .docs-article-art{max-width:125px}}
+@media(max-width:520px){#docs-app .studio-docs-article-hero{display:block}#docs-app .docs-article-art{max-width:150px;margin:16px auto 0}#docs-app .docs-article-meta span+span::before{display:none}#docs-app .studio-docs-prose{font-size:14px}#docs-app .studio-docs-finish{padding:22px}}
+@media(prefers-reduced-motion:reduce){#docs-app .docs-article-art .docs-art-float{animation:none}}
+@media print{#docs-app .studio-docs-sidebar,#docs-app .studio-docs-right,#docs-app .docs-mobile-toc,#docs-app .docs-article-actions,#docs-app .studio-docs-prevnext,#docs-app .studio-docs-finish,#footer,#header{display:none!important}#docs-app .studio-docs-grid{display:block}#docs-app .studio-docs-reader{max-width:none;padding:0}#docs-app .studio-docs-prose{font-size:12px}#docs-app .docs-article-art{max-width:120px}#docs-app .studio-docs-prose h2{break-after:avoid}}
