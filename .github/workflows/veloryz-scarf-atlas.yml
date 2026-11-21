@@ -31,7 +31,15 @@ jobs:
           if git diff --cached --quiet; then
             echo "Scarf frame atlases already up-to-date."
           else
-            git commit -m "Add original 24fps scarf frame atlases for smooth low-GPU scroll motion"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            git commit -m "Add adaptive 30fps original scarf frame atlases for smooth GPU-friendly scrolling"
+            success=0
+            for attempt in 1 2 3 4 5 6 7 8; do
+              git pull --rebase origin main
+              if git push origin HEAD:main; then
+                success=1
+                break
+              fi
+              sleep 2
+            done
+            test "$success" -eq 1
           fi
