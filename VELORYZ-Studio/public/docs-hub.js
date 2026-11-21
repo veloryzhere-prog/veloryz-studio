@@ -19,7 +19,7 @@
  function href(value){
   const str=String(value||'').trim(),m=str.match(/(?:^|\/)([\w-]+\.md)(#[a-z0-9_-]+)?$/i);
   if(m){const d=docs().find(x=>x.filename===m[1]);if(d)return url(d.id)+(m[2]||'');}
-  return /^https?:\/\//i.test(str)||str.startsWith('/docs/')||str.startsWith('/help/studio/')||str.startsWith('/sitemap/')||/^#[a-z0-9_-]+$/i.test(str)?str:'#';
+  return /^https:\/\//i.test(str)||/^\/(?!\/)[a-z0-9/_-]+(?:\.[a-z0-9]+)?\/?(?:#[a-z0-9_-]+)?$/i.test(str)||/^#[a-z0-9_-]+$/i.test(str)?str:'#';
  }
  function inline(raw){
   const tokens=[],tick=String.fromCharCode(96),re=new RegExp(tick+'([^'+tick+'\\n]+)'+tick,'g');
