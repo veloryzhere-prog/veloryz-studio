@@ -6,6 +6,10 @@ on:
       - "VELORYZ-Studio/public/**"
       - "VELORYZ-Studio/lib/**"
       - "VELORYZ-Studio/tools/**"
+      - "VELORYZ-Studio/src/vendor/lenis/**"
+      - "VELORYZ-Studio/scripts/build-scroll.mjs"
+      - "VELORYZ-Studio/package.json"
+      - "VELORYZ-Studio/pnpm-lock.yaml"
       - ".github/workflows/veloryz-documentation.yml"
   pull_request:
     paths:
