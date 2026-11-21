@@ -51,7 +51,7 @@ assert.ok(publicCss.includes('body.motion-edition .kb-v4'),'Documentation needs 
 assert.ok(publicCss.includes('body.motion-edition .v4-root'),'Project Creator needs coordinated styling');
 assert.ok(publicCss.includes('body.motion-edition .vz-chat'),'Support chat needs coordinated styling');
 assert.ok(publicCss.includes('.vz-footer-help'),'Need Help card must remain visually prominent');
-assert.ok(!publicCss.includes('pointer-events:none} /* Preserve original V sculpture'), 'Do not disable the V sculpture interaction');
+assert.ok(!publicCss.includes('.studio-render){pointer-events:none}'),'Do not disable original V sculpture pointer interaction');
 assert.ok(consoleCss.includes('.admin-layout')&&consoleCss.includes('.cp-body'),'Admin and portal styles must be separately scoped');
 assert.ok(consoleCss.includes('.ka-agent-card'),'AI Management responsive cards must be enhanced');
 assert.ok(visual.includes('const frameBudget=economical?32:19'),'Motion should adapt frame budgets');
