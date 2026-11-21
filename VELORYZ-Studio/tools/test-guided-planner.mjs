@@ -35,7 +35,7 @@ console.log('PASS: bounded planning inputs, restored drafts, transparent estimat
 // Exercise the actual controller against a small DOM adapter. No browser or network side effects.
 const listeners=new Map(),raf=[];
 const attributes=()=>({attrs:{},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]??null;},classList:{toggle(){}},focus(){this.focused=true;}});
-const panels=[0,1,2,3].map(()=>({...attributes(),hidden:false,querySelector:()=>({focus(){}})}));
+const panels=[0,1,2,3].map(()=>({...attributes(),hidden:false,querySelector:()=>({focus(){}}),scrollIntoView(){}}));
 const next={hidden:false},back={disabled:false},submit={hidden:false},progress={style:{}},status={textContent:''},review={innerHTML:''},saveStatus={textContent:''},goal={...attributes(),value:'short'},goalError={hidden:true,textContent:''},contact={value:'client@example.com',validity:{valid:true},focus(){this.focused=true;},reportValidity(){return true}},contactError={hidden:true,textContent:''};
 const stepButtons=[0,1,2,3].map(i=>({...attributes(),dataset:{plannerGo:String(i)}}));
 const root={querySelectorAll:s=>s==='[data-planner-panel]'?panels:[],querySelector:s=>({'[data-planner-back]':back,'[data-planner-next]':next,'[data-planner-submit]':submit,'.planner-progress span':progress,'.planner-step-status':status}[s]||panels[Number(s.match(/"(\d)"/)?.[1])]),scrollIntoView(){}};
