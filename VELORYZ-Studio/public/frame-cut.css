@@ -83,6 +83,10 @@ veloryz-frame-cut:not([data-full]) .frame-film-plane{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-scarf{opacity:0!important}
 veloryz-frame-cut:not([data-full]) .frame-stage::after{opacity:0!important}
 html:not([data-motion-gate])[data-vz-cinema-focus="true"] body :is(#header,#site-pin,#ad-slider,#site-progress,#offer-dock,#expert-launcher,.whatsapp-float){visibility:hidden;pointer-events:none}
+/* While scrubbing the film, reserve the compositor for it instead of
+   simultaneously running offscreen tickers and decorative orbit loops. */
+html[data-vz-cinema-focus="true"] body.motion-edition :is(.ticker-track,.orbit-track b,.vz-orbit,.render-drift){animation-play-state:paused!important}
+
 @media(max-width:900px){
  veloryz-frame-cut[data-full]{height:170svh}
  veloryz-frame-cut[data-full] .frame-stage{height:100svh}
