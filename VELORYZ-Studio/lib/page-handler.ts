@@ -5,6 +5,7 @@ import adminShell from './admin-shell';
 import { secureHtml,pageMetadata } from './response-security';
 import { publicOrigin,canonicalPath } from './site-origin.mjs';
 import { getPublished, handleApi } from './cms-api.mjs';
+import { studioDocsRoutes } from './studio-docs-routes.mjs';
 export const dynamic = 'force-dynamic';
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
@@ -51,6 +52,7 @@ export async function GET(request: Request) {
  const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
  for(const person of people)pages['/teamjob/'+(person.slug||slug(person.name))]=person.name+' — Studio profile';
  for(const document of ["overview","experience","architecture","project-ai","pricing","client-portal","privacy","copyright","quality","troubleshooting","communications"])pages['/docs/'+document]='VELORYZ '+document.replace(/-/g,' ')+' documentation';
+ for(const [docPath,docTitle] of Object.entries(studioDocsRoutes))pages[docPath]=docTitle;
  if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  if(normal==='/sitemap.xml'){const urls=Object.keys(pages).map(p=>`<url><loc>${base}${p==='/'?'/':p}</loc></url>`).join('');return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});}
  const routeDescriptions:Record<string,string>={
