@@ -43,7 +43,7 @@ const chapters=[0,1,2,3,4].map(()=>({...attributes(),hidden:false,scrollIntoView
 const stageButtons=[0,1,2,3,4].map(i=>({...attributes(),dataset:{journeySelect:String(i)}}));
 const caption={textContent:''},story={dataset:{},style:{setProperty(){}},querySelectorAll:s=>s==='[data-journey-chapter]'?chapters:stageButtons,querySelector:()=>caption,getBoundingClientRect:()=>({top:2000,bottom:3800})};
 const media={matches:true,addEventListener(name,fn){this.change=fn;}};
-context.document={querySelector:s=>({'#guided-project-planner':root,'[data-planner-review-copy]':review,'[data-planner-save-status]':saveStatus,'[data-planner-goal]':goal,'#planner-goal-error':goalError,'[data-planner-contact-email]':contact,'#planner-contact-error':contactError}[s]??null),querySelectorAll:s=>s==='[data-project-journey]'?[story]:s==='[data-planner-go]'?stepButtons:[],addEventListener:(name,fn)=>listeners.set(name,fn)};
+context.document={getElementById:id=>id==='planner-contact-error'?contactError:null,querySelector:s=>({'#guided-project-planner':root,'[data-planner-review-copy]':review,'[data-planner-save-status]':saveStatus,'[data-planner-goal]':goal,'#planner-goal-error':goalError,'[data-planner-contact-email]':contact,'#planner-contact-error':contactError}[s]??null),querySelectorAll:s=>s==='[data-project-journey]'?[story]:s==='[data-planner-go]'?stepButtons:[],addEventListener:(name,fn)=>listeners.set(name,fn)};
 let stored='',destination='';
 context.sessionStorage={setItem:(key,value)=>{stored=value;},removeItem:()=>{stored='';}};
 context.matchMedia=()=>media;context.requestAnimationFrame=fn=>{raf.push(fn);return raf.length;};
