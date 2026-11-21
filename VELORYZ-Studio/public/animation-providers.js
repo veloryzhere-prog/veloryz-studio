@@ -19,7 +19,7 @@
  const targets='.v4-question-heading,.v4-reference,.v4-handoff-step,.v4-success-handoff,.vz-chat-side-head,.chat-name-card,.kb-reader-tools';
  let motionLoader=null,lottieLoader=null,observer=null,routeTimer=0;
  const observed=new WeakSet(),finished=new WeakSet();
- const motionURL='https://cdn.jsdelivr.net/npm/motion@14.14.0/mini/+esm';
+ const motionURL='https://cdn.jsdelivr.net/npm/motion@14.11.1/mini/+esm';
  const lottieURL='https://cdn.jsdelivr.net/npm/lottie-web@5.13.0/build/player/lottie_light.min.js';
  const animatedEvent=(name,detail={})=>document.dispatchEvent(new CustomEvent('veloryz:provider-'+name,{detail}));
  function motion(){
@@ -71,7 +71,7 @@
   return lottieLoader;
  }
  async function celebrate(){
-  if(!allow()||touch.matches)return;
+  if(!allow())return;
   const mark=document.querySelector('.v4-root .v4-success-check');
   if(!mark||mark.dataset.vzLottie==='done')return;
   mark.dataset.vzLottie='done';
