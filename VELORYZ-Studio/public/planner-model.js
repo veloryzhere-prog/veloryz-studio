@@ -2,7 +2,7 @@
 (()=>{
  const purposes=['Portfolio','Ecommerce','Gaming','Editorial','SaaS / platform','Something else'];
  const pages=[1,4,6,8,12],timelines=['Flexible','Within 2 weeks','Within a month','Within 2–3 months'];
- const features=['Content management','Booking workflow','Payment integration','AI adviser','Member accounts','Motion direction'];
+ const features=['Content management','Booking workflow','Payment integration','AI adviser','Member accounts','Motion direction','SEO foundations','Blog & publishing','Search & filters','Multilingual support','Email notifications','Admin dashboard','Product catalogue','Inventory management','Analytics dashboard','API integrations'];
  const assets=['Brand identity','Written content','Images & media','Existing website'];
  const styles=['Editorial','Minimal','Bold','Immersive'];
  const budgetRange={min:20000,max:300000,step:5000};
@@ -17,7 +17,7 @@
   const candidates=Array.isArray(catalogue)?catalogue:[];
   const selected=reference||candidates.find(x=>x.id===brief.referenceId)||candidates.find(x=>x.category===brief.purpose);
   const price=Number(selected?.price),base=Number.isFinite(price)&&price>=1&&price<=10000000?Math.round(price):17999;
-  const additionalPages=Math.max(0,Number(brief.pages)-4)*1500,featureAllowance=brief.features.length*2500;
+  const additionalPages=Math.max(0,Number(brief.pages)-4)*1500,featureAllowance=brief.features.reduce((sum,name)=>sum+({ 'SEO foundations':1500,'Search & filters':2000,'Email notifications':2000,'Analytics dashboard':2000,'Admin dashboard':3000,'API integrations':3500,'Inventory management':3000 }[name]||2500),0);
   const low=base+additionalPages+featureAllowance;
   // A visible 25% contingency illustrates uncertainty; it is not a studio offer.
   const high=Math.ceil(low*1.25/500)*500;
@@ -25,7 +25,7 @@
  }
  function format(value,reference,catalogue=[]){
   const b=normalize(value),e=estimate(b,reference,catalogue),money=v=>'₹'+Number(v).toLocaleString('en-IN');
-  return ['Project direction: '+b.purpose,reference?'Design reference: '+clean(reference.name,160):'', 'Core pages: '+b.pages,'Visual style: '+b.style,'Budget preference (not a quote): '+money(b.budget),'Features: '+(b.features.join(', ')||'Core website'),'Materials ready: '+(b.assets.join(', ')||'To discuss'),'Timeline preference: '+b.timeline,b.goal?'Project goal: '+b.goal:'','Illustrative planning range: '+money(e.low)+'–'+money(e.high)+'. Upper end includes a rounded 25% scope contingency.','Planning assumptions: up to 4 pages in the base, ₹1,500 per additional page, ₹2,500 per selected feature. Provider fees, licenses, hosting and taxes are excluded. Final scope and quote require studio review.'].filter(Boolean).join('\n');
+  return ['Project direction: '+b.purpose,reference?'Design reference: '+clean(reference.name,160):'', 'Core pages: '+b.pages,'Visual style: '+b.style,'Budget preference (not a quote): '+money(b.budget),'Features: '+(b.features.join(', ')||'Core website'),'Materials ready: '+(b.assets.join(', ')||'To discuss'),'Timeline preference: '+b.timeline,b.goal?'Project goal: '+b.goal:'','Illustrative planning range: '+money(e.low)+'–'+money(e.high)+'. Upper end includes a rounded 25% scope contingency.','Planning assumptions: up to 4 pages in the base, ₹1,500 per additional page, variable feature planning allowances from ₹1,500 to ₹3,500. Provider fees, licenses, hosting and taxes are excluded. Final scope and quote require studio review.'].filter(Boolean).join('\n');
  }
  function restore(raw){try{return normalize(JSON.parse(raw));}catch{return normalize();}}
  function goalError(goal){const s=clean(goal,1000);return s.length<10?'Tell us your main goal in at least 10 characters.':/[<>\x00-\x08\x0b\x0c\x0e-\x1f]/.test(s)?'Use plain text without angle brackets or control characters.':'';}
