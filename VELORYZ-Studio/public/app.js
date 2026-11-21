@@ -227,7 +227,7 @@ function consultationForm(compact=false,preset=''){
 function contactPage(){return `${intro('Say hello','Your next idea.<br>Our next conversation.','Have a project in mind? Tell us a little about it. We would love to understand what you are building and how we can help.','05')}<section class="section container contact-layout"><div class="contact-info reveal"><div><div class="eyebrow">Let’s make a connection</div><h2>Good work starts<br>with a hello.</h2><p>Reach out directly, or prepare a consultation request. Share your goals, your timeline and the kind of help you need.</p></div><div><a class="contact-channel" href="mailto:${CONTACT.email}"><span class="label">01 / Email the studio</span><strong>${CONTACT.email} ${arrow}</strong></a><a class="contact-channel" href="${wa('Hi VELORYZ Studio! I would like to discuss a project.')}" target="_blank" rel="noopener"><span class="label">02 / Chat on WhatsApp</span><strong>${CONTACT.display} ${arrow}</strong></a><a class="contact-channel" href="tel:+${CONTACT.phone}"><span class="label">03 / Give us a call</span><strong>${CONTACT.display} ${arrow}</strong></a><a class="contact-channel" href="https://www.google.com/maps/search/?api=1&query=Bokaro%20Jharkhand%20India" target="_blank" rel="noopener"><span class="label">04 / Our home</span><strong>Bokaro, Jharkhand, India ${arrow}</strong></a></div><p class="location-note">Based in India · Collaborating remotely<br>Times shown in India Standard Time (UTC+5:30).</p></div><div class="form-panel reveal"><h2>Let’s talk about your project.</h2><p class="form-intro">A few details will help us start in the right place.</p>${consultationForm()}</div></section><section class="section container faq-section"><div class="faq-grid"><div class="reveal"><div class="eyebrow">Before you say hello</div><h2>A little more clarity.</h2></div><div class="reveal">${faqs()}</div></div></section>`;}
 function notFoundPage(){return `<section class="container not-found"><div class="eyebrow">A little off the map</div><h1>Let’s head home.</h1><p>This page isn’t part of the studio. The next good idea might be.</p><a href="/" class="button">Back to the studio ${arrow}</a></section>`;}
 function renderRoute(route,scroll=true){
- currentRoute=normalise(route); let page=routes[currentRoute];
+ currentRoute=normalise(route);document.body.classList.toggle('v4-creator-page',currentRoute==='/create/');let page=routes[currentRoute];
  if(!page&&currentRoute.startsWith('/teamjob/')){const slug=currentRoute.split('/')[2];page={title:'Team Profile — VELORYZ Studio',render:()=>teamProfilePage(slug)};}
  document.title=page?.title||'Page not found — VELORYZ Studio';
  const canonical=$('link[rel="canonical"]'),canonicalOrigin=canonical?new URL(canonical.href).origin:location.origin,url=canonicalOrigin+(currentRoute==='/'?'/':currentRoute);if(canonical)canonical.href=url;const ogUrl=$('meta[property="og:url"]'),ogTitle=$('meta[property="og:title"]');if(ogUrl)ogUrl.content=url;if(ogTitle)ogTitle.content=document.title;const metaDesc=$('meta[name="description"]'),ogDesc=$('meta[property="og:description"]');const routeSummary=page?.title?('Explore '+page.title.replace(/ — VELORYZ Studio$/,'')+' at VELORYZ Studio. Design, development and considered digital experiences from Bokaro, India.'):'This page does not exist on the VELORYZ Studio website.';if(metaDesc)metaDesc.content=routeSummary;if(ogDesc)ogDesc.content=routeSummary;
@@ -236,7 +236,10 @@ function renderRoute(route,scroll=true){
  hydrateCMSPage();
  header();footer();window.StudioMotion?.sync();
  if(currentRoute==='/'){const teaser=document.createElement('section');teaser.className='container platform-teaser';teaser.innerHTML='<span class="teaser-star" aria-hidden="true">✳</span><div><div class="eyebrow">A LITTLE INSPIRATION, TO BEGIN</div><h2>Your next direction starts here.</h2><p>Explore the design library. Shape a brief. Make it yours.</p></div><a class="button" href="/design/">Explore the design library ↗</a>';$('#main').insertBefore(teaser,$('#main').querySelector('.motion-manifesto')||null);}
- initMotion();renderOfferDock();platformMount();
+ if(currentRoute==='/create/'){
+  document.getElementById('expert-launcher')?.remove();document.getElementById('offer-dock')?.remove();
+  document.getElementById('site-pin')?.remove();document.getElementById('ad-slider')?.remove();
+}else{initMotion();renderOfferDock();platformMount();}
  document.dispatchEvent(new CustomEvent('studio:route'));
  if(scroll){if(!reduced.matches&&typeof $('#main').animate==='function')$('#main').animate([{opacity:.55,transform:'translateY(7px)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,.7,.3,1)'});window.scrollTo({top:0,behavior:'instant'});$('#main').focus({preventScroll:true});}
 }
@@ -541,7 +544,11 @@ async function refreshCMS(){
  try{
   const response=await fetch('/api/site',{cache:'no-store'});if(!response.ok)return;const data=await response.json();
   if(Number(data.version)>studioVersion&&!modalOpen&&!$('[data-enquiry][data-dirty]')&&!document.activeElement?.matches('input,select,textarea')){
-   const scroll=window.scrollY;applyCMS(data.state,data.version);renderRoute(currentRoute,false);window.scrollTo({top:scroll,behavior:'instant'});startVisitorCampaigns(false);
+   const scroll=window.scrollY;applyCMS(data.state,data.version);
+   if(currentRoute==='/create/')document.dispatchEvent(new CustomEvent('veloryz:cms-updated'));
+   else renderRoute(currentRoute,false);
+   window.scrollTo({top:scroll,behavior:'instant'});
+   if(currentRoute!=='/create/')startVisitorCampaigns(false);
   }else if(liveOffers().some(o=>campaignPlacement(o)==='popup'&&!popupSeen(o))&&!modalOpen)startVisitorCampaigns(false);else renderOfferDock();
  }catch{/* The current published view remains available during transient network loss. */}
 }

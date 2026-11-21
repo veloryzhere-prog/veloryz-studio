@@ -403,22 +403,28 @@
    '<p class="v4-small-note">No payment has been taken, and no portal invitation has been issued by this submission.</p></section>';
  }
  function header(){
-  const flowList=flow(),total=flowList.length,number=active==='success'?total:at()+1,group=meta(active);
+  const steps=flow(),total=steps.length,number=active==='success'?total:at()+1;
+  const isStep=active!=='welcome'&&active!=='success',group=meta(active);
+  const next=active==='review'?'submit':'next';
+  const label=active==='review'?'Send my project →':'Continue →';
   return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="134" height="40" alt="VELORYZ" decoding="async"><span>/ STUDIO</span></a>'+
-   (active==='welcome'?'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>':'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>')+
-   '<a class="v4-exit" href="/">Exit <span aria-hidden="true">↗</span></a></header>'+
-   (active==='welcome'?'':'<div class="v4-progress-track" role="progressbar" aria-label="Project creator progress" aria-valuenow="'+number+'" aria-valuemin="0" aria-valuemax="'+total+'"><i style="width:'+Math.round(number/total*100)+'%"></i></div>');
+   (isStep?'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>':'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>')+
+   '<nav class="v4-top-actions" aria-label="Project navigation">'+
+   (isStep?'<button type="button" class="v4-top-back" data-v4-action="back">← Back</button>'+
+    (reviewVisited&&active!=='review'?'<button type="button" class="v4-top-review" data-v4-action="review">Review ↗</button>':'')+
+    '<button type="button" class="v4-primary v4-top-next" data-v4-action="'+next+'" '+(busy?'disabled aria-busy="true"':'')+'>'+(busy?'Sending…':label)+'</button>':
+    '<a class="v4-exit" href="/">Exit <span aria-hidden="true">↗</span></a>')+
+   '</nav></header>'+
+   (isStep?'<div class="v4-progress-track" role="progressbar" aria-label="Project creator progress" aria-valuenow="'+number+'" aria-valuemin="0" aria-valuemax="'+total+'"><i style="width:'+Math.round(number/total*100)+'%"></i></div>':'');
  }
  function app(){
-  const welcome=active==='welcome',success=active==='success';
-  const index=at()+1,total=flow().length;
+  const welcome=active==='welcome',success=active==='success',index=at()+1,total=flow().length;
   return '<div class="v4-root">'+header()+
    (welcome?welcomeScreen():success?successScreen():
      '<section class="v4-question-view"><div class="v4-question-wrap"><div class="v4-side-number" aria-hidden="true">'+String(index).padStart(2,'0')+' / '+String(total).padStart(2,'0')+'</div>'+
-      '<div class="v4-question-inner" id="v4-question-body">'+view(active)+'<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p><p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></section>'+
-     '<footer class="v4-bottom"><button type="button" class="v4-back" data-v4-action="back">← Back</button>'+(reviewVisited&&active!=='review'?'<button type="button" class="v4-return-review" data-v4-action="review">Back to review ↗</button>':'<span class="v4-shortcut">'+(active==='review'?'ONE FINAL STEP':'PRESS ENTER TO CONTINUE')+'</span>')+
-     (active==='review'?'<button type="button" class="v4-primary" data-v4-action="submit" '+(busy?'disabled':'')+'>'+(busy?'Sending…':'Send my project →')+'</button>':
-      '<button type="button" class="v4-primary" data-v4-action="next">Continue <span>→</span></button>')+'</footer>')+
+      '<div class="v4-question-inner" id="v4-question-body">'+view(active)+
+      '<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p>'+
+      '<p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></section>')+
    '<div id="v4-ai-slot"></div></div>';
  }
  function render(){
@@ -511,7 +517,8 @@
  }
  document.addEventListener('click',event=>{
   const b=event.target.closest('[data-v4-action],[data-v4-pick],[data-v4-template],[data-v4-external],[data-v4-gallery],[data-v4-filter],[data-v4-budget-set],[data-v4-edit]');
-  if(!b||!document.querySelector('.v4-root'))return;
+  if(!b||!b.closest('.v4-root'))return;
+  event.preventDefault();event.stopImmediatePropagation();
   if(b.hasAttribute('data-v4-action')){handleAction(b.dataset.v4Action);return;}
   if(b.hasAttribute('data-v4-edit')){route(b.dataset.v4Edit);return;}
   if(b.hasAttribute('data-v4-pick')){handlePick(b.dataset.v4Pick,b.dataset.value);return;}
@@ -530,7 +537,7 @@
   if(b.hasAttribute('data-v4-budget-set')){
    change('budget',Number(b.dataset.v4BudgetSet));render();return;
   }
- });
+ },true);
  document.addEventListener('input',event=>{
   const b=event.target;if(!b.closest('.v4-root'))return;
   if(b.hasAttribute('data-v4-search')){search=b.value;refreshLibrary();return;}

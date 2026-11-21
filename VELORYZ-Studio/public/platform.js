@@ -127,6 +127,7 @@ function mountPageHelp(){
  main.append(section);
 }
 function platformMount(){
+ if(currentRoute==='/create/'){document.getElementById('expert-launcher')?.remove();return;}
  mountPageHelp();
  if(currentRoute==='/book/'||currentRoute==='/contact/')clearTimeout(popupTimer);
  if(!$('#expert-launcher')){const a=advisers[adviserIndex],button=document.createElement('button');button.id='expert-launcher';button.className='expert-launcher';button.dataset.expert=a.id;button.setAttribute('aria-label','Ask '+a.name+', AI studio adviser');button.innerHTML=avatar(a,true)+`<span>Need a hand?<strong>Ask ${a.name} <i>↗</i></strong><small>AI studio adviser</small></span>`;document.body.append(button);}

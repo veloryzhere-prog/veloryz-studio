@@ -57,10 +57,10 @@
   }finally{clearTimeout(timeout);store.busy=false;mount();}
  }
  document.addEventListener('click',event=>{
-  if(event.target.closest('[data-v4-ai-toggle]')){show(!store.open);return;}
+  if(event.target.closest('[data-v4-ai-toggle]')?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();show(!store.open);return;}
   const prompt=event.target.closest('[data-v4-ai-prompt]');
-  if(prompt&&document.querySelector('.v4-root'))ask(prompt.dataset.v4AiPrompt);
- });
+  if(prompt?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();ask(prompt.dataset.v4AiPrompt);}
+ },true);
  document.addEventListener('submit',event=>{
   if(event.target.id!=='v4-ai-form')return;
   event.preventDefault();
@@ -68,6 +68,7 @@
   ask(q);
  });
  document.addEventListener('veloryz:creator-render',mount);
+ document.addEventListener('studio:route',mount);
  document.addEventListener('DOMContentLoaded',mount);
  if(document.readyState!=='loading')mount();
 })();
