@@ -65,9 +65,9 @@
   store.messages.push({role:'user',content:text});store.error='';store.fallback=false;store.busy=true;store.open=true;mount();
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),26000);
   try{
-   const reply=await fetch('/api/project-ai',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({messages:store.messages.slice(-11),context:context()}),signal:ctrl.signal});
+   const reply=await fetch('/api/knowledge-ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({agent:'creator',messages:store.messages.slice(-11).map(({role,content})=>({role,content}))}),signal:ctrl.signal});
    const data=await reply.json().catch(()=>({error:'The AI service could not respond.'}));
-   if(!reply.ok||!data.available||!data.answer)throw Error(data.error||'Project AI is unavailable. Please message the team.');
+   if(!reply.ok||!data.answer||data.mode!=='ai')throw Error(data.error||'The configured Project AI is unavailable.');
    store.messages.push({role:'assistant',content:String(data.answer).slice(0,1400)});
   }catch(err){
    store.fallback=true;
