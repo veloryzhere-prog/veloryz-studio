@@ -11,6 +11,7 @@ assert.match(app,/class="frame-reveal"/);
 assert.match(app,/class="frame-reveal-canvas"/);
 assert.match(code,/frames\/sheet-/);
 assert.match(code,/TOTAL_FRAMES=90/);
+assert.match(code,/SCARF_FRAMES=178/,'Original scarf must use frame atlas, not a video seek for low-GPU devices');
 assert.match(app,/assets\/frame-cut\/poster\.jpg/);
 assert.match(code,/assets\/frame-cut\/reveal\.mp4/);
 assert.match(code,/assets\/frame-cut\/scarf\.mp4/);
@@ -117,7 +118,7 @@ assert.equal(scarf.hasAttribute('src'),false);
  // Browser canvas path: authentic 90-frame WebP sheets must be used instead
  // of high-frequency MP4 seeks, including fast trackpad jumps.
  let SpriteFrameCut,spriteVisibility,frameId=0;
- const frames2=new Map(),draws=[],loadedSheets=[];
+ const frames2=new Map(),draws=[],scarfDraws=[],loadedSheets=[];
  const win=Object.assign(new EventTarget(),{
   innerHeight:800,innerWidth:1280,devicePixelRatio:1,scrollY:0,
   StudioMotion:Object.assign(new EventTarget(),{level:'full'})
@@ -140,12 +141,17 @@ assert.equal(scarf.hasAttribute('src'),false);
   fillRect(){},drawImage(...args){draws.push(args);},
   set fillStyle(v){},set imageSmoothingEnabled(v){},set imageSmoothingQuality(v){}
  }}};
+ const scarfCanvas2={width:0,height:0,getContext(){return {
+  fillRect(){},drawImage(...args){scarfDraws.push(args);},
+  set fillStyle(v){},set imageSmoothingEnabled(v){},set imageSmoothingQuality(v){}
+ }}};
  const stage2={clientWidth:1280,clientHeight:800};
  const variables=new Map();
  scene2.style={setProperty(k,v){variables.set(k,v);}};
  scene2.querySelector=x=>({
   '.frame-stage':stage2,'.frame-reveal':reveal2,
-  '.frame-reveal-canvas':canvas2,'.frame-scarf':scarf2,'.frame-toggle':button2
+  '.frame-reveal-canvas':canvas2,'.frame-scarf':scarf2,
+  '.frame-scarf-canvas':scarfCanvas2,'.frame-toggle':button2
  })[x];
  let scrollPosition=0;
  scene2.getBoundingClientRect=()=>({top:-scrollPosition,bottom:1960-scrollPosition,height:1960});
@@ -158,14 +164,19 @@ assert.equal(scarf.hasAttribute('src'),false);
  assert(loadedSheets.some(url=>url.includes('sheet-9.webp')));
  assert.equal(Number(variables.get('--frame-canvas-ready')),1);
  assert.equal(scarf2.paused,true,'A scarf sprite scrub must never run an independent video loop');
- assert(scarf2.currentTime>0,'Native scarf video time must follow exact scroll progress');
+ assert.equal(scarf2.hasAttribute('src'),false,'On low GPU use the frame atlas without decoding the MP4');
+ assert(scarfDraws.length>0,'Original scarf should render source frames into the lightweight canvas');
+ assert(loadedSheets.some(url=>url.includes('scarf-frames/sheet-')),'Load scarf frame atlas');
+ const scarfStill=scarfDraws.length;
+ pump();
+ assert.equal(scarfDraws.length,scarfStill,'No scarf animation frames after scrolling stops');
  const lastFrame=draws.at(-1);
  assert.equal(lastFrame[3],768);
  assert.equal(lastFrame[4],432);
  scrollPosition=140;win.scrollY=140;win.dispatchEvent(new Event('scroll'));pump();
  assert.equal(scarf2.paused,true);
  assert.equal(Number(variables.get('--scarf-film-opacity')),0);
- assert(scarf2.currentTime<.05,'Reversing the scrub must seek the scarf back to its start');
+ assert(scarfDraws.length>scarfStill,'Reversing scroll must draw the original scarf frames backward');
  assert.equal(Number(variables.get('--frame-canvas-ready')),1);
  scene2.disconnectedCallback();
  assert.equal(frames2.size,0);
