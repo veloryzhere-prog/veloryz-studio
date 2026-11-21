@@ -51,7 +51,7 @@ const engine=FakeLenis.instances[0];
 assert.equal(engine.options.lerp,.14,'Balanced Lenis smoothing');
 assert.equal(engine.options.wheelMultiplier,.94,'Moderate wheel distance');
 assert.equal(engine.options.syncTouch,false);
-assert.ok(engine.options.prevent({matches:s=>s==='dialog'}),'Nested modal should scroll natively');
+assert.ok(engine.options.prevent({matches:s=>s.includes('dialog')}),'Nested modal should scroll natively');
 mockWindow.VeloryzScroll.sync();
 assert.equal(FakeLenis.instances.length,1,'Repeated scroll sync must not create more instances');
 docEvents['studio:route']();
