@@ -41,7 +41,13 @@
     "ritikBrief": "",
     "aryanBrief": "",
     "showcaseTitle": "Ideas, made tangible.",
-    "adInterval": 8
+    "adInterval": 8,
+    "creatorPricing": {
+      "base": 17999,
+      "pageAllowance": 1500,
+      "featureAllowance": 2500,
+      "contingencyPct": 25
+    }
   },
   "branding": {
     "headerLogo": "",

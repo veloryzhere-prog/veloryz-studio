@@ -31,6 +31,9 @@ export function validateState(value){
  for(const agent of ['happy','nikhil','milky','ritik','aryan'])site[agent+'Brief']=text(s[agent+'Brief'],500);
  site.showcaseTitle=text(s.showcaseTitle??defaults.site.showcaseTitle,120,true);
  site.adInterval=Math.min(30,Math.max(4,Number(s.adInterval)||8));
+ const sourcePricing=s.creatorPricing&&typeof s.creatorPricing==='object'&&!Array.isArray(s.creatorPricing)?s.creatorPricing:{};
+ const pricingNumber=(key,min,max)=>{const n=Number(sourcePricing[key]??defaults.site.creatorPricing[key]);if(!Number.isFinite(n)||!Number.isInteger(n)||n<min||n>max)fail('Check the Project Creator pricing settings.');return n;};
+ site.creatorPricing={base:pricingNumber('base',1000,10000000),pageAllowance:pricingNumber('pageAllowance',0,100000),featureAllowance:pricingNumber('featureAllowance',0,100000),contingencyPct:pricingNumber('contingencyPct',0,100)};
  const branding={};for(const key of ['headerLogo','footerLogo','favicon','productLogo','heroLogo','showreel'])branding[key]=url(b[key],true);
  const projects=unique(list(input.projects,100).map((p,i)=>({id:slug(p.id),name:text(p.name,120,true),category:text(p.category,100),type:['product','web','brand','motion'].includes(p.type)?p.type:'web',status:text(p.status,100),year:text(p.year,100),description:text(p.description,7000),scope:list(p.scope||[],30).map(x=>text(x,250)),approach:text(p.approach,7000),note:text(p.note,2000),published:!!p.published,featured:!!p.featured,order:Number.isFinite(Number(p.order))?Number(p.order):i,cover:url(p.cover,true),video:url(p.video,true),website:url(p.website)})));
  const services=list(input.services,20).map(p=>({name:text(p.name,120,true),short:text(p.short,500),description:text(p.description,4000),tags:list(p.tags||[],25).map(x=>text(x,100)),deliverables:text(p.deliverables,2500)}));

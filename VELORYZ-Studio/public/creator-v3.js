@@ -96,7 +96,7 @@
   window.VeloryzProjectEmail=data.email;
   try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem('veloryz.planner.v1',JSON.stringify(projectBrief));}catch{}
  }
- const estimate=()=>{sync();return VeloryzPlanner.estimate(projectBrief,null,[])};
+ const estimate=()=>{sync();const pricing=typeof studioCMS!=='undefined'?studioCMS?.site?.creatorPricing:undefined;return VeloryzPlanner.estimate(projectBrief,null,[],pricing)};
  const review=()=>data.features.filter(n=>info[n]?.[2]).length;
  const preset=()=>presets.find(p=>p.id===data.template);
  function preview(item,small=false){

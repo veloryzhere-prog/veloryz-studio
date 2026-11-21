@@ -12,15 +12,17 @@
   const unique=(items,allowed)=>[...new Set(Array.isArray(items)?items.filter(x=>allowed.includes(x)):[])];
   return {purpose:clean(value.purpose,60)||'Portfolio',pages:String(pages.includes(Number(value.pages))?Number(value.pages):4),timeline:timelines.includes(value.timeline)?value.timeline:'Flexible',features:unique(value.features,features),assets:unique(value.assets,assets),style:styles.includes(value.style)?value.style:'Editorial',budget:Number.isFinite(Number(value.budget))&&Number(value.budget)>=budgetRange.min?Math.round(Math.min(budgetRange.max,Math.max(budgetRange.min,Number(value.budget)))/budgetRange.step)*budgetRange.step:50000,goal:clean(value.goal,1000),referenceId:/^[a-z0-9-]{1,90}$/.test(value.referenceId||'')?value.referenceId:''};
  }
- function estimate(value,reference,catalogue=[]){
+ function estimate(value,reference,catalogue=[],pricing={}){
+  const clamp=(v,def,min,max)=>{const n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max?Math.round(n):def;};
+  const rule={base:clamp(pricing?.base,17999,1000,10000000),pageAllowance:clamp(pricing?.pageAllowance,1500,0,100000),featureAllowance:clamp(pricing?.featureAllowance,2500,0,100000),contingencyPct:clamp(pricing?.contingencyPct,25,0,100)};
   const brief=normalize(value);
   const candidates=Array.isArray(catalogue)?catalogue:[];
   const selected=reference||candidates.find(x=>x.id===brief.referenceId)||candidates.find(x=>x.category===brief.purpose);
-  const price=Number(selected?.price),base=Number.isFinite(price)&&price>=1&&price<=10000000?Math.round(price):17999;
-  const additionalPages=Math.max(0,Number(brief.pages)-4)*1500,featureAllowance=brief.features.reduce((sum,name)=>sum+({ 'SEO foundations':1500,'Search & filters':2000,'Email notifications':2000,'Analytics dashboard':2000,'Admin dashboard':3000,'API integrations':3500,'Inventory management':3000 }[name]||2500),0);
+  const price=Number(selected?.price),base=Number.isFinite(price)&&price>=1&&price<=10000000?Math.round(price):rule.base;
+  const additionalPages=Math.max(0,Number(brief.pages)-4)*rule.pageAllowance,featureAllowance=brief.features.reduce((sum,name)=>sum+({ 'SEO foundations':1500,'Search & filters':2000,'Email notifications':2000,'Analytics dashboard':2000,'Admin dashboard':3000,'API integrations':3500,'Inventory management':3000 }[name]??rule.featureAllowance),0);
   const low=base+additionalPages+featureAllowance;
   // A visible 25% contingency illustrates uncertainty; it is not a studio offer.
-  const high=Math.ceil(low*1.25/500)*500;
+  const high=Math.ceil(low*(1+rule.contingencyPct/100)/500)*500;
   return {base,additionalPages,featureAllowance,low,high,contingency:high-low};
  }
  function format(value,reference,catalogue=[]){
