@@ -40,8 +40,24 @@ export function studioEnvironment(env) {
   const objectUrl=k=>base+'/storage/v1/object/'+bucket+'/'+k.split('/').map(encodeURIComponent).join('/');
   BUCKET={
    async put(k,bytes,options={}) {
-    const r=await fetch(objectUrl(k),{method:'POST',headers:{...headers,'Content-Type':options.httpMetadata?.contentType||'application/octet-stream'},body:bytes,signal:AbortSignal.timeout(30000)});
-    if(!r.ok)throw new Error('Studio media upload failed.');
+    let r;
+    try {
+     r=await fetch(objectUrl(k),{method:'POST',headers:{...headers,'Content-Type':options.httpMetadata?.contentType||'application/octet-stream','x-upsert':'false'},body:bytes,signal:AbortSignal.timeout(100000)});
+    }catch(error){
+     console.error('Studio storage transport error',{reason:error?.name||'network-error'});
+     throw Object.assign(new Error('Media storage connection timed out or failed. Retry the upload.'),{status:503});
+    }
+    if(!r.ok){
+     let detail={};try{detail=await r.json();}catch{}
+     const code=String(detail?.error||detail?.code||detail?.statusCode||'').slice(0,72);
+     console.error('Studio storage upload rejected',{status:r.status,code});
+     const message=r.status===413?'This file exceeds your storage upload limit. Try a smaller or compressed video.':
+       r.status===429?'Media storage is busy. Retry the upload shortly.':
+       r.status===401||r.status===403?'The private media storage connection needs administrator attention.':
+       r.status===400?'The storage service rejected this file. Check format, size and bucket configuration.':
+       'Media storage is temporarily unavailable. Retry the upload.';
+     throw Object.assign(new Error(message),{status:r.status===413?413:503});
+    }
    },
    async delete(k) {
     const r=await fetch(base+'/storage/v1/object/'+bucket,{method:'DELETE',headers,body:JSON.stringify({prefixes:[k]})});
