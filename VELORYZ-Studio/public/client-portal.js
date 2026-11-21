@@ -40,9 +40,9 @@ function entry(error=""){
  '<aside class="cp-auth-preview"><div class="cp-auth-preview-top"><span>VELORYZ / A CONNECTED EXPERIENCE</span><span>✳</span></div><div class="cp-preview-wrap"><div class="cp-preview-app"><div class="cp-preview-side"><b>V.</b><i></i><i></i><i></i><i></i></div><div class="cp-preview-content"><small>CLIENT VIEW / PREVIEW</small><strong>Everything, in sync.</strong><p>Project timeline</p><div class="cp-preview-steps"><i class="done"></i><i class="done"></i><i class="current"></i><i></i><i></i></div><div class="cp-preview-metrics"><span><b>2/5</b>Milestones</span><span><b>3</b>Deliverables</span><span><b>1</b>To review</span></div><div class="cp-preview-deliverable"><strong>Deliverables</strong><p>Brand direction <span>Shared</span></p><p>Homepage concept <span>In review</span></p></div></div></div></div><div class="cp-auth-preview-foot"><p>A calmer way to collaborate, from first idea to final handover.</p><button type="button" data-cp-demo>Explore an interactive demo ↗</button></div></aside></div>';
  const hash=location.hash.match(/(?:^#|&)invite=([^&]+)/i);
  if(hash){
-  const token=decodeURIComponent(hash[1]);
+  let token;try{token=decodeURIComponent(hash[1]);}catch{token="";}
   history.replaceState(null,"",location.pathname+location.search);
-  const input=$("#cp-invite");input.value=token;signIn(token);
+  if(token){const input=$("#cp-invite");input.value=token;signIn(token);}
  }
 }
 async function signIn(code){
@@ -71,7 +71,7 @@ function shell(){
  '<div class="cp-app-client"><div class="cp-app-client-icon">'+esc(initials)+'</div><span><strong>'+esc(p.client_name)+'</strong><small>'+esc(p.title)+'</small></span></div>'+
  '<nav class="cp-app-nav" aria-label="Client workspace navigation">'+nav.map(([id,label,icon])=>'<button type="button" data-cp-tab="'+id+'" class="'+(tab===id?'is-active':'')+'" '+(tab===id?'aria-current="page"':'')+'>'+navIcon(icon)+'<span>'+label+'</span>'+(id==="reviews"&&actionCount?'<b class="cp-nav-count">'+actionCount+'</b>':'')+'</button>').join('')+'</nav>'+
  '<div class="cp-app-sidebar-footer"><div class="cp-security"><span>◉</span><p>Private & secure<br><small>Shared by VELORYZ Studio</small></p></div><button class="cp-exit" data-cp-exit>'+(isDemo?'Exit preview':'Sign out')+' <span>↗</span></button></div></aside>'+
- '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><span class="cp-app-live"><i></i> YOUR WORKSPACE</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
+ '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><button class="cp-refresh-button" type="button" data-cp-refresh title="Refresh project updates" aria-label="Refresh project updates">↻ <span>Refresh</span></button><span class="cp-app-live"><i></i> YOUR WORKSPACE</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
  '<section class="cp-app-content" id="cp-view">'+
  (isDemo?'<div class="cp-demo-alert"><strong>ILLUSTRATIVE DEMO</strong><span>Example content only. No project changes or client messages are sent from this preview.</span></div>':'')+
  views[tab](p)+'</section><footer class="cp-app-bottom"><span>VELORYZ STUDIO · CLIENT COLLABORATION</span><a href="mailto:veloryz.here@gmail.com">Need help? Contact us ↗</a></footer></div></div>';
@@ -135,6 +135,12 @@ document.addEventListener("click",async e=>{
  const tabButton=e.target.closest("[data-cp-tab]");
  if(tabButton){tab=tabButton.dataset.cpTab;if(views[tab]){render();$("#cp-view")?.scrollIntoView({block:"start",behavior:"instant"});}return;}
  if(e.target.closest("[data-cp-demo]")){sample();return;}
+ if(e.target.closest("[data-cp-refresh]")){
+  if(isDemo){toast("Preview is up to date.");return;}
+  try{state=await api("/session");render();toast("Project updates refreshed.");}
+  catch(err){toast(err.message);}
+  return;
+ }
  if(e.target.closest("[data-cp-exit]")){
   if(!isDemo){try{await api("/logout",{method:"POST",body:"{}"});}catch{toast("Please close this browser if you are on a shared device.");}}
   entry();return;
