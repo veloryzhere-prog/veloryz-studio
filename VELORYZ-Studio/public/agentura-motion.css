@@ -35,3 +35,7 @@ veloryz-frame-cut .frame-toggle{pointer-events:auto}
  veloryz-frame-cut .frame-emblem,veloryz-frame-cut .frame-rings,veloryz-frame-cut .frame-scarf{animation:none!important}
  veloryz-frame-cut .frame-scarf{opacity:0!important}
 }
+
+/* Embedded demos remain usable even when Lenis is active. */
+html.lenis.lenis-smooth .vz-ext-frame-wrap iframe{pointer-events:auto!important}
+html.lenis .vz-ext-cart-dialog,html.lenis .vz-ext-dialog{overscroll-behavior:contain}
