@@ -42,7 +42,7 @@ assert.ok(store.includes('name="kind" value="project"'),'Use validated Studio pr
 assert.ok(store.includes("data-request-id="),'Idempotent order request must include a UUID');
 assert.ok(store.includes("!=='Escape'")&&store.includes('data-vz-cart-close'),'Cart must close by keyboard and button');
 assert.ok(store.includes('no charges')||store.includes('No charges'),'No unconnected payment claim may appear');
-assert.ok(store.includes('template-store')&&store.includes('template-covers'),'Working source and real covers');
+assert.ok(store.includes('vz-store')&&store.includes('p.cover')&&store.includes('p.preview'),'Working source, cover images and live preview must be wired to products');
 assert.ok(shell.includes('veloryz-template-products.js')&&shell.includes('template-store.js')&&shell.includes('template-store.css'));
 assert.ok(platform.includes('VeloryzTemplateStore?.render()'),'Design route must be the real Studio template store');
 assert.ok(creator.includes('v4-template-live-art')&&creator.includes("params.get('template')"),'Create Project must use real template products and preserve selection');
