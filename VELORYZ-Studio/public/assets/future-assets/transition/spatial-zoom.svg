@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title desc">
+<title id="title">Spatial Zoom</title><desc id="desc">VELORYZ transition motion asset 098</desc>
+<style>.a,.b{fill:none;stroke:#4267E8;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transform-origin:60px 60px}.a{stroke-dasharray:260;animation:draw 3.6s cubic-bezier(.22,.75,.2,1) infinite}.b{opacity:.36;animation:drift 4.8s ease-in-out infinite alternate}@keyframes draw{0%{stroke-dashoffset:260;opacity:.15}45%,75%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:-260;opacity:.15}}@keyframes drift{to{transform:rotate(16deg) scale(1.06);opacity:.72}}@media(prefers-reduced-motion:reduce){.a,.b{animation:none;stroke-dashoffset:0}}</style>
+<rect class="a" x="29" y="29" width="62" height="62" rx="18"/><path class="b" d="M42 60H78M60 42V78"/></svg>
