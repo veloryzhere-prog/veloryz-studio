@@ -6,6 +6,8 @@
  const assets=['Brand identity','Written content','Images & media','Existing website'];
  const styles=['Editorial','Minimal','Bold','Immersive'];
  const budgetRange={min:20000,max:300000,step:5000};
+ const CATEGORY_BASES={"Business":17999,"Portfolio":17999,"Ecommerce":49999,"Agency":29999,"SaaS / platform":199999,"Restaurant":24999,"Editorial":22999,"Education":79999,"Community":79999,"Custom App":249999};
+ const TECH_REVIEW=['Payment integration','Member accounts','API integrations','AI adviser','Admin dashboard','Inventory management'];
  const clean=(value,max)=>typeof value==='string'?value.trim().slice(0,max):'';
  function normalize(value={}){
   if(!value||typeof value!=='object'||Array.isArray(value))value={};
@@ -18,12 +20,15 @@
   const brief=normalize(value);
   const candidates=Array.isArray(catalogue)?catalogue:[];
   const selected=reference||candidates.find(x=>x.id===brief.referenceId)||candidates.find(x=>x.category===brief.purpose);
-  const price=Number(selected?.price),base=Number.isFinite(price)&&price>=1&&price<=10000000?Math.round(price):rule.base;
+  const price=Number(selected?.price),custom=Number(pricing?.categoryBases?.[brief.purpose]);
+  const categoryBase=Number.isFinite(custom)&&custom>=1000&&custom<=10000000?Math.round(custom):brief.purpose==='Portfolio'||brief.purpose==='Business'?rule.base:CATEGORY_BASES[brief.purpose]||rule.base;
+  const base=Number.isFinite(price)&&price>=1&&price<=10000000?Math.round(price):categoryBase;
   const additionalPages=Math.max(0,Number(brief.pages)-4)*rule.pageAllowance,featureAllowance=brief.features.reduce((sum,name)=>sum+({ 'SEO foundations':1500,'Search & filters':2000,'Email notifications':2000,'Analytics dashboard':2000,'Admin dashboard':3000,'API integrations':3500,'Inventory management':3000 }[name]??rule.featureAllowance),0);
   const low=base+additionalPages+featureAllowance;
   // A visible 25% contingency illustrates uncertainty; it is not a studio offer.
-  const high=Math.ceil(low*(1+rule.contingencyPct/100)/500)*500;
-  return {base,additionalPages,featureAllowance,low,high,contingency:high-low};
+  const reviewItems=brief.features.filter(x=>TECH_REVIEW.includes(x));
+  const high=Math.ceil(low*(1+rule.contingencyPct/100+Math.min(.3,reviewItems.length*.07))/500)*500;
+  return {base,additionalPages,featureAllowance,low,high,contingency:high-low,reviewItems,category:brief.purpose};
  }
  function format(value,reference,catalogue=[]){
   const b=normalize(value),e=estimate(b,reference,catalogue),money=v=>'₹'+Number(v).toLocaleString('en-IN');

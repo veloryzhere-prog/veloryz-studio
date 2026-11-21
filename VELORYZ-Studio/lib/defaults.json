@@ -46,7 +46,19 @@
       "base": 17999,
       "pageAllowance": 1500,
       "featureAllowance": 2500,
-      "contingencyPct": 25
+      "contingencyPct": 25,
+      "categoryBases": {
+        "Business": 17999,
+        "Portfolio": 17999,
+        "Ecommerce": 49999,
+        "Agency": 29999,
+        "SaaS / platform": 199999,
+        "Restaurant": 24999,
+        "Editorial": 22999,
+        "Education": 79999,
+        "Community": 79999,
+        "Custom App": 249999
+      }
     }
   },
   "branding": {
