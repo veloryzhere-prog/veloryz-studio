@@ -21,6 +21,10 @@
   const visible = new Set();
   let tracked = [];
   let frame = 0;
+  const clock=window.VeloryzMotionClock;
+  const frameKey='visual-motion-v4';
+  const requestFrame=callback=>clock?clock.request(frameKey,callback):requestAnimationFrame(callback);
+  const cancelFrame=()=>clock?clock.cancel(frameKey):cancelAnimationFrame(frame);
   let previousTime = 0;
   let cameraY = window.scrollY;
   const economical=matchMedia('(max-width:850px), (pointer:coarse)').matches||(navigator.deviceMemory||8)<=4;
@@ -57,7 +61,7 @@
   }
 
   function schedule() {
-    if (full() && !frame) frame = requestAnimationFrame(tick);
+    if (full() && !frame) frame = requestFrame(tick); // Shared clock if present; native rAF fallback.
   }
 
   function tick(time) {
@@ -153,7 +157,7 @@
   }
 
   function sync() {
-    cancelAnimationFrame(frame);
+    cancelFrame();
     frame = 0;
     previousTime = 0;
     lastPaint = 0;
@@ -177,6 +181,8 @@
   window.StudioMotion?.addEventListener('change', sync);
   window.addEventListener('pageshow', sync);
   window.addEventListener('scroll', schedule, {passive: true});
+  // During Lenis animation, subscribe to its actual interpolated scroll progress.
+  clock?.subscribeScroll(schedule);
   window.addEventListener('resize', schedule, {passive: true});
   if (typeof ResizeObserver === 'function') new ResizeObserver(schedule).observe(main);
   refresh();
