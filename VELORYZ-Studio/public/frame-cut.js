@@ -16,10 +16,13 @@ class VeloryzFrameCut extends HTMLElement {
     const clamp=value=>Math.min(1,Math.max(0,value));
     const mix=(a,b,t)=>a+(b-a)*t;
     const part=(p,a,b)=>clamp((p-a)/(b-a));
-    let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false;
+    let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false,lastProgress=-1,lastFull=null,lastFocus=null;
     let observer;
     const style=(name,value)=>this.style.setProperty(name,String(value));
     const setProgress=p=>{
+      // Ignore sub-pixel changes; an unchanged scene should not recalculate styles.
+      if(Math.abs(p-lastProgress)<.0008)return;
+      lastProgress=p;
       // Match the original authored choreography, including the pause before scarf reveal.
       const intro=part(p,0,.38),outro=part(p,.47,.69);
       const easeOut=t=>1-Math.pow(1-t,3);
@@ -48,9 +51,9 @@ class VeloryzFrameCut extends HTMLElement {
       frame=0;
       if(!this.isConnected)return;
       full=window.StudioMotion?.level==='full';
-      this.toggleAttribute('data-full',full);
+      if(lastFull!==full){lastFull=full;this.toggleAttribute('data-full',full);}
       if(!full||document.hidden){
-        pause();button.hidden=true;this.removeAttribute('data-focus');setProgress(0);return;
+        pause();button.hidden=true;if(lastFocus!==false){lastFocus=false;this.removeAttribute('data-focus');}setProgress(0);return;
       }
       const bounds=this.getBoundingClientRect();
       const stageHeight=stage.clientHeight||window.innerHeight||1;
@@ -58,9 +61,11 @@ class VeloryzFrameCut extends HTMLElement {
       const travel=Math.max(1,bounds.height-stageHeight);
       const progress=clamp(-bounds.top/travel);
       const visible=bounds.top<stageHeight&&bounds.bottom>0;
+      if(!visible&&!near){pause();button.hidden=true;if(lastFocus!==false){lastFocus=false;this.removeAttribute('data-focus');}return;}
       // The rAF controller runs only on actual scroll/resize/change events.
       setProgress(progress);
-      this.toggleAttribute('data-focus',visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1);
+      const focus=visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1;
+      if(lastFocus!==focus){lastFocus=focus;this.toggleAttribute('data-focus',focus);}
       if(near&&visible&&progress>=.22&&!videoLoadStarted){
         videoLoadStarted=true;
         scarf.preload='auto';
