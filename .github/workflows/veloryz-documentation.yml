@@ -1,0 +1,38 @@
+name: VELORYZ Studio documentation release gates
+on:
+  push:
+    branches: [main]
+    paths:
+      - "VELORYZ-Studio/public/**"
+      - "VELORYZ-Studio/lib/**"
+      - "VELORYZ-Studio/tools/**"
+      - ".github/workflows/veloryz-documentation.yml"
+  pull_request:
+    paths:
+      - "VELORYZ-Studio/**"
+permissions:
+  contents: read
+jobs:
+  docs-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: VELORYZ-Studio
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@v4
+      - name: Install Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Enable package manager
+        run: corepack enable
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+      - name: Validate all public guides, routes and links
+        run: node tools/test-documentation.mjs
+      - name: Typecheck
+        run: corepack pnpm exec tsc --noEmit
+      - name: Build production application
+        run: corepack pnpm build
