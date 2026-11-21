@@ -71,5 +71,16 @@ document.addEventListener('click',event=>{
 document.addEventListener('input',e=>{if(e.target.matches('[data-vz-search]')){query=e.target.value.trim().toLowerCase();updateGrid();}});
 document.addEventListener('change',e=>{if(e.target.matches('[data-vz-sort]')){sort=e.target.value;updateGrid();}});
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.querySelector('#vz-store-preview:not([hidden])'))closePreview();else if(document.querySelector('#vz-store-cart:not([hidden])'))closeCart();});
+const openedPurchaseLinks=new Set();
+function acceptPurchaseLink(){
+ if(!document.querySelector('#vz-template-store'))return;
+ const id=new URL(location.href).searchParams.get('buy');
+ if(!id||!byId(id)||openedPurchaseLinks.has(id))return;
+ openedPurchaseLinks.add(id);
+ add(id); // Purchase request, never a payment: show exact item in bag.
+}
+document.addEventListener('studio:route',acceptPurchaseLink);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',acceptPurchaseLink,{once:true});
+else queueMicrotask(acceptPurchaseLink);
 window.VeloryzTemplateStore={render,products,preview,add,get items(){return [...items]}};
 })();
