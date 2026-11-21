@@ -8,6 +8,8 @@ on:
       - "VELORYZ-Studio/tools/**"
       - "VELORYZ-Studio/src/vendor/lenis/**"
       - "VELORYZ-Studio/scripts/build-scroll.mjs"
+      - "VELORYZ-Studio/scripts/build-template-gallery.mjs"
+      - "VELORYZ-Studio/scripts/template-*.mjs"
       - "VELORYZ-Studio/package.json"
       - "VELORYZ-Studio/pnpm-lock.yaml"
       - ".github/workflows/veloryz-documentation.yml"
@@ -48,3 +50,5 @@ jobs:
         run: corepack pnpm build
       - name: Verify bundled first-party Lenis runtime
         run: node tools/test-lenis-bundle.mjs
+      - name: Validate original storefront, twelve live templates, and purchase requests
+        run: node tools/test-template-store.mjs
