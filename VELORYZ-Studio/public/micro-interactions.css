@@ -1,0 +1,37 @@
+/* VELORYZ interaction micro-motion: visual-only enhancement, no theme/layout changes. */
+:root{--vz-tap-duration:280ms;--vz-arrival-duration:340ms}
+.vz-micro-ripple{position:absolute;pointer-events:none;z-index:2;border-radius:50%;width:12px;height:12px;background:currentColor;opacity:.16;transform:translate(-50%,-50%) scale(0);animation:vz-micro-ripple .52s cubic-bezier(.22,1,.36,1) forwards;mix-blend-mode:normal}
+@keyframes vz-micro-ripple{0%{opacity:.16;transform:translate(-50%,-50%) scale(0)}100%{opacity:0;transform:translate(-50%,-50%) scale(var(--vz-ripple-scale,16))}}
+@keyframes vz-micro-arrive{from{opacity:.45;translate:0 7px}to{opacity:1;translate:0 0}}
+@keyframes vz-micro-error{0%,100%{translate:0 0}20%,60%{translate:-4px 0}40%,80%{translate:4px 0}}
+@keyframes vz-micro-success{0%{transform:scale(.72);opacity:.4}55%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes vz-micro-pulse{0%,100%{opacity:1}50%{opacity:.62}}
+.vz-micro-arrival{animation:vz-micro-arrive var(--vz-arrival-duration) cubic-bezier(.2,.85,.2,1) both}
+.vz-micro-error-flash{animation:vz-micro-error .34s ease-in-out 1}
+.vz-micro-success-mark{animation:vz-micro-success .65s cubic-bezier(.2,1.4,.3,1) both}
+.vz-micro-pending{animation:vz-micro-pulse 1.1s ease-in-out infinite}
+.vz-micro-focus-ring:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.vz-micro-click-feedback{transition:filter 140ms ease,scale 140ms ease}
+.vz-micro-click-feedback:active:not(:disabled){scale:.975;filter:brightness(.97)}
+.vz-micro-cursor{position:fixed;top:0;left:0;width:30px;height:30px;border:1px solid currentColor;border-radius:50%;pointer-events:none;z-index:2147483000;opacity:0;transform:translate3d(-100px,-100px,0) translate(-50%,-50%) scale(.7);transition:opacity .16s ease,scale .18s ease;will-change:transform;color:rgba(75,102,117,.45);mix-blend-mode:multiply}
+.vz-micro-cursor.is-active{opacity:.65}
+.vz-micro-cursor.is-press{scale:.72}
+.v4-root .vz-micro-cursor{color:rgba(61,102,84,.55)}
+@media (hover:none),(pointer:coarse){.vz-micro-cursor{display:none!important}}
+@media (prefers-reduced-motion:reduce){
+ .vz-micro-ripple,.vz-micro-cursor{display:none!important}
+ .vz-micro-arrival,.vz-micro-error-flash,.vz-micro-success-mark,.vz-micro-pending{animation:none!important}
+ .vz-micro-click-feedback{transition:none!important}
+}
+html[data-motion="reduced"] .vz-micro-ripple,
+html[data-motion="paused"] .vz-micro-ripple,
+html[data-motion="reduced"] .vz-micro-cursor,
+html[data-motion="paused"] .vz-micro-cursor{display:none!important}
+html[data-motion="reduced"] .vz-micro-arrival,
+html[data-motion="paused"] .vz-micro-arrival,
+html[data-motion="reduced"] .vz-micro-error-flash,
+html[data-motion="paused"] .vz-micro-error-flash,
+html[data-motion="reduced"] .vz-micro-success-mark,
+html[data-motion="paused"] .vz-micro-success-mark,
+html[data-motion="reduced"] .vz-micro-pending,
+html[data-motion="paused"] .vz-micro-pending{animation:none!important}
