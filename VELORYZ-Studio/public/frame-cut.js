@@ -15,7 +15,7 @@ class VeloryzFrameCut extends HTMLElement {
     let full=false, near=false, held=false, frame=0, playing=false;
     const update=()=>{
       frame=0;
-      if(!full||!near||document.hidden){if(playing){playing=false;scarf.pause();}this.removeAttribute('data-focus');return;}
+      if(!full||!near||document.hidden){if(playing){playing=false;scarf.pause();}button.hidden=true;this.removeAttribute('data-focus');return;}
       const bounds=this.getBoundingClientRect();
       const height=this.firstElementChild.clientHeight;
       const progress=Math.max(0,Math.min(1,-bounds.top/Math.max(1,bounds.height-height)));
