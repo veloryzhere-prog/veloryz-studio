@@ -5,7 +5,7 @@ export function debounce<CB extends (...args: unknown[]) => void>(
   let timer: number | undefined
   return function <T>(this: T, ...args: Parameters<typeof callback>) {
     clearTimeout(timer)
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       timer = undefined
       callback.apply(this, args)
     }, delay)
