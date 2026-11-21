@@ -482,6 +482,7 @@ document.addEventListener('click',event=>{
 });
 
 function renderCampaignSurfaces(){
+ if(currentRoute==='/create/')return;
  renderAdSlider();
  const offers=liveOffers(),pin=offers.find(o=>campaignPlacement(o)==='pinned'&&!campaignHidden(o));
  let bar=$('#site-pin');
@@ -506,6 +507,7 @@ function renderCampaignSurfaces(){
  zone.innerHTML=inline.map(o=>`<div class="campaign-inline-item">${CampaignDesign.card(o,{brandLogo:studioCMS.branding.headerLogo})}${o.dismissible!==false?`<button class="campaign-inline-close" data-campaign-dismiss="${esc(o.id)}" aria-label="Dismiss ${esc(o.title)}">×</button>`:''}</div>`).join('');
 }
 function renderOfferDock(){
+ if(currentRoute==='/create/')return;
  renderCampaignSurfaces();
  let dock=$('#offer-dock');const all=liveOffers(),offers=all.filter(o=>campaignPlacement(o)==='popup'&&o.ribbon!==false);
  if(!offers.length){dock?.remove();document.body.classList.remove('has-offer','offer-minimized');return;}
@@ -515,12 +517,19 @@ function renderOfferDock(){
  dock.innerHTML=`<button class="offer-mini" data-offer-open="${index}" aria-label="Open studio update"><span aria-hidden="true">↗</span> Studio update ${arrow}</button><div class="offer-dock-content"><span class="offer-dock-symbol">${CampaignDesign.mark(offer,studioCMS.branding.headerLogo)}</span><button class="offer-dock-copy" data-offer-open="${index}"><span>${esc(offer.eyebrow||offer.kind)}</span><strong>${esc(offer.title)}</strong></button><button class="offer-dock-action" data-offer-open="${index}">View details ${arrow}</button><button class="offer-dock-minimize" data-offer-minimize aria-label="Minimize studio update">−</button></div>`;
 }
 function openOffer(index=0){
+ if(currentRoute==='/create/')return;
  const offers=liveOffers();if(!offers.length)return;index=((index%offers.length)+offers.length)%offers.length;
  const o=offers[index];rememberPopup(o);
  openModal(CampaignDesign.card(o,{titleId:'dialog-title',brandLogo:studioCMS.branding.headerLogo})+(offers.length>1?`<nav class="campaign-pagination" aria-label="Other studio updates">${offers.map((item,i)=>`<button class="${i===index?'selected':''}" data-offer-open="${i}" aria-label="Show ${esc(item.title)}">${String(i+1).padStart(2,'0')}</button>`).join('')}</nav>`:''),'campaign-modal');
 }
 function startVisitorCampaigns(initial=true){
  clearTimeout(campaignTimer);clearInterval(campaignRotation);clearTimeout(popupTimer);clearTimeout(pinExpiryTimer);
+ if(currentRoute==='/create/'){
+  for(const id of ['offer-dock','site-pin','ad-slider','campaign-inline-zone'])document.getElementById(id)?.remove();
+  document.body.classList.remove('has-offer','has-site-pin','offer-minimized');
+  document.documentElement.style.removeProperty('--site-pin-height');
+  return;
+ }
  if(window.StudioMotion?.onboardingActive){
   document.addEventListener('studio:motion-intro-complete',()=>startVisitorCampaigns(initial),{once:true});
   renderOfferDock();
@@ -549,7 +558,8 @@ async function refreshCMS(){
    else renderRoute(currentRoute,false);
    window.scrollTo({top:scroll,behavior:'instant'});
    if(currentRoute!=='/create/')startVisitorCampaigns(false);
-  }else if(liveOffers().some(o=>campaignPlacement(o)==='popup'&&!popupSeen(o))&&!modalOpen)startVisitorCampaigns(false);else renderOfferDock();
+  }else if(currentRoute==='/create/')return;
+  else if(liveOffers().some(o=>campaignPlacement(o)==='popup'&&!popupSeen(o))&&!modalOpen)startVisitorCampaigns(false);else renderOfferDock();
  }catch{/* The current published view remains available during transient network loss. */}
 }
 
