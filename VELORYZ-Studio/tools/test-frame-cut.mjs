@@ -17,6 +17,9 @@ for(let index=0;index<25;index++){
  const url=new URL('../public/assets/frame-cut/scarf-frames/'+name,import.meta.url);
  assert(fs.existsSync(url),'Required low-GPU scarf atlas missing: '+name);
  assert(fs.statSync(url).size>1024,'Invalid scarf atlas: '+name);
+ const lite=new URL('../public/assets/frame-cut/scarf-frames-lite/'+name,import.meta.url);
+ assert(fs.existsSync(lite),'Low-GPU scarf atlas missing: '+name);
+ assert(fs.statSync(lite).size>1024,'Invalid low-GPU scarf atlas: '+name);
 }
 assert.match(app,/assets\/frame-cut\/poster\.jpg/);
 assert.match(code,/assets\/frame-cut\/reveal\.mp4/);
@@ -136,6 +139,7 @@ assert.equal(scarf.hasAttribute('src'),false);
  }
  vm.runInNewContext(code,{
   window:win,document:doc,HTMLElement:Element,AbortController,queueMicrotask,Image:SheetImage,
+  navigator:{deviceMemory:2},
   CustomEvent:class extends Event{constructor(type,options={}){super(type);this.detail=options.detail;}},
   customElements:{get(){return undefined;},define(name,klass){SpriteFrameCut=klass;}},
   requestAnimationFrame(fn){frames2.set(++frameId,fn);return frameId;},
@@ -172,7 +176,8 @@ assert.equal(scarf.hasAttribute('src'),false);
  assert.equal(scarf2.paused,true,'A scarf sprite scrub must never run an independent video loop');
  assert.equal(scarf2.hasAttribute('src'),false,'On low GPU use the frame atlas without decoding the MP4');
  assert(scarfDraws.length>0,'Original scarf should render source frames into the lightweight canvas');
- assert(loadedSheets.some(url=>url.includes('scarf-frames/sheet-')),'Load scarf frame atlas');
+ assert(loadedSheets.some(url=>url.includes('scarf-frames-lite/sheet-')),'Load lightweight scarf frames on a 2 GB device');
+ assert.equal(scarfDraws.at(-1)[3],480,'Low-memory devices render 480px cells instead of full-quality frames');
  const scarfStill=scarfDraws.length;
  pump();
  assert.equal(scarfDraws.length,scarfStill,'No scarf animation frames after scrolling stops');
