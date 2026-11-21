@@ -49,14 +49,30 @@ export async function GET(request: Request) {
  const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
  const slug=(value:string)=>value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
  const people=[{name:data.state.site.founderName,slug:slug(data.state.site.founderName)},...data.state.team];
- const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
+ const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/sitemap':'Site map','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
  for(const person of people)pages['/teamjob/'+(person.slug||slug(person.name))]=person.name+' — Studio profile';
  for(const document of ["overview","experience","architecture","project-ai","pricing","client-portal","privacy","copyright","quality","troubleshooting","communications"])pages['/docs/'+document]='VELORYZ '+document.replace(/-/g,' ')+' documentation';
  for(const [docPath,docTitle] of Object.entries(studioDocsRoutes))pages[docPath]=docTitle;
+ const docEdits=data.state.site.documentation?.edits||{};
+ for(const [rawPath,edit] of Object.entries(docEdits)){
+  const p=rawPath.replace(/\\/+$/,'')||'/';
+  if(!Object.hasOwn(pages,p))continue;
+  if((edit as {visible?:boolean}).visible===false)delete pages[p];
+  else if((edit as {title?:string}).title)pages[p]=(edit as {title:string}).title;
+ }
  if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
- if(normal==='/sitemap.xml'){const urls=Object.keys(pages).map(p=>`<url><loc>${base}${p==='/'?'/':p}</loc></url>`).join('');return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});}
+ if(normal==='/sitemap.xml'){
+  const escapeXml=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const urls=Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)).map(p=>{
+   const href=base+canonicalPath(p);
+   return `<url><loc>${escapeXml(href)}</loc></url>`;
+  }).join('');
+  return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
+ }
  const routeDescriptions:Record<string,string>={
   '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from Bokaro, India.',
+  '/docs':'Find the complete VELORYZ Studio Help Centre, product documentation, services, security, copyright and project workflow guides.',
+  '/sitemap':'Search the full VELORYZ website, the Studio documentation, Help Centre and every available public reference.',
   '/work':'Explore VELORYZ Studio original products, work in progress and clearly identified visual concept studies, with transparent project status.',
   '/services':'Explore VELORYZ Studio services across custom websites, product interfaces, brand identity, backend systems and motion design.',
   '/design':'Browse curated website design references and transparent adaptation estimates. Source attribution is shown for third-party references.',
