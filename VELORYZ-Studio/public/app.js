@@ -304,8 +304,13 @@ function closeModal(){
  [$('#header'),$('#main'),$('#footer'),$('.whatsapp-float'),$('#expert-launcher'),$('#offer-dock'),$('#site-pin'),$('#ad-slider')].filter(Boolean).forEach(el=>el.inert=false);
  if(modalReturnFocus?.isConnected)modalReturnFocus.focus({preventScroll:true});
 }
+function consultationSuppressed(){try{return localStorage.getItem('veloryz.consultation.no-auto')==='1'}catch{return false}}
+document.addEventListener('change',event=>{
+ if(event.target?.id!=='vz-consultation-dont-show')return;
+ try{if(event.target.checked)localStorage.setItem('veloryz.consultation.no-auto','1');else localStorage.removeItem('veloryz.consultation.no-auto')}catch{}
+});
 function openBooking(preset=''){
- openModal(`<div class="booking-layout"><div class="booking-aside"><div class="eyebrow">Your next big thing</div><h2 id="dialog-title">Let’s build<br>something<br>worth talking<br>about.</h2><p>A new website, a better experience or a completely new idea. It starts here.</p><div class="booking-info">A conversation, not a commitment.<br>Tell us what you have in mind.<br>Bokaro, India · Working remotely.</div><div class="booking-v" aria-hidden="true">V</div></div><div class="booking-main"><h3>Request a consultation.</h3>${consultationForm(true,preset)}</div></div>`,'booking-modal');
+ openModal(`<div class="booking-layout"><div class="booking-aside"><div class="eyebrow">Your next big thing</div><h2 id="dialog-title">Let’s build<br>something<br>worth talking<br>about.</h2><p>A new website, a better experience or a completely new idea. It starts here.</p><div class="booking-info">A conversation, not a commitment.<br>Tell us what you have in mind.<br>Bokaro, India · Working remotely.</div><div class="booking-v" aria-hidden="true">V</div></div><div class="booking-main"><h3>Request a consultation.</h3>${consultationForm(true,preset)}<div class="vz-consultation-preference"><label for="vz-consultation-dont-show"><input id="vz-consultation-dont-show" type="checkbox" ${consultationSuppressed()?'checked':''}> Don’t show this consultation suggestion again on this device</label><p>You can still request a consultation any time from the website.</p></div></div></div>`,'booking-modal');
 }
 function openReel(){
  openModal(`<video controls autoplay playsinline preload="auto" aria-labelledby="dialog-title"><source src="${esc(studioCMS?.branding?.showreel||'/assets/studio-film.mp4')}">Your browser does not support this video.</video><div class="showreel-caption"><span id="dialog-title">VELORYZ STUDIO / A STUDIO IN MOTION.</span><span>Studio motion film</span></div>`,'showreel-modal');
@@ -563,7 +568,7 @@ function startVisitorCampaigns(initial=true){
  if(index>=0){
   const o=offers[index],delay=initial?Math.max(50,(Number(o.delay)||4.7)*1000-performance.now()):250;
   campaignTimer=setTimeout(()=>{if(!modalOpen&&!document.querySelector('veloryz-frame-cut[data-focus]')&&!document.activeElement?.matches('input,select,textarea'))openOffer(index);},delay);
- }else if(initial&&!offers.some(o=>campaignPlacement(o)==='popup')&&studioCMS?.site.consultationEnabled&&!['/book/','/contact/','/create/'].includes(currentRoute)){
+ }else if(initial&&!offers.some(o=>campaignPlacement(o)==='popup')&&studioCMS?.site.consultationEnabled&&!['/book/','/contact/','/create/'].includes(currentRoute)&&!consultationSuppressed()){
   popupTimer=setTimeout(()=>{if(!modalOpen&&!document.querySelector('veloryz-frame-cut[data-focus]')&&!document.activeElement?.matches('input,select,textarea'))openBooking();},studioCMS.site.consultationDelay*1000);
  }
  campaignRotation=setInterval(()=>{if(!document.hidden&&!modalOpen&&!$('#site-pin')?.contains(document.activeElement)&&!$('#offer-dock')?.contains(document.activeElement)){if(!reduced.matches&&!document.body.classList.contains('motion-paused'))offerIndex++;renderOfferDock();}},9000);
