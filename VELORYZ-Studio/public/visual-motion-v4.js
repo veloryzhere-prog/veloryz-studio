@@ -24,10 +24,9 @@
   let previousTime = 0;
   let cameraY = window.scrollY;
   const economical=matchMedia('(max-width:850px), (pointer:coarse)').matches||(navigator.deviceMemory||8)<=4;
-  // Aim for 30fps on touch/low-memory devices and up to 50fps on desktops.
-  // Reduced motion and background tabs are handled by full().
-  const frameBudget=economical?32:19;
-  let lastPaint=0;
+  // The browser owns its display refresh rate. Skipping every other frame causes visible judder
+  // (especially on 60/90/120 Hz screens) even when each painted frame is inexpensive.
+  // Perform a single read/write batch per rAF; never create a second scroll momentum loop.
 
   let backdrop;
   function atmosphere() {
@@ -63,13 +62,12 @@
   function tick(time) {
     frame = 0;
     if (!full()) return;
-    if(lastPaint&&time-lastPaint<frameBudget){schedule();return;}
-    lastPaint=time;
     const actualY = window.scrollY;
     const elapsed = previousTime ? Math.min(64, time - previousTime) : 16;
     previousTime = time;
-    cameraY += (actualY - cameraY) * (1 - Math.exp(-elapsed / 75));
-    if (Math.abs(actualY - cameraY) < 0.15) cameraY = actualY;
+    // Lenis already smooths wheel input. A second virtual camera introduces lag and
+    // 5-10 extra animation frames after every scroll, so use real scroll coordinates.
+    cameraY=actualY;
     const height = Math.max(1, window.innerHeight);
     // Measure stationary scene boxes first. Only descendants use the resulting transforms.
     const values = [];
@@ -83,9 +81,11 @@
       values.push([el, progress, assembly]);
     }
 
-    if (backdrop) {
-      backdrop.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
-      backdrop.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
+    if (backdrop && !economical) {
+      const y=(Math.sin(actualY/490)*19).toFixed(1)+'px';
+      const reverse=(Math.cos(actualY/620)*-23).toFixed(1)+'px';
+      if(backdrop.style.getPropertyValue('--vz-flow-y')!==y)backdrop.style.setProperty('--vz-flow-y',y);
+      if(backdrop.style.getPropertyValue('--vz-flow-reverse')!==reverse)backdrop.style.setProperty('--vz-flow-reverse',reverse);
     }
     for (const [el, progress, assembly] of values) {
       if(assembly!==null && (el.assemblyProgress===undefined||Math.abs(assembly-el.assemblyProgress)>.006)){
@@ -102,8 +102,7 @@
         el.style.setProperty('--vz-in-view',((progress * 2 - 1) * 14).toFixed(2) + 'px');
       }
     }
-    if (cameraY !== actualY) schedule();
-    else previousTime = 0;
+    previousTime=0; // No independently scheduled tail after Lenis/natural scrolling ends.
   }
 
   const hasObserver = typeof IntersectionObserver === 'function';
@@ -156,7 +155,6 @@
     cancelAnimationFrame(frame);
     frame = 0;
     previousTime = 0;
-    lastPaint = 0;
     cameraY = window.scrollY;
     if (full()) { schedule(); return; }
     if (document.hidden) return;
