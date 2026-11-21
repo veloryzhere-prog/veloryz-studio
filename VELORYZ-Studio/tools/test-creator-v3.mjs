@@ -42,6 +42,7 @@ assert(html.includes('ILLUSTRATIVE PLANNING RANGE'));
 assert(html.includes('creator')===false || html.includes('v3-hero'));
 assert.equal(creator.estimate().low,21999);
 assert(creator.format().startsWith('PROJECT CREATOR V3'));
+assert.equal(model.estimate(model.normalize({pages:'8',features:['Member accounts']}),null,[],{base:30000,pageAllowance:2000,featureAllowance:4000,contingencyPct:30}).low,42000);
 function click(data){
  listeners.click({target:{closest:()=>({dataset:data})}});
  return rendered;

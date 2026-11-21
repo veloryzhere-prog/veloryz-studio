@@ -86,7 +86,14 @@
  const clean=s=>String(s??'').replace(/[<>\x00-\x1f]/g,' ').trim();
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
  let saved;try{saved=JSON.parse(sessionStorage.getItem(KEY));}catch{}
- let data={...initial(),...(saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:{})},step=0,filter='All',search='',busy=false,result=null,error='';
+ let legacy=null;
+ if(!saved){
+  try{const raw=sessionStorage.getItem('veloryz.planner.v1');if(raw){const v=VeloryzPlanner.restore(raw);
+   const match=v.purpose==='Ecommerce'?'edit':v.purpose==='Portfolio'?'works':v.purpose==='SaaS / platform'?'saas':null;
+   legacy={...initial(),category:v.purpose,template:match||'',style:v.style,pages:Number(v.pages),features:v.features,assets:v.assets,goal:v.goal,timeline:v.timeline,budget:v.budget};}
+  }catch{}
+ }
+ let data={...initial(),...(saved&&typeof saved==='object'&&!Array.isArray(saved)?saved:legacy||{})},step=0,filter='All',search='',busy=false,result=null,error='';
  data.features=Array.isArray(data.features)?data.features.filter(n=>info[n]):[];
  data.answers=data.answers&&typeof data.answers==='object'?data.answers:{};
  function sync(){
@@ -94,7 +101,7 @@
   data.budget=Math.max(20000,Math.min(300000,Math.round(Number(data.budget||55000)/5000)*5000));
   projectBrief=VeloryzPlanner.normalize({...projectBrief,purpose:data.category,pages:String(data.pages),style:data.style,features:data.features,budget:data.budget,timeline:data.timeline,goal:data.goal,assets:data.assets});
   window.VeloryzProjectEmail=data.email;
-  try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem('veloryz.planner.v1',JSON.stringify(projectBrief));}catch{}
+  if(!result)try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem('veloryz.planner.v1',JSON.stringify(projectBrief));}catch{}
  }
  const estimate=()=>{sync();const pricing=typeof studioCMS!=='undefined'?studioCMS?.site?.creatorPricing:undefined;return VeloryzPlanner.estimate(projectBrief,null,[],pricing)};
  const review=()=>data.features.filter(n=>info[n]?.[2]).length;
@@ -191,7 +198,7 @@
    const res=await fetch('/api/enquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal});
    const out=await res.json().catch(()=>({error:'Could not read the response.'}));
    if(!res.ok)throw Error(out.error||'Unable to submit your project.');
-   result=out;data.requestId='';try{sessionStorage.removeItem(KEY);}catch{}update();document.querySelector('.v3-success')?.scrollIntoView({block:'start',behavior:'auto'});
+   result=out;data.requestId='';try{sessionStorage.removeItem(KEY);sessionStorage.removeItem('veloryz.planner.v1');}catch{}update();document.querySelector('.v3-success')?.scrollIntoView({block:'start',behavior:'auto'});
   }catch(e){error=e.name==='AbortError'?'Request timed out. You can safely retry.':e.message;const box=form.querySelector('.v3-error');box.textContent=error;box.hidden=false;b.disabled=false;b.textContent='Submit project request ↗';}
   finally{clearTimeout(timer);busy=false;}
  }
