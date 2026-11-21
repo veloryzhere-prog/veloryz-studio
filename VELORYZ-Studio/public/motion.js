@@ -4,18 +4,17 @@
 (()=>{
  const root=document.documentElement;
  const key='veloryz.motion.v2';
+ const welcomeKey='veloryz.motion.intro.v3';
  const valid=new Set(['auto','full','reduced','paused']);
  const media=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
  const listeners=new Set();
- let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='';
- try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;}catch{}
+ let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='',introDone=false;
+ try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;introDone=localStorage.getItem(welcomeKey)==='1';}catch{}
  const saver=()=>typeof navigator!=='undefined'&&Boolean(navigator.connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
  const effective=()=>preference==='auto'?(media?.matches||saver()?'reduced':'full'):preference;
- // Only an explicit Full motion choice completes the invitation. Automatic
- // visitors see it on entry; a quiet preference also sees it after a refresh.
- const reload=window.performance?.getEntriesByType('navigation')[0]?.type==='reload';
- const needsIntro=root.dataset.guidedMotionIntro==='true' && preference!=='full' &&
-   (effective()!=='full' || !reload);
+ // An actual first-visit choice is required once per browser, then remembered.
+ // Existing explicit Full preference is already a completed choice.
+ const needsIntro=root.dataset.guidedMotionIntro==='true' && !introDone && preference!=='full';
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
  function lockPage(){
@@ -44,7 +43,7 @@
   });
   const hint=dialog.querySelector('.motion-gate-hint');
   if(hint)hint.hidden=!gateActive;
-  const accessibleExit=dialog.querySelector('[data-motion-accessible-exit]');if(accessibleExit)accessibleExit.hidden=true;
+  const accessibleExit=dialog.querySelector('[data-motion-accessible-exit]');if(accessibleExit)accessibleExit.hidden=!gateActive;
  }
  function createOverlay(){
   if(gateOverlay)return;
@@ -66,6 +65,8 @@
   button.classList.add('motion-gate-target');
   button.setAttribute('aria-label','Open motion settings to enable Full motion');
   button.focus({preventScroll:true});
+  // Show the decision immediately; visitors need not hunt for the header icon.
+  requestAnimationFrame(()=>{if(gateActive)panel();});
  }
  function endGate(){
   if(!gateActive)return;
@@ -90,13 +91,15 @@
   document.querySelectorAll('[data-motion-label]').forEach(el=>el.textContent=level==='full'?'Motion on':level==='paused'?'Motion paused':'Reduced motion');
   document.querySelectorAll('[data-motion-choice]').forEach(el=>{const selected=el.dataset.motionChoice===preference;el.setAttribute('aria-pressed',String(selected));el.classList.toggle('selected',selected);});
   const status=document.querySelector('#motion-status');
-  if(status)status.textContent=gateActive?'Choose Full motion to enter the studio. Other settings unlock immediately afterward.':preference==='auto'?`Automatic is using ${level==='full'?'full':'reduced'} motion, following your device preference.`:level==='full'?'Full motion is on. Graphics move automatically. You can reduce or pause them at any time.':level==='paused'?'Motion is paused. All content and controls remain available.':'Reduced motion is on. The experience stays clear, with a still presentation.';
+  if(status)status.textContent=gateActive?'Choose Full motion for the complete experience, or continue with reduced motion.':preference==='auto'?`Automatic is using ${level==='full'?'full':'reduced'} motion, following your device preference.`:level==='full'?'Full motion is on. Graphics move automatically. You can reduce or pause them at any time.':level==='paused'?'Motion is paused. All content and controls remain available.':'Reduced motion is on. The experience stays clear, with a still presentation.';
   for(const callback of listeners){try{callback({type:'change',matches:level!=='full'});}catch{console.warn('A motion view could not refresh.');}}
 
  }
  function choose(value){
   if(!valid.has(value)||(gateActive&&!['full','reduced'].includes(value)))return;
-  preference=value;try{localStorage.setItem(key,value);}catch{}
+  preference=value;
+  if(gateActive&&['full','reduced'].includes(value))introDone=true;
+  try{localStorage.setItem(key,value);if(introDone)localStorage.setItem(welcomeKey,'1');}catch{}
   sync();observe();if(gateActive&&['full','reduced'].includes(value))endGate();
  }
  function observe(){
@@ -112,10 +115,10 @@
   let dialog=document.querySelector('#motion-preferences');
   if(!dialog){
    dialog=document.createElement('dialog');dialog.id='motion-preferences';dialog.className='motion-dialog';dialog.setAttribute('aria-labelledby','motion-title');
-   dialog.innerHTML=`<form method="dialog"><button class="motion-close" aria-label="Close motion settings">×</button></form><div class="motion-panel-icon" aria-hidden="true"><i></i><i></i><i></i></div><span class="motion-eyebrow">MAKE YOURSELF COMFORTABLE</span><h2 id="motion-title">A little movement.<br>At your pace.</h2><p>Choose how the studio moves. Your preference stays with this browser across pages and refreshes.</p><div class="motion-choices">${[['auto','Automatic','Follow this device'],['full','Full motion','Bring the studio to life'],['reduced','Reduced','A quieter experience'],['paused','Pause','Keep everything still']].map(([id,name,note])=>`<button type="button" data-motion-choice="${id}" aria-pressed="false"><span>${name}</span><small>${note}</small><i aria-hidden="true">↗</i></button>`).join('')}</div><p class="motion-gate-hint" role="note" hidden>Select Full motion, or press Escape to keep your current preference.</p><button type="button" class="motion-accessible-exit" data-motion-accessible-exit hidden>Continue with reduced motion</button><p id="motion-status" role="status"></p><p class="motion-panel-note">Films have a separate play control if your browser limits autoplay.</p>`;
+   dialog.innerHTML=`<form method="dialog"><button class="motion-close" aria-label="Close motion settings">×</button></form><div class="motion-panel-icon" aria-hidden="true"><i></i><i></i><i></i></div><span class="motion-eyebrow">VELORYZ STUDIO / YOUR EXPERIENCE</span><h2 id="motion-title">Make the studio<br><em>move.</em></h2><p>Turn on the full VELORYZ motion experience to explore its sculptural animations, fluid scrolling, and interactive details. One choice, remembered on this device.</p><div class="motion-choices">${[['auto','Automatic','Follow this device'],['full','Full motion','Bring the studio to life'],['reduced','Reduced','A quieter experience'],['paused','Pause','Keep everything still']].map(([id,name,note])=>`<button type="button" data-motion-choice="${id}" aria-pressed="false"><span>${name}</span><small>${note}</small><i aria-hidden="true">↗</i></button>`).join('')}</div><p class="motion-gate-hint" role="note" hidden>Choose <strong>Full motion</strong> to enter the animated studio. Prefer less movement? Continue in reduced mode below.</p><button type="button" class="motion-accessible-exit" data-motion-accessible-exit hidden>Continue with reduced motion</button><p id="motion-status" role="status"></p><p class="motion-panel-note">Films have a separate play control if your browser limits autoplay.</p>`;
    document.body.append(dialog);
    dialog.addEventListener('click',e=>{if(e.target===dialog&&!gateActive)dialog.close();});
-   dialog.addEventListener('cancel',e=>{if(gateActive){e.preventDefault();endGate();}});
+   dialog.addEventListener('cancel',e=>{if(gateActive){e.preventDefault();choose('reduced');}});
   }
   if(gateActive){gateStage=2;root.dataset.motionGate='panel';}
   gateControls(dialog);sync();
@@ -136,7 +139,7 @@
  },true);
  document.addEventListener('keydown',event=>{
   if(!gateActive)return;
-  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();endGate();return;}
+  if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();choose('reduced');return;}
   if(event.key==='Tab'&&gateStage===1){event.preventDefault();document.querySelector('.site-header .header-motion')?.focus();}
  },true);
  document.addEventListener('visibilitychange',()=>{root.toggleAttribute('data-motion-suspended',document.hidden);if(!document.hidden){sync();observe();}});
