@@ -50,6 +50,8 @@ jobs:
         run: node tools/test-micro-interactions.mjs
       - name: Verify Motion and Lottie lazy-loading and smooth-scroll isolation
         run: node tools/test-animation-providers.mjs
+      - name: Verify visible kinetic animations across all pages
+        run: node tools/test-site-kinetics.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
