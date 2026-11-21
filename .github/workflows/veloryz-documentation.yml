@@ -36,6 +36,8 @@ jobs:
         run: node tools/test-knowledge-ai.mjs
       - name: Verify responsive visual system and animation performance
         run: node tools/test-studio-fluid.mjs
+      - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
+        run: node tools/test-smooth-motion.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
