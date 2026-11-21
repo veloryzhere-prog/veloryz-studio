@@ -63,7 +63,7 @@
  'Multilingual support':['Experience','Multiple languages and localized content.',true],
  'Booking workflow':['Operations','Design appointment requests and availability rules.',true],
  'Email notifications':['Operations','Transactional messages and verified delivery.',true],
- 'Admin dashboard':['Operations','Manage data with private owner controls.',true],
+ 'Admin dashboard':['Operations','Manage project data through secure team controls.',true],
  'Product catalogue':['Commerce','Products, categories, filters and variants.',true],
  'Payment integration':['Commerce','Payment-provider integration and checkout.',true],
  'Inventory management':['Commerce','Inventory records, stock and workflows.',true],
@@ -79,7 +79,7 @@
  'AI adviser':['AI use case',['Answer questions','Search documents','Customer support','Internal workflows']],
  'API integrations':['Integration',['CRM','Google services','Payment services','Custom API']],
  'Product catalogue':['Catalogue size',['Under 25 products','25–100 products','100+','Not sure']],
- 'Admin dashboard':['Management users',['Owner only','Small team','Multiple roles','Not sure']],
+ 'Admin dashboard':['Management users',['Team admin only','Small team','Multiple roles','Not sure']],
  'Multilingual support':['Languages',['Two','Three or four','Five+','Not sure']]
  };
  const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,features:['Content management','SEO foundations'],answers:{},assets:[],timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',name:'',email:'',phone:'',company:'',notes:'',consent:false,reference:'',external:'',requestId:''});
@@ -375,7 +375,7 @@
  function welcomeScreen(){
   return '<div class="v4-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag"><i></i> VELORYZ STUDIO / THE PROJECT CREATOR</span><h1>Let’s make<br>something <em>great.</em></h1><p>Tell us what you have in mind. One thoughtful question at a time, we’ll shape a clear brief and a proposal you can keep.</p><button type="button" class="v4-primary v4-start" data-v4-action="start">Start a project <span>→</span></button>'+
   (sessionStorage.getItem(KEY)?'<button class="v4-resume" type="button" data-v4-action="resume">Continue your saved brief ↗</button>':'')+
-  '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>OWNER-REVIEWED REQUEST</span></div></div>'+
+  '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>TEAM-REVIEWED REQUEST</span></div></div>'+
   '<div class="v4-welcome-art" aria-hidden="true"><div class="v4-intro-paper"><div><span>VELORYZ / YOUR IDEA</span><span>01 — DISCOVER</span></div><h2>A good project starts with the right questions.</h2><div class="v4-intro-line"></div><div class="v4-intro-row"><i></i><span>01</span><b>Discover</b></div><div class="v4-intro-row"><i></i><span>02</span><b>Define</b></div><div class="v4-intro-row"><i></i><span>03</span><b>Make it real</b></div></div></div></div>';
  }
  function successScreen(){
