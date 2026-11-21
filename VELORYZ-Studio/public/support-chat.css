@@ -92,3 +92,17 @@
 @media(max-width:700px){.vz-chat{grid-template-columns:1fr;height:calc(100dvh - 110px);min-height:520px}.vz-chat-side{display:none}.vz-chat-page{padding:18px 8px 42px}.vz-chat-page-head{padding:0 13px}.vz-chat-header{height:79px;min-height:79px;padding:14px 15px}.vz-chat-header-name b{font-size:14px}.vz-chat-reset>span{display:none}.vz-chat-log{padding:20px 11px}.vz-chat-compose{padding:11px 12px 13px}.vz-chat-welcome{margin:5vh auto 10px}.vz-chat-message{max-width:100%;gap:7px}.vz-chat-message-avatar{width:27px;height:27px;font-size:12px}.vz-chat-bubble{font-size:12px;padding:12px 13px}.vz-chat-suggestions button{font-size:10px}.vz-chat-privacy{font-size:9px}.vz-chat-page-head h1{font-size:29px}.vz-chat.is-embedded{height:68dvh;min-height:480px}.vz-need-help{margin-top:37px;padding:27px 20px}.vz-need-help-actions a{width:100%}}
 @media(prefers-reduced-motion:reduce){.vz-chat-log{scroll-behavior:auto}.vz-chat *{transition:none!important;animation:none!important}}
 @media print{.vz-chat-side,.vz-chat-compose,.vz-need-help-actions{display:none!important}.vz-chat{display:block;height:auto;overflow:visible}.vz-chat-log{overflow:visible;max-height:none}}
+
+.kb-v4 .kb-help-chat-cta{display:flex;justify-content:center;flex-wrap:wrap;gap:11px;margin:24px auto 0}
+.kb-v4 .kb-help-chat-cta a{display:inline-flex;align-items:center;padding:12px 18px;border-radius:10px;background:#244aa7;color:#fff;font-size:12px;font-weight:780;border:1px solid #244aa7}
+.kb-v4 .kb-help-chat-cta a:nth-child(2){color:#3157b2;background:#fff;border-color:#cbdcf3}
+.kb-v4 .kb-help-chat-cta a:hover{transform:translateY(-1px);box-shadow:0 7px 17px #25499b1b}
+.contact-support-ai-link{margin:16px 0 20px}
+.contact-support-ai-link a{display:inline-block;padding:11px 15px;color:#284fa9;background:#e7f2ff;border:1px solid #c9defa;border-radius:9px;font:750 12px/1.6 ui-sans-serif,system-ui}
+.vz-consultation-preference{border-top:1px solid #e3eaf0;margin:24px 0 0;padding:19px 0 3px}
+.vz-consultation-preference label{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.5;color:#435773;cursor:pointer}
+.vz-consultation-preference input{width:18px;height:18px;flex:none;margin:1px 0 0;accent-color:#4267e8}
+.vz-consultation-preference p{font-size:11px;color:#8291a2;margin:8px 0 0 28px;line-height:1.6}
+.cp-ai-disclaimer{margin:17px 0 0;padding:14px;border:1px solid #d8e6f5;border-radius:10px;font-size:12px;line-height:1.7;color:#75889f;background:#f7faff}
+.cp-ai-disclaimer button{color:#2e56b7;border:0;background:transparent;padding:0;font:750 12px ui-sans-serif,system-ui;text-decoration:underline;cursor:pointer}
+@media(max-width:600px){.kb-v4 .kb-help-chat-cta{margin-top:18px}.kb-v4 .kb-help-chat-cta a{width:100%;justify-content:center}.vz-consultation-preference{margin-top:16px}}
