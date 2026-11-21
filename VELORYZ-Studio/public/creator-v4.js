@@ -235,26 +235,44 @@
   return sectionTitle('LET’S BEGIN','What are you thinking of creating?','Choose the type of project that feels closest. You can change it later.')+
   '<div class="v4-category-grid">'+categories.map((name,i)=>cardSelect(name,categorySummary[name],'category',name,data.category===name,String(i+1).padStart(2,'0'))).join('')+'</div>';
  }
+ function externalDesigns(){
+  return (window.VeloryzExternalDesignLibrary?.entries()||[]).filter(p=>p?.enabled!==false);
+ }
+ function categoryForExternal(p){
+  const x=String(p?.category||'').toLowerCase();
+  if(x.includes('ecommerce')||x.includes('shop'))return 'Ecommerce';
+  if(x.includes('saas')||x.includes('fintech')||x.includes('dashboard'))return 'SaaS / platform';
+  if(x.includes('social')||x.includes('community'))return 'Community';
+  if(x.includes('portfolio')||x.includes('creative'))return 'Portfolio';
+  if(x.includes('agency')||x.includes('motion'))return 'Agency';
+  if(x.includes('editorial')||x.includes('publish'))return 'Editorial';
+  if(x.includes('education'))return 'Education';
+  return 'Business';
+ }
+ function chooseExternal(p){
+  data.template='';
+  data.external=p.name+' — '+p.author+' — '+p.source;
+  data.reference=p.demo||p.source;
+  data.category=categoryForExternal(p);
+  data.style='Studio decides';
+  // Preserve the user's requested features, but clear template-specific source assumptions.
+  data.requestId='';sync();
+ }
  function library(){
-  const pList=presets.filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description].join(' ').toLowerCase().includes(search.toLowerCase())));
-  const eList=refs.filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.source].join(' ').toLowerCase().includes(search.toLowerCase())));
-  const cards=galleryTab==='studio'?
-   pList.map(p=>{const product=window.VELORYZ_TEMPLATE_PRODUCTS?.find(t=>t.id===p.id);
-    const art=product?'<a class="v4-template-live-art" href="'+product.preview+'" target="_blank" rel="noopener"><img src="'+product.cover+'" alt="Original VELORYZ '+escape(p.name)+' working website preview" loading="lazy" decoding="async" width="1280" height="800"><span>Open the live website ↗</span></a>':preview(p.name,p.style,p.category);
-    return '<article class="v4-template-card '+(data.template===p.id?'is-selected':'')+'">'+art+
-   '<div class="v4-template-info"><div><span>ORIGINAL VELORYZ · '+escape(p.category)+'</span><span>'+escape(p.style)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(product?.description||p.description)+'</p>'+
-   (product?'<span class="v4-template-price">Template license ₹'+product.price.toLocaleString('en-IN')+' · Full build quoted separately</span>':'')+
-   '<button type="button" data-v4-template="'+escape(p.id)+'">'+(data.template===p.id?'✓ Selected':'Use this working template →')+'</button>'+
-   (product?'<a class="v4-template-store-link" href="/design/?buy='+encodeURIComponent(p.id)+'">Request this template license ↗</a>':'')+'</div></article>'}).join(''):
-   eList.map(p=>'<article class="v4-template-card v4-external-card">'+preview(p.name,p.style,p.category)+
-   '<div class="v4-template-info"><div><span>'+escape(p.source)+' · '+escape(p.category)+'</span><span>EXTERNAL</span></div><h3>'+escape(p.name)+'</h3><p>Original template reference. View the actual design and licensing on '+escape(p.source)+'.</p><div class="v4-reference-actions"><a href="'+escape(p.url)+'" target="_blank" rel="noopener noreferrer">View original ↗</a><button type="button" data-v4-external="'+escape(p.name)+'">Use as inspiration →</button></div></div></article>').join('');
-  return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No templates match these filters. Try another category.</div>')+'</div>'+
-   '<p class="v4-credits">Original VELORYZ front-end templates. Selection personalizes your project brief; it does not purchase a license or collect payment.</p></div>';
+  const items=externalDesigns().filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description,p.author].join(' ').toLowerCase().includes(search.toLowerCase())));
+  const cards=items.map(p=>'<article class="v4-template-card v4-external-card">'+
+   '<a class="v4-template-live-art" href="'+escape(p.demo||p.source)+'" target="_blank" rel="noopener noreferrer"><img src="'+escape(p.image)+'" alt="External live design reference for '+escape(p.name)+'" loading="lazy" decoding="async"><span>Explore real reference ↗</span></a>'+
+   '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>EXTERNAL · '+escape(p.author)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p>'+
+   '<div class="v4-reference-actions"><a href="'+escape(p.source)+'" target="_blank" rel="noopener noreferrer">Original source ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Customize this direction →</button></div>'+
+   '<small>Source rights stay with the original creator. Adaptation is separately scoped.</small></div></article>').join('');
+  return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No designs match this filter. Try another category.</div>')+'</div>'+
+   '<p class="v4-credits">Real third-party designs. Preview originals, then commission a licensed adaptation or independently designed experience from the Studio.</p></div>';
  }
  function templateScreen(){
-  return sectionTitle('01 / THE STARTING POINT','Would you like to start with inspiration?','Choose an original studio concept, browse credited marketplace references, or begin with a blank canvas.','OPTIONAL')+
-   '<div class="v4-library-controls"><div class="v4-tab-switch" role="group" aria-label="Library source"><button type="button" data-v4-gallery="studio" aria-pressed="true" class="active">Original VELORYZ websites <span>'+presets.length+'</span></button><a href="/design/" class="v4-market-link">Template store ↗</a></div><label class="v4-search"><span class="sr-only">Search template names</span><input data-v4-search type="search" placeholder="Search templates" autocomplete="off" value="'+escape(search)+'"></label></div>'+
-   '<div class="v4-filter-strip" role="group" aria-label="Template categories">'+['All',...categories].map(c=>'<button type="button" data-v4-filter="'+escape(c)+'" class="'+(categoryFilter===c?'active':'')+'" aria-pressed="'+(categoryFilter===c)+'">'+escape(c)+'</button>').join('')+'</div>'+
+  const all=externalDesigns(),types=['All',...new Set(all.map(p=>p.category))];
+  return sectionTitle('01 / THE STARTING POINT','Find a real website you love.','Browse distinct external design references, then request a tailored and properly licensed implementation.','OPTIONAL')+
+   '<div class="v4-library-controls"><div class="v4-tab-switch"><a href="/design/" class="v4-market-link">Open full Design Library · '+all.length+' references ↗</a></div><label class="v4-search"><span class="sr-only">Search external websites</span><input data-v4-search type="search" placeholder="Search real designs" autocomplete="off" value="'+escape(search)+'"></label></div>'+
+   '<div class="v4-filter-strip" role="group" aria-label="Design reference categories">'+types.map(n=>'<button type="button" data-v4-filter="'+escape(n)+'" class="'+(categoryFilter===n?'active':'')+'" aria-pressed="'+(categoryFilter===n)+'">'+escape(n)+'</button>').join('')+'</div>'+
    '<div id="v4-gallery-holder">'+library()+'</div>'+
    '<button type="button" class="v4-skip-template" data-v4-action="blank">Start with a blank canvas <span>→</span></button>';
  }
@@ -541,9 +559,8 @@
    data.template=selected.id;data.external='';data.category=selected.category;data.style=selected.style;data.pages=selected.pages;data.features=selected.features.slice();data.requestId='';sync();return move(1);
   }
   if(b.hasAttribute('data-v4-external')){
-   const ref=refs.find(r=>r.name===b.dataset.v4External);if(!ref)return;
-   data.template='';data.external=ref.name+' ('+ref.source+'): '+ref.url;
-   data.category=ref.category;data.style=ref.style;data.requestId='';sync();return move(1);
+   const ref=externalDesigns().find(r=>r.id===b.dataset.v4External);if(!ref)return;
+   chooseExternal(ref);return move(1);
   }
   if(b.hasAttribute('data-v4-gallery')){galleryTab='studio';render();return;}
   if(b.hasAttribute('data-v4-filter')){categoryFilter=b.dataset.v4Filter;refreshLibrary();const strip=document.querySelector('.v4-filter-strip');if(strip){strip.querySelectorAll('button').forEach(el=>{const yes=el.dataset.v4Filter===categoryFilter;el.classList.toggle('active',yes);el.setAttribute('aria-pressed',String(yes));});}return;}
@@ -596,11 +613,15 @@
  if(active!=='welcome'&&active!=='success'){data.lastQuestion=active;sync();}
  function creatorPage(){
   const params=new URL(location.href).searchParams,selected=params.get('template');
+  const requestedReference=params.get('reference');
+  const selectedReference=externalDesigns().find(p=>p.id===requestedReference);
+  if(selectedReference&&data.reference!==selectedReference.demo){chooseExternal(selectedReference);categoryFilter='All';}
+
   const chosen=presets.find(p=>p.id===selected);
   if(chosen&&data.template!==chosen.id){
    Object.assign(data,{template:chosen.id,category:chosen.category,style:chosen.style,pages:chosen.pages,features:chosen.features.slice(),external:'',requestId:''});sync();
   }
-  const fromURL=params.get('question')||(chosen?'template':'welcome');
+  const fromURL=params.get('question')||((chosen||selectedReference)?'template':'welcome');
   active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
   if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
