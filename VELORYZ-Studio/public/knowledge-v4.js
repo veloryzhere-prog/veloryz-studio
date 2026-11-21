@@ -57,7 +57,8 @@
     return [...full,...original];
   }
   function fetchIndex(){
-    if(loading||(index&&service))return;
+    if(loading)return loading;
+    if(index&&service)return Promise.resolve();
     loading=Promise.all([
       fetch('/studio-docs-index.json?v=20261121-handbook-2',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Knowledge index unavailable');return r.json()}),
       fetch('/docs-library.json?v=20261121-docs-library-v2',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('Service reference index unavailable');return r.json()})
@@ -68,6 +69,7 @@
       loading=null;
       const path=rootPage();
       if(['/docs/','/docs/studio/','/help/studio/','/sitemap/'].includes(path))refreshCurrent();
+      renderFooterLinks();
     });
   }
   const icon=(name,cls='')=>{
@@ -210,6 +212,25 @@
     if(p==='/sitemap/'){const n=document.getElementById('site-map-app');if(n)n.outerHTML=mapRender();}
     else if(['/docs/','/docs/studio/','/help/studio/'].includes(p)){const n=document.getElementById('docs-app');if(n)n.outerHTML=docsRender();}
   }
+  function renderFooterLinks(){
+    const box=document.getElementById('footer-knowledge-links');
+    if(!box||!index||!service)return;
+    const items=library();
+    const chunks=[
+      ['Help Centre',items.filter(a=>a.kind==='help')],
+      ['Studio documentation',items.filter(a=>a.kind==='studio')],
+      ['Studio service guides',items.filter(a=>a.kind==='guides')]
+    ];
+    box.innerHTML=chunks.map(([title,entries])=>
+      '<section class="footer-index-section"><h3>'+E(title)+' <span>'+entries.length+' articles</span></h3><div class="footer-index-grid">'+
+      entries.map(a=>'<a href="'+E(a.path)+'">'+E(a.title)+'</a>').join('')+'</div></section>').join('');
+  }
+  document.addEventListener('toggle',ev=>{
+    if(ev.target?.id!=='footer-knowledge-index'||!ev.target.open)return;
+    const promise=fetchIndex();
+    if(promise&&typeof promise.then==='function')promise.then(renderFooterLinks);
+    else renderFooterLinks();
+  },true);
   window.VeloryzDocs={...previousDocs,render:docsRender,refresh:refreshCurrent};
   window.VeloryzSiteMap={...previousMap,render:mapRender,refresh:refreshCurrent};
   function ensurePalette(){
@@ -289,6 +310,6 @@
       const a=palette.querySelector('[data-kb-palette-result]');if(a){ev.preventDefault();palette.close();a.click()}
     }
   });
-  window.addEventListener('studio:route',()=>{if(palette?.open)palette.close()});
+  document.addEventListener('studio:route',()=>{if(palette?.open)palette.close();renderFooterLinks();});
   window.VeloryzKnowledgeV4={render:docsRender,siteMap:mapRender,search:openPalette,getArticles:library};
 })();
