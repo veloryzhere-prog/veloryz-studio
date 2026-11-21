@@ -117,7 +117,7 @@ body.motion-edition{--paper:#100711;--white:#1b101f;--ink:#f8f0fa;--muted:#b0a1b
 .motion-edition .motion-choices button{background:#291a32;border-color:#4a2b54}.motion-edition .motion-choices button.selected{background:#6a2d5c;border-color:#b45a99}
 .motion-edition .motion-dialog>p,.motion-edition .motion-dialog .motion-panel-note{color:#b8a0c7}
 .motion-edition .whatsapp-float{background:#22132c;color:#e8d8f2;border:1px solid #734879}
-.motion-edition .text-link{color:#ecd9f3}
+.motion-edition .text-link{color:#000000}
 .motion-edition :focus-visible{outline:2px solid #80bdff;outline-offset:5px}
 .motion-edition .intro-animate{animation-duration:1s}
 .brand-entry{position:fixed;left:24px;bottom:24px;z-index:500;display:flex;align-items:center;gap:12px;background:#29142fe8;border:1px solid #9f4a7d60;backdrop-filter:blur(12px);padding:13px 18px;border-radius:4px;pointer-events:none;animation:entry-note 2s both}
