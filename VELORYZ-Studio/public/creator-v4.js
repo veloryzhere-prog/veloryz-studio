@@ -215,7 +215,7 @@
   if(advance)move(1);else render();
  }
  function validateStep(id){
-  const show=message=>{error=message;const el=document.querySelector('#v4-error');if(el){el.hidden=false;el.textContent=message;}return false;};
+  const show=message=>{error=message;const el=document.querySelector('#v4-error');if(el){el.hidden=false;el.textContent=message;}document.dispatchEvent(new CustomEvent('veloryz:creator-state',{detail:{state:'error'}}));return false;};
   if(id==='goal'&&str(data.goal).trim().length<10)return show('Write at least 10 characters about what you want to achieve.');
   if(id==='name'&&str(data.name).trim().length<2)return show('Enter your name so we know who to contact.');
   if(id==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str(data.email).trim()))return show('Enter a valid email address for your project updates.');
@@ -519,9 +519,11 @@
    finished={reference:out.reference};data.requestId='';busy=false;
    try{sessionStorage.removeItem(KEY);sessionStorage.removeItem(oldKey);sessionStorage.removeItem('veloryz.planner.v1');}catch{}
    route('success');
+   document.dispatchEvent(new CustomEvent('veloryz:creator-state',{detail:{state:'success'}}));
   }catch(err){
    busy=false;error=err.name==='AbortError'?'The request timed out. You can safely retry.':err.message;
    render();
+   document.dispatchEvent(new CustomEvent('veloryz:creator-state',{detail:{state:'error'}}));
   }finally{clearTimeout(timeout);}
  }
  function handlePick(key,val){
