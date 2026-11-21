@@ -407,11 +407,11 @@
      '<footer class="v4-bottom"><button type="button" class="v4-back" data-v4-action="back">← Back</button><span class="v4-shortcut">'+(active==='review'?'ONE FINAL STEP': 'PRESS ENTER TO CONTINUE')+'</span>'+
      (active==='review'?'<button type="button" class="v4-primary" data-v4-action="submit" '+(busy?'disabled':'')+'>'+(busy?'Sending…':'Send my project →')+'</button>':
       '<button type="button" class="v4-primary" data-v4-action="next">Continue <span>→</span></button>')+'</footer>')+
-   '</div>';
+   '<div id="v4-ai-slot"></div></div>';
  }
  function render(){
   const target=document.querySelector('.v4-root');
-  if(target)target.outerHTML=app();
+  if(target){target.outerHTML=app();if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')document.dispatchEvent(new CustomEvent('veloryz:creator-render'));}
  }
  function updateBudget(){
   const text=document.getElementById('v4-budget-output');if(text)text.textContent=money(data.budget);
@@ -561,6 +561,7 @@
  createPage=function(){
   const fromURL=new URL(location.href).searchParams.get('question')||'welcome';
   active=fromURL==='welcome'||(fromURL==='success'&&finished)||flow().includes(fromURL)?fromURL:'welcome';
+  if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
  };
  window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active};
