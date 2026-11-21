@@ -15,8 +15,8 @@
     "configure": "node scripts/configure-studio.mjs",
     "test:upgrade": "node tools/test-supabase.mjs && node tools/test-cms.mjs && node tools/test-enquiries.mjs && node tools/test-admin-password-only.mjs && node tools/test-platform.mjs && node tools/test-production.mjs",
     "build:motion": "node scripts/build-motion.mjs",
-    "prebuild": "node scripts/build-motion.mjs && node tools/build-docs.mjs",
-    "predev": "node scripts/build-motion.mjs && node tools/build-docs.mjs",
+    "prebuild": "node scripts/build-scroll.mjs && node scripts/build-motion.mjs && node tools/build-docs.mjs",
+    "predev": "node scripts/build-scroll.mjs && node scripts/build-motion.mjs && node tools/build-docs.mjs",
     "test:motion": "node tools/test-logo-model.mjs && node tools/test-motion.mjs && node tools/test-motion-lab.mjs && node tools/test-broadcasts.mjs",
     "test:journey": "node tools/test-motion.mjs && node tools/test-production.mjs",
     "test:v5": "node tools/test-v5-foundation.mjs && node tools/test-v5-ai-routing.mjs && node tools/test-v5-content-audit.mjs && node tools/test-v5-release.mjs && node tools/test-v5-contrast.mjs",
@@ -25,7 +25,8 @@
     "test:creator:legacy": "node tools/test-creator-v3.mjs",
     "test:project-ai": "node tools/test-project-ai.mjs",
     "build:docs": "node tools/build-docs.mjs",
-    "test:docs": "node tools/test-docs-hub.mjs"
+    "test:docs": "node tools/test-docs-hub.mjs",
+    "build:scroll": "node scripts/build-scroll.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
