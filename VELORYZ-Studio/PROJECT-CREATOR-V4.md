@@ -45,3 +45,16 @@ The final Send action requires goal, name, email and explicit consent. It POSTs 
 
 ## QA and limitations
 The JavaScript was syntax checked, the dynamic questionnaire and enquiry path simulated, the PDF passes format checks, and a Node regression suite was added at tools/test-creator-v4.mjs. The hosting deployment, production screenshots and a live server enquiry still need verification.
+
+## V4.2: Project AI, team consultation, offers and follow-up
+
+- The creator uses team-led language. After a successful submission the screen shows the server-issued **project reference** immediately, then explains the private invitation process. The reference is **not** a login code.
+- **Invitation / activation code**: The team first reviews the request, creates a private client workspace and generates a separate random invitation. Only then does the configured provider attempt email delivery. A request submission itself does NOT email an invitation.
+- Visitors are encouraged to check email and spam over the next 12 hours for updates. This is a check-in window, NOT a guaranteed 12-hour response or email-delivery SLA. Studio Control flags new requests waiting over 12 hours for follow-up.
+- After receiving the real invitation code, clients open /client/, redeem it for a private session and may message the team inside their project workspace.
+- Budget screens link to team WhatsApp and email for scope and price discussions. They do not automatically send a message, guarantee a discount or form a binding quote.
+- Category base allowances now differ for Business, Portfolio, Ecommerce, Agency, SaaS/platform, Custom App, Restaurant, Editorial, Education and Community. Studio Control → Settings contains configurable amounts. Technical scope may increase the estimated range.
+- Custom apps and platforms support budget preferences up to INR 15 lakh. A visitor can edit individual answers directly from the final review and return to the review.
+- Optional creator promotions can be published in Studio Control, with eligibility text, optional code and percentage, and expiry. They are OFF by default and NEVER automatically deducted from the estimate. The visitor can request offer review in the eventual quote.
+- Separate VELORYZ Project AI appears inside the wizard. Its /api/project-ai route calls a real configured Gemini/OpenAI or Workers AI model. It is independent of all persona bots, rate limited, scope restricted and does not receive visitors' email. It reports unavailable instead of inventing replies when providers are not connected.
+- Run npm run test:creator and npm run test:project-ai, or npm run test:all from VELORYZ-Studio. The deployed backend and actual email delivery are not certified by source-level checks.
