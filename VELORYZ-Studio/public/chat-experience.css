@@ -111,3 +111,40 @@ body.motion-edition #modal-root .expert-modal .chat-connection,
 body.motion-edition #modal-root .expert-modal .chat-footer {color:var(--chat-muted)!important;background:var(--chat-paper)}
 body.motion-edition #modal-root .expert-modal .chat-header p{background:transparent}
 body.motion-edition #modal-root .expert-modal #expert-question{scrollbar-width:thin;scrollbar-color:var(--chat-line) var(--chat-paper)}
+
+/* Studio-wide finishing pass: readable forms, consistent controls and quieter surfaces. */
+body.motion-edition .text-link{color:#000!important;text-underline-offset:5px}
+body.motion-edition .site-header{box-shadow:0 4px 24px #36251908}
+body.motion-edition .desktop-nav a{padding-block:12px}
+body.motion-edition .button{border-radius:10px;min-height:44px}
+body.motion-edition .hero-desc{max-width:510px;line-height:1.8}
+body.motion-edition .section-head{gap:24px;align-items:end}
+body.motion-edition .ui-study-card{border-radius:20px;overflow:hidden;border:1px solid #42302618;box-shadow:0 12px 36px #42302608}
+body.motion-edition .ui-study-card:focus-within{outline:2px solid #2476b7;outline-offset:4px}
+body.motion-edition .faq-item{border-color:#48342825}
+body.motion-edition .faq-item summary{padding-block:22px;line-height:1.5}
+body.motion-edition .modal:not(.expert-modal):not(.motion-dialog):not(.legal-modal){background:#fffdf9;color:#171717;border-radius:22px;border:1px solid #dfd8ce;box-shadow:0 28px 100px #21180f35}
+body.motion-edition .modal .booking-main,
+body.motion-edition .form-panel{background:#fffdf9;color:#171717}
+body.motion-edition .booking-main :is(h2,h3,label,p,small),
+body.motion-edition .form-panel :is(h2,h3,label,p,small){color:#171717!important}
+body.motion-edition .booking-main .field :is(input,select,textarea),
+body.motion-edition .form-panel .field :is(input,select,textarea){background:#fff;color:#111;border:1px solid #b6aea5;border-radius:9px;min-height:46px;box-shadow:none;opacity:1}
+body.motion-edition .booking-main .field :is(input,textarea)::placeholder,
+body.motion-edition .form-panel .field :is(input,textarea)::placeholder{color:#626262;opacity:1}
+body.motion-edition .booking-aside{background:linear-gradient(145deg,#ede7de,#e8dfd0);color:#171717}
+body.motion-edition .booking-aside :is(h2,h3,p,small,.eyebrow){color:#171717!important}
+body.motion-edition .booking-main .text-link{color:#000!important}
+body.motion-edition .field :is(input,select,textarea):focus-visible{outline:2px solid #2476b7;outline-offset:3px}
+body.motion-edition .modal:not(.expert-modal) .modal-close{background:#fff;color:#111;border:1px solid #c9c1b7}
+@media(max-width:640px){
+ body.motion-edition .hero-actions{gap:12px}
+ body.motion-edition .hero-actions .button{min-height:48px}
+ body.motion-edition .section-head{align-items:start;gap:16px}
+ body.motion-edition .booking-main,body.motion-edition .form-panel{padding:22px 18px}
+ body.motion-edition .ui-study-card{border-radius:14px}
+}
+@media(prefers-reduced-motion:no-preference){
+ body.motion-edition .ui-study-card{transition:box-shadow .22s ease,border-color .22s ease}
+ body.motion-edition .ui-study-card:hover{border-color:#75614b55;box-shadow:0 16px 40px #42302612}
+}
