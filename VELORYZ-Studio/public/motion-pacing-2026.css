@@ -1,0 +1,101 @@
+/* VELORYZ / Motion welcome + balanced Lenis scrolling
+   Pinned first-party Lenis v1.3.27 / MIT. Keep native browser scroll as fallback. */
+html.lenis,html.lenis body{height:auto}
+html.lenis.lenis-smooth{scroll-behavior:auto!important}
+html.lenis.lenis-smooth body{scroll-behavior:auto!important}
+html[data-vz-smooth-wheel="lenis"]{scroll-behavior:auto!important}
+html[data-vz-smooth-wheel="lenis"] body{scroll-behavior:auto!important}
+html.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip}
+html.lenis [data-lenis-prevent],html.lenis [data-lenis-prevent-wheel],
+html.lenis [data-lenis-prevent-touch],html.lenis [data-lenis-prevent-vertical],
+html.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain}
+html.lenis.lenis-smooth iframe{pointer-events:none}
+body.motion-edition :is(.vz-chat-log,.vz-chat-side,.mobile-nav,.kb-service-toc,.docs-sidebar,.studio-docs-sidebar,.v4-steps,.v4-ai-messages,dialog,.modal,.modal-backdrop){overscroll-behavior:contain}
+body.motion-edition :is(.vz-chat-log,.vz-chat-side,.mobile-nav,.kb-service-toc,.docs-sidebar,.studio-docs-sidebar,.v4-ai-messages){-webkit-overflow-scrolling:touch}
+html[data-vz-smooth-wheel="lenis"] body.motion-edition .ticker-track{animation-duration:43s}
+html[data-motion="full"] body.motion-edition :is(.project-art,.design-preview,.render-drift){backface-visibility:hidden}
+html[data-motion="full"] body.motion-edition :is(.site-header,.mobile-nav){transform:translateZ(0)}
+/* First experience: a complete visible modal, not a hidden gate in a tiny icon. */
+body.motion-edition .motion-dialog.motion-gate-mode{
+ box-sizing:border-box;
+ width:min(620px,calc(100% - 32px));
+ max-width:620px;
+ max-height:calc(100dvh - 36px);
+ padding:clamp(25px,4.2vw,46px);
+ background:radial-gradient(ellipse at 104% -12%,rgba(227,167,229,.23),transparent 53%),
+ linear-gradient(150deg,#fffdf8,#f7f0eb 68%,#f9f3ee);
+ border:1px solid #d1b8bc;
+ border-radius:clamp(15px,2.5vw,27px);
+ box-shadow:0 34px 110px rgba(43,24,47,.30),inset 0 1px rgba(255,255,255,.85);
+ color:#252025;
+}
+body.motion-edition .motion-dialog.motion-gate-mode::backdrop{background:rgba(29,24,34,.64);backdrop-filter:blur(6px)}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-panel-icon{height:44px}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-panel-icon i{width:5px;background:linear-gradient(#f186ae,#7864c0);border-radius:5px}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-eyebrow{color:#805478;font-size:10px;letter-spacing:.17em;margin-top:21px;font-weight:800}
+body.motion-edition .motion-dialog.motion-gate-mode h2{font-size:clamp(34px,5vw,58px);line-height:1.02;letter-spacing:-.07em;font-weight:550;margin:13px 0 16px;text-wrap:balance}
+body.motion-edition .motion-dialog.motion-gate-mode h2 em{font-family:Georgia,serif;font-style:italic;color:#a44683;font-weight:400}
+body.motion-edition .motion-dialog.motion-gate-mode>p{font-size:clamp(12px,1.3vw,14px);line-height:1.75;color:#65565b;max-width:510px}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices{
+ margin:24px 0 15px;
+ gap:10px;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button{
+ min-height:74px;padding:14px;border-radius:13px;box-shadow:none;transform:none;
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"]{
+ grid-column:1/-1;
+ min-height:91px;
+ background:linear-gradient(112deg,#bd3976,#834db6 59%,#5665bb);
+ border:1px solid #884cad;
+ color:white;
+ box-shadow:0 12px 30px rgba(112,64,134,.24);
+ display:flex;
+ flex-direction:column;
+ align-items:flex-start;
+ justify-content:center;
+ gap:3px;
+ padding:18px 26px;
+ opacity:1;filter:none;
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"] span{font-size:18px;font-weight:760;letter-spacing:-.025em}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"] small{font-size:11px;opacity:.92}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"]:hover{background:linear-gradient(110deg,#a72e6c,#7643a9 58%,#4959b0);transform:translateY(-2px)}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"]:focus-visible{outline:3px solid #4732b8;outline-offset:4px}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button:not([data-motion-choice="full"]){display:none}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-accessible-exit:not([hidden]){
+ display:flex!important;align-items:center;justify-content:center;width:100%;min-height:45px;
+ background:transparent;color:#73536b;border:1px solid #d8c2cb;border-radius:12px;
+ padding:12px 18px;margin:8px 0 2px;font:700 12px/1.4 ui-sans-serif,system-ui,sans-serif;
+ cursor:pointer;text-decoration:none;
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-accessible-exit:not([hidden]):hover{
+ background:#f1e6ef;border-color:#b68ca8;color:#4d325b
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-accessible-exit:not([hidden]):focus-visible{outline:3px solid #8050b0;outline-offset:3px}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-gate-hint{
+ display:block;color:#604c50;background:#f7e9e9;border:1px solid #e8ced6;border-radius:10px;
+ font-size:11px;line-height:1.6;margin:13px 0 7px;padding:10px 13px;
+}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-gate-hint strong{color:#79346c}
+body.motion-edition .motion-dialog.motion-gate-mode #motion-status{font-size:10px;color:#75616b;border-color:#e0cfd7;padding-top:13px;min-height:0}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-panel-note{margin-top:9px;font-size:10px;color:#837480}
+body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[disabled]{pointer-events:none!important}
+body.motion-edition .motion-dialog:not(.motion-gate-mode) .motion-accessible-exit{display:none!important}
+/* Modals and nested scroll areas stay independently scrollable. */
+@media(max-width:650px){
+ body.motion-edition .motion-dialog.motion-gate-mode{width:calc(100% - 22px);max-height:calc(100dvh - 22px);padding:25px 19px;border-radius:17px}
+ body.motion-edition .motion-dialog.motion-gate-mode h2{font-size:clamp(34px,10vw,47px)}
+ body.motion-edition .motion-dialog.motion-gate-mode .motion-choices{margin:17px 0 12px}
+ body.motion-edition .motion-dialog.motion-gate-mode .motion-choices button[data-motion-choice="full"]{min-height:78px;padding:14px 18px}
+ body.motion-edition .motion-dialog.motion-gate-mode .motion-gate-hint{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion="full"]){scroll-behavior:auto!important}
+ body.motion-edition .motion-dialog.motion-gate-mode{animation:none!important}
+ body.motion-edition .motion-dialog.motion-gate-mode .motion-panel-icon i{animation:none!important}
+}
+html[data-motion="reduced"] body.motion-edition .motion-dialog.motion-gate-mode *,
+html[data-motion="paused"] body.motion-edition .motion-dialog.motion-gate-mode *{animation:none!important;transition:none!important}
