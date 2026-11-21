@@ -1,0 +1,1002 @@
+[
+  {
+    "id": "vz-001",
+    "name": "aurora-drift",
+    "label": "Aurora Drift",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/aurora-drift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-002",
+    "name": "orbital-halo",
+    "label": "Orbital Halo",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/orbital-halo.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-003",
+    "name": "grid-breathe",
+    "label": "Grid Breathe",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/grid-breathe.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-004",
+    "name": "signal-rain",
+    "label": "Signal Rain",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/signal-rain.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-005",
+    "name": "mist-pulse",
+    "label": "Mist Pulse",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/mist-pulse.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-006",
+    "name": "horizon-wave",
+    "label": "Horizon Wave",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/horizon-wave.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-007",
+    "name": "prism-float",
+    "label": "Prism Float",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/prism-float.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-008",
+    "name": "constellation-loop",
+    "label": "Constellation Loop",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/constellation-loop.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-009",
+    "name": "light-sweep",
+    "label": "Light Sweep",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/light-sweep.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-010",
+    "name": "depth-rings",
+    "label": "Depth Rings",
+    "family": "ambient",
+    "type": "animated-svg",
+    "path": "./ambient/depth-rings.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-011",
+    "name": "help-beacon",
+    "label": "Help Beacon",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/help-beacon.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-012",
+    "name": "question-orbit",
+    "label": "Question Orbit",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/question-orbit.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-013",
+    "name": "support-signal",
+    "label": "Support Signal",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/support-signal.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-014",
+    "name": "guidance-compass",
+    "label": "Guidance Compass",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/guidance-compass.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-015",
+    "name": "topic-radar",
+    "label": "Topic Radar",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/topic-radar.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-016",
+    "name": "answer-reveal",
+    "label": "Answer Reveal",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/answer-reveal.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-017",
+    "name": "contact-pulse",
+    "label": "Contact Pulse",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/contact-pulse.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-018",
+    "name": "path-finder",
+    "label": "Path Finder",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/path-finder.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-019",
+    "name": "resource-spark",
+    "label": "Resource Spark",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/resource-spark.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-020",
+    "name": "human-channel",
+    "label": "Human Channel",
+    "family": "help",
+    "type": "animated-svg",
+    "path": "./help/human-channel.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-021",
+    "name": "network-bloom",
+    "label": "Network Bloom",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/network-bloom.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-022",
+    "name": "node-ripple",
+    "label": "Node Ripple",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/node-ripple.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-023",
+    "name": "route-draw",
+    "label": "Route Draw",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/route-draw.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-024",
+    "name": "cluster-expand",
+    "label": "Cluster Expand",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/cluster-expand.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-025",
+    "name": "hub-gravity",
+    "label": "Hub Gravity",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/hub-gravity.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-026",
+    "name": "path-focus",
+    "label": "Path Focus",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/path-focus.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-027",
+    "name": "map-reframe",
+    "label": "Map Reframe",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/map-reframe.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-028",
+    "name": "branch-spring",
+    "label": "Branch Spring",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/branch-spring.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-029",
+    "name": "node-select",
+    "label": "Node Select",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/node-select.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-030",
+    "name": "canvas-drift",
+    "label": "Canvas Drift",
+    "family": "sitemap",
+    "type": "animated-svg",
+    "path": "./sitemap/canvas-drift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-031",
+    "name": "page-unfold",
+    "label": "Page Unfold",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/page-unfold.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-032",
+    "name": "section-marker",
+    "label": "Section Marker",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/section-marker.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-033",
+    "name": "reading-progress",
+    "label": "Reading Progress",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/reading-progress.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-034",
+    "name": "sidebar-glide",
+    "label": "Sidebar Glide",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/sidebar-glide.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-035",
+    "name": "breadcrumb-flow",
+    "label": "Breadcrumb Flow",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/breadcrumb-flow.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-036",
+    "name": "callout-pulse",
+    "label": "Callout Pulse",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/callout-pulse.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-037",
+    "name": "tab-slide",
+    "label": "Tab Slide",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/tab-slide.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-038",
+    "name": "accordion-breathe",
+    "label": "Accordion Breathe",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/accordion-breathe.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-039",
+    "name": "media-frame",
+    "label": "Media Frame",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/media-frame.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-040",
+    "name": "copy-confirm",
+    "label": "Copy Confirm",
+    "family": "documentation",
+    "type": "animated-svg",
+    "path": "./documentation/copy-confirm.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-041",
+    "name": "image-reveal",
+    "label": "Image Reveal",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/image-reveal.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-042",
+    "name": "video-scan",
+    "label": "Video Scan",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/video-scan.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-043",
+    "name": "audio-wave",
+    "label": "Audio Wave",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/audio-wave.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-044",
+    "name": "gallery-shift",
+    "label": "Gallery Shift",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/gallery-shift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-045",
+    "name": "poster-float",
+    "label": "Poster Float",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/poster-float.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-046",
+    "name": "frame-focus",
+    "label": "Frame Focus",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/frame-focus.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-047",
+    "name": "caption-rise",
+    "label": "Caption Rise",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/caption-rise.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-048",
+    "name": "media-buffer",
+    "label": "Media Buffer",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/media-buffer.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-049",
+    "name": "spectrum-line",
+    "label": "Spectrum Line",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/spectrum-line.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-050",
+    "name": "thumbnail-stack",
+    "label": "Thumbnail Stack",
+    "family": "media",
+    "type": "animated-svg",
+    "path": "./media/thumbnail-stack.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-051",
+    "name": "menu-morph",
+    "label": "Menu Morph",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/menu-morph.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-052",
+    "name": "arrow-travel",
+    "label": "Arrow Travel",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/arrow-travel.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-053",
+    "name": "nav-indicator",
+    "label": "Nav Indicator",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/nav-indicator.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-054",
+    "name": "drawer-slide",
+    "label": "Drawer Slide",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/drawer-slide.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-055",
+    "name": "backtrack-line",
+    "label": "Backtrack Line",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/backtrack-line.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-056",
+    "name": "link-underline",
+    "label": "Link Underline",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/link-underline.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-057",
+    "name": "direction-pulse",
+    "label": "Direction Pulse",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/direction-pulse.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-058",
+    "name": "index-scan",
+    "label": "Index Scan",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/index-scan.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-059",
+    "name": "route-switch",
+    "label": "Route Switch",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/route-switch.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-060",
+    "name": "focus-ring",
+    "label": "Focus Ring",
+    "family": "navigation",
+    "type": "animated-svg",
+    "path": "./navigation/focus-ring.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-061",
+    "name": "skeleton-wave",
+    "label": "Skeleton Wave",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/skeleton-wave.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-062",
+    "name": "orbit-loader",
+    "label": "Orbit Loader",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/orbit-loader.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-063",
+    "name": "dot-sequence",
+    "label": "Dot Sequence",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/dot-sequence.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-064",
+    "name": "line-progress",
+    "label": "Line Progress",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/line-progress.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-065",
+    "name": "page-resolve",
+    "label": "Page Resolve",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/page-resolve.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-066",
+    "name": "content-shimmer",
+    "label": "Content Shimmer",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/content-shimmer.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-067",
+    "name": "node-wait",
+    "label": "Node Wait",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/node-wait.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-068",
+    "name": "search-scan",
+    "label": "Search Scan",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/search-scan.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-069",
+    "name": "sync-loop",
+    "label": "Sync Loop",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/sync-loop.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-070",
+    "name": "soft-spinner",
+    "label": "Soft Spinner",
+    "family": "loading",
+    "type": "animated-svg",
+    "path": "./loading/soft-spinner.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-071",
+    "name": "success-bloom",
+    "label": "Success Bloom",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/success-bloom.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-072",
+    "name": "error-ripple",
+    "label": "Error Ripple",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/error-ripple.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-073",
+    "name": "info-orbit",
+    "label": "Info Orbit",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/info-orbit.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-074",
+    "name": "warning-pulse",
+    "label": "Warning Pulse",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/warning-pulse.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-075",
+    "name": "active-signal",
+    "label": "Active Signal",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/active-signal.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-076",
+    "name": "offline-fade",
+    "label": "Offline Fade",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/offline-fade.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-077",
+    "name": "complete-draw",
+    "label": "Complete Draw",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/complete-draw.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-078",
+    "name": "pending-drift",
+    "label": "Pending Drift",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/pending-drift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-079",
+    "name": "secure-lock",
+    "label": "Secure Lock",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/secure-lock.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-080",
+    "name": "live-beacon",
+    "label": "Live Beacon",
+    "family": "status",
+    "type": "animated-svg",
+    "path": "./status/live-beacon.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-081",
+    "name": "hover-lift",
+    "label": "Hover Lift",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/hover-lift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-082",
+    "name": "press-ripple",
+    "label": "Press Ripple",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/press-ripple.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-083",
+    "name": "toggle-glide",
+    "label": "Toggle Glide",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/toggle-glide.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-084",
+    "name": "chip-select",
+    "label": "Chip Select",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/chip-select.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-085",
+    "name": "tooltip-rise",
+    "label": "Tooltip Rise",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/tooltip-rise.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-086",
+    "name": "cursor-gravity",
+    "label": "Cursor Gravity",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/cursor-gravity.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-087",
+    "name": "card-tilt",
+    "label": "Card Tilt",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/card-tilt.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-088",
+    "name": "button-sheen",
+    "label": "Button Sheen",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/button-sheen.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-089",
+    "name": "input-focus",
+    "label": "Input Focus",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/input-focus.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-090",
+    "name": "feedback-spark",
+    "label": "Feedback Spark",
+    "family": "interaction",
+    "type": "animated-svg",
+    "path": "./interaction/feedback-spark.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-091",
+    "name": "page-crossfade",
+    "label": "Page Crossfade",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/page-crossfade.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-092",
+    "name": "portal-open",
+    "label": "Portal Open",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/portal-open.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-093",
+    "name": "layer-shift",
+    "label": "Layer Shift",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/layer-shift.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-094",
+    "name": "blur-resolve",
+    "label": "Blur Resolve",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/blur-resolve.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-095",
+    "name": "panel-expand",
+    "label": "Panel Expand",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/panel-expand.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-096",
+    "name": "content-stagger",
+    "label": "Content Stagger",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/content-stagger.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-097",
+    "name": "section-wipe",
+    "label": "Section Wipe",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/section-wipe.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-098",
+    "name": "spatial-zoom",
+    "label": "Spatial Zoom",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/spatial-zoom.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-099",
+    "name": "depth-crossing",
+    "label": "Depth Crossing",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/depth-crossing.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  },
+  {
+    "id": "vz-100",
+    "name": "system-reveal",
+    "label": "System Reveal",
+    "family": "transition",
+    "type": "animated-svg",
+    "path": "./transition/system-reveal.svg",
+    "motion": "path-draw + ambient-drift",
+    "reducedMotion": "static-first-frame"
+  }
+]
