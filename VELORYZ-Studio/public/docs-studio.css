@@ -55,3 +55,12 @@
 @media(max-width:980px){.studio-docs-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.studio-docs-tools{grid-template-columns:1fr 1fr}.studio-docs-tools label{grid-column:1 / -1}.studio-docs-grid{grid-template-columns:190px minmax(0,1fr);gap:25px}}
 @media(max-width:650px){.studio-docs-hero{padding:54px 22px}.studio-docs-content{padding:36px 18px}.studio-docs-tools{display:block}.studio-docs-tools input{margin:15px 0 4px}.studio-docs-tools p{text-align:left}.studio-docs-cards{grid-template-columns:1fr}.studio-docs-card{min-height:165px}.studio-docs-reader{padding:28px 18px}.studio-docs-grid{display:block}.studio-docs-sidebar{position:static;max-height:240px;overflow:auto;border:1px solid var(--docs-line);padding:15px;margin-bottom:36px}.studio-docs-prevnext{align-items:flex-start}}
 @media(prefers-reduced-motion:reduce){.studio-docs-card,.studio-docs-switch a{transition:none}.studio-docs-card:hover{transform:none}}
+
+/* Primary /docs directory routes readers into the product manual and Help Centre. */
+.docs-root-pathways{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:24px max(24px,calc((100vw - 1180px)/2));background:#151411;color:#faf7ef;border-bottom:1px solid #c8b796}
+.docs-root-pathways strong{display:block;font-size:18px;font-weight:650}
+.docs-root-pathways p{font-size:13px;color:#d3cabe;line-height:1.55;margin:5px 0 0}
+.docs-root-path-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.docs-root-path-links a{color:#17140f!important;background:#f8f1e3;padding:13px 15px;font-size:12px;font-weight:750;text-decoration:none;border:1px solid #e5d8bf;white-space:normal}
+.docs-root-path-links a:hover{background:#e7d4ae}
+@media(max-width:750px){.docs-root-pathways{flex-direction:column;align-items:flex-start}.docs-root-path-links{width:100%}.docs-root-path-links a{flex:1 1 220px}}
