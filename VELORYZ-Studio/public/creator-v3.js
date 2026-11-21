@@ -172,7 +172,7 @@
  function download(){
   try{
    if(!window.VeloryzProposal)throw Error('Proposal builder unavailable');
-   sync();window.VeloryzProposal.download({brief:projectBrief,estimate:estimate(),reference:{name:preset()?.name||data.external||'Original direction'}});
+   sync();window.VeloryzProposal.download({brief:projectBrief,estimate:estimate(),reference:{name:preset()?.name||data.external||'Original direction'},creator:{category:data.category,palette:data.palette,priority:data.priority,features:data.features,answers:data.answers,source:data.external}});
   }catch(e){console.error(e);alert('Could not generate the proposal. Please try again.');}
  }
  async function submit(form){

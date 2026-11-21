@@ -36,19 +36,19 @@
     display.forEach((line,i)=>{this.text(line,x,top+i*lineHeight,size,bold,color);});
     return top+display.length*lineHeight;
    },
-   footer(n){
+   footer(n,total=3){
     this.line(42,800,553,800,LINE,.7);
     this.text('VELORYZ STUDIO  /  PROJECT OUTLINE',42,810,8,true,MUTED);
     this.text('DRAFT - NOT A STUDIO QUOTATION',341,810,8,false,MUTED);
-    this.text(String(n).padStart(2,'0')+' / 03',515,810,8,true,INK);
+    this.text(String(n).padStart(2,'0')+' / '+String(total).padStart(2,'0'),515,810,8,true,INK);
    }
   };
  }
  function build(input){
-  const b=input.brief||{},e=input.estimate||{},ref=input.reference;
+  const b=input.brief||{},e=input.estimate||{},ref=input.reference,creator=input.creator||null;
   const formatMoney=v=>'INR '+Math.round(Number(v)||0).toLocaleString('en-IN');
   const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-  const docs=[page(),page(),page()];const p1=docs[0],p2=docs[1],p3=docs[2];
+  const docs=[page(),page(),page(),...(creator?[page()]:[])];const p1=docs[0],p2=docs[1],p3=docs[2];
   // Cover and project definition
   p1.rect(0,0,W,H,CREAM);p1.rect(0,0,W,236,INK);p1.rect(42,35,8,8,TERRA);
   p1.text('VELORYZ / STUDIO',62,30,13,true,WHITE);
@@ -66,7 +66,7 @@
   p1.paragraph(b.goal||'Project goals will be shaped together during the studio discovery conversation.',42,548,510,11,17,10,INK);
   p1.rect(42,736,510,42,SOFT);
   p1.text('Your selected direction is a starting point, not a final specification.',55,749,10,false,INK);
-  p1.footer(1);
+  /* Footer added after all pages are assembled. */
   // Budget breakdown + materials
   p2.rect(0,0,W,H,CREAM);p2.rect(42,43,8,8,TERRA);p2.text('VELORYZ  /  SCOPE & BUDGET',61,38,10,true,MUTED);
   p2.text('Budget, explained.',42,86,29,true,INK);
@@ -89,7 +89,7 @@
   const feats=Array.isArray(b.features)&&b.features.length?b.features:['Core website planning'];
   feats.slice(0,7).forEach((feature,i)=>p2.text((i+1)+'.  '+feature,49,651+i*18,10,false,INK));
   p2.text('Provider costs, hosting, licenses, subscriptions and taxes are excluded.',42,766,9,false,MUTED);
-  p2.footer(2);
+  /* Footer added after all pages are assembled. */
   // Roadmap and next steps
   p3.rect(0,0,W,H,CREAM);p3.rect(42,43,8,8,TERRA);p3.text('VELORYZ  /  HOW WE GET THERE',61,38,10,true,MUTED);
   p3.text('The road ahead.',42,85,29,true,INK);p3.text('A suggested sequence, not a booked schedule.',42,126,11,false,MUTED);
@@ -113,13 +113,32 @@
   p3.rect(42,615,510,154,SOFT);p3.text('BEFORE ANY PROJECT BEGINS',58,630,10,true,TERRA);
   p3.paragraph('CLIENT-SIDE DRAFT - NOT A STUDIO QUOTATION. Scope, schedule, total price, payment terms, final deliverables, hosting, third-party providers, licenses, taxes and support must be reviewed and confirmed in writing by VELORYZ Studio. No purchase or booking is created by this document.',58,653,477,10,17,7,INK);
   p3.text('Contact: veloryz.here@gmail.com   /   veloryz.online',58,744,9,true,INK);
-  p3.footer(3);
+  /* Footer added after all pages are assembled. */
+
+  if(creator){
+   const p4=docs[3];
+   p4.rect(0,0,W,H,CREAM);p4.rect(42,43,8,8,TERRA);
+   p4.text('VELORYZ  /  PRODUCT REQUIREMENTS',61,38,10,true,MUTED);
+   p4.text('Your experience, defined.',42,85,28,true,INK);
+   p4.text('A record of the selected ideas for the studio discovery conversation.',42,127,10,false,MUTED);
+   const pairs=[['CATEGORY',creator.category||b.purpose||'To be discussed'],['STARTING POINT',ref?.name||'Original direction'],['VISUAL PALETTE',creator.palette||'To be discussed'],['PRIORITY',creator.priority||'Balanced quality and speed']];
+   pairs.forEach(([key,value],i)=>{const y=169+i*41;p4.text(key,45,y,9,true,MUTED);p4.paragraph(value,235,y,305,10,14,2,INK,true);p4.line(42,y+28,553,y+28,LINE,.6);});
+   p4.text('CAPABILITIES FOR STUDIO REVIEW',42,356,10,true,TERRA);
+   const capabilities=Array.isArray(creator.features)?creator.features:(b.features||[]);
+   capabilities.slice(0,16).forEach((feature,i)=>{const x=i<8?46:305,y=382+(i%8)*26;p4.rect(x,y+3,6,6,TERRA);p4.paragraph(feature,x+15,y,230,10,13,2,INK);});
+   p4.line(42,612,553,612,LINE,.8);p4.text('REQUIREMENTS AND DECISIONS',42,624,10,true,TERRA);
+   const answers=Object.entries(creator.answers||{}).filter(([name,v])=>String(v||'').trim()).slice(0,4);let y=648;
+   for(const [key,value] of answers){const lines=wrap(key+': '+value,475,9).slice(0,2);lines.forEach((line,i)=>p4.text(line,46,y+i*13,9,false,INK));y+=Math.max(1,lines.length)*13+4;if(y>730)break;}
+   if(creator.source&&!answers.length)p4.paragraph('External inspiration: '+creator.source,46,y,477,9,13,3,MUTED);
+   p4.text('These selections are editable. Third-party licenses are not included.',42,764,9,false,MUTED);
+  }
+  docs.forEach((p,i)=>p.footer(i+1,docs.length));
   const objects=[];
   objects.push('<< /Type /Catalog /Pages 2 0 R >>');
-  objects.push('<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R] /Count 3 >>');
+  objects.push('<< /Type /Pages /Kids ['+docs.map((_,i)=>(5+i*2)+' 0 R').join(' ')+'] /Count '+docs.length+' >>');
   objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
   objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
-  for(let i=0;i<3;i++){
+  for(let i=0;i<docs.length;i++){
    const pageId=5+i*2,streamId=pageId+1,content=docs[i].cmd.join('\n')+'\n';
    objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+streamId+' 0 R >>');
    objects.push('<< /Length '+content.length+' >>\nstream\n'+content+'endstream');
