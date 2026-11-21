@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
   const views:Record<string,string>={home:'/',work:'/work/',design:'/design/',studio:'/studio/',book:'/book/',create:'/create/',pricing:'/pricing/',developers:'/developers/'};
   const route=views[view]||'/';
-  const html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};window.STUDIO_PREVIEW_ROUTE=${serialise(route)};</script><script src="/app.js" defer></script>`);
+  const html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};window.STUDIO_PREVIEW_ROUTE=${serialise(route)};</script>${match}`);
   return secureHtml(html,200,true,true);
  }
 
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   const result=await handleApi(apiRequest,env,'password');
   if(!result.ok)return secureHtml(adminShell,200,true);
   const data=await result.json() as {state:unknown};
-  return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({state:data.state,version:-1,preview:true})};</script><script src="/app.js" defer></script>`).replace(/<body[^>]*>/,match=>match+'<a href="/admin" class="draft-preview-note">DRAFT PREVIEW · Return to Studio Control ↗</a>'),200,true);
+  return secureHtml(siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({state:data.state,version:-1,preview:true})};</script>${match}`).replace(/<body[^>]*>/,match=>match+'<a href="/admin" class="draft-preview-note">DRAFT PREVIEW · Return to Studio Control ↗</a>'),200,true);
  }
  if(path==='/admin'||path.startsWith('/admin/'))return secureHtml(adminShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/admin'){
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   data.state.offers=[{id:'visual-preview',title:'Your next idea deserves a good beginning.',eyebrow:'STUDIO CAMPAIGN PREVIEW',body:'A clean introduction for your next launch, announcement or offer. This campaign is a local design preview.',kind:'announcement',media:'',mediaType:'none',buttonLabel:'Talk to the studio',buttonUrl:'/contact/',enabled:true,startAt:'',endAt:'',priority:50}];
   data.state.offers.push({...data.state.offers[0],id:'preview-pin',title:'A new chapter, pinned above everything.',body:'This is a local preview of a site-wide message.',placement:'pinned',logo:'/assets/favicon.svg',logoLink:'/',theme:'gold',priority:100,buttonLabel:'Explore designs',buttonUrl:'/design/'},{...data.state.offers[0],id:'preview-ad',title:'Consider your next direction.',body:'A composed advertisement with original motion, your logo and two destinations. Local design preview.',kind:'ad',placement:'inline',theme:'dark',animation:'ribbon',logo:'/assets/favicon.svg',buttonLabel:'Discover the designs',buttonUrl:'/design/',secondaryLabel:'Book a conversation',secondaryUrl:'/book/'});
   data.state.offers.push({...data.state.offers[0],id:'preview-slider',kind:'ad',placement:'slider',title:'Explore the studio’s design directions',buttonLabel:'Browse designs',buttonUrl:'/design/'},{...data.state.offers[0],id:'preview-slider-two',kind:'ad',placement:'slider',title:'Meet the people behind the work',buttonLabel:'Meet the team',buttonUrl:'/teamjob/'});
-  return secureHtml(siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};</script><script src="/app.js" defer></script>`),200,true);
+  return secureHtml(siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};</script>${match}`),200,true);
  }
  const data=await getPublished(env,request.url);
  const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
@@ -84,7 +84,7 @@ export async function GET(request: Request) {
   '/studio':'Meet VELORYZ Studio and explore its design, development and creative direction team.'
  };
  const known=Object.hasOwn(pages,normal);
- let html=siteShell.replace('<script src="/app.js" defer></script>',()=>`<script>window.STUDIO_STATE=${serialise(data)};</script><script src="/app.js" defer></script>`);
+ let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
