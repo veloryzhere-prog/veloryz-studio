@@ -254,7 +254,7 @@
   data.external=p.name+' — '+p.author+' — '+p.source;
   data.reference=p.demo||p.source;
   data.category=categoryForExternal(p);
-  data.style='Studio decides';
+  data.style=/motion|agency|portfolio/i.test(p.category)?'Immersive':/ecommerce|editorial/i.test(p.category)?'Editorial':/social|community|gaming/i.test(p.category)?'Bold':'Minimal';
   // Preserve the user's requested features, but clear template-specific source assumptions.
   data.requestId='';sync();
  }
