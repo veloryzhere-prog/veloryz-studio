@@ -3,7 +3,7 @@
 let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpError='';
 let cpSearch='',cpFilter='all',cpTab='overview',cpEditMode='',cpEditingItem='',cpItemType='milestone';
 let cpNewDraft=null,cpNewProject=false,cpBusy=false,cpSequence=0;
-let cpDelivery={configured:false,provider:'Resend'},cpDeliveryLoaded=false;
+let cpDelivery={configured:false,provider:'Gmail SMTP · TLS 465'},cpDeliveryLoaded=false,cpEmailEvents=[];
 const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
 const cpE=v=>E(v??'');
 const cpStatuses=[['planning','Planning'],['in-progress','In progress'],['in-review','In review'],['on-hold','On hold'],['launched','Launched']];
@@ -38,7 +38,9 @@ function cpSummaryNumbers(){
  '<div class="cpm-metric"><span>On hold</span><strong>'+onHold+'</strong><small>Awaiting a restart</small></div></div>';
 }
 function cpDeliveryPill(){
- return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'Email connection configured':'Invitation emails: manual setup')+'</strong><small>'+(cpDelivery.configured?'Sending is attempted when you issue a code. Check each result.':'Generate codes now; send with the prepared email draft until Resend is configured.')+'</small></div><details><summary>Setup</summary><p>Add <code>RESEND_API_KEY</code> and a verified <code>PORTAL_FROM_EMAIL</code> under Supabase Edge Function secrets. These are server-only settings.</p></details></div>';
+ return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'VELORYZ Gmail connection configured':'Gmail delivery not configured yet')+'</strong>'+
+ '<small>'+(cpDelivery.configured?'Sender: VELORYZ &lt;veloryz.here@gmail.com&gt;. Provider acceptance is recorded but inbox receipt is not guaranteed.':'Private invitation codes and project PDFs still work. Automatic email needs the Gmail App Password on the server.')+'</small></div>'+
+ '<details><summary>Gmail setup</summary><p>Use <strong>veloryz.here@gmail.com</strong>. Enable 2-Step Verification, generate a Google App Password, then save <code>VELORYZ_GMAIL_APP_PASSWORD</code> in your Supabase Edge Function secrets. This integration uses encrypted SMTP port 465 and does not use Resend. Do not enter Gmail passwords in published CMS content.</p></details></div>';
 }
 function cpEditor(p={}){
  const edit=!!p.id&&!cpNewProject;
@@ -108,8 +110,8 @@ function cpItems(type){
 function cpMessages(){
  const messages=cpWorkspace?.messages||[];
  return '<section class="cpm-card cpm-message-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">PRIVATE CONVERSATION</span><h3>Client messages</h3><p>Write directly to your client. All messages stay with this project.</p></div><span class="cpm-conversation-count">'+messages.length+' messages</span></div>'+
- '<div class="cpm-conversation" role="log" aria-label="Client conversation">'+(messages.length?messages.slice(-75).map(m=>'<div class="cpm-message '+(m.sender==='studio'?'from-studio':'from-client')+'"><div><b>'+(m.sender==='studio'?'VELORYZ STUDIO':'CLIENT')+'</b><time>'+cpDate(m.created_at)+'</time></div><p>'+cpE(m.body)+'</p></div>').join(''):'<div class="cpm-tab-empty"><span>↗</span><h4>Start the conversation.</h4><p>Write a welcome note or share the next project step.</p></div>')+'</div>'+
- '<form data-cpm-form="message" class="cpm-message-form"><label for="cpm-message-text">New message to your client</label><textarea id="cpm-message-text" name="body" required maxlength="2000" minlength="2" rows="4" placeholder="Share an update, ask a question or leave a useful note…"></textarea><div><small>Messages save to this project immediately. Email notifications are not enabled for regular messages.</small><button class="admin-button" type="submit">Send message ↗</button></div></form></section>';
+ '<div class="cpm-conversation" role="log" aria-label="Client conversation">'+(messages.length?messages.slice(-75).map(m=>'<div class="cpm-message '+(m.sender==='studio'?'from-studio':'from-client')+'"><div><b>'+(m.sender==='studio'?'VELORYZ STUDIO':'CLIENT')+'</b><time>'+cpDate(m.created_at)+'</time></div><p>'+cpE(m.body).replace(/\n/g,'<br>')+'</p><small class="cpm-receipt">'+(m.read_at?'Seen by '+(m.sender==='studio'?'client':'studio'):'Sent · not marked read')+'</small></div>').join(''):'<div class="cpm-tab-empty"><span>↗</span><h4>Start the conversation.</h4><p>Write a welcome note or share the next project step.</p></div>')+'</div>'+
+ '<div class="cpm-reply-templates" aria-label="Quick project message starters"><button data-cpm-template="update" type="button">Progress update</button><button data-cpm-template="review" type="button">Request feedback</button><button data-cpm-template="handover" type="button">Handover note</button></div><form data-cpm-form="message" class="cpm-message-form"><label for="cpm-message-text">New message to your client</label><textarea id="cpm-message-text" name="body" required maxlength="2000" minlength="2" rows="4" placeholder="Share an update, ask a question or leave a useful note…"></textarea><div><small>Messages save directly in this private thread. Gmail sends a notification if configured; message contents stay in the portal.</small><button class="admin-button" type="submit">Send message ↗</button></div></form></section>';
 }
 function cpDetail(){
  if(cpEditMode==='project')return cpEditor(cpNewProject?(cpNewDraft||{}):(cpWorkspace?.project||{}));
@@ -140,10 +142,11 @@ async function cpLoad(selected=null){
  const desired=selected===null?cpSelected:selected;
  try{
   const work=cpReq('/projects'+(desired?'?id='+encodeURIComponent(desired):''));
-  const delivery=!cpDeliveryLoaded?cpReq('/delivery').catch(()=>({configured:false,provider:'Resend'})):Promise.resolve(cpDelivery);
+  const delivery=!cpDeliveryLoaded?cpReq('/delivery').catch(()=>({configured:false,provider:'Gmail SMTP · TLS 465'})):Promise.resolve(cpDelivery);
   const [result,emailInfo]=await Promise.all([work,delivery]);
   if(seq!==cpSequence)return;
   cpDelivery=emailInfo;cpDeliveryLoaded=true;cpProjects=result.projects||[];
+   if(desired){cpReq('/mail-events?project_id='+encodeURIComponent(desired)).then(data=>{if(cpSelected===desired&&seq===cpSequence){cpEmailEvents=data.events||[];const box=document.querySelector('[data-cpm-email-audit]');if(box)box.innerHTML=cpEmailAudit();}}).catch(()=>{});}
   const available=cpProjects.some(p=>p.id===desired);
   cpSelected=available?desired:(cpProjects[0]?.id||'');
   cpWorkspace=available&&result.workspace?result.workspace:null;
@@ -179,7 +182,7 @@ function cpRefreshDirectory(){
  if(count)count.textContent=cpMatches().length+' projects';
 }
 function cpInvitation(data){
- const sent=data.delivery?.status==='sent',manual=data.delivery?.status==='manual';
+ const sent=data.delivery?.status==='sent',manual=data.delivery?.status==='not-configured';
  const status=sent?'Accepted by email provider':manual?'Manual email needed':'Email delivery failed';
  const note=data.delivery?.message||'Use the secure code or link to invite the client.';
  const body='Hi '+(cpWorkspace?.project?.client_name||'')+',\n\nYour private VELORYZ Studio project workspace is ready.\n\nYour unique one-time code: '+data.code+'\n\nOpen your portal: '+data.url+'\n\nThis code expires in 14 days. Please do not share it.\n\nVELORYZ Studio';
