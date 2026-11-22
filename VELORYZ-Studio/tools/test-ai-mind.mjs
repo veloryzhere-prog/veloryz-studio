@@ -16,6 +16,7 @@ assert.deepEqual(adviserNavigation('I want to book a call','/','happy').links.ma
 assert.equal(adviserNavigation('I want to book a call','/','happy').action.type,'open_booking_form');
 assert.equal(adviserNavigation('I want to build a website','/','happy').action.type,'open_project_planner');
 assert.deepEqual(adviserNavigation('Show me the price','/','happy').links.map(x=>x.url),['/pricing/','/create/']);
+assert.deepEqual(adviserNavigation('How can I track my existing project?','/','happy').links.map(x=>x.url),['/client/','/contact/']);
 assert.equal(personas.milky.name,'Milky');assert.match(personas.milky.voice,/female/i);
 assert.match(personas.aryan.voice,/founder-inspired AI counterpart/);
 assert.match(personas.nikhil.focus,/smartest analytical/);

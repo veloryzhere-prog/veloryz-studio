@@ -20,6 +20,9 @@ for(const match of ['play','replay','sound','fullscreen']){
 }
 for(const match of ['veloryz-cinematic-full.mp4','veloryz-cinematic-full-mobile.mp4','IntersectionObserver','preload','visibilitychange','studio:route','loadeddata','error','ended'])
  assert.ok(code.includes(match),'Missing closing film lifecycle behavior: '+match);
+assert.ok(fs.existsSync(new URL('../public/assets/frame-cut/reveal.mp4',import.meta.url)),'Bundled VELORYZ reveal must exist in repository.');
+assert.match(code,/const BUNDLED='\/assets\/frame-cut\/reveal.mp4'/,'Missing cinematic export must retry actual checked-in logo reveal.');
+assert.match(code,/sourceAttempt===0/,'Player must try the bundled source when full film MP4 is absent.');
 assert.match(opening,/veloryz-opening-60fps\.mp4/,'Full screen opening should prefer native 60fps film.');
 assert.match(opening,/veloryz-opening-60fps-mobile\.mp4/,'Phones should prefer portrait 60fps film.');
 assert.match(opening,/removeClip\(\)/,'Video element must be cleaned up after the opening.');

@@ -2,13 +2,14 @@
 export const STUDIO_ROUTES=Object.freeze({
  '/':'Studio home','/work/':'View studio work','/design/':'Explore design directions',
  '/services/':'Explore services','/studio/':'Meet the studio','/teamjob/':'Meet the team',
- '/pricing/':'View starting prices','/create/':'Build a project brief','/book/':'Request a discovery call',
+ '/pricing/':'View starting prices','/create/':'Build a project brief','/client/':'Track your project in the Client Portal','/book/':'Request a discovery call',
  '/contact/':'Contact the studio','/process/':'How we work','/journey/':'Explore the project journey',
  '/developers/':'Integrations & development','/payments/':'Project payment information',
  '/motion/':'Motion playground','/velori/':'VELORI product','/veloryz/':'Studio platform'
 });
 const canonical=p=>typeof p==='string'&&Object.hasOwn(STUDIO_ROUTES,p)?p:'/';
 const TOPICS=[
+ {id:'client',words:/\b(track|tracking|progress|milestones?|client portal|existing project|already created|invitation code|project status)\b|ट्रैक|प्रगति/i,links:['/client/','/contact/'],next:['How do I access the Client Portal?','What is the difference between a project reference and an invitation code?','How can I contact the team about my current project?']},
  {id:'booking',words:/\b(book|appointment|meeting|schedule|consult|call|talk to a human|talk to staff)\b|बुक|मीटिंग|कॉल/i,links:['/book/','/contact/'],next:['How does the consultation work?','What should I prepare for the call?','Can I submit my project requirements?']},
  {id:'pricing',words:/\b(price|pricing|budget|cost|quote|afford|estimate|discount|charges?|payment plan)\b|कीमत|बजट|दाम/i,links:['/pricing/','/create/'],next:['What affects the final project cost?','Show me suitable design options','Help me prepare a cost-conscious brief']},
  {id:'project',words:/\b(build|create|develop|launch|project|website|web app|store|ecommerce|business idea|start a brand|portfolio)\b|प्रोजेक्ट|वेबसाइट/i,links:['/create/','/work/'],next:['Help me define the essential features','What would the first milestone be?','Which services should I choose?']},
@@ -19,6 +20,7 @@ const TOPICS=[
  {id:'service',words:/\b(service|offer|what do you do|capabilit|what can you help|agency|studio|work with you)\b|सेवा|क्या करते/i,links:['/services/','/work/'],next:['Which service is right for me?','Show me relevant work','How do I get a proposal?']}
 ];
 const PAGE_DEFAULTS={
+ '/client/':{links:['/contact/','/create/'],next:['How do I activate my private workspace?','Where can I find project milestones?','What does my reference code mean?']},
  '/pricing/':{links:['/create/','/book/'],next:['Which option fits my budget?','What is included in the price?','Can we discuss a custom proposal?']},
  '/design/':{links:['/create/','/work/'],next:['Help me choose a design direction','How would this look for my brand?','What does customization cost?']},
  '/create/':{links:['/pricing/','/book/'],next:['What are the must-have features?','Can you review my project idea?','What should I do after this brief?']},
@@ -39,6 +41,7 @@ export function rankTopic(message){
  if(/\b(debug|bug|broken|crash|error|stack trace|fix (my|this)|doesn'?t work|not working|timeout|syntax error|deploy fail)\b/i.test(value))boost('technology',6);
  if(/\b(how much|cost|price|quote|quotation|budget|estimated price|pricing)\b|कितना|कीमत/i.test(value))boost('pricing',7);
  if(/\b(refund|payment failed|receipt|paid|invoice)\b/i.test(value))boost('payment',6);
+ if(/\b(track|tracking|milestone|project progress|client portal|existing project|already created|project status)\b/i.test(value))boost('client',10);
  if(/\b(book a call|schedule a meeting|make an appointment|reserve|available time)\b/i.test(value))boost('booking',5);
  if(/\b(logo|brand identity|ui design|visual identity|colour palette|color palette)\b/i.test(value))boost('design',3);
  if(/\b(sell|selling|customers|conversion|launch my business)\b/i.test(value))boost('project',2);
