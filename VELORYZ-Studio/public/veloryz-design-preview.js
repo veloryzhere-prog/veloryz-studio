@@ -1,79 +1,137 @@
-/* VELORYZ studio viewer — displays authentic locally hosted HTML or original media. */
+/* VELORYZ Studio premium project and full-site preview controller.
+   Actual site motion runs in its own scrolling document; parent page never
+   fakes the website scroll. Sandbox intentionally omits allow-same-origin. */
 (()=>{'use strict';
-const script=document.getElementById('vz-design-data');
-const frameRoot=document.getElementById('vz-concept');
+const data=document.getElementById('vz-design-data');
+const content=document.getElementById('vz-concept');
 const stage=document.getElementById('vz-stage');
 const caption=document.getElementById('vz-preview-caption');
-if(!script||!frameRoot||!stage)return;
+if(!data||!content||!stage)return;
 let design;
-try{design=JSON.parse(script.textContent||'{}')}catch{return}
-const setStatus=(message)=>{if(caption)caption.textContent=message};
-let current='preview';
-function makeScreenshot(){
- const image=String(design.image||'');
- if(!image){
-  const box=document.createElement('div');box.className='vz-studio-unavailable';
-  const star=document.createElement('span');star.textContent='V / DESIGN COLLECTION';
-  const name=document.createElement('h2');name.textContent=design.name;
-  const body=document.createElement('p');body.textContent='An interactive preview is not available for this directory yet. You can explore more studio designs or use this as your project reference.';
-  const link=document.createElement('a');link.href='/create/?reference='+encodeURIComponent(design.id);link.textContent='Create a project ↗';
-  box.append(star,name,body,link);frameRoot.replaceChildren(box);
-  setStatus('Preview not available');return;
- }
- const pic=document.createElement('img');pic.className='vz-studio-preview-image';pic.src=image;
- pic.alt=design.name+' — published project preview';pic.decoding='async';pic.referrerPolicy='no-referrer';
- pic.addEventListener('error',()=>{if(!pic.dataset.fallbackTried&&design.fallbackImage&&pic.src!==design.fallbackImage){pic.dataset.fallbackTried='1';pic.src=design.fallbackImage;return}showUnavailable()});
- frameRoot.replaceChildren(pic);
- setStatus('Gallery view');
+try{design=JSON.parse(data.textContent||'{}')}catch{return}
+const live=design.mode==='immersive',id=design.id;
+let frame=null,currentPercent=0;
+const setStatus=message=>{if(caption)caption.textContent=message};
+const escape=s=>String(s||'');
+function updateProgress(value){
+ currentPercent=Math.max(0,Math.min(100,Math.round(Number(value)||0)));
+ const bar=document.getElementById('vz-progress-fill');
+ const label=document.getElementById('vz-progress-text');
+ if(bar)bar.style.transform='scaleX('+(currentPercent/100)+')';
+ if(label)label.textContent=currentPercent+'%';
 }
-function showUnavailable(){
- const container=document.createElement('div');container.className='vz-studio-unavailable';
- const mark=document.createElement('strong');mark.textContent='V.';
- const h=document.createElement('h2');h.textContent='This preview is temporarily unavailable.';
- const p=document.createElement('p');p.textContent='Some external media providers restrict embedded content. You can still continue with this design in the VELORYZ project planner.';
- const link=document.createElement('a');link.href='/create/?reference='+encodeURIComponent(design.id);link.textContent='Create with VELORYZ ↗';
- container.append(mark,h,p,link);
- frameRoot.replaceChildren(container);setStatus('Preview unavailable');
+function placeholder(title,message){
+ const box=document.createElement('div');box.className='vz-market-preview-unavailable';
+ const mark=document.createElement('span');mark.textContent='VELORYZ / PREVIEW';
+ const h=document.createElement('h2');h.textContent=title;
+ const p=document.createElement('p');p.textContent=message;
+ const a=document.createElement('a');a.href='/create/?reference='+encodeURIComponent(id);
+ a.textContent='Customize with VELORYZ ↗';
+ box.append(mark,h,p,a);content.replaceChildren(box);setStatus(message);
 }
-function loadPreview(){
- current='preview';
- if(!design.localSource)return makeScreenshot();
- const iframe=document.createElement('iframe');iframe.className='vz-studio-iframe';
- iframe.title=design.name+' — interactive design website';
- iframe.loading='eager';iframe.referrerPolicy='strict-origin-when-cross-origin';
- // No allow-same-origin: third-party preview code cannot read VELORYZ cookies
- // or access the parent document. This is intentional security isolation.
+function imagePreview(){
+ frame=null;
+ if(!design.image)return placeholder('Preview under preparation','A full interactive website has not been installed for this project. You can use the visual direction in your VELORYZ project brief.');
+ const img=document.createElement('img');
+ img.className='vz-market-screenshot';img.src=design.image;
+ img.decoding='async';img.referrerPolicy='no-referrer';
+ img.alt=design.name+' — actual publisher or repository project media';
+ img.addEventListener('error',()=>{
+  if(!img.dataset.fallback&&design.fallbackImage&&img.src!==design.fallbackImage){
+   img.dataset.fallback='yes';img.src=design.fallbackImage;return;
+  }
+  placeholder('Preview temporarily unavailable','The original media host cannot supply this preview right now. You can still request a tailored design from the Studio.');
+ });
+ content.replaceChildren(img);
+ setStatus('Visual reference · website source not locally installed');
+}
+function loadSite(){
+ updateProgress(0);
+ if(!design.isRunnable||!design.localSource){imagePreview();return}
+ const iframe=document.createElement('iframe');
+ iframe.className='vz-market-live-iframe';
+ iframe.title=escape(design.name)+' — original website, scroll to explore';
+ iframe.src=design.localSource;
+ iframe.loading='eager';
+ iframe.referrerPolicy='strict-origin-when-cross-origin';
+ // Browser-enforced opaque origin isolates upstream source from Studio login/DOM.
+ // Do NOT add allow-same-origin to this sandbox.
  iframe.setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock');
  iframe.setAttribute('allow','fullscreen');
- iframe.src=design.localSource;
- iframe.addEventListener('load',()=>setStatus('Interactive preview · scroll inside to explore'),{once:true});
- iframe.addEventListener('error',()=>{if(design.image)makeScreenshot();else showUnavailable()},{once:true});
- frameRoot.replaceChildren(iframe);
- setStatus('Opening interactive preview...');
+ iframe.addEventListener('load',()=>{
+  setStatus('Live website ready · scroll inside the experience to trigger original motion');
+  command('report');
+ },{once:true});
+ iframe.addEventListener('error',()=>{if(design.image)imagePreview();else placeholder('Website temporarily unavailable','The preview could not load. The Studio can still help you scope this direction.')},{once:true});
+ frame=iframe;
+ content.replaceChildren(iframe);
+ setStatus('Loading the real website...');
 }
-loadPreview();
+function command(name,delta=0){
+ if(!frame?.contentWindow)return;
+ // No secrets or user data pass through the untrusted iframe boundary.
+ frame.contentWindow.postMessage({type:'veloryz:preview-command',id,command:name,delta:Math.max(-1800,Math.min(1800,Math.round(delta)))},'*');
+}
+loadSite();
+window.addEventListener('message',event=>{
+ if(!frame?.contentWindow||event.source!==frame.contentWindow)return;
+ const msg=event.data;
+ if(!msg||msg.type!=='veloryz:preview-progress'||msg.id!==id)return;
+ const percent=Number(msg.percent);
+ if(Number.isFinite(percent)&&percent>=0&&percent<=100)updateProgress(percent);
+});
 document.addEventListener('click',event=>{
- const el=event.target.closest('[data-vz-device],[data-vz-reload],[data-vz-fullscreen],[data-vz-close],#vz-made-with');
- if(!el)return;
- if(el.dataset.vzDevice){
-  const width=el.dataset.vzDevice;if(!['desktop','tablet','mobile'].includes(width))return;
+ const control=event.target.closest('[data-vz-device],[data-vz-restart],[data-vz-reload],[data-vz-fullscreen],[data-vz-close],#vz-made-with');
+ if(!control)return;
+ if(control.dataset.vzDevice){
+  const width=control.dataset.vzDevice;
+  if(!['desktop','tablet','mobile'].includes(width))return;
   stage.dataset.vzDevice=width;
-  document.querySelectorAll('[data-vz-device]').forEach(button=>button.setAttribute('aria-pressed',String(button===el)));
+  document.querySelectorAll('[data-vz-device]').forEach(button=>button.setAttribute('aria-pressed',String(button===control)));
+  setStatus('Viewport: '+width+'. Scroll inside the site for its original motion.');
+  command('report');
   return;
  }
- if(el.hasAttribute('data-vz-reload')){if(design.localSource)loadPreview();else makeScreenshot();return}
- if(el.hasAttribute('data-vz-fullscreen')){
+ if(control.matches('[data-vz-restart]')){command('top');setStatus('Returning to the beginning of the site');return}
+ if(control.matches('[data-vz-reload]')){loadSite();return}
+ if(control.matches('[data-vz-fullscreen]')){
   if(document.fullscreenElement){document.exitFullscreen?.().catch(()=>{});return}
-  if(stage.requestFullscreen)stage.requestFullscreen().catch(()=>setStatus('Fullscreen is not available in this browser.'));
-  else setStatus('Fullscreen is not available in this browser.');
+  stage.requestFullscreen?.().catch(()=>setStatus('Fullscreen is unavailable on this device.'));
   return;
  }
- const dialog=document.getElementById('vz-studio-about');
- if(el.id==='vz-made-with'){if(dialog?.showModal)dialog.showModal();return}
- if(el.hasAttribute('data-vz-close'))dialog?.close?.();
+ const dlg=document.getElementById('vz-studio-about');
+ if(control.id==='vz-made-with'){if(dlg?.showModal)dlg.showModal();return}
+ if(control.matches('[data-vz-close]'))dlg?.close?.();
 });
-const dialog=document.getElementById('vz-studio-about');
-dialog?.addEventListener('click',event=>{
- if(event.target===dialog)dialog.close();
-});
+const dlg=document.getElementById('vz-studio-about');
+dlg?.addEventListener('click',event=>{if(event.target===dlg)dlg.close()});
+// When user wheels over a static preview overlay (badge / shell), forward it to
+// the real website instead of making the outer page move while the site stays put.
+// Native mouse wheel *inside* the iframe remains untouched.
+stage.addEventListener('wheel',event=>{
+ if(!frame||!design.isRunnable)return;
+ if(event.target.closest('button,a'))return;
+ event.preventDefault();
+ command('wheel',event.deltaY);
+},{passive:false});
+// Full viewer is 100dvh and cannot scroll externally. Touch/mouse/trackpad
+// inside the iframe scroll the source document itself, driving IntersectionObserver,
+// CSS scroll timelines, Lenis, GSAP ScrollTrigger and native scroll effects.
+if(live){
+ window.addEventListener('wheel',event=>{
+  if(!frame||!design.isRunnable)return;
+  if(event.target.closest('button,a,.vz-market-devices'))return;
+  if(stage.contains(event.target))return; // stage already forwards its overlay wheel
+  event.preventDefault();command('wheel',event.deltaY);
+ },{passive:false});
+}
+document.addEventListener('error',event=>{
+ const node=event.target;
+ if(!(node instanceof HTMLImageElement))return;
+ if(!node.matches('.vz-market-cover,.vz-market-related-card img'))return;
+ const fallback=node.dataset.fallbackSrc;
+ if(fallback&&!node.dataset.fallbackTried&&node.src!==fallback){
+  node.dataset.fallbackTried='1';node.src=fallback;
+ }else node.style.opacity='.2';
+},true);
 })();
