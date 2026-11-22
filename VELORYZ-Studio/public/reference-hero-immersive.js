@@ -136,7 +136,7 @@ if(brand){
  brand.addEventListener('error',()=>{
   if(!tried){tried=true;brand.src='/assets/brand/official/Main-Dark-Ink-Transparent.png';}
   else{
-   brand.hidden=true;
+   brand.hidden=true;brand.style.setProperty('display','none','important');
    if(!brand.parentNode.querySelector('.vz-brand-text-fallback')){
     const fallback=document.createElement('span');fallback.className='vz-brand-text-fallback';
     fallback.textContent='VELORYZ';brand.parentNode.append(fallback);
