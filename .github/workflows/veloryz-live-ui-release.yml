@@ -1,0 +1,32 @@
+name: Verify VELORYZ live UI deployment
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "VELORYZ-Studio/public/veloryz-*.css"
+      - "VELORYZ-Studio/public/veloryz-*.js"
+      - "VELORYZ-Studio/lib/response-security.ts"
+      - "VELORYZ-Studio/lib/design-detail-page.ts"
+      - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
+      - ".github/workflows/veloryz-live-ui-release.yml"
+permissions:
+  contents: read
+jobs:
+  live-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: VELORYZ-Studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm actual live deployment version, rendered markup and motion assets
+        env:
+          VELORYZ_LIVE_URL: https://veloryz.online
+          VELORYZ_UI_RELEASE: silk-ui-20261123-r2
+          VELORYZ_PROBE_ATTEMPTS: 16
+        run: node tools/check-live-ui-release.mjs

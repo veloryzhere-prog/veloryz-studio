@@ -26,8 +26,8 @@
   return (!reduced.matches || m === 'full') && m !== 'paused' && m !== 'reduced' && !doc.hidden;
  };
 
- const LIFT = '.dc,.fl,.vz-doc-guide,.vz-studio-full-grid>a,.pc';
- const PRESS = '.btn,.chip,.mbtn,.vz-header-create,.stars button';
+ const LIFT = '.dc,.fl,.vz-doc-guide,.vz-studio-full-grid>a,.pc,.v4-choice,.v4-feature-card,.v4-style-card,.v4-template-card,.v4-number-card,.vz-market-related-card';
+ const PRESS = '.btn,.chip,.mbtn,.vz-header-create,.stars button,.v4-choice,.v4-primary,.v4-top-next,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.vz-market-btn';
 
  /* One lazily created, paused animation per element and effect; we only drive it forwards or back. */
  const rigs = new WeakMap();
