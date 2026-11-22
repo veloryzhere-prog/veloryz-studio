@@ -12,59 +12,95 @@ const safeImg=u=>{
  catch{return ''}
 };
 function buildGallery(){
- const root=$('#vz-home-library-track'),pause=$('#vz-library-pause');
- if(!root)return;
- const items=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x?.enabled!==false&&x?.name):[];
+ const track=$('#vz-home-library-track');
+ const viewport=$('#vz-home-library-viewport');
+ const section=$('#vz-home-library');
+ const index=$('#vz-library-index');
+ const count=$('#vz-library-count');
+ const fill=$('#vz-library-progress-fill');
+ if(!track||!viewport||!section)return;
+ const items=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x&&x.enabled!==false&&toText(x.name)):[];
  if(!items.length){
-  root.innerHTML='';
-  const a=document.createElement('a');a.href='/design/';a.className='btn fill';a.textContent='Explore the published design collection ↗';root.append(a);
-  if(pause)pause.hidden=true;
+  const a=document.createElement('a');a.href='/design/';a.className='btn fill';a.textContent='Explore the available design directions ↗';
+  track.replaceChildren(a);
+  section.classList.add('is-static');
+  if(index)index.textContent='Browse the full library ↗';
+  if(count)count.textContent='Design library / Explore';
   return;
  }
- const createCard=(item,index)=>{
+ const createCard=(item,i)=>{
   const article=document.createElement('article');article.className='vz-home-design-card';
   const art=document.createElement('a');art.className='vz-home-design-art';art.href='/design/';
   art.setAttribute('aria-label','Explore '+toText(item.name)+' in the VELORYZ design library');
   const image=safeImg(item.image||item.cover);
   if(image){
-   const img=document.createElement('img');img.src=image;img.loading='lazy';img.decoding='async';
-   img.alt=toText(item.name)+' website reference preview';
+   const img=document.createElement('img');img.src=image;img.loading=i<3?'eager':'lazy';img.decoding='async';
+   img.alt=toText(item.name)+' published design preview';
    img.addEventListener('error',()=>{img.hidden=true;art.classList.add('vz-art-unavailable')},{once:true});
    art.append(img);
   }else art.classList.add('vz-art-unavailable');
   const body=document.createElement('div');body.className='vz-home-design-body';
-  const tag=document.createElement('span');tag.className='tag';tag.textContent=toText(item.category||'Design direction')+' / '+String(index+1).padStart(2,'0');
+  const tag=document.createElement('span');tag.className='tag';
+  tag.textContent=toText(item.category||'Design direction')+' / '+String(i+1).padStart(2,'0');
   const title=document.createElement('h3');title.textContent=toText(item.name);
-  const desc=document.createElement('p');desc.textContent=truncate(item.description||'Explore the full design direction and associated licensing details.',156);
+  const desc=document.createElement('p');
+  desc.textContent=truncate(item.description||'Explore this design direction and its project requirements in the published VELORYZ library.',185);
   const foot=document.createElement('div');foot.className='vz-home-design-meta';
-  const price=document.createElement('strong');price.textContent='From '+money(item.price);
-  const link=document.createElement('a');link.href='/design/';link.textContent='Details ↗';
-  link.setAttribute('aria-label','View library details for '+toText(item.name));
-  foot.append(price,link);body.append(tag,title,desc,foot);article.append(art,body);
-  return article;
+  const info=document.createElement('div');info.className='vz-home-design-byline';
+  const cost=document.createElement('strong');cost.textContent=Number(item.price)>0?'From '+money(item.price):'Scope-based pricing';
+  info.append(cost);
+  if(item.author){const credit=document.createElement('span');credit.textContent='Source: '+truncate(item.author,48);info.append(credit);}
+  const link=document.createElement('a');link.href='/design/';link.textContent='View direction ↗';
+  link.setAttribute('aria-label','View published library details for '+toText(item.name));
+  foot.append(info,link);body.append(tag,title,desc,foot);article.append(art,body);return article;
  };
- const group=document.createElement('div');group.className='vz-home-library-set';
- items.forEach((p,i)=>group.append(createCard(p,i)));
- // Enough cards for small datasets and ultra-wide viewports; same-width groups guarantee seam-free looping.
- if(items.length<4){items.forEach((p,i)=>group.append(createCard(p,i+items.length)));}
- const second=group.cloneNode(true);second.setAttribute('aria-hidden','true');second.inert=true;
- root.replaceChildren(group,second);
+ track.replaceChildren(...items.map(createCard)); // one complete set, no duplicate artificial items
+ track.setAttribute('aria-label',items.length+' published designs, presented through scrolling');
+ let travel=0,lastW=0,lastViewW=0;
+ const motionIsFull=()=>!window.StudioMotion||window.StudioMotion.level==='full';
+ const clamp=v=>Math.max(0,Math.min(1,v));
+ const update=()=>{
+  if(!section.isConnected||!viewport.clientWidth)return;
+  const full=motionIsFull();
+  section.classList.toggle('is-static',!full);
+  if(!full){
+   track.style.transform='none';
+   if(fill)fill.style.transform='scaleX(0)';
+   if(index)index.textContent='Swipe designs horizontally ↔';
+   return;
+  }
+  if(track.scrollWidth!==lastW||viewport.clientWidth!==lastViewW)recalc();
+  const range=Math.max(1,section.offsetHeight-window.innerHeight);
+  const progress=clamp(-section.getBoundingClientRect().top/range);
+  track.style.transform='translate3d('+(-travel*progress).toFixed(2)+'px,0,0)';
+  if(fill)fill.style.transform='scaleX('+progress.toFixed(4)+')';
+  if(index){
+   const nearest=Math.min(items.length,Math.max(1,Math.round(progress*(items.length-1))+1));
+   index.textContent=String(nearest).padStart(2,'0')+' / '+String(items.length).padStart(2,'0');
+  }
+ };
  const recalc=()=>{
-  if(!root.isConnected)return;
-  const gap=parseFloat(getComputedStyle(root).gap)||18;
-  const width=group.getBoundingClientRect().width;
-  root.style.setProperty('--vz-home-library-gap',gap/2+'px');
-  root.style.setProperty('--vz-home-library-duration',Math.max(28,width/50).toFixed(2)+'s');
+  const viewWidth=viewport.clientWidth; if(!viewWidth)return;
+  lastW=track.scrollWidth;lastViewW=viewWidth;
+  travel=Math.max(0,lastW-viewWidth);
+  section.style.setProperty('--vz-library-scroll-distance',Math.max(1,Math.ceil(travel*1.12))+'px');
+  if(count)count.textContent=String(items.length).padStart(2,'0')+' published design directions';
+  if(index&&!section.classList.contains('is-static'))index.textContent='01 / '+String(items.length).padStart(2,'0');
  };
- requestAnimationFrame(recalc);
- if(typeof ResizeObserver==='function')new ResizeObserver(recalc).observe(group);
- if(reduce){root.classList.add('is-paused');if(pause){pause.textContent='Reduced motion';pause.disabled=true;pause.setAttribute('aria-pressed','true');}}
- else pause?.addEventListener('click',()=>{
-  const paused=!root.classList.contains('is-paused');
-  root.classList.toggle('is-paused',paused);
-  pause.setAttribute('aria-pressed',String(paused));
-  pause.textContent=paused?'Resume motion ▶':'Pause motion ‖';
- });
+ window.VeloryzReferenceGallery={update,refresh:recalc,get count(){return items.length}};
+ // Same scroll clock as the original horizontally pinned services sequence.
+ // The existing page tick calls update(); no independent high-frequency animation loop.
+ requestAnimationFrame(()=>{recalc();update();});
+ if(typeof ResizeObserver==='function'){
+  const observer=new ResizeObserver(()=>{recalc();update();});
+  observer.observe(viewport);observer.observe(track);
+ }else window.addEventListener('resize',()=>{recalc();update();},{passive:true});
+ document.addEventListener('DOMContentLoaded',()=>{
+  window.StudioMotion?.addEventListener?.('change',()=>{recalc();update();});
+  recalc();update();
+ },{once:true});
+ window.addEventListener('pageshow',()=>{recalc();update();});
+ window.addEventListener('hashchange',()=>requestAnimationFrame(()=>{recalc();update();}));
 }
 function menuFocus(){
  const menu=$('#mn'),button=$('#mb');
