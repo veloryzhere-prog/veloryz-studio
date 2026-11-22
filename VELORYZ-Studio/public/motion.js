@@ -10,11 +10,13 @@
  const listeners=new Set();
  let preference='auto',gateActive=false,gateStage=0,gateInitialized=false,gateAttempts=0,observer,queued=false,originalOverflow='',introDone=false;
  try{const saved=localStorage.getItem(key);if(valid.has(saved))preference=saved;introDone=localStorage.getItem(welcomeKey)==='1';}catch{}
- const saver=()=>typeof navigator!=='undefined'&&Boolean(navigator.connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
+ const saver=()=>typeof navigator!=='undefined'&&Boolean(navigator.connection?.saveData);
  const effective=()=>preference==='auto'?(media?.matches||saver()?'reduced':'full'):preference;
  // An actual first-visit choice is required once per browser, then remembered.
  // Existing explicit Full preference is already a completed choice.
- const needsIntro=root.dataset.guidedMotionIntro==='true' && !introDone && preference!=='full';
+ // The former compulsory gate locked the site and delayed all motion on first visits.
+ // The existing Motion settings remain available without blocking content playback.
+ const needsIntro=false;
  if(needsIntro)root.setAttribute('data-motion-gate','boot');
  let gateOverlay=null;
  function lockPage(){
