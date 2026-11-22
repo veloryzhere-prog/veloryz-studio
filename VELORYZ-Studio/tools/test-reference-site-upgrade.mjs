@@ -33,6 +33,8 @@ assert(dock.includes("fetch('/api/adviser'"),'Side AI must call live existing ad
 for(const id of ['happy','nikhil','milky','ritik','aryan'])assert(dock.includes("id:'"+id+"'"),'Missing live personality '+id);
 assert(!dock.includes('madherchod'),'Deleted assistant must not be reintroduced');
 assert(dock.includes("No AI reply was generated"),'No fabricated responses if API fails');
+assert(dock.includes('window.VeloryzReferenceAI'),'Reference conversation drawer must be accessible from studio adviser cards');
+assert(read('public/claude-reference-enhancements.js').includes('window.VeloryzReferenceAI.open'),'Studio advisers must open live assistant in the current design');
 assert(shared.includes('href=link'),'Shared menu uses real navigation');
 assert(shared.includes('vz-shared-menu-toggle')&&shared.includes('vz-shared-curtain'),'Reference circular nav and page-curtain interactions');
 assert(shared.includes('vz-shared-guides'),'Each public route receives animated docs footer');
