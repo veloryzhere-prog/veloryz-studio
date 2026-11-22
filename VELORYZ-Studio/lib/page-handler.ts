@@ -6,6 +6,8 @@ import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import {findDesignPreview,renderDesignPreview} from './design-detail-page';
+import {renderDesignNoticesPage} from './design-notices-page';
+import {serveDesignAsset} from './design-asset-proxy';
 import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json' };
 import { renderReviewsPage } from './reviews-page';
 import { renderRoadmapPage } from './roadmap-page';
@@ -22,6 +24,9 @@ const htmlDocumentPath=(p:string)=>{
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ const assetResponse=await serveDesignAsset(request);
+ if(assetResponse)return assetResponse;
+ if(path==='/legal/design-notices'||path==='/legal/design-notices/')return secureHtml(renderDesignNoticesPage(),200,true);
  // Owner-supplied editorial reference experience becomes the public homepage.
  // Keep the existing SPA available with ?classic=1 for account/project workflows.
  // All admin, documentation, client, pricing and creator endpoints retain their original handlers.
