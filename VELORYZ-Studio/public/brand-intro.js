@@ -21,7 +21,7 @@
  try{seen=sessionStorage.getItem(sessionKey)==='1';}catch{}
  let active=!preview&&home&&!seen&&!motionOff();
  let started=false,finished=false,overlay=null,returnFocus=null;
- let runTimer=0,exitTimer=0,safetyTimer=0,previousOverflow='',locked=[];
+ let runTimer=0,exitTimer=0,safetyTimer=0,previousOverflow='',locked=[],clip=null;
  root.dataset.vzIntro=active?'preparing':'idle';
  function remember(){
   if(preview)return;
@@ -30,6 +30,27 @@
  function clearTimers(){
   clearTimeout(runTimer);clearTimeout(exitTimer);clearTimeout(safetyTimer);
   runTimer=exitTimer=safetyTimer=0;
+ }
+ function removeClip(){if(clip){clip.pause();clip.removeAttribute('src');clip.remove();clip=null;}overlay?.classList.remove('vz-intro-clip-ready');}
+ function tryHighFpsFilm(){
+  // CSS animation is a fully working offline fallback. MP4 enables a true native 60fps film.
+  if(overlay?.dataset.concept!=='prism'||typeof document.createElement!=='function')return;
+  const created=performance?.now?.()||Date.now();
+  const player=document.createElement('video');clip=player;
+  player.className='vz-intro-film-clip';player.muted=true;player.playsInline=true;player.preload='auto';player.setAttribute('aria-hidden','true');
+  player.src=matchMedia?.('(max-width: 700px)')?.matches?'/assets/brand/intro/veloryz-opening-60fps-mobile.mp4':'/assets/brand/intro/veloryz-opening-60fps.mp4';
+  player.addEventListener('canplay',()=>{
+   if(!active||finished||root.dataset.vzIntro!=='playing')return;
+   // Never flash a late-decoding video over an already-running logo animation.
+   if((performance?.now?.()||Date.now())-created>500)return;
+   try{player.currentTime=0;}catch{}
+   const task=player.play();if(task?.catch)task.catch(()=>{removeClip();});
+   overlay.classList.add('vz-intro-clip-ready');
+   clearTimeout(runTimer);runTimer=setTimeout(()=>exit(false),2670);
+  },{once:true});
+  player.addEventListener('ended',()=>exit(false),{once:true});
+  player.addEventListener('error',removeClip,{once:true});
+  overlay.appendChild(player);player.load();
  }
  function lockPage(){
   previousOverflow=document.body.style.overflow;
@@ -49,7 +70,7 @@
  }
  function done(skipped=false){
   if(finished||!active)return;
-  finished=true;clearTimers();remember();
+  finished=true;clearTimers();removeClip();remember();
   if(overlay){overlay.hidden=true;overlay.setAttribute('aria-hidden','true');}
   root.dataset.vzIntro='done';
   restorePage();
@@ -63,7 +84,7 @@
   clearTimeout(runTimer);
   if(skipped||motionOff()){done(true);return;}
   root.dataset.vzIntro='exiting';
-  exitTimer=setTimeout(()=>done(false),740);
+  exitTimer=setTimeout(()=>done(false),460);
  }
  function start(concept='prism',force=false){
   if(!concepts.has(concept))concept='prism';
@@ -87,9 +108,11 @@
    root.dataset.vzIntro='playing';
    overlay.querySelector('[data-vz-intro-skip]')?.focus({preventScroll:true});
   }));
-  runTimer=setTimeout(()=>exit(false),2110);
-  // Never block access indefinitely if animation events are interrupted.
-  safetyTimer=setTimeout(()=>done(true),5700);
+  runTimer=setTimeout(()=>exit(false),1750);
+  // The shorter CSS sequence targets display refresh (60/120Hz) without long-frame video.
+  tryHighFpsFilm();
+  // The 60fps clip is optional; even on a failed fetch the overlay always unlocks.
+  safetyTimer=setTimeout(()=>done(true),4000);
  }
  window.VeloryzIntro={
   get active(){return active;},
