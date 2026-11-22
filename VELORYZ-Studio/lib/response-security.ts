@@ -2,7 +2,7 @@ const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&am
 export function secureHtml(html:string,status=200,privatePage=false,forceProduction=false){
  const nonce=crypto.randomUUID().replaceAll('-','');
  const headers:Record<string,string>={'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Permissions-Policy':'camera=(), microphone=(), geolocation=()','X-Permitted-Cross-Domain-Policies':'none'};
- if(forceProduction||!import.meta.env.DEV)headers['Content-Security-Policy']=`default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' blob: https:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://chatgpt.com; upgrade-insecure-requests`;
+ if(forceProduction||!import.meta.env.DEV)headers['Content-Security-Policy']=`default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; media-src 'self' blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://chatgpt.com; upgrade-insecure-requests`;
  if((forceProduction||!import.meta.env.DEV))headers['Strict-Transport-Security']='max-age=31536000';
  if(privatePage||status===404)headers['X-Robots-Tag']='noindex, nofollow';
  const projectLink='<a class="make-project-link" href="/create/"><span>Make your project</span><span class="make-project-arrow" aria-hidden="true">↗</span></a>';
