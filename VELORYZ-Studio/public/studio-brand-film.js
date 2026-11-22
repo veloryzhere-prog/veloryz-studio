@@ -19,10 +19,10 @@ const markup=()=>[
 '<div class="vz-film-window" data-film-state="still" data-film-media="pending"><div class="vz-film-canvas">',
 '<div class="vz-film-illustration" aria-hidden="true">',
 '<div class="vz-film-dark"><span class="vz-film-filmgrid"></span><span class="vz-film-orbit orbit-one"></span><span class="vz-film-orbit orbit-two"></span>',
-'<img class="vz-film-emblem" src="/assets/brand/veloryz-mark.svg" width="240" height="220" alt="">',
-'<img class="vz-film-portal" src="/assets/brand/official/Profile-Transparent.png" width="420" height="420" alt="">',
+'<img class="vz-film-emblem" loading="lazy" decoding="async" src="/assets/brand/veloryz-mark.svg" width="240" height="220" alt="">',
+'<img class="vz-film-portal" loading="lazy" decoding="async" src="/assets/brand/official/Profile-Transparent.png" width="420" height="420" alt="">',
 '<span class="vz-film-script">BEYOND THE FRAME</span></div>',
-'<div class="vz-film-light"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="" width="880" height="263"><span>DREAM. BUILD. GROW. TOGETHER.</span></div>',
+'<div class="vz-film-light"><img loading="lazy" decoding="async" src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="" width="880" height="263"><span>DREAM. BUILD. GROW. TOGETHER.</span></div>',
 '</div><video class="vz-film-video" playsinline muted preload="none" aria-label="VELORYZ original cinematic logo film, 7.75 seconds" disablepictureinpicture></video>',
 '<div class="vz-film-corner top-left">VELORYZ <span>/ STUDIO</span></div>',
 '<div class="vz-film-corner top-right">BEYOND THE FRAME <span>·</span> 001</div>',
@@ -109,12 +109,12 @@ function click(event){
 function observe(){
  observer?.disconnect();
  if(!section)return;
- if(typeof IntersectionObserver!=='function'){visible=true;loadVideo();if(allowMotion())play();return;}
+ if(typeof IntersectionObserver!=='function'){visible=true;if(allowMotion()){loadVideo();play();}return;}
  observer=new IntersectionObserver(entries=>{
   for(const item of entries){
    if(item.target!==section)continue;
    visible=item.isIntersecting&&item.intersectionRatio>=.12;
-   if(visible){loadVideo();if(allowMotion()&&!manuallyPlayed&&!complete)play();}
+   if(visible){if(allowMotion()){loadVideo();if(!manuallyPlayed&&!complete)play();}}
    else pause();
   }
  },{rootMargin:'160px 0px 140px 0px',threshold:[0,.12,.3]});
