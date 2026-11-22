@@ -1,71 +1,68 @@
-/* VELORYZ scarf: one original video, no controls, labels or scroll-progress transforms.
-   Autoplays muted whenever visible; pauses while offscreen/hidden. Reduced motion,
-   explicit site Motion Off, and Save Data still take priority over autoplay.
-*/
-class VeloryzFrameCut extends HTMLElement{
- connectedCallback(){
-  queueMicrotask(()=>{if(this.isConnected&&!this.disposeScene)this.mount();});
- }
- disconnectedCallback(){this.disposeScene?.();this.disposeScene=null;}
+/* VELORYZ original scarf film — motion-aware, route-safe, automatic playback.
+ * Native muted inline video remains the animation engine; no duplicate rAF loops.
+ */
+class VeloryzFrameCut extends HTMLElement {
+ connectedCallback(){queueMicrotask(()=>{if(this.isConnected&&!this.cleanup)this.mount();});}
+ disconnectedCallback(){this.cleanup?.();this.cleanup=null;}
  mount(){
-  const video=this.querySelector('.frame-scarf');
-  if(!video)return;
-  const controller=new AbortController();
-  const listen=(node,type,callback)=>node?.addEventListener?.(type,callback,{signal:controller.signal});
+  const video=this.querySelector('video.frame-scarf');if(!video)return;
+  const controller=new AbortController(),signal=controller.signal;
+  const listen=(el,name,fn)=>el?.addEventListener?.(name,fn,{signal});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  let observer=null,visible=false,loaded=false,attempting=false;
-  video.muted=true;
-  video.loop=true;
-  video.playsInline=true;
-  video.autoplay=true;
-  const motionAllowed=()=>!document.hidden&&!reduced.matches&&!connection?.saveData&&
-   window.StudioMotion?.level!=='reduced'&&window.StudioMotion?.level!=='paused'&&
-   !window.StudioMotion?.onboardingActive;
-  const pause=()=>{if(!video.paused)video.pause();};
+  let observer,visible=false,attempting=false,loaded=false,lastError='',retryTimer=0;
+  video.defaultMuted=true;video.muted=true;video.loop=true;video.autoplay=true;video.playsInline=true;
+  video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('loop','');video.setAttribute('playsinline','');
+  video.preload='auto';
+  const allowed=()=>this.isConnected&&!document.hidden&&!reduced.matches&&!connection?.saveData&&
+    !['paused','reduced'].includes(window.StudioMotion?.level)&&!window.StudioMotion?.onboardingActive;
+  const clearRetry=()=>{if(retryTimer){clearTimeout(retryTimer);retryTimer=0;}};
+  const load=()=>{if(loaded)return;loaded=true;video.src='/assets/frame-cut/scarf.mp4';video.load();};
+  const pause=()=>{clearRetry();if(!video.paused)video.pause();};
   const sync=()=>{
-   if(!this.isConnected)return;
-   if(!visible||!motionAllowed()){pause();return;}
-   if(!loaded){
-    loaded=true;
-    video.preload='metadata';
-    video.src='/assets/frame-cut/scarf.mp4';
-    video.load?.();
-   }
+   if(!visible||!allowed()){pause();return;}
+   load();
    if(!video.paused||attempting)return;
    attempting=true;
-   const attempt=video.play();
-   if(attempt&&typeof attempt.then==='function'){
-    attempt.catch(()=>{ /* Muted autoplay may still be blocked; keep the static poster. */ }).finally(()=>{attempting=false;});
-   }else attempting=false;
+   try {
+    Promise.resolve(video.play()).then(()=>{lastError='';this.dataset.scarfState='playing';},error=>{
+     lastError=error?.name||'PlaybackError';this.dataset.scarfState='blocked';
+     // Browsers can deny autoplay. Retry once media is ready or after user interaction.
+     // Do not spam play() from a timer if permissions forbid it.
+    }).finally(()=>{attempting=false;});
+   }catch(error){attempting=false;lastError=error?.name||'PlaybackError';this.dataset.scarfState='blocked';}
   };
+  const onUserGesture=()=>{if(lastError&&allowed()&&visible){lastError='';sync();}};
   if(typeof IntersectionObserver==='function'){
    observer=new IntersectionObserver(entries=>{
-    for(const entry of entries){
-     if(entry.target!==this)continue;
-     visible=entry.isIntersecting&&entry.intersectionRatio>=.08;
-     sync();
+    for(const entry of entries)if(entry.target===this){
+     visible=entry.isIntersecting;sync();
     }
-   },{rootMargin:'180px 0px',threshold:[0,.08,.3]});
+   },{rootMargin:'360px 0px',threshold:0});
    observer.observe(this);
   }else visible=true;
+  listen(video,'canplay',sync);
+  listen(video,'stalled',()=>{if(visible&&allowed()){clearRetry();retryTimer=setTimeout(sync,1500);}});
+  listen(video,'waiting',()=>{if(visible&&allowed()){clearRetry();retryTimer=setTimeout(sync,1500);}});
+  listen(video,'ended',()=>{try{video.currentTime=0;}catch{}sync();});
+  listen(video,'error',()=>{this.dataset.scarfState='unavailable';});
+  listen(video,'playing',()=>{this.dataset.scarfState='playing';});
   listen(document,'visibilitychange',sync);
+  listen(window,'pageshow',sync);
+  listen(window,'focus',sync);
+  listen(document,'pointerdown',onUserGesture);
+  listen(document,'keydown',onUserGesture);
   listen(document,'studio:route',sync);
   listen(document,'studio:motion-intro-complete',sync);
   listen(document,'studio:brand-intro-complete',sync);
-  listen(window,'pageshow',sync);
   listen(window.StudioMotion,'change',sync);
   reduced.addEventListener?.('change',sync);
   connection?.addEventListener?.('change',sync);
   sync();
-  this.disposeScene=()=>{
-   controller.abort();
-   observer?.disconnect();
-   reduced.removeEventListener?.('change',sync);
-   connection?.removeEventListener?.('change',sync);
-   pause();
-   video.removeAttribute('src');
-   video.load?.();
+  this.cleanup=()=>{
+   controller.abort();observer?.disconnect();clearRetry();
+   reduced.removeEventListener?.('change',sync);connection?.removeEventListener?.('change',sync);
+   pause();video.removeAttribute('src');video.load();
   };
  }
 }

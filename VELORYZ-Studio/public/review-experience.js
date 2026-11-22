@@ -61,17 +61,45 @@
    }
    node.classList.remove('vz-reviews-spotlight-empty');
    state.textContent='Genuine visitor feedback · human-reviewed, not purchase-verified';
-   const first=mk('div','vz-review-set');
-   for(const review of items)first.append(reviewSlide(review));
-   const second=first.cloneNode(true);
-   second.setAttribute('aria-hidden','true');
-   second.inert=true;
-   track.replaceChildren(first,second);
-   track.style.setProperty('--vz-review-run',Math.max(28,items.length*10)+'s');
+   // Two equal content groups are required for translate(-50%) to loop seamlessly.
+   // Repeat only authentic approved reviews; extra repetitions are decorative.
+   let resizeObserver=null,renderedWidth=0;
+   const buildTrack=()=>{
+    if(!track.isConnected)return;
+    const ribbon=track.closest('.vz-reviews-ribbon');
+    const width=Math.max(320,Math.ceil(ribbon?.getBoundingClientRect().width||window.innerWidth));
+    if(Math.abs(width-renderedWidth)<60&&track.children.length===2)return;
+    renderedWidth=width;
+    const first=mk('div','vz-review-set'),prototype=items.map(reviewSlide);
+    prototype.forEach(card=>first.append(card));
+    // Ensure a whole set spans more than the viewport; avoid the empty half of a loop.
+    // Limit repetition for performance (authentic items only, never invented testimonials).
+    let copies=0;
+    const estimated=Math.max(280,Math.min(430,width*.31))+20;
+    while(items.length*(copies+1)*estimated<width+estimated*2&&copies<10){
+     for(const card of prototype){
+      const copy=card.cloneNode(true);copy.setAttribute('aria-hidden','true');copy.inert=true;first.append(copy);
+     }
+     copies++;
+    }
+    const second=first.cloneNode(true);second.setAttribute('aria-hidden','true');second.inert=true;
+    track.replaceChildren(first,second);
+    // Distance-based speed: approximately 55px/second regardless of card count.
+    requestAnimationFrame(()=>{
+     if(!track.isConnected)return;
+     const pixels=first.getBoundingClientRect().width;
+     track.style.setProperty('--vz-review-run',Math.max(24,pixels/55).toFixed(2)+'s');
+    });
+    if(reduce.matches||track.dataset.manualPause==='true')track.classList.add('vz-review-paused');
+    else track.classList.remove('vz-review-paused');
+   };
+   buildTrack();
+   if(typeof ResizeObserver==='function'){
+    resizeObserver=new ResizeObserver(()=>{if(document.contains(track))buildTrack();else resizeObserver.disconnect();});
+    resizeObserver.observe(track.closest('.vz-reviews-ribbon')||track);
+   }
    const btn=$('vz-review-pause');
-   if(btn){btn.disabled=false;btn.hidden=false;btn.setAttribute('aria-pressed','false');btn.textContent=reduce.matches?'Motion reduced':'Pause motion ‖';}
-   if(reduce.matches)track.classList.add('vz-review-paused');
-   else track.classList.remove('vz-review-paused');
+   if(btn){btn.disabled=reduce.matches;btn.hidden=false;btn.setAttribute('aria-pressed',String(track.dataset.manualPause==='true'));btn.textContent=reduce.matches?'Motion reduced':track.dataset.manualPause==='true'?'Resume motion ▶':'Pause motion ‖';}
   }).catch(()=>{
    if(current!==carouselToken)return;
    track.replaceChildren();
@@ -87,7 +115,10 @@
   const pause=$('vz-review-pause');
   pause?.addEventListener('click',()=>{
    const track=$('vz-review-track');if(!track)return;
-   const paused=track.classList.toggle('vz-review-paused');
+   if(reduce.matches)return;
+   const paused=track.dataset.manualPause!=='true';
+   track.dataset.manualPause=String(paused);
+   track.classList.toggle('vz-review-paused',paused);
    pause.setAttribute('aria-pressed',String(paused));
    pause.textContent=paused?'Resume motion ▶':'Pause motion ‖';
   });
@@ -167,8 +198,8 @@
  addEventListener('pagehide',stopClock);
  reduce.addEventListener?.('change',()=>{
   const track=$('vz-review-track'),pause=$('vz-review-pause');
-  if(track&&reduce.matches){track.classList.add('vz-review-paused');if(pause)pause.textContent='Motion reduced';}
-  else if(track&&pause?.getAttribute('aria-pressed')!=='true'){track.classList.remove('vz-review-paused');pause.textContent='Pause motion ‖';}
+  if(track&&reduce.matches){track.classList.add('vz-review-paused');if(pause){pause.disabled=true;pause.textContent='Motion reduced';}}
+  else if(track){if(pause)pause.disabled=false;if(track.dataset.manualPause!=='true'){track.classList.remove('vz-review-paused');if(pause)pause.textContent='Pause motion ‖';}}
  });
  window.VeloryzReviewExperience={mount,showInviteForPreview:()=>{if(location.hostname==='localhost')showInvite();}};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scheduleClock,{once:true});

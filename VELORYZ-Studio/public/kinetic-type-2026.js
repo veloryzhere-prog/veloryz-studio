@@ -1,56 +1,55 @@
-/* VELORYZ kinetic typography: one-shot character choreography.
- * The source word stays in the DOM for accessibility, SEO and non-JS clients.
- * Never polls scroll, replaces entire page headings or starts an rAF loop.
+/* VELORYZ — animated editorial word, preserving accessible original text.
+ * Changing visual languages are CSS driven, not layout-thrashing JavaScript loops.
  */
 (()=>{
- 'use strict';
- const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- let observer=null,previous=null;
- const allowed=()=>!reduced.matches&&document.documentElement.dataset.motion==='full'&&!document.hidden;
- function mount(){
-  const word=document.querySelector('#main .hero-kinetic-word[data-kinetic-word]');
-  if(previous===word&&word?.isConnected)return;
-  observer?.disconnect();observer=null;previous=word;
-  if(!word)return;
-  const original=String(word.dataset.kineticWord||word.textContent||'').trim();
-  if(!original||original.length>32)return;
-  const readable=document.createElement('span');
-  readable.className='vz-kinetic-readable';
-  readable.textContent=original;
-  const letters=document.createElement('span');
-  letters.className='vz-kinetic-letters';
-  letters.setAttribute('aria-hidden','true');
-  for(const [index,char] of [...original].entries()){
-   const piece=document.createElement('span');
-   piece.className='vz-kinetic-letter';
-   piece.textContent=char;
-   piece.style.setProperty('--vz-letter-index',String(index));
-   letters.appendChild(piece);
-  }
-  word.replaceChildren(readable,letters);
-  word.classList.add('is-ready');
-  const start=()=>{if(!word.isConnected)return;word.classList.add('is-activated');observer?.disconnect();observer=null;};
-  if(!allowed()||typeof IntersectionObserver!=='function'){
-   start();return;
-  }
-  observer=new IntersectionObserver(entries=>{
-   if(entries.some(entry=>entry.isIntersecting))start();
-  },{threshold:.08,rootMargin:'0px 0px -4% 0px'});
+'use strict';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+const PHASES=['editorial','sculptural','outline','signature'];
+let previous=null,observer=null,timer=0,phase=0,visible=false;
+const allowed=()=>document.documentElement.dataset.motion==='full'&&!reduce.matches&&!document.hidden&&!window.StudioMotion?.onboardingActive;
+const stop=()=>{if(timer){clearInterval(timer);timer=0;}};
+function paint(){
+ if(!previous?.isConnected)return;
+ previous.dataset.typePhase=PHASES[phase%PHASES.length];
+ previous.classList.add('is-activated');
+}
+function sync(){
+ if(!previous?.isConnected){mount();return;}
+ if(!allowed()||!visible){stop();previous.dataset.typePhase='editorial';previous.classList.add('is-activated');return;}
+ if(!timer){paint();timer=setInterval(()=>{phase=(phase+1)%PHASES.length;paint();},4700);}
+}
+function mount(){
+ const word=document.querySelector('#main .hero-kinetic-word[data-kinetic-word]');
+ if(word===previous&&word?.isConnected){sync();return;}
+ stop();observer?.disconnect();observer=null;previous=word;visible=false;phase=0;
+ if(!word)return;
+ const original=String(word.dataset.kineticWord||word.textContent||'').trim();
+ if(!original||original.length>40)return;
+ const readable=document.createElement('span');
+ readable.className='vz-kinetic-readable';readable.textContent=original;
+ const letters=document.createElement('span');
+ letters.className='vz-kinetic-letters';letters.setAttribute('aria-hidden','true');
+ Array.from(original).forEach((letter,index)=>{
+  const span=document.createElement('span');
+  span.className='vz-kinetic-letter';span.textContent=letter;
+  span.style.setProperty('--vz-letter-index',String(index));letters.appendChild(span);
+ });
+ word.replaceChildren(readable,letters);
+ word.classList.add('is-ready','is-activated');
+ word.dataset.typePhase='editorial';
+ const onIntersect=entries=>{visible=entries.some(e=>e.isIntersecting);sync();};
+ if(typeof IntersectionObserver==='function'){
+  observer=new IntersectionObserver(onIntersect,{rootMargin:'80px',threshold:0});
   observer.observe(word);
- }
- function refresh(){
-  if(!previous?.isConnected){previous=null;mount();return;}
-  if(!allowed()&&!previous.classList.contains('is-activated')){
-   previous.classList.add('is-activated');
-   observer?.disconnect();observer=null;
-  }
- }
- document.addEventListener('studio:route',mount);
- document.addEventListener('studio:motion-intro-complete',refresh);
- document.addEventListener('studio:brand-intro-complete',refresh);
- document.addEventListener('visibilitychange',refresh);
- window.StudioMotion?.addEventListener?.('change',refresh);
- reduced.addEventListener?.('change',refresh);
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});
- else mount();
+ }else{visible=true;sync();}
+}
+document.addEventListener('studio:route',mount);
+document.addEventListener('studio:brand-intro-complete',sync);
+document.addEventListener('studio:motion-intro-complete',sync);
+document.addEventListener('visibilitychange',sync);
+window.addEventListener('pageshow',sync);
+window.addEventListener('pagehide',stop);
+window.StudioMotion?.addEventListener?.('change',sync);
+reduce.addEventListener?.('change',sync);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
