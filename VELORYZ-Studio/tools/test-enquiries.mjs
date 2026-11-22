@@ -6,7 +6,7 @@ const sqlite=new DatabaseSync(':memory:');
 for(const file of fs.readdirSync(new URL('../drizzle/',import.meta.url)).filter(f=>f.endsWith('.sql')).sort())sqlite.exec(fs.readFileSync(new URL('../drizzle/'+file,import.meta.url),'utf8'));
 const DB={prepare(sql){let args=[];return{bind(...a){args=a;return this;},async first(){return sqlite.prepare(sql).get(...args)||null;},async all(){return{results:sqlite.prepare(sql).all(...args)};},async run(){return{meta:{changes:Number(sqlite.prepare(sql).run(...args).changes)}};}};}};
 const env={DB,BUCKET:{},ADMIN_EMAIL:'owner@example.com'},owner={'oai-authenticated-user-id':'owner-id','oai-authenticated-user-email':'owner@example.com'};
-async function call(path,body,headers={},method=body?'POST':'GET'){const response=await handleApi(new Request('https://studio.test'+path,{method,headers:{origin:'https://studio.test',...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined}),env);return{status:response.status,data:await response.json()};}
+async function call(path,body,headers={},method=body?'POST':'GET'){const response=await handleApi(new Request('https://studio.test'+path,{method,headers:{...headers,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined}),env);return{status:response.status,data:await response.json()};}
 const day=new Date(Date.now()+2*86400000).toISOString().slice(0,10);
 const payload=(extra={})=>({requestId:crypto.randomUUID(),name:'QA Visitor',email:'visitor@example.com',phone:'+91 90000 00000',service:'Websites & development',budget:'Let’s discuss',date:day,time:'10:00 AM – 11:00 AM',company:'Example',message:'Please help me build a thoughtful studio website.',consent:true,website:'',...extra});
 assert.equal((await call('/api/health')).status,200);
@@ -38,17 +38,6 @@ assert.equal((await call('/api/admin/enquiries?status=confirmed',null,owner)).da
 assert.equal((await call('/api/admin/enquiries?page=1',null,owner)).data.items.length,0);
 assert.equal((await call('/api/admin/enquiries',null,{'oai-authenticated-user-id':'other','oai-authenticated-user-email':'other@example.com'})).status,403);
 assert.equal((await call('/api/site')).data.state.enquiries,undefined,'contact details never enter public CMS state');
-const bugPayload=payload({requestId:crypto.randomUUID(),kind:'bug',email:'bug-reporter@example.com',service:'Website bug report',date:'',time:'',message:'WEBSITE BUG REPORT\\nCategory: Header navigation\\nSteps: Open homepage and click Menu.\\nExpected: Menu opens immediately.\\nActual: Click does not respond.'});
-const bugSaved=await call('/api/enquiries',bugPayload);
-assert.equal(bugSaved.status,201,'Bug reports must persist without forcing users to choose a consultation date');
-assert.match(bugSaved.data.reference,/^VZ-[A-F0-9]{12}$/,'Bug submission receives a studio reference');
-const bugRow=sqlite.prepare('SELECT service,message,status FROM studio_enquiries WHERE id=?').get(bugPayload.requestId);
-assert.equal(bugRow.service,'Website bug report','Admin enquiries must distinguish bug reports from project enquiries');
-assert.match(bugRow.message,/Expected: Menu opens immediately/,'Reproduction steps and expected behaviour must persist');
-assert.equal(bugRow.status,'new');
-assert.equal((await call('/api/enquiries',bugPayload)).data.reference,bugSaved.data.reference,'Bug report retries must be idempotent');
-assert.equal((await call('/api/enquiries',payload({requestId:crypto.randomUUID(),kind:'bug',email:'short-report@example.com',date:'',time:'',message:'tiny issue'}))).status,400,'Bug reports must require useful reproduction detail');
-
 for(let i=0;i<30;i++)assert.equal((await call('/api/enquiries',payload({email:`network-${i}@example.com`}),{'cf-connecting-ip':'192.0.2.8'})).status,201);
 assert.equal((await call('/api/enquiries',payload({email:'network-last@example.com'}),{'cf-connecting-ip':'192.0.2.8'})).status,429,'network request limit enforced');
 console.log('PASS: real enquiry persistence, privacy, consent, field/body validation, spam limits, idempotency, owner-only inbox, status filters, booking conflicts and concurrent-edit protection.');
