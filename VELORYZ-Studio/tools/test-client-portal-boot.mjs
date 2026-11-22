@@ -1,0 +1,40 @@
+/* Boot-time regression for deployed client portal Edge, owner Gmail status, and UI. */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const edge=read('supabase/functions/veloryz-client-portal-api/index.ts');
+const mail=read('supabase/functions/veloryz-client-portal-api/gmail-lifecycle.ts');
+const lifecycle=read('supabase/functions/veloryz-client-portal-api/client-lifecycle.ts');
+const admin=read('public/admin-client.js');
+const shell=read('lib/admin-shell.ts');
+const proxy=read('lib/cms-api.mjs');
+const functions=[...edge.matchAll(/^(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(/gm)].map(x=>x[1]);
+const duplicates=[...new Set(functions.filter(n=>functions.indexOf(n)!==functions.lastIndexOf(n)))];
+assert.deepEqual(duplicates,[],'Supabase Edge boot must not redeclare top-level functions. This previously broke every request with BOOT_ERROR / HTTP 503.');
+for(const fn of ['dbBatch','logDelivery','issueInvite','admin','view','main'])assert.equal(functions.filter(x=>x===fn).length,1,'Required Edge function '+fn+' must be declared exactly once.');
+const stripped=edge.replace(/^import\s+[^;\n]+;\s*$/gm,'');
+assert.doesNotThrow(()=>new vm.Script(stripped),'Deployed Edge entrypoint must parse before auth/API requests.');
+for(const [file,source] of [['client-lifecycle.ts',lifecycle],['gmail-lifecycle.ts',mail]]){
+ const result=ts.transpileModule(source,{fileName:file,reportDiagnostics:true,compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}});
+ assert.deepEqual((result.diagnostics||[]).filter(x=>x.category===ts.DiagnosticCategory.Error).map(x=>ts.flattenDiagnosticMessageText(x.messageText,'\n')),[],file+' must parse.');
+}
+assert.doesNotThrow(()=>new vm.Script(admin),'Client Management UI must parse.');
+assert.match(edge,/if\(action\.startsWith\("\/admin\/"\)\)/,'Owner-only routes must be gated.');
+assert.match(edge,/if\(!await admin\(req\)\)/,'Owner login must be checked.');
+assert.match(edge,/\/admin\/delivery/);
+assert.match(edge,/\/admin\/projects/);
+assert.match(edge,/listProjectsFull/,'Project directory reads protected database.');
+assert.match(mail,/Deno\.env\.get\("VELORYZ_GMAIL_APP_PASSWORD"\)/,'Gmail status is sourced from the active Edge process, not browser guesses.');
+assert.match(admin,/configured:null/,'Gmail is UNKNOWN before verified by API, not falsely missing.');
+assert.match(admin,/if\(emailResult\.ok\)/,'Mail service status preserves failure separately from credential detection.');
+assert.doesNotMatch(admin,/cpReq\('\/delivery'\)\.catch\(\(\)=>\(\{configured:false/,'Failed Gmail status request must never be mislabeled as no secret.');
+assert.match(admin,/Could not verify Gmail configuration/);
+assert.match(admin,/Client directory connection failed — project count not verified/,'Do not report zero clients on 503.');
+assert.match(admin,/HTTP 503/,'Backend outage must be distinguished from empty records.');
+assert.match(admin,/data-cpm="refresh-mail"/,'Admin can recheck Gmail config.');
+assert.match(admin,/data-cpm="test-email"/,'Owner can send an intentional test.');
+assert.match(shell,/admin-client\.js/);
+assert.match(proxy,/forwardClientPortal/);
+console.log('PASS: Edge function parses, no duplicate declarations, admin auth preserved, Gmail unknown vs missing, client outage state and safe retry.');
