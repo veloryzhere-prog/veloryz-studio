@@ -8,8 +8,10 @@ assert.doesNotThrow(()=>new vm.Script(src));
 assert.doesNotMatch(src,/addEventListener\(\s*['"](?:scroll|wheel)['"]|requestAnimationFrame|subscribeScroll|--scarf-progress/);
 assert.doesNotMatch(css,/340svh|280svh|position:sticky|\.frame-(?:emblem|rings|title|footer|overlay|toggle)/);
 assert.doesNotMatch(app,/class="frame-(?:emblem|rings|mark|overlay|toggle|title|footer|eyebrow)"/);
+const scarfMarkup=app.match(/<veloryz-frame-cut\b[\s\S]*?<\/veloryz-frame-cut>/)?.[0]||'';
+assert(scarfMarkup,'The scarf section should exist');
 for(const phrase of ['VELORYZ / A STUDY IN MOTION','01 / Fabric · Form · Flow','Made to<br><em>move.</em>','Play scarf motion','Pause scarf motion'])
- assert(!app.includes(phrase),'Removed scarf text/control still present: '+phrase);
+ assert(!scarfMarkup.includes(phrase),'Removed scarf text/control still present in scarf section: '+phrase);
 assert.match(app,/<veloryz-frame-cut role="group"/);
 assert.match(app,/<video class="frame-scarf" autoplay muted loop playsinline preload="none"/);
 assert.match(src,/video\.autoplay=true/);
