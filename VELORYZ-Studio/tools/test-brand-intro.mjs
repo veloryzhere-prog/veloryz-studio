@@ -11,6 +11,7 @@ const gallery=read('public/intro-concepts.html');
 const motion=read('public/motion.js');
 const boot=read('public/motion-boot.js');
 const scroll=read('public/smooth-scroll.js');
+const app=read('public/app.js');
 
 assert.doesNotThrow(()=>new vm.Script(js),'Brand intro script must parse as standalone browser JavaScript.');
 assert.ok(shell.indexOf('/brand-intro.js')<shell.indexOf('/motion.js'),'Brand intro controller must initialize before motion preference gate.');
@@ -33,6 +34,7 @@ assert.match(motion,/choose\('reduced'\)/,'Accessible reduced-motion exit must r
 assert.match(motion,/welcomeKey='veloryz.motion.intro.v3'/,'Mandatory first-visit choice must remain unchanged.');
 assert.match(boot,/studio:brand-intro-complete/,'The original 3D V must resume after intro.');
 assert.match(scroll,/studio:brand-intro-complete/,'Original Lenis smooth scroll must resume after intro.');
+assert.match(app,/window.VeloryzIntro\?\.active\?'studio:brand-intro-complete':'studio:motion-intro-complete'/,'Existing ad and announcement timers must resume after the correct intro gate.');
 assert.ok(!js.includes('fetch('),'The logo intro must not rely on an external request, fabricated progress or an API.');
 
 function simulate({isPreview=false,seen=false,reduced=false,saveData=false,path='/',motionPreference='auto'}={}){
