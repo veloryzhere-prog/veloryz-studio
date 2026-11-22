@@ -250,3 +250,17 @@ body.vz-reference-site:has(.pg[data-p="design"].act) .vz-header-actions .vz-head
 body.vz-reference-site:has(.pg[data-p="design"].act) a[aria-label="Quick create a project"]{
   display:none!important;
 }
+
+/* Match the actual reference site's hash router. The previous :has(.pg.act)
+   guard was vulnerable to delayed page transitions and style overrides.
+   The router now sets data-vz-view immediately and directly hides the link. */
+body.vz-reference-site[data-vz-view="design"] .vz-header-actions .vz-header-create,
+body.vz-reference-site[data-vz-view="create"] .vz-header-actions .vz-header-create,
+body.vz-reference-site[data-vz-view="library"] .vz-header-actions .vz-header-create,
+body.vz-reference-site[data-vz-view="designs"] .vz-header-actions .vz-header-create,
+body.vz-reference-site[data-vz-view="design"] .vz-reference-support-links [data-vz-quick-create],
+body.vz-reference-site[data-vz-view="create"] .vz-reference-support-links [data-vz-quick-create],
+body.vz-reference-site[data-vz-view="library"] .vz-reference-support-links [data-vz-quick-create],
+body.vz-reference-site[data-vz-view="designs"] .vz-reference-support-links [data-vz-quick-create] {
+  display:none!important;
+}
