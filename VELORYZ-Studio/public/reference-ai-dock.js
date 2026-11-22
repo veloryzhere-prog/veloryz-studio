@@ -1,6 +1,7 @@
 /* Actual VELORYZ character AI. Uses the existing five-agent /api/adviser endpoint. */
 (()=>{
 'use strict';
+const el=(tag,klass,text)=>{const e=document.createElement(tag);if(klass)e.className=klass;if(text!==undefined)e.textContent=String(text);return e;};
 const agents=[
  {id:'happy',name:'Happy',avatar:'/assets/ai-avatars/happy.webp',hint:'Creative ideas, first contact, project inspiration'},
  {id:'nikhil',name:'Nikhil',avatar:'/assets/ai-avatars/nikhil.webp',hint:'Strategy, scope and careful comparisons'},
