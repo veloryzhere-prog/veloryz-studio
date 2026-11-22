@@ -34,7 +34,7 @@ has('lib/site-shell.ts','support-chat.js?v=20261121-multi-agent-v3');
 has('lib/site-shell.ts','creator-ai.js?v=20261121-multi-agent-v3');
 has('lib/client-portal-shell.ts','support-chat.js?v=20261121-multi-agent-v3');
 has('lib/admin-shell.ts','admin-knowledge-ai.js?v=20261121-multi-agent-v1');
-has('public/admin.js',"'knowledge-ai':knowledgeAiAdmin");
+has('public/admin.js',"'knowledge-ai':typeof knowledgeAiAdmin==='function'?knowledgeAiAdmin:null");
 has('public/client-portal.js','["ai","AI Guide","chat"]');
 has('public/creator-ai.js',"agent:'creator'");
 has('public/knowledge-v4.js','/help/assistant/');

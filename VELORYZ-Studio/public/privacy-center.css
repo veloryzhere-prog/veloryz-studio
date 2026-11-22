@@ -1,0 +1,54 @@
+/* VELORYZ consent & public policy system, no third-party UI dependency. */
+.vz-privacy-layer{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;background:#0e102b8a;backdrop-filter:blur(4px);padding:20px;overflow-y:auto}
+.vz-privacy-layer.is-settings{align-items:center}
+.vz-privacy-panel{box-sizing:border-box;width:min(100%,850px);max-height:min(94dvh,860px);overflow-y:auto;background:#fff;border-radius:18px;padding:clamp(18px,3vw,32px);box-shadow:0 28px 100px #090b1e35;border:1px solid #dedfe9;color:#24273b}
+.vz-privacy-head{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.vz-privacy-brand{font:bold 15px/1.2 Arial,sans-serif;letter-spacing:.13em;color:#292643}
+.vz-privacy-brand i{color:#a276a1;font-style:normal}
+.vz-privacy-overline{font:750 10px/1.3 Arial,sans-serif;letter-spacing:.12em;color:#9c759b}
+.vz-privacy-panel h2{font:600 clamp(25px,4vw,38px)/1.16 Georgia,serif;color:#28263e;letter-spacing:-.055em;margin:17px 0 11px}
+.vz-privacy-intro{font:500 13px/1.8 Arial,sans-serif;color:#596279;max-width:760px}
+.vz-gpc-note{padding:10px 13px;border-radius:8px;background:#e9f3ed;color:#345b4a;font:650 12px/1.5 Arial,sans-serif;margin-top:12px}
+.vz-consent-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0}
+.vz-consent-toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#faf9fd;border:1px solid #e2e1eb;border-radius:12px;padding:16px}
+.vz-consent-toggle-text{display:grid;gap:6px}
+.vz-consent-toggle strong{font:750 12px/1.35 Arial,sans-serif;color:#34354d}
+.vz-consent-toggle small{font:500 11px/1.6 Arial,sans-serif;color:#667087}
+.vz-consent-toggle input{appearance:auto;accent-color:#84619d;width:20px;height:20px;flex:none;cursor:pointer}
+.vz-consent-toggle input:disabled{opacity:.65;cursor:not-allowed}
+.vz-privacy-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:stretch}
+.vz-privacy-actions button{min-height:49px;border-radius:10px;padding:12px 18px;cursor:pointer;font:750 12px/1.3 Arial,sans-serif}
+.vz-choice-equal{border:2px solid #303048;background:#303048;color:#fff}
+.vz-choice-equal:hover{border-color:#625276;background:#625276}
+.vz-choice-save{border:1px solid #d7d8e2;background:#fff;color:#4d4e63}
+.vz-choice-save:hover{background:#f3f2f8}
+.vz-consent-foot{font:500 11px/1.7 Arial,sans-serif;color:#636c7d;margin:15px 0 0}
+.vz-consent-foot a{color:#685483;text-decoration:underline;text-underline-offset:3px}
+.vz-consent-foot button{border:0;background:none;text-decoration:underline;color:#574b7d;cursor:pointer}
+#vz-privacy-fab{position:fixed;bottom:10px;left:10px;z-index:600;background:#f7f5fa;color:#313249;border:1px solid #d9d5e5;border-radius:999px;box-shadow:0 4px 18px #18122b25;padding:9px 13px;font:750 11px/1.2 Arial,sans-serif;cursor:pointer}
+.vz-consent-present #vz-privacy-fab{display:none}
+.vz-legal-page{max-width:1050px;margin:auto;padding:clamp(25px,4vw,60px) 20px 80px;color:#323750}
+.vz-legal-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}
+.vz-legal-nav a{padding:9px 13px;border:1px solid #dddde8;border-radius:999px;background:#fff;text-decoration:none;color:#44435d;font:700 12px/1.4 Arial,sans-serif}
+.vz-legal-nav a:hover{background:#eeecf5}
+.vz-legal-hero{background:linear-gradient(120deg,#25283e,#43344f);color:#fff;padding:clamp(28px,5vw,60px);border-radius:21px;margin-bottom:29px}
+.vz-legal-hero>span{color:#dcb2d4;font:800 11px/1.5 Arial,sans-serif;letter-spacing:.13em}
+.vz-legal-hero h1{font:550 clamp(37px,5vw,61px)/1.07 Georgia,serif;letter-spacing:-.055em;color:#fff;margin:18px 0}
+.vz-legal-hero p{font:500 14px/1.85 Arial,sans-serif;color:#e9e3ef;max-width:770px}
+.vz-legal-hero small{display:block;color:#d8cada;font:600 11px Arial,sans-serif;margin-top:24px}
+.vz-legal-section{border:1px solid #e9e8f0;border-radius:15px;background:#fff;padding:clamp(20px,3vw,30px);margin-bottom:14px}
+.vz-legal-section h2{font:550 clamp(22px,3vw,31px)/1.2 Georgia,serif;color:#262b40;letter-spacing:-.04em;margin:0 0 17px}
+.vz-legal-section p{font:500 13px/1.95 Arial,sans-serif;color:#626e82;margin:0 0 15px;overflow-wrap:anywhere}
+.vz-legal-section p:last-child{margin-bottom:0}
+.vz-legal-section a,.vz-legal-footer a{color:#635080;text-decoration:underline;text-underline-offset:3px}
+.vz-cookie-table-wrap{overflow-x:auto;background:#fff;border:1px solid #e8e8f0;border-radius:15px;margin-bottom:14px}
+.vz-cookie-table{border-collapse:collapse;min-width:720px;width:100%;font:500 12px/1.7 Arial,sans-serif;color:#60697e}
+.vz-cookie-table th{background:#2d2d48;color:#fff;text-align:left;padding:16px}
+.vz-cookie-table td{padding:17px;border-bottom:1px solid #ececf0;vertical-align:top}
+.vz-cookie-table td:first-child{color:#33344e}
+.vz-legal-settings-button,.vz-legal-rights button{padding:13px 18px;background:#35344f;color:#fff;border:0;border-radius:9px;font:750 12px/1.5 Arial,sans-serif;cursor:pointer;margin:8px 9px 18px 0}
+.vz-legal-rights{display:flex;flex-wrap:wrap;gap:7px}
+.vz-legal-footer{margin-top:30px;border-top:1px solid #dedde7;padding:20px 0;color:#767f90;font:550 12px/1.7 Arial,sans-serif}
+.vz-privacy-layer button:focus-visible,.vz-legal-page :is(a,button):focus-visible,#vz-privacy-fab:focus-visible{outline:3px solid #739cd4;outline-offset:3px}
+@media(max-width:680px){.vz-privacy-layer{padding:7px;align-items:end}.vz-privacy-panel{border-radius:14px;padding:18px;max-height:93dvh}.vz-consent-choices{grid-template-columns:1fr}.vz-privacy-actions{grid-template-columns:1fr 1fr}.vz-choice-save{grid-column:1/-1}.vz-privacy-panel h2{font-size:27px}.vz-legal-page{padding:20px 14px 65px}}
+@media(prefers-reduced-motion:reduce){.vz-privacy-layer{backdrop-filter:none}.vz-privacy-panel *,#vz-privacy-fab{animation:none!important;transition:none!important}}

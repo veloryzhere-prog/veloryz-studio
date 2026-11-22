@@ -23,8 +23,12 @@ assert.match(core,/window\.VeloryzAdminDetail\?\.operations/,'Command center mus
 assert.match(core,/window\.VeloryzAdminDetail\?\.overview/,'Dashboard must include a source-backed publication checklist.');
 
 assert.match(core,/let enquiryItems=\[\],enquiryTotal=0,[^;]*enquiryLoaded=false/,'Admin must declare the singular enquiryLoaded state.');
-assert.match(core,/sidebar\(section,navigation,workspace,icon,E,\{enquiriesLoaded:enquiryLoaded,/,'Pass the existing singular state using the detailed sidebar API property name.');
+assert.match(core,/sidebar\(section,navigation,workspace,icon,E,\{enquiriesLoaded:typeof enquiryLoaded!=='undefined'&&enquiryLoaded,/,'Pass existing admin state defensively and avoid ReferenceErrors.');
 assert.doesNotMatch(core,/\{enquiriesLoaded,enquiryTotal,/,'Never pass undeclared enquiriesLoaded shorthand: this used to crash Studio Control.');
+assert.match(core,/function safeRender\(\)/,'Recover the owner console from isolated rendering exceptions.');
+assert.match(core,/typeof clientPortalAdmin==='function'/,'Do not eagerly evaluate optional client management globals.');
+assert.match(core,/typeof knowledgeAiAdmin==='function'/,'Do not blank dashboard when standalone knowledge agent module fails to load.');
+assert.match(core,/enquiriesLoaded:typeof enquiryLoaded/,'Sidebar must avoid undefined state variables.');
 
 assert.match(core,/window\.VeloryzAdminDetail\?\.mediaHeader/,'Media Library must show actual data and filters.');
 assert.match(core,/if\(action==='reload-media'\)/,'Refresh action must reload stored media.');

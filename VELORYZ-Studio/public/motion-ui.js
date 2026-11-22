@@ -55,7 +55,7 @@
      window.StudioMotion?.onboardingActive || document.querySelector('dialog[open],.modal-backdrop'))return;
   const work=document.getElementById('selected-work');
   if(!work || window.scrollY>96)return;
-  try{if(localStorage.getItem(seenKey)){dismiss();return;}}catch{}
+  try{if(window.VeloryzPrivacy?.allowed('preferences')&&localStorage.getItem(seenKey)){dismiss();return;}}catch{}
   invitation=document.createElement('aside');
   invitation.className='work-invitation';
   invitation.setAttribute('aria-label','Explore the studio’s work');
@@ -63,7 +63,7 @@
    <div><p>Scroll down to see what we make.</p><a href="#selected-work">Explore our work <span aria-hidden="true">↓</span></a></div>
    <button type="button" aria-label="Dismiss scroll invitation">×</button>`;
   document.body.append(invitation);
-  try{localStorage.setItem(seenKey,'1');}catch{}
+  try{if(window.VeloryzPrivacy?.allowed('preferences'))localStorage.setItem(seenKey,'1');}catch{}
   invitation.querySelector('button').addEventListener('click',dismiss);
   invitation.querySelector('a').addEventListener('click',event=>{
    event.preventDefault();
