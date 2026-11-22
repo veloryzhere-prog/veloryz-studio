@@ -102,4 +102,48 @@ assert.match(headerCSS,/vz-reference-support-links \[data-vz-quick-create\]/,'Fo
 assert.ok(home.includes('reference-header-interactions.css?v=20261123-router-quick-create-v3'),'Updated header CSS must bypass old browser caches');
 assert.ok(home.includes('reference-restored-features.js?v=20261123-router-quick-create-v3'),'Updated footer JS must bypass old browser caches');
 
+
+/* Actual /create/ page contract: the shared "Quick Create" link must not be
+   inserted in the DOM. A CSS display:none fallback alone is insufficient. */
+const security=read('lib/response-security.ts');
+assert.ok(!security.includes("const projectLink="),'Retired floating project button must not be injected by server');
+assert.ok(!security.includes("projectLink+'</body>'"),'Do not append floating project CTA to any HTML body');
+const from=menu.indexOf('const quickCreateExcluded=');
+const until="document.addEventListener('studio:route',syncQuickCreate);";
+const to=menu.indexOf(until,from);
+assert.ok(from>0&&to>from,'Shared quick-create DOM mounting must be route-aware');
+const quickMount=menu.slice(from,to+until.length);
+const routeEvents={};
+const quickElement={isConnected:false,remove(){this.isConnected=false;const i=sharedRoot.nodes.indexOf(this);if(i>=0)sharedRoot.nodes.splice(i,1);},setAttribute(){}};
+const sharedRoot={
+ nodes:[],append(...nodes){this.nodes=nodes;},
+ insertBefore(element,before){
+  assert.equal(before,sharedTrigger);
+  assert.equal(element,quickElement);
+  this.nodes.splice(this.nodes.indexOf(before),0,element);
+  element.isConnected=true;
+ }
+};
+const sharedTrigger={};
+const locationState={pathname:'/create/'};
+const mockDocument={
+ body:{append(element){assert.equal(element,sharedRoot);}},
+ addEventListener(name,callback){routeEvents[name]=callback;}
+};
+const mock={root:sharedRoot,brand:{},trigger:sharedTrigger,menu:{},curtain:{},quick:quickElement,location:locationState,document:mockDocument};
+vm.runInNewContext(quickMount,mock,{timeout:2000});
+assert.ok(!quickElement.isConnected,'Quick Create must not exist in the /create/ document on first load');
+assert.ok(!sharedRoot.nodes.includes(quickElement),'Creator must not mount Quick Create in header markup');
+for(const route of ['/design/','/designs/','/create/review/']){
+ locationState.pathname=route;routeEvents['studio:route']();
+ assert.ok(!quickElement.isConnected,'No Quick Create DOM link on '+route);
+}
+locationState.pathname='/services/';routeEvents['studio:route']();
+assert.ok(quickElement.isConnected,'Quick Create may be mounted on allowed pages');
+locationState.pathname='/create/';routeEvents['studio:route']();
+assert.ok(!quickElement.isConnected,'SPA navigation into Create must remove Quick Create from the DOM');
+assert.ok(!sharedRoot.nodes.includes(quickElement),'The previously mounted anchor must be physically removed from shared header markup');
+assert.ok(menu.includes('root.append(brand,trigger,menu,curtain)'),'Initial HTML chrome must omit generic create CTA');
+assert.ok(shell.includes('reference-shared-menu.js?v=20261123-remove-create-dom-v2'),'Bust cached shared-menu script on creator route');
+
 console.log('PASS: clickable Quick Create/Motion/Menu, translucent logo, smooth frame-independent scroll, and persisted secure bug report with real reference and accessible entrypoints.');

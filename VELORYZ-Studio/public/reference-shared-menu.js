@@ -28,7 +28,16 @@ for(const [name,link] of menuLinks){
  menu.append(a);
 }
 const curtain=document.createElement('div');curtain.className='vz-shared-curtain';curtain.setAttribute('aria-hidden','true');
-root.append(brand,quick,trigger,menu,curtain);document.body.append(root);
+/* Never mount a second Create button on the actual project creator or design
+   pages. It must not exist in the document, not merely be hidden by CSS. */
+const quickCreateExcluded=()=>/^\/(?:create|design|designs)(?:\/|$)/.test(location.pathname);
+root.append(brand,trigger,menu,curtain);document.body.append(root);
+const syncQuickCreate=()=>{
+ if(quickCreateExcluded()){quick.remove();return;}
+ if(!quick.isConnected)root.insertBefore(quick,trigger);
+};
+syncQuickCreate();
+document.addEventListener('studio:route',syncQuickCreate);
 let last=null;
 const isOpen=()=>root.classList.contains('is-open');
 const setOpen=open=>{
