@@ -138,8 +138,18 @@ async function refresh(){
  catch(e){if(e.status===401)entry();else entry("The client workspace could not be loaded. Please try again.");}
 }
 document.addEventListener("click",async e=>{
+ const starter=e.target.closest("[data-cp-compose]");
+ if(starter){
+  const el=$("#cp-message");if(!el)return;
+  const presets={
+   update:"Hello VELORYZ team! Could you share the current stage, what has been completed and the next expected milestone? Thank you.",
+   question:"I have a question about my project:\n\nContext:\n\nWhat I need clarified:",
+   feedback:"Feedback on the latest shared work:\n\nWhat works well:\n\nWhat I would like to change:\n\nPriority:"
+  };
+  el.value=presets[starter.dataset.cpCompose]||"";el.dispatchEvent(new Event("input",{bubbles:true}));el.focus();return;
+ }
  const tabButton=e.target.closest("[data-cp-tab]");
- if(tabButton){tab=tabButton.dataset.cpTab;if(views[tab]){render();$("#cp-view")?.scrollIntoView({block:"start",behavior:"instant"});}return;}
+ if(tabButton){tab=tabButton.dataset.cpTab;if(views[tab]){render();$("#cp-view")?.scrollIntoView({block:"start",behavior:"instant"});if(tab==="messages"&&!isDemo){api("/messages/read",{method:"POST",body:"{}"}).then(async()=>{if(tab==="messages"&&state){state=await api("/session");render();}}).catch(()=>{});}}return;}
  if(e.target.closest("[data-cp-demo]")){sample();return;}
  if(e.target.closest("[data-cp-refresh]")){
   if(isDemo){toast("Preview is up to date.");return;}
@@ -152,6 +162,33 @@ document.addEventListener("click",async e=>{
   entry();return;
  }
 });
+
+document.addEventListener("input",e=>{
+ if(e.target?.id!=="cp-message")return;
+ const count=$("#cp-message-count");
+ if(count)count.textContent=String(e.target.value||"").length+" / 2000";
+});
+document.addEventListener("keydown",e=>{
+ if(e.target?.id==="cp-message"&&(e.ctrlKey||e.metaKey)&&e.key==="Enter"){
+  e.preventDefault();e.target.closest("form")?.requestSubmit();
+ }
+});
+/* Background read-only refresh; never reset an unfinished client reply. */
+setInterval(async()=>{
+ if(!state||isDemo||busy||document.visibilityState==="hidden")return;
+ if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+ try{
+  const current=state,newState=await api("/session");
+  if(state!==current||isDemo)return;
+  const previousId=current.messages.at(-1)?.id||"",newId=newState.messages.at(-1)?.id||"";
+  const changed=previousId!==newId||newState.project.updated_at!==current.project.updated_at||
+   JSON.stringify(newState.items.map(i=>[i.id,i.state,i.updated_at]))!==JSON.stringify(current.items.map(i=>[i.id,i.state,i.updated_at]));
+  if(!changed)return;
+  state=newState;render();
+  if(newId&&previousId!==newId)toast("A new project message is available.");
+ }catch{ /* Preserve the authenticated workspace when an individual refresh fails. */ }
+},17000);
+
 document.addEventListener("submit",async e=>{
  const f=e.target;
  if(f.id==="cp-login"){e.preventDefault();if(f.reportValidity())await signIn(f.elements.invite.value);return;}
