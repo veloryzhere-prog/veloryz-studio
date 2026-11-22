@@ -8,7 +8,7 @@ import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json
 export type DesignPreviewRecord={
  id:string;name:string;category:string;description:string;source:string;
  author:string;license:string;rights:string;motion?:string;caution?:string;
- sourceType?:string;importStatus?:string;previewType?:string;
+ sourceType?:string;importStatus?:string;previewType?:string;originalTemplateId?:string;price?:number;
 };
 
 const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({
@@ -17,6 +17,8 @@ const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({
 
 export function findDesignPreview(id:string,cms:any[]=[]):DesignPreviewRecord|null{
  if(!/^[a-z0-9-]{2,100}$/.test(id))return null;
+ const firstParty=openDesigns.originals.find(p=>p.id===id);
+ if(firstParty)return firstParty;
  const open=openDesigns.items.find(p=>p.id===id);
  if(open)return open;
  const curated=cms.find(p=>p?.id===id&&p.enabled!==false);
@@ -57,7 +59,7 @@ export function renderDesignPreview(design:DesignPreviewRecord):string{
  '<div id="vz-concept" aria-live="polite"><div class="vz-loading">Preparing your VELORYZ concept preview...</div></div><div class="vz-watermark"><span class="vz-watermark-v">V</span><span>Made with <b>VELORYZ</b></span></div></div></div></section>'+
  '<section class="vz-bottom"><div class="vz-bottom-main"><span class="vz-eyebrow">FROM REFERENCE TO YOUR OWN PRODUCT</span><h2>Make a concept<br><em>entirely yours.</em></h2><p>Browse the studio’s original interactive direction, choose the pages and features that matter, and share a detailed project brief. Code, integrations and commercial licensing are reviewed before delivery.</p><a class="vz-btn" href="/create/?reference='+encodeURIComponent(design.id)+'">Start your project ↗</a></div>'+
  '<aside class="vz-rights" id="vz-provenance"><h3>Source & rights</h3>'+
- '<dl><dt>Design idea</dt><dd>'+title+'</dd><dt>Original source author</dt><dd>'+escape(design.author)+'</dd><dt>Upstream license / terms</dt><dd>'+escape(design.license)+'</dd><dt>Catalogue status</dt><dd>'+escape(design.rights==='candidate'?'Candidate for licensed adaptation; assets not cleared':design.rights==='restricted'?'Reference only / separate permission required':'Independent review required')+'</dd></dl>'+
+ '<dl><dt>Design idea</dt><dd>'+title+'</dd><dt>Original source author</dt><dd>'+escape(design.author)+'</dd><dt>Upstream license / terms</dt><dd>'+escape(design.license)+'</dd><dt>Catalogue status</dt><dd>'+escape(design.rights==='original'?'Original VELORYZ source template; one end-product license':design.rights==='candidate'?'Candidate for licensed adaptation; assets not cleared':design.rights==='restricted'?'Reference only / separate permission required':'Independent review required')+'</dd></dl>'+
  '<p>The interactive preview above is VELORYZ-created demonstration UI. It is not a white-labelled copy of the linked repository or its original assets. VELORYZ branding identifies this showcase and customization service, not ownership of third-party work.</p>'+
  (String(design.source).startsWith('https://')?'<a href="'+escape(design.source)+'" target="_blank" rel="noopener noreferrer">View original credited source ↗</a>':'')+
  '</aside></section></div><div class="vz-toast" id="vz-toast" role="status" aria-live="polite"></div></body></html>';
