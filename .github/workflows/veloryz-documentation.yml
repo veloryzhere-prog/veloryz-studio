@@ -60,6 +60,8 @@ jobs:
         run: node tools/test-animation-providers.mjs
       - name: Verify visible kinetic animations across all pages
         run: node tools/test-site-kinetics.mjs
+      - name: Verify admin sessions, archived media and invitation abuse controls
+        run: node tools/test-security-hardening.mjs
       - name: Verify detailed Studio Control console, AI Mindset and owner actions
         run: node tools/test-admin-detail.mjs
       - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle

@@ -177,7 +177,7 @@ async function forwardPrivacyReceipt(request){
  const contentType=request.headers.get('content-type')||'';
  if(!contentType.includes('application/json'))return json({error:'Expected JSON.'},415);
  const headers=new Headers({'Content-Type':'application/json'});
- for(const name of ['origin','sec-fetch-site']){const value=request.headers.get(name);if(value)headers.set(name,value)}
+ for(const name of ['origin','sec-fetch-site','cf-connecting-ip']){const value=request.headers.get(name);if(value)headers.set(name,value)}
  try{
   const response=await fetch(privacyReceiptOrigin+'/api/privacy/consent',{
    method:'POST',headers,body:request.body,redirect:'manual',signal:AbortSignal.timeout(9500)
@@ -188,7 +188,7 @@ async function forwardPrivacyReceipt(request){
 const clientPortalOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-client-portal-api';
 async function forwardClientPortal(request){
  const url=new URL(request.url),headers=new Headers();
- for(const name of ['cookie','content-type','origin','sec-fetch-site']){
+ for(const name of ['cookie','content-type','origin','sec-fetch-site','cf-connecting-ip']){
   const value=request.headers.get(name);if(value)headers.set(name,value);
  }
  const response=await fetch(clientPortalOrigin+url.pathname+url.search,{
@@ -219,7 +219,7 @@ async function authorize(request,env,defaultLoginMode){
  // This NEVER authorizes a request by itself: every admin API route still checks
  // passwordSession() after authorize(), with a signed, HttpOnly session cookie.
  // Requiring both private runtime settings prevents accidental open access.
- if((env.ADMIN_LOGIN_MODE || defaultLoginMode)==='password'){
+ if((defaultLoginMode==='password' ? 'password' : (env.ADMIN_LOGIN_MODE || defaultLoginMode))==='password'){
   if(!env.DB)fail('Connect the studio database in the Worker runtime settings before signing in.',503);
   if(!env.ADMIN_PASSWORD_HASH||!env.ADMIN_SESSION_SECRET)fail('Configure the Worker secrets ADMIN_PASSWORD_HASH and ADMIN_SESSION_SECRET before signing in.',503);
   return {id:'studio-owner',name:'Studio owner'};
@@ -237,7 +237,7 @@ async function authorize(request,env,defaultLoginMode){
 }
 async function body(request){if(!request.headers.get('content-type')?.includes('application/json'))fail('Send a JSON document.',415);const value=await request.text();if(value.length>6000000)fail('The document is too large.',413);try{return JSON.parse(value);}catch{fail('The document could not be read.');}}
 async function stateResponse(env,user){await ensureState(env);const row=await env.DB.prepare('SELECT * FROM cms_state WHERE id=1').first();return {state:upgrade(JSON.parse(row.draft)),draftVersion:row.draft_version,publishedVersion:row.published_version,hasDraft:row.draft!==row.published,updatedAt:row.updated_at,user};}
-function mutationOrigin(request){if(['GET','HEAD'].includes(request.method))return;const origin=request.headers.get('origin');if((origin&&origin!==new URL(request.url).origin)||request.headers.get('sec-fetch-site')==='cross-site')fail('This request must come from the studio website.',403);}
+function mutationOrigin(request){if(['GET','HEAD'].includes(request.method))return;const origin=request.headers.get('origin'),site=request.headers.get('sec-fetch-site');if((origin!==new URL(request.url).origin && !(origin===null&&site==='same-origin'))||site==='cross-site')fail('This request must come from the studio website.',403);}
 async function saveDraft(env,state,expected){
  const result=await env.DB.prepare('UPDATE cms_state SET draft=?,draft_version=draft_version+1,updated_at=? WHERE id=1 AND draft_version=? RETURNING draft_version').bind(JSON.stringify(state),now(),expected).first();
  if(!result)fail('Another tab changed this draft. Reload the workspace before saving again.',409);return result.draft_version;
@@ -330,9 +330,9 @@ export async function mediaResponse(request,env,id){
  if(usesHostedBackend(env,request.url)) return forwardStudioRequest(request);
  env=studioEnvironment(env);
  if(!/^[0-9a-f-]{36}$/.test(id)||!env.DB||!env.BUCKET)return new Response('Not found',{status:404});
- const row=await env.DB.prepare('SELECT storage_key,mime FROM cms_media WHERE id=?').bind(id).first();if(!row)return new Response('Not found',{status:404});
+ const row=await env.DB.prepare('SELECT storage_key,mime FROM cms_media WHERE id=? AND archived=0').bind(id).first();if(!row)return new Response('Not found',{status:404});
  const item=await env.BUCKET.get(row.storage_key,{range:request.headers});if(!item)return new Response('Not found',{status:404});
- const headers=new Headers({'Content-Type':row.mime,'X-Content-Type-Options':'nosniff','Cache-Control':'public,max-age=31536000,immutable','Accept-Ranges':'bytes'});item.writeHttpMetadata(headers);headers.set('ETag',item.httpEtag);
+ const headers=new Headers({'Content-Type':row.mime,'X-Content-Type-Options':'nosniff','Cache-Control':'no-store, max-age=0','Accept-Ranges':'bytes'});item.writeHttpMetadata(headers);headers.set('ETag',item.httpEtag);
  let status=200;if(item.range&&'offset'in item.range){status=206;headers.set('Content-Range',`bytes ${item.range.offset}-${item.range.offset+item.range.length-1}/${item.size}`);headers.set('Content-Length',String(item.range.length));}else headers.set('Content-Length',String(item.size));
  return new Response(request.method==='HEAD'?null:item.body,{status,headers});
 }
