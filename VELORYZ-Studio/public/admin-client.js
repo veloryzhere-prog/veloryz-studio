@@ -4,7 +4,7 @@ let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,
 let cpSearch='',cpFilter='all',cpTab='overview',cpEditMode='',cpEditingItem='',cpItemType='milestone';
 let cpNewDraft=null,cpNewProject=false,cpBusy=false,cpSequence=0;
 let cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'},cpDeliveryLoaded=false,cpDeliveryError='',cpEmailEvents=[];
-const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
+const cpReq=async(path,options={})=>{try{return await api('/api/client-portal/admin'+path,options);}catch(error){if(error.status===503)throw Object.assign(new Error('The Client Portal service is unavailable (HTTP 503). The project records have not been deleted. Please retry after backend recovery.'),{status:503});if(error.status===401||error.status===403)throw Object.assign(new Error('Your Studio owner session is not authorized for Client Management. Sign in again or check the owner connection.'),{status:error.status});throw error;}};
 const cpE=v=>E(v??'');
 const cpStatuses=[['planning','Planning'],['in-progress','In progress'],['in-review','In review'],['on-hold','On hold'],['launched','Launched']];
 const cpPhases=['Discover','Define','Design','Develop','Review','Launch'];
