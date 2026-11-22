@@ -72,7 +72,7 @@ function updateLibrary(){
     li.append(document.createTextNode(label));caption.textContent=value;li.append(caption);detailsList.append(li);
    }
   }
-  const a=$('a.btn',detail);if(a)a.href='/design/';
+  const a=$('a.btn',detail);if(a)a.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';
  });
 }
 function updateStudioAgents(){
