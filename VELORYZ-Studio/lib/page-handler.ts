@@ -32,7 +32,8 @@ export async function GET(request: Request) {
     .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
    catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false).slice(0,12)
     .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
-     image:x.image,cover:x.cover,price:x.price,enabled:x.enabled}))
+     image:x.image,cover:x.cover,price:x.price,enabled:x.enabled})),
+   documentation:Object.entries(studioDocsRoutes).map(([url,title])=>({url:htmlDocumentPath(url),title}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
   let html=claudeReferenceShell.replace('</head>',`<script>window.VELORYZ_REFERENCE_DATA=${serialise(appearance)};</script></head>`);
