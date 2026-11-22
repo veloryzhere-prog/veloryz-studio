@@ -9,7 +9,7 @@ const MOBILE='/assets/brand/intro/veloryz-cinematic-full-mobile.mp4';
 const reduce=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
 const compact=typeof matchMedia==='function'?matchMedia('(max-width: 700px)'):null;
 let section=null,video=null,observer=null,visible=false,loaded=false,failed=false,complete=false;
-let frame=0,queued=false,manuallyPlayed=false;
+let frame=0,queued=false,manuallyPlayed=false,pendingManualPlay=false;
 const homepage=()=>location.pathname==='/'||location.pathname==='/index.html';
 const allowMotion=()=>!reduce?.matches&&!navigator.connection?.saveData&&!['paused','reduced'].includes(window.StudioMotion?.level)&&!document.hidden;
 const markup=()=>[
@@ -67,7 +67,8 @@ function fallback(restart=false){
  failed=true;loaded=false;video?.pause();
  const host=el('.vz-film-window');if(!host)return;
  host.dataset.filmMedia='fallback';
- if(restart){host.classList.remove('vz-film-fallback-animate');void host.offsetWidth;host.classList.add('vz-film-fallback-animate');}
+ if(restart){host.classList.remove('vz-film-fallback-animate');void host.offsetWidth;}
+ host.classList.add('vz-film-fallback-animate');
  if(restart||allowMotion()&&visible&&!complete)setState('playing-fallback');
  else setState(complete?'complete':'still');
  refreshButtons();
@@ -84,7 +85,7 @@ function play(explicit=false,restart=false){
  if(!explicit&&!allowMotion())return;
  complete=false;
  if(failed){fallback(true);return;}
- if(!loaded){loadVideo();return;}
+ if(!loaded){if(explicit)pendingManualPlay=true;loadVideo();return;}
  if(restart){try{video.currentTime=0;}catch{}}
  setState('playing');
  const task=video.play();if(task?.catch)task.catch(()=>fallback(true));
@@ -120,7 +121,7 @@ function observe(){
  observer.observe(section);
 }
 function dispose(){
- observer?.disconnect();observer=null;visible=false;loaded=false;failed=false;complete=false;manuallyPlayed=false;
+ observer?.disconnect();observer=null;visible=false;loaded=false;failed=false;complete=false;manuallyPlayed=false;pendingManualPlay=false;
  stopTicker();
  if(video){video.pause();video.removeAttribute('src');video.load();}
  section?.remove();section=null;video=null;
@@ -136,7 +137,7 @@ function mount(){
  section.addEventListener('click',click);
  video.addEventListener('loadeddata',()=>{
   loaded=true;failed=false;el('.vz-film-window').dataset.filmMedia='video';refreshButtons();
-  if(visible&&allowMotion()&&!manuallyPlayed)play();
+  if((visible&&allowMotion()&&!manuallyPlayed)||pendingManualPlay){const manual=pendingManualPlay;pendingManualPlay=false;play(manual);}
  });
  video.addEventListener('error',()=>fallback(false));
  video.addEventListener('ended',onEnded);
