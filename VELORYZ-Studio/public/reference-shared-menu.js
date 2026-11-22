@@ -6,7 +6,7 @@ const menuLinks=[
  ['Home','/'],['Services','/#services'],['Work','/#work'],['Design','/design/'],
  ['Process','/#process'],['Pricing','/#pricing'],['Studio','/#studio'],
  ['Reviews','/#reviews'],['Contact','/#contact'],['Create project','/create/'],
- ['Client portal','/client/'],['Documentation','/docs/'],['Help AI','/help/assistant/']
+ ['Client portal','/client/'],['Documentation','/docs/'],['Help AI','/help/assistant/'],['Report a Bug','/report-bug/']
 ];
 const docsLinks=[
  ['Documentation home','/docs/'],['Getting started','/help/studio/getting-started.html'],
@@ -19,6 +19,7 @@ const root=document.createElement('div');root.id='vz-shared-chrome';root.classNa
 const brand=document.createElement('a');brand.className='vz-shared-brand';brand.href='/';brand.setAttribute('aria-label','VELORYZ Studio homepage');
 const logo=document.createElement('img');logo.src='/assets/brand/veloryz-mark.svg';logo.alt='';logo.width=30;logo.height=30;
 const word=document.createElement('span');word.textContent='VELORYZ';brand.append(logo,word);
+const quick=document.createElement('a');quick.className='vz-shared-quick-create';quick.href='/create/';quick.textContent='Quick Create ↗';quick.setAttribute('aria-label','Quick create a project');
 const trigger=document.createElement('button');trigger.type='button';trigger.id='vz-shared-menu-toggle';trigger.className='vz-shared-menu-toggle';trigger.textContent='Menu';trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','vz-shared-menu');
 const menu=document.createElement('nav');menu.id='vz-shared-menu';menu.className='vz-shared-menu';menu.setAttribute('aria-label','Primary VELORYZ navigation');menu.setAttribute('aria-hidden','true');
 for(const [name,link] of menuLinks){
@@ -27,11 +28,11 @@ for(const [name,link] of menuLinks){
  menu.append(a);
 }
 const curtain=document.createElement('div');curtain.className='vz-shared-curtain';curtain.setAttribute('aria-hidden','true');
-root.append(brand,trigger,menu,curtain);document.body.append(root);
+root.append(brand,quick,trigger,menu,curtain);document.body.append(root);
 let last=null;
 const isOpen=()=>root.classList.contains('is-open');
 const setOpen=open=>{
- root.classList.toggle('is-open',open);trigger.setAttribute('aria-expanded',String(open));trigger.textContent=open?'Close':'Menu';menu.setAttribute('aria-hidden',String(!open));
+ root.classList.toggle('is-open',open);quick.setAttribute('aria-hidden',String(open));quick.tabIndex=open?-1:0;trigger.setAttribute('aria-expanded',String(open));trigger.textContent=open?'Close':'Menu';menu.setAttribute('aria-hidden',String(!open));
  document.body.classList.toggle('vz-shared-menu-open',open);
  if(open){last=document.activeElement;menu.querySelector('a')?.focus({preventScroll:true});}
  else if(last){const prev=last;last=null;(prev.isConnected?prev:trigger).focus({preventScroll:true});}
@@ -93,7 +94,7 @@ observeDocLinks();
 /* Maintain reference cursor and editorial art direction on the real public routes.
    The original site header, AI launcher, privacy footer and motion engine remain the source. */
 const refreshRoute=()=>{
- const active=/^\/(?:work|design|designs|services|studio|pricing|process|contact|book|journey|motion|veloryz|velori|teamjob|payments|developers)(?:\/|$)/.test(location.pathname);
+ const active=/^\/(?:work|design|designs|services|studio|pricing|process|contact|book|journey|motion|veloryz|velori|teamjob|payments|developers|report-bug)(?:\/|$)/.test(location.pathname);
  document.body.classList.toggle('vz-ref-public-route',active);
 };
 refreshRoute();document.addEventListener('studio:route',refreshRoute);

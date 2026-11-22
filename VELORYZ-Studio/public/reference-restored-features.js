@@ -16,7 +16,12 @@ function chrome(){
  const motionButton=el('button','vz-home-motion-button');
  motionButton.type='button';motionButton.setAttribute('data-motion-control','');motionButton.setAttribute('aria-label','Open original VELORYZ motion settings');
  const waves=el('span','vz-home-motion-waves');waves.setAttribute('aria-hidden','true');for(let i=0;i<3;i++)waves.append(el('i'));
- motionButton.append(waves,el('span','','Motion'));document.body.append(motionButton);
+ motionButton.append(waves,el('span','','Motion'));
+ // Put the existing motion control in the same genuinely clickable toolbar as Menu.
+ // The previous body-fixed button was underneath the full-width, high-z-index logo nav.
+ const actions=document.querySelector('.vz-header-actions');
+ if(actions)actions.insertBefore(motionButton,actions.querySelector('#mb'));
+ else document.body.append(motionButton);
  const talk=el('a','whatsapp-float vz-original-whatsapp');
  talk.href='https://wa.me/919955326740?text='+encodeURIComponent('Hi VELORYZ Studio! I would like to discuss a project.');
  talk.target='_blank';talk.rel='noopener noreferrer';talk.setAttribute('aria-label',"Let's Talk with VELORYZ on WhatsApp");

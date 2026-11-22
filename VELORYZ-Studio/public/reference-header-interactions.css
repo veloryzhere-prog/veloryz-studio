@@ -1,0 +1,243 @@
+/* VELORYZ reference header: fix intercepted pointer events, restore reliable actions,
+   add Quick Create, and keep the approved editorial presentation. */
+body.vz-reference-site > nav {
+  pointer-events:none !important;
+  z-index:100 !important;
+}
+body.vz-reference-site > nav .vz-official-header-brand {
+  pointer-events:auto !important;
+  background:rgba(248,241,230,.79) !important;
+  border:1px solid rgba(66,43,52,.16) !important;
+  border-radius:14px !important;
+  padding:7px 12px !important;
+  box-shadow:0 9px 26px rgba(47,35,41,.09) !important;
+  -webkit-backdrop-filter:blur(9px);
+  backdrop-filter:blur(9px);
+  transition:background-color .3s,box-shadow .3s,border-color .3s,transform .35s cubic-bezier(.16,1,.3,1);
+}
+body.vz-reference-site > nav .vz-official-header-brand:hover,
+body.vz-reference-site > nav .vz-official-header-brand:focus-visible {
+  background:rgba(252,249,242,.96) !important;
+  border-color:rgba(75,48,61,.32) !important;
+  box-shadow:0 14px 33px rgba(47,35,41,.15) !important;
+}
+body.vz-reference-site > nav .vz-official-header-brand img {
+  pointer-events:none;
+}
+/* One independently stacked toolbar: no opaque, full-width hit target over it. */
+body.vz-reference-site .vz-header-actions {
+  position:fixed;
+  top:calc(12px + env(safe-area-inset-top,0px));
+  right:clamp(18px,5vw,72px);
+  z-index:144;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  max-width:calc(100vw - 200px);
+  pointer-events:auto;
+  isolation:isolate;
+}
+body.vz-reference-site .vz-header-actions > :is(a,button) {
+  position:relative !important;
+  inset:auto !important;
+  z-index:1 !important;
+  margin:0 !important;
+  box-sizing:border-box;
+  flex:none;
+  height:44px;
+  min-height:44px;
+  padding:10px 17px !important;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border:1px solid rgba(52,35,43,.38) !important;
+  border-radius:999px !important;
+  background:rgba(249,244,234,.91) !important;
+  color:#292226 !important;
+  mix-blend-mode:normal !important;
+  -webkit-backdrop-filter:blur(9px);
+  backdrop-filter:blur(9px);
+  box-shadow:0 8px 19px rgba(42,31,35,.075);
+  text-decoration:none;
+  font:600 .72rem/1.1 'Inter Tight',system-ui,sans-serif;
+  letter-spacing:.04em;
+  white-space:nowrap;
+  cursor:pointer;
+  pointer-events:auto !important;
+  transition:transform .3s cubic-bezier(.16,1,.3,1),background-color .3s,color .3s,box-shadow .3s,border-color .3s;
+}
+body.vz-reference-site .vz-header-actions > :is(a,button):is(:hover,:focus-visible) {
+  transform:translateY(-2px);
+  box-shadow:0 12px 24px rgba(42,31,35,.14);
+  border-color:rgba(53,34,43,.55) !important;
+}
+body.vz-reference-site .vz-header-actions > :is(a,button):focus-visible,
+body.vz-reference-site > nav .vz-official-header-brand:focus-visible {
+  outline:3px solid #ae5877 !important;
+  outline-offset:3px !important;
+}
+body.vz-reference-site .vz-header-actions .vz-header-create {
+  background:#2b2429 !important;
+  color:#f9f2e8 !important;
+  border-color:#2b2429 !important;
+}
+body.vz-reference-site .vz-header-actions .vz-header-create:hover {
+  background:#624051 !important;
+  border-color:#624051 !important;
+}
+body.vz-reference-site .vz-header-create [aria-hidden]{
+  font-size:1rem;
+  line-height:1;
+  transition:transform .3s;
+}
+body.vz-reference-site .vz-header-create:hover [aria-hidden]{transform:translate(2px,-2px)}
+body.vz-reference-site .vz-header-actions .vz-home-motion-button {
+  font-size:.72rem;
+  min-width:104px;
+}
+body.vz-reference-site .vz-header-actions #mb {
+  font-size:.72rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  min-width:83px;
+}
+body.vz-reference-site .vz-header-actions .vz-home-motion-waves i {
+  animation-duration:1.35s;
+}
+body.vz-reference-site #mn {
+  z-index:138;
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(7px,1.2vh,18px) clamp(28px,7vw,130px);
+  justify-content:stretch;
+  align-content:center;
+  justify-items:start;
+  padding:clamp(93px,11vh,125px) clamp(25px,12vw,240px) clamp(38px,5vh,80px);
+  overflow-x:hidden;
+  overflow-y:auto;
+  visibility:hidden;
+  pointer-events:none;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  transition:clip-path .72s cubic-bezier(.76,0,.24,1),visibility .72s;
+}
+body.vz-reference-site #mn.open {
+  visibility:visible;
+  pointer-events:auto;
+}
+body.vz-reference-site #mn a {
+  font-size:clamp(1.6rem,3.5vh,3.35rem);
+  line-height:1.13;
+  min-height:1.18em;
+  width:fit-content;
+  max-width:100%;
+  overflow-wrap:break-word;
+}
+body.vz-reference-site.vz-menu-open .vz-header-actions .vz-header-create,
+body.vz-reference-site.vz-menu-open .vz-header-actions .vz-home-motion-button {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none !important;
+}
+body.vz-reference-site.vz-menu-open .vz-header-actions #mb {
+  background:#f7f0e4 !important;
+  color:#211b1b !important;
+}
+body.vz-reference-site #mn a[href="/report-bug/"] {
+  color:#e4ad9f;
+  font-style:italic;
+}
+body.vz-reference-site .vz-footer-bug-link {
+  display:inline-flex;align-items:center;
+  border-bottom:1px solid currentColor;
+  padding-bottom:3px;
+  color:inherit;
+}
+body.vz-reference-site .vz-footer-bug-link:hover{color:var(--acc)}
+/* Avoid unnecessary large blur layers in the hero: the particle field already
+   provides the motion. Preserve the original logo model and particle drawing. */
+body.vz-reference-site .vz-material-hero .orb {
+  opacity:.045 !important;
+  filter:blur(38px) !important;
+  will-change:auto;
+}
+body.vz-reference-site .vz-header-actions .vz-home-motion-waves {
+  pointer-events:none;
+}
+@media(max-width:900px){
+  body.vz-reference-site .vz-header-actions{
+    right:18px;top:calc(10px + env(safe-area-inset-top,0px));
+    max-width:calc(100vw - min(44vw,220px));
+    gap:6px;
+  }
+  body.vz-reference-site .vz-header-actions > :is(a,button) {
+    height:40px;min-height:40px;
+    padding:8px 12px !important;
+    font-size:.68rem;
+  }
+  body.vz-reference-site .vz-header-actions #mb {min-width:68px}
+  body.vz-reference-site .vz-header-actions .vz-home-motion-button {min-width:83px}
+  body.vz-reference-site #mn {
+    padding-inline:clamp(30px,7vw,72px);
+  }
+}
+@media(max-width:650px){
+  body.vz-reference-site > nav {
+    padding-left:14px;
+  }
+  body.vz-reference-site > nav .vz-official-header-brand{
+    max-width:35vw !important;
+    min-width:0;
+    width:clamp(104px,33vw,160px) !important;
+    padding:5px 7px !important;
+    height:46px !important;
+    border-radius:10px !important;
+  }
+  body.vz-reference-site .vz-header-actions {
+    top:calc(12px + env(safe-area-inset-top,0px));
+    right:12px;gap:5px;
+    max-width:calc(100vw - 120px);
+  }
+  body.vz-reference-site .vz-header-actions > :is(a,button) {
+    height:39px;min-height:39px;
+    padding:7px 10px !important;
+    font-size:.64rem;
+    gap:5px;
+  }
+  body.vz-reference-site .vz-header-create .vz-quick-long{display:none}
+  body.vz-reference-site .vz-header-create .vz-quick-short{display:inline}
+  body.vz-reference-site .vz-header-actions #mb{min-width:57px;font-size:.65rem}
+  body.vz-reference-site .vz-header-actions .vz-home-motion-button{
+    min-width:37px;
+    padding:7px 9px !important;
+  }
+  body.vz-reference-site .vz-header-actions .vz-home-motion-button > span:last-child{display:none}
+  body.vz-reference-site #mn {
+    grid-template-columns:1fr;
+    gap:4px;
+    align-content:start;
+    padding:82px 25px 38px;
+  }
+  body.vz-reference-site #mn a {
+    font-size:clamp(1.42rem,4.6vh,2.35rem);
+    min-height:1.05em;
+  }
+}
+@media(max-width:350px){
+ body.vz-reference-site > nav .vz-official-header-brand{
+  width:110px !important;max-width:110px !important;
+ }
+ body.vz-reference-site .vz-header-actions{
+  right:9px;max-width:calc(100vw - 116px);
+ }
+ body.vz-reference-site .vz-header-actions > :is(a,button){padding-inline:7px !important}
+ body.vz-reference-site .vz-header-actions #mb{min-width:53px}
+}
+@media(prefers-reduced-motion:reduce) {
+ html:not([data-motion=full]) body.vz-reference-site .vz-header-actions > :is(a,button) {
+  transition:none;
+ }
+}
