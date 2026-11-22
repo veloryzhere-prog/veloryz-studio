@@ -41,7 +41,7 @@ assert.match(file('lib/docs-server-html.ts'),/renderHtmlDocument/,'Initial HTML 
 assert.match(docs,/docHtmlPath/);
 assert.match(hub,/docHtmlPath/);
 assert.match(sitemap,/\/docs\/index\.html/);
-for(const path of ['lib/defaults.json','lib/page-handler.ts','lib/search-index-content.ts','lib/site-shell.ts','public/app.js']){
+for(const path of ['lib/defaults.json','lib/page-handler.ts','lib/search-index-content.ts','lib/site-shell.ts','public/app.js','public/privacy-center.js']){
  assert.doesNotMatch(file(path),/Bokaro|Bucaro|Jharkhand/i,'City-specific public text remains in '+path);
 }
 assert.doesNotMatch(publicHtml,/fake client|placeholder testimonial/i);
