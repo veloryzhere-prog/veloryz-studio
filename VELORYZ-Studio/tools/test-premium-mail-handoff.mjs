@@ -18,8 +18,8 @@ const PDFDocument={create:async()=>lastDoc={
  pages:[],attachments:[],metadata:{},
  setTitle(v){this.metadata.title=v},setAuthor(v){this.metadata.author=v},
  setSubject(v){this.metadata.subject=v},setCreator(v){this.metadata.creator=v},
- embedFont:async()=>font,addPage(){
-  const page={texts:[],drawRectangle(){},drawLine(){},drawText(text,options){this.texts.push({text,options})}};
+ embedFont:async()=>font,embedJpg:async()=>({width:80,height:80}),addPage(){
+  const page={texts:[],drawRectangle(){},drawLine(){},drawImage(){},drawText(text,options){this.texts.push({text,options})}};
   this.pages.push(page);return page;
  },async attach(data,name,options){this.attachments.push({data,name,options})},
  async save(){return new Uint8Array([37,80,68,70])}
@@ -56,6 +56,7 @@ assert.equal(lastDoc.pages.length,1,'A4 project-order summary must have exactly 
 const lines=lastDoc.pages[0].texts.map(x=>x.text).join(' / ');
 for(const expected of ["VELORYZ","VZ-ORDER-2026-0001","CLIENT PORTAL","Complete original request","Production milestones"])
  assert.ok(lines.toLowerCase().includes(expected.toLowerCase()),'One-sheet missing '+expected);
+assert.ok(mailSource.includes("doc.embedJpg(logoBytes())"),"One-sheet PDF must embed the official project emblem.");
 assert.ok(lastDoc.attachments.some(a=>new TextDecoder().decode(a.data).includes("Budget: INR 120,000")),
  'Entire original submitted brief must survive even when it cannot fit visibly on one page.');
 const long={...req,brief_details:"Huge detailed request\n"+("Feature: many many design options; https://example.org/reference\n").repeat(2200)};
@@ -75,6 +76,7 @@ const delivery=await mail.sendGmailMail({to:req.client_email,...summary,attachme
 assert.equal(delivery.status,"sent",'Mock SMTP should return accepted only after Gmail DATA 250.');
 const sent=outbound.join("");
 assert.ok(sent.includes("multipart/alternative"),'Gmail MIME must support alternative HTML and text.');
+assert.ok(sent.includes("multipart/related")&&sent.includes("Content-ID: <veloryz-brand-emblem>"),"Email must embed the official VELORYZ emblem as an inline CID image.");
 assert.ok(sent.includes("multipart/mixed"),'Gmail MIME must contain PDF attachment.');
 assert.ok(sent.includes('filename="VELORYZ-Order-Summary.pdf"'));
 assert.ok(sent.includes("Content-Transfer-Encoding: base64"));
