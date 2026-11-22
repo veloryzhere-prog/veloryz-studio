@@ -70,6 +70,8 @@ jobs:
         run: node tools/test-client-portal-boot.mjs
       - name: Verify one-page industrial order PDF and manual Gmail delivery actions
         run: node tools/test-premium-mail-handoff.mjs
+      - name: Verify exact Google Search Console HTML ownership token
+        run: node tools/test-google-verification.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application

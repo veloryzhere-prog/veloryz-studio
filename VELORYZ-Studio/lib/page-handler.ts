@@ -10,6 +10,11 @@ export const dynamic = 'force-dynamic';
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ // Google Search Console ownership token. Respond with the uploaded file's exact
+ // content before the site CMS / SPA fallback, without redirecting or wrapping it.
+ if(path==='/googleb802659617480672.html')return new Response('google-site-verification: googleb802659617480672.html',{
+  status:200,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300','X-Content-Type-Options':'nosniff'}
+ });
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
