@@ -41,7 +41,7 @@ assertContains(renderer,"originalTemplateId",'Source-built original demos must h
 assertContains(handler,"const designMatch=path.match",'Direct navigation needs a real server route');
 assertContains(handler,"renderDesignPreview(design)",'Render server HTML on direct navigation');
 assertContains(handler,"serialise([...openDesigns.originals,...openDesigns.items])",'Direct creator links require a hydrated catalogue');
-assertContains(detail,"'/template-previews/'+encodeURIComponent(p.originalTemplateId)",'Original demos must remain same origin');
+assertContains(detail,"/template-previews/'+encodeURIComponent(p.originalTemplateId)",'Original demos must remain same origin');
 assertContains(renderer,"Made with <b>VELORYZ",'The local preview must carry studio branding');
 assertContains(creator,"window.createPage=creatorPage",'Creator global registration must avoid strict assignment');
 assertContains(creator,"href=\"/design/",'Creator inspiration gallery must use local previews');
