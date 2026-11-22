@@ -62,6 +62,8 @@ jobs:
         run: node tools/test-site-kinetics.mjs
       - name: Verify detailed Studio Control console, AI Mindset and owner actions
         run: node tools/test-admin-detail.mjs
+      - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle
+        run: node tools/test-client-lifecycle.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
