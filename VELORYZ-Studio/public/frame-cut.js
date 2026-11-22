@@ -1,111 +1,86 @@
-/* VELORYZ frame-cut: one reliable rAF scroll progress for original V, rings and scarf film.
- * No CSS view-timeline dependency; no image redraw and no scroll hijacking.
+/* VELORYZ / Scarf Film — isolated from scrolling.
+ * The previous 340svh scroll-linked logo/rings transition is deliberately removed.
+ * IntersectionObserver controls one native video; there is no scroll handler, rAF
+ * ticker, 3D asset, canvas, frame-sheet decoding, or sticky pinning in this scene.
  */
 class VeloryzFrameCut extends HTMLElement {
-  connectedCallback() {
-    queueMicrotask(() => { if (this.isConnected && !this.cleanup) this.mount(); });
-  }
-  disconnectedCallback() { this.cleanup?.(); this.cleanup=null; }
-  mount() {
-    const scarf=this.querySelector('.frame-scarf');
-    const button=this.querySelector('.frame-toggle');
-    const stage=this.querySelector('.frame-stage');
-    if(!scarf||!button||!stage)return;
-    const controller=new AbortController();
-    const listen=(target,type,fn,options={})=>target?.addEventListener?.(type,fn,{...options,signal:controller.signal});
-    const clamp=value=>Math.min(1,Math.max(0,value));
-    const mix=(a,b,t)=>a+(b-a)*t;
-    const part=(p,a,b)=>clamp((p-a)/(b-a));
-    let full=false,near=false,held=false,playing=false,frame=0,videoLoadStarted=false;
-    let observer;
-    const clock=window.VeloryzMotionClock;
-    const frameKey=Symbol('scarf-frame');
-    const requestFrame=callback=>clock?clock.request(frameKey,callback):requestAnimationFrame(callback);
-    const cancelFrame=()=>clock?clock.cancel(frameKey):cancelAnimationFrame(frame);
-    let unsubscribeScroll;
-    const style=(name,value)=>this.style.setProperty(name,String(value));
-    const setProgress=p=>{
-      // Match the original authored choreography, including the pause before scarf reveal.
-      const intro=part(p,0,.38),outro=part(p,.47,.69);
-      const easeOut=t=>1-Math.pow(1-t,3);
-      const zoom=easeOut(intro);
-      const x=mix(0,13,outro),y=mix(0,-3,outro);
-      const scale=intro<1?mix(4.1,1,zoom):mix(1,.58,outro);
-      const angle=intro<1?mix(12,0,zoom):mix(0,17,outro);
-      style('--scarf-progress',p.toFixed(5));
-      style('--scarf-x',x.toFixed(3)+'%');
-      style('--scarf-y',y.toFixed(3)+'%');
-      style('--scarf-scale',scale.toFixed(4));
-      style('--scarf-angle',angle.toFixed(3)+'deg');
-      style('--scarf-emblem-opacity',(1-outro).toFixed(4));
-      style('--scarf-rings-opacity',part(p,.06,.32).toFixed(4));
-      style('--scarf-film-opacity',part(p,.47,.69).toFixed(4));
-      style('--scarf-film-scale',mix(1.05,1,part(p,.47,.69)).toFixed(4));
-    };
-    const label=()=>{
-      button.textContent=scarf.paused?'Play scarf':'Pause scarf';
-      button.setAttribute('aria-label',button.textContent);
-    };
-    const pause=()=>{
-      if(playing||!scarf.paused){playing=false;scarf.pause();}
-    };
-    const update=()=>{
-      frame=0;
-      if(!this.isConnected)return;
-      full=window.StudioMotion?.level==='full';
-      this.toggleAttribute('data-full',full);
-      if(!full||document.hidden){
-        pause();button.hidden=true;this.removeAttribute('data-focus');setProgress(0);return;
-      }
-      const bounds=this.getBoundingClientRect();
-      const stageHeight=stage.clientHeight||window.innerHeight||1;
-      // Sticky stage travels over the height of the entire scene minus the viewport.
-      const travel=Math.max(1,bounds.height-stageHeight);
-      const progress=clamp(-bounds.top/travel);
-      const visible=bounds.top<stageHeight&&bounds.bottom>0;
-      // The rAF controller runs only on actual scroll/resize/change events.
-      setProgress(progress);
-      this.toggleAttribute('data-focus',visible&&bounds.top<=1&&bounds.bottom>=stageHeight-1);
-      if(near&&visible&&progress>=.22&&!videoLoadStarted){
-        videoLoadStarted=true;
-        scarf.preload='auto';
-        scarf.src='/assets/frame-cut/scarf.mp4';
-      }
-      const film=near&&visible&&progress>=.47;
-      button.hidden=!film;
-      if(!film||held){pause();return;}
-      if(!playing){
-        playing=true;
-        const promise=scarf.play();
-        promise?.catch?.(()=>{
-          if(playing){playing=false;held=true;label();}
-        });
-      }
-    };
-    const schedule=()=>{
-      if(!frame)frame=requestFrame(update);
-    };
-    unsubscribeScroll=clock?.subscribeScroll(schedule);
-    const preference=()=>{schedule();};
-    if(typeof IntersectionObserver==='function'){
-      observer=new IntersectionObserver(([entry])=>{near=entry.isIntersecting; if(!near)pause();schedule();},{rootMargin:'60% 0px'});
-      observer.observe(this);
-    }else near=true;
-    listen(window,'scroll',schedule,{passive:true});
-    listen(window,'resize',schedule,{passive:true});
-    listen(window,'pageshow',schedule);
-    listen(document,'visibilitychange',schedule);
-    listen(document,'studio:route',schedule);
-    listen(button,'click',()=>{held=!scarf.paused; if(!held)playing=false; schedule();});
-    listen(scarf,'play',label);
-    listen(scarf,'pause',label);
-    window.StudioMotion?.addEventListener?.('change',preference);
-    schedule();
-    this.cleanup=()=>{
-      controller.abort();observer?.disconnect();cancelFrame();unsubscribeScroll?.();
-      window.StudioMotion?.removeEventListener?.('change',preference);
-      pause();scarf.removeAttribute('src');scarf.load();
-    };
-  }
+ connectedCallback(){
+  queueMicrotask(()=>{if(this.isConnected&&!this.disposeScene)this.mount();});
+ }
+ disconnectedCallback(){this.disposeScene?.();this.disposeScene=null;}
+ mount(){
+  const video=this.querySelector('.frame-scarf');
+  const button=this.querySelector('.frame-toggle');
+  if(!video||!button)return;
+  const controller=new AbortController();
+  const listen=(target,event,callback)=>target?.addEventListener?.(event,callback,{signal:controller.signal});
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  let near=false,visible=false,manual=false,held=false,loading=false,observer=null;
+  const canAuto=()=>!document.hidden&&!reduced.matches&&!network?.saveData&&window.StudioMotion?.level!=='paused'&&window.StudioMotion?.level!=='reduced'&&!window.StudioMotion?.onboardingActive;
+  const label=()=>{
+   const playing=!video.paused;
+   button.textContent=playing?'Pause scarf motion':'Play scarf motion';
+   button.setAttribute('aria-label',button.textContent);
+   button.setAttribute('aria-pressed',String(playing));
+  };
+  const load=()=>{
+   if(loading)return;
+   loading=true;
+   video.preload='metadata';
+   video.src='/assets/frame-cut/scarf.mp4';
+   video.load?.();
+  };
+  const pause=()=>{if(!video.paused)video.pause();label();};
+  const sync=()=>{
+   if(!this.isConnected)return;
+   const active=near&&visible&&!document.hidden;
+   this.toggleAttribute('data-visible',active);
+   if(!active){pause();return;}
+   if(canAuto()&&!held){load();video.play()?.catch(()=>{held=true;pause();});}
+   else if(manual&&!held){load();video.play()?.catch(()=>pause());}
+   else pause();
+   label();
+  };
+  const toggle=()=>{
+   if(!loading)load();
+   if(!video.paused){held=true;manual=false;pause();}
+   else{held=false;manual=true;sync();}
+  };
+  if(typeof IntersectionObserver==='function'){
+   observer=new IntersectionObserver(entries=>{
+    for(const entry of entries){
+     if(entry.target!==this)continue;
+     near=entry.isIntersecting;
+     visible=entry.isIntersecting&&entry.intersectionRatio>=.08;
+     sync();
+    }
+   },{rootMargin:'120px 0px',threshold:[0,.08,.25]});
+   observer.observe(this);
+  }else {near=true;visible=true;}
+  listen(button,'click',toggle);
+  listen(video,'play',label);
+  listen(video,'pause',label);
+  listen(video,'error',()=>{held=true;button.textContent='Scarf film unavailable';button.disabled=true;});
+  listen(document,'visibilitychange',sync);
+  listen(document,'studio:route',sync);
+  listen(document,'studio:motion-intro-complete',sync);
+  listen(document,'studio:brand-intro-complete',sync);
+  listen(window,'pageshow',sync);
+  listen(window.StudioMotion,'change',sync);
+  reduced.addEventListener?.('change',sync);
+  network?.addEventListener?.('change',sync);
+  label();
+  sync();
+  this.disposeScene=()=>{
+   controller.abort();
+   observer?.disconnect();
+   reduced.removeEventListener?.('change',sync);
+   network?.removeEventListener?.('change',sync);
+   pause();
+   video.removeAttribute('src');
+   video.load?.();
+  };
+ }
 }
 if(!customElements.get('veloryz-frame-cut'))customElements.define('veloryz-frame-cut',VeloryzFrameCut);
