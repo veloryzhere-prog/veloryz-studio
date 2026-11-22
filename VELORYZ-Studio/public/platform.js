@@ -15,14 +15,16 @@ const advisers=[
  {id:'nikhil',name:'Nikhil',role:'Senior intelligence · Strategy',color:'#56adbd'},
  {id:'milky',name:'Milky',role:'Creative director · Visuals',color:'#e58bb6'},
  {id:'ritik',name:'Ritik',role:'Technical specialist · Engineering',color:'#68a0eb'},
- {id:'aryan',name:'ARYAN',role:'Executive escalation · Final review',color:'#9462da'}
+ {id:'aryan',name:'ARYAN',role:'Executive escalation · Final review',color:'#9462da'},
+ {id:'madherchod',name:'Madherchod AI',role:'Brutally frank · Reality check',color:'#d77748'}
 ];
 const adviserIntros={
  happy:'Happy here. I’ll help you get moving—tell me what you need. ⚡',
  nikhil:'Nikhil. Give me the objective and constraints. We’ll find the sharpest solution.',
  milky:'Hi, I’m Milky ✨. Let’s make something extraordinary.',
  ritik:'Ritik here. Describe the technical problem and I’ll get straight to the point.',
- aryan:'ARYAN. Final review. Bring your hardest problem and let’s get serious. ⚡'
+ aryan:'ARYAN. Final review. Bring your hardest problem and let’s get serious. ⚡',
+ madherchod:'Madherchod AI here. Give me your idea and I will tell you the good, the bad, and what to fix. ⚡'
 };
 const STUDIO_HELP_ROUTES={
  '/':'Home','/work/':'Our work','/design/':'Design library','/services/':'Services','/studio/':'The studio','/teamjob/':'Our team',
@@ -46,7 +48,7 @@ const helpForPage=()=>PAGE_AI_HELP[currentRoute]||['Need a hand?','Get page-awar
 const validSiteLink=url=>typeof url==='string'&&Object.hasOwn(STUDIO_HELP_ROUTES,url);
 const money=value=>'₹'+Number(value).toLocaleString('en-IN');
 function catalogue(){return (studioCMS?.catalogue||[]).filter(d=>d.enabled);}
-function avatar(a,small=false){return `<span class="expert-avatar ${small?'small':''} expert-avatar-${a.id}" style="--avatar-tone:${a.color}" aria-hidden="true"><img src="/assets/ai-avatars/${a.id}.webp" alt="" width="80" height="80" decoding="async"><i></i></span>`;}
+function avatar(a,small=false){return `<span class="expert-avatar ${small?'small':''} expert-avatar-${a.id}" style="--avatar-tone:${a.color}" aria-hidden="true">${a.id==='madherchod'?'<b class="vz-agent-flash">⚡</b>':`<img src="/assets/ai-avatars/${a.id}.webp" alt="" width="80" height="80" decoding="async">`}<i></i></span>`;}
 
 function platformIntro(kicker,title,description,number){return `<section class="platform-intro container"><div class="eyebrow">${kicker}</div><div class="platform-title-line"><h1>${title}</h1>${motionGlyph()}</div><p>${description}</p></section>`;}
 function designCard(d,i){return `<article class="design-card reveal" data-design-category="${esc(d.category)}" data-design-name="${esc((d.name+' '+d.category+' '+d.description).toLowerCase())}"><button class="design-preview" data-design-preview="${esc(d.id)}" aria-label="Preview ${esc(d.name)}"><div class="browser-rail"><i></i><i></i><i></i><span>${esc(d.category.toUpperCase())} / INTERFACE REFERENCE</span><b>↗</b></div><div class="design-image-wrap"><img src="${esc(d.image)}" alt="${esc(d.name)} — imported ${esc(d.category)} website interface preview" width="1280" height="727" loading="${i<2?'eager':'lazy'}" decoding="async"></div><span class="design-preview-label">Explore direction <span>↗</span></span></button><div class="design-card-body"><div class="design-meta"><span>${esc(d.category)}</span><span>${esc(d.timeline)}</span></div><h2>${esc(d.name)}</h2><p>${esc(d.description)}</p><div class="design-card-bottom"><span>Adaptation from <strong>${money(d.price)}</strong></span><button class="shop-request" data-design-purchase="${esc(d.id)}" aria-label="Request ${esc(d.name)}">Request design ↗</button></div>${d.source?`<a class="source-credit" href="${esc(d.source)}" target="_blank" rel="noopener">Reference by ${esc(d.author)} · source ↗</a>`:''}</div></article>`;}
