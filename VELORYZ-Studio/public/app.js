@@ -276,7 +276,7 @@ function renderRoute(route,scroll=true){
   document.getElementById('site-pin')?.remove();document.getElementById('ad-slider')?.remove();
 }else{initMotion();renderOfferDock();platformMount();}
  document.dispatchEvent(new CustomEvent('studio:route'));
- if(scroll){if(!reduced.matches&&typeof $('#main').animate==='function')$('#main').animate([{opacity:.55,transform:'translateY(7px)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,.7,.3,1)'});window.scrollTo({top:0,behavior:'instant'});$('#main').focus({preventScroll:true});}
+ if(scroll){if(!reduced.matches&&typeof $('#main').animate==='function')$('#main').animate([{opacity:.55,transform:'translateY(7px)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,.7,.3,1)'});if(window.VeloryzScroll?.active)window.VeloryzScroll.scrollTo(0,{immediate:true,force:true});else window.scrollTo({top:0,behavior:'instant'});$('#main').focus({preventScroll:true});}
 }
 function navigate(path){
  while(modalOpen)closeModal();
