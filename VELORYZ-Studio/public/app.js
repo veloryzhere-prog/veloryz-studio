@@ -214,6 +214,14 @@ function typeStudy(){
  return `<section class="type-study container"><div class="type-heading"><div><span class="eyebrow">Motion playground</span><h2>Type in motion.</h2></div><label>Letter spacing <input type="range" min="0" max="100" value="40" data-type-spacing></label></div>
  <div class="type-window" aria-label="Veloryz kinetic type study"><div aria-hidden="true">${['VELORYZ','STUDIO','VELORYZ'].map(word=>`<span>${word}</span>`).join('')}</div></div></section>`;
 }
+function reviewSpotlight(){return `
+ <section id="vz-reviews-spotlight" class="vz-reviews-spotlight" aria-labelledby="vz-reviews-title">
+  <div class="container vz-reviews-top"><div><div class="vz-reviews-eyebrow">REAL VOICES / VELORYZ COMMUNITY</div><h2 id="vz-reviews-title">The work speaks.<br><em>People do too.</em></h2></div>
+  <div class="vz-reviews-intro"><p>Every project and conversation teaches us something. Explore genuine visitor feedback, thoughtfully moderated and always written by real people.</p><a href="/reviews.html">Explore every review ↗</a></div></div>
+  <div class="container vz-reviews-counter"><span id="vz-review-count">PREPARING THE COMMUNITY</span><button id="vz-review-pause" class="vz-review-control" type="button" aria-pressed="false" hidden disabled>Pause motion ‖</button></div>
+  <div class="vz-reviews-ribbon"><div id="vz-review-track" class="vz-review-track" aria-label="Continuously sliding community reviews" aria-live="off"><div class="vz-review-empty">Loading genuine reviews…</div></div></div>
+  <div class="container vz-review-spotlight-bottom"><p id="vz-review-section-state" aria-live="polite">Only human-reviewed submissions are published. No fictional testimonials.</p><a href="/reviews.html#share-review">Add your experience ↗</a></div>
+ </section>`;}
 function homePage(){const settings=studioCMS?.site||{};return `
  <section class="hero container motion-hero"><div class="hero-topline intro-animate"><div class="eyebrow hero-studio-tagline" data-cursor-fade>VELORYZ Studio · Independent creative & technology studio</div><span class="small-index">INDIA · ASIA / WORKING EVERYWHERE</span></div><div class="hero-layout"><div class="hero-copy"><div class="hero-chapter intro-animate">DESIGN × CODE × MOTION</div><h1 class="intro-animate delay-1">Built to be<br><span class="serif">remembered.</span></h1><p class="hero-desc intro-animate delay-2">Distinctive identities, thoughtful websites and digital experiences. A little different thinking. A lasting impression.</p><div class="hero-actions intro-animate delay-3"><a href="/work/" class="button">Explore our work ${arrow}</a><button class="motion-secondary" data-book>Start a conversation ${arrow}</button></div><a class="hero-maker intro-animate delay-3" href="/studio/"><span class="maker-monogram">AR</span><span>Designed & built by<strong>Aryan Raj Singh <span aria-hidden="true">↗</span></strong></span></a></div><div class="hero-art intro-animate delay-2">${logoStage()}</div></div><div class="hero-meta intro-animate delay-3"><div><span>01 / A SMALL STUDIO. A BIG VISION.</span>Design, technology & a little different thinking.</div><div><span>02 / FOUNDED BY ARYAN RAJ SINGH</span>Independent since 2025.</div><div><span>03 / KEEP EXPLORING</span><a href="${settings.showWork===false?'/work/':'#selected-work'}">Scroll to discover ↓</a></div></div></section>
 ${settings.showWork!==false?` <section id="selected-work" class="section container"><div class="section-head reveal"><div><div class="eyebrow">Featured real-world design references</div><h2>${esc(settings.showcaseTitle||'Ideas, made tangible.')}</h2></div><a href="/work/" class="text-link">Explore the design library ${arrow}</a></div>${projectShowcase()}</section>`:''}
@@ -224,6 +232,7 @@ ${settings.showScarf!==false?` <veloryz-frame-cut aria-label="The VELORYZ logo r
  </div></veloryz-frame-cut>`:''}
  ${settings.showManifesto!==false?motionManifesto():''}
  ${ticker()}
+ ${reviewSpotlight()}
  ${settings.showStudies!==false?uiExplorations():''}
  <section class="section container services-section"><div class="split-section"><div class="split-intro reveal"><div class="eyebrow">What we bring</div><h2>From the first idea<br>to the finer detail.</h2><p>A connected approach to strategy, design and development. One studio, with the right people around your idea.</p><a href="/services/" class="text-link">Explore our services ${arrow}</a></div><div class="reveal">${serviceList()}</div></div></section>
  ${settings.showFounder!==false?creatorSection():''}
@@ -260,7 +269,7 @@ function renderRoute(route,scroll=true){
  if(observer)observer.disconnect();
  $('#main').innerHTML=currentRoute==='/create/'&&typeof window.VeloryzCreatorV4?.renderPage==='function'?window.VeloryzCreatorV4.renderPage():(page?page.render():notFoundPage());
  hydrateCMSPage();
- header();footer();window.StudioMotion?.sync();
+ header();footer();window.StudioMotion?.sync();window.VeloryzReviewExperience?.mount?.();
  if(currentRoute==='/'){const teaser=document.createElement('section');teaser.className='container platform-teaser';teaser.innerHTML='<span class="teaser-star" aria-hidden="true">✳</span><div><div class="eyebrow">A LITTLE INSPIRATION, TO BEGIN</div><h2>Your next direction starts here.</h2><p>Explore the design library. Shape a brief. Make it yours.</p></div><a class="button" href="/design/">Explore the design library ↗</a>';$('#main').insertBefore(teaser,$('#main').querySelector('.motion-manifesto')||null);}
  if(currentRoute==='/create/'){
   document.getElementById('expert-launcher')?.remove();document.getElementById('offer-dock')?.remove();
