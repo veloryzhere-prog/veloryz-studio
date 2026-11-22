@@ -43,7 +43,7 @@ assert.match(gmail,/port:465/,'SMTP must use TLS submission over 465, not 25/587
 assert.match(gmail,/VELORYZ_GMAIL_APP_PASSWORD/);
 assert.match(gmail,/const MAILBOX="veloryz\.here@gmail\.com"/);
 assert.ok(!gmail.includes('RESEND_API_KEY')&&!backend.includes('RESEND_API_KEY'),'Do not require Resend.');
-assert.match(gmail,/new Date\(expires\)/,'Invitations should communicate expiry.');
+assert.match(gmail,/date\(expires\)/,'Invitations should communicate formatted expiration to the recipient.');
 assert.match(gmail,/one-time/i);
 assert.match(gmail,/pdf-lib@1\.17\.1/,'PDF dependency must be pinned.');
 assert.match(gmail,/Content-Disposition: attachment/,'MIME should attach PDF.');
