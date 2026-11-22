@@ -296,6 +296,34 @@ document.addEventListener('click',async event=>{
   if(action==='enquiry-open'){openEnquiry(id);return;}
   if(action==='enquiry-refresh'){enquiryLoaded=false;render();return;}
   if(action==='enquiry-page'){enquiryPage=Math.max(0,enquiryPage+Number(id));enquiryLoaded=false;render();return;}
+  if(action==='accept-copy-code'){
+   const field=$('#vz-accepted-invite-code');
+   if(field){try{await navigator.clipboard.writeText(field.value);toast('Private code copied. Do not share outside the intended recipient.');}catch{field.select();toast('Select and copy this access code securely.');}}
+   return;
+  }
+  if(action==='accept-open-client'){
+   closeModal();
+   cpSelected=id;
+   cpTab='overview';
+   location.hash='#/client-portal';
+   cpLoaded=false;
+   render();
+   return;
+  }
+  if(action==='enquiry-accept'){
+   if(preview){toast('This needs the live signed-in owner workspace.');return;}
+   const request=enquiryItems.find(x=>x.id===id);
+   if(!request)return;
+   if(!confirm('Accept the project request for '+request.name+'?\n\nThis creates a private workspace with six starter milestones, generates a one-time invitation and attempts two branded Gmail emails (one with a detailed project-summary PDF). The action cannot be silently undone.'))return;
+   button.disabled=true;button.textContent='Accepting and preparing client access…';
+   try{
+    const result=await api('/api/client-portal/admin/accept',{method:'POST',body:JSON.stringify({enquiry_id:id}),signal:AbortSignal.timeout(100000)});
+    closeModal();
+    enquiryLoaded=false;cpLoaded=false;
+    acceptanceResult(result);
+   }finally{button.disabled=false;}
+   return;
+  }
   if(action==='enquiry-save'){if(preview){toast('Read-only design preview.');return;}const item=enquiryItems.find(x=>x.id===id);button.disabled=true;try{await api('/api/admin/enquiries/'+id,{method:'PUT',body:JSON.stringify({status:$('#enquiry-status').value,notes:$('#enquiry-notes').value,version:item.version})});closeModal();enquiryLoaded=false;render();toast('Enquiry updated. Send your reply using your contact app.');}finally{button.disabled=false;}return;}
   if(action==='content-audit'){
    if(preview){toast('The content review requires the owner workspace.');return;}
@@ -387,13 +415,40 @@ function creatorBriefPanel(message){
   (data['External inspiration']?'<p class="creator-request-extra">External reference: '+E(data['External inspiration'])+'</p>':'')+
   '<p class="creator-request-small">See the original enquiry below for feature-specific requirements, notes and any additional details.</p></section>';
 }
+
+function acceptanceResult(result){
+ const project=result.project||{},code=result.invitation?.code||'';
+ const acceptance=result.acceptance_delivery||{},invite=result.invitation?.delivery||{};
+ const statuses=[
+  {label:'Project linked to client workspace',state:'complete',note:'A single private workspace is associated with this project request.'},
+  {label:'Detailed PDF prepared',state:result.already_accepted?'review':'complete',note:'Download the original brief, onboarding roadmap, project reference and key links.'},
+  {label:'Acceptance email and PDF',state:acceptance.status||'review',note:acceptance.message||'Refer to the email delivery log for the original result.'},
+  {label:'Private invitation email',state:invite.status||'review',note:invite.message||(result.already_accepted?'No duplicate invitation was issued.':'Invitation code available only in this view.')}
+ ];
+ const projectId=String(result.id||project.id||'');
+ const codeFields=code?'<div class="vz-accept-secure"><span>ONE-TIME PRIVATE ACCESS CODE</span>'+
+  '<div class="vz-accept-copy"><input id="vz-accepted-invite-code" readonly autocomplete="off" value="'+E(code)+'">'+
+  '<button type="button" class="admin-button secondary" data-action="accept-copy-code">Copy code</button></div>'+
+  '<p>This code expires in 14 days and is only valid once. Store it securely if Gmail has not accepted the invitation. The project reference is not a login code.</p></div>':'<p class="vz-accept-existing">This request was previously accepted. Invitation codes are not stored in plaintext; issue a fresh invitation from Client Management only when necessary.</p>';
+ const summary='<section class="vz-accepted"><div class="vz-accepted-heading"><span>VELORYZ / PROJECT ACCEPTANCE</span><h2>'+E(project.title||'Client project')+'</h2><p>'+E(project.client_name||'')+' · '+E(project.client_email||'')+'</p></div>'+
+  '<div class="vz-accept-ref"><strong>'+E(project.request_reference||result.reference||'VELORYZ')+'</strong><small>Official project reference</small></div>'+
+  '<div class="vz-accept-timeline">'+statuses.map((x,i)=>'<div class="vz-accept-step"><span class="vz-accept-step-dot '+(x.state==='sent'||x.state==='complete'?'is-ok':x.state==='not-configured'?'is-manual':'is-review')+'">'+(i+1)+'</span><div><strong>'+E(x.label)+'</strong><p>'+E(x.note)+'</p></div><small>'+E(x.state==='sent'?'Accepted by Gmail':x.state==='complete'?'Created':x.state==='not-configured'?'Manual delivery needed':x.state==='failed'?'Delivery needs attention':'Review')+'</small></div>').join('')+'</div>'+codeFields+'</section>';
+ const pdfUrl='/api/client-portal/admin/projects/'+encodeURIComponent(projectId)+'/summary';
+ showModal(result.already_accepted?'Project already onboarded':'Project accepted & workspace created',
+  'The real project record and mail status are shown below. A provider accepting an email does not guarantee inbox delivery.',
+  summary,
+  '<a href="'+E(pdfUrl)+'" class="admin-button secondary" target="_blank" rel="noopener">Download project PDF ↓</a>'+
+  '<button type="button" class="admin-button" data-action="accept-open-client" data-id="'+E(projectId)+'">Open client management ↗</button>'+
+  '<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>','medium');
+}
+
 function openEnquiry(id){
  const item=enquiryItems.find(x=>x.id===id);if(!item)return;
  const subject=(item.status==='confirmed'?'Consultation confirmation':'Your studio enquiry')+' · '+item.reference;
  const message=`Hi ${item.name},\n\nThank you for your enquiry (${item.reference}).\nPreferred consultation: ${item.preferred_date}, ${item.preferred_time} IST.\n\n${item.status==='confirmed'?'Your consultation time is confirmed.':'Let’s discuss the next step for your project.'}\n\nVELORYZ Studio`;
  const email='mailto:'+encodeURIComponent(item.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
  const phone=item.phone.replace(/\D/g,'');
- showModal(E(item.name),E(item.reference)+' · Received '+E(friendlyDate(item.created_at)),`<div class="enquiry-detail-grid"><div><span>Email</span><a href="mailto:${E(item.email)}">${E(item.email)}</a></div><div><span>Phone / WhatsApp</span><strong>${E(item.phone||'Not provided')}</strong></div><div><span>Service</span><strong>${E(item.service)}</strong></div><div><span>Budget</span><strong>${E(item.budget||'Let’s discuss')}</strong></div><div><span>Preferred consultation · IST</span><strong>${E(item.preferred_date||'To be arranged')}<br>${E(item.preferred_time)}</strong></div><div><span>Company / website</span><strong>${E(item.company||'Not provided')}</strong></div></div>${creatorBriefPanel(item.message)}<div class="enquiry-message"><span>THE FULL PROJECT SPECIFICATION</span><p>${E(item.message).replace(/\n/g,'<br>')}</p></div><section data-request-history><h3>Request activity</h3><p>Loading activity…</p></section><div class="enquiry-edit"><label for="enquiry-status">Request status</label><select id="enquiry-status">${['new','contacted','confirmed','closed'].map(status=>`<option ${status===item.status?'selected':''} value="${status}">${status}</option>`).join('')}</select><label for="enquiry-notes">Private studio notes</label><textarea id="enquiry-notes" maxlength="3000" rows="4">${E(item.notes)}</textarea><p>Confirming reserves the preferred time and prevents a second confirmation for that slot. Send your reply separately using the contact drafts below.</p></div><div class="enquiry-reply"><a class="admin-button secondary" href="${E(email)}">Prepare email reply ↗</a>${phone?`<a class="admin-button secondary" href="https://wa.me/${phone}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">Prepare WhatsApp reply ↗</a>`:''}</div>`,`<span class="footer-hint">Changes apply to this inbox immediately.</span><button class="admin-button secondary" data-cpm="from-enquiry" data-id="${E(id)}">Create client workspace ↗</button><button class="admin-button" data-action="enquiry-save" data-id="${E(id)}">Save request ${icon('check')}</button>`);
+ showModal(E(item.name),E(item.reference)+' · Received '+E(friendlyDate(item.created_at)),`<div class="enquiry-detail-grid"><div><span>Email</span><a href="mailto:${E(item.email)}">${E(item.email)}</a></div><div><span>Phone / WhatsApp</span><strong>${E(item.phone||'Not provided')}</strong></div><div><span>Service</span><strong>${E(item.service)}</strong></div><div><span>Budget</span><strong>${E(item.budget||'Let’s discuss')}</strong></div><div><span>Preferred consultation · IST</span><strong>${E(item.preferred_date||'To be arranged')}<br>${E(item.preferred_time)}</strong></div><div><span>Company / website</span><strong>${E(item.company||'Not provided')}</strong></div></div>${creatorBriefPanel(item.message)}<div class="enquiry-message"><span>THE FULL PROJECT SPECIFICATION</span><p>${E(item.message).replace(/\n/g,'<br>')}</p></div><section data-request-history><h3>Request activity</h3><p>Loading activity…</p></section><div class="enquiry-edit"><label for="enquiry-status">Request status</label><select id="enquiry-status">${['new','contacted','confirmed','closed'].map(status=>`<option ${status===item.status?'selected':''} value="${status}">${status}</option>`).join('')}</select><label for="enquiry-notes">Private studio notes</label><textarea id="enquiry-notes" maxlength="3000" rows="4">${E(item.notes)}</textarea><p>Confirming reserves the preferred time and prevents a second confirmation for that slot. Send your reply separately using the contact drafts below.</p></div><div class="enquiry-reply"><a class="admin-button secondary" href="${E(email)}">Prepare email reply ↗</a>${phone?`<a class="admin-button secondary" href="https://wa.me/${phone}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">Prepare WhatsApp reply ↗</a>`:''}</div>`,`<span class="footer-hint">Changes apply to this inbox immediately.</span><button class="admin-button vz-accept-trigger" data-action="enquiry-accept" data-id="${E(id)}">✓ Accept &amp; onboard client</button><button class="admin-button secondary" data-cpm="from-enquiry" data-id="${E(id)}">Create manually ↗</button><button class="admin-button secondary" data-action="enquiry-save" data-id="${E(id)}">Save notes ${icon('check')}</button>`);
  const history=document.querySelector('[data-request-history]');
  api('/api/admin/enquiries/'+encodeURIComponent(id)+'/activity').then(({events})=>{
   if(!history.isConnected)return;
