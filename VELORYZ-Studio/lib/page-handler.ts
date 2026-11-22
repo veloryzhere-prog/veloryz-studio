@@ -6,6 +6,9 @@ import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import {findDesignPreview,renderDesignPreview} from './design-detail-page';
+import {renderDesignNoticesPage} from './design-notices-page';
+import {serveDesignAsset} from './design-asset-proxy';
+import {serveDesignImage} from './design-image-proxy';
 import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json' };
 import { renderReviewsPage } from './reviews-page';
 import { renderRoadmapPage } from './roadmap-page';
@@ -22,6 +25,11 @@ const htmlDocumentPath=(p:string)=>{
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ const assetResponse=await serveDesignAsset(request);
+ if(assetResponse)return assetResponse;
+ const designImage=await serveDesignImage(request);
+ if(designImage)return designImage;
+ if(path==='/legal/design-notices'||path==='/legal/design-notices/')return secureHtml(renderDesignNoticesPage(),200,true);
  // Owner-supplied editorial reference experience becomes the public homepage.
  // Keep the existing SPA available with ?classic=1 for account/project workflows.
  // All admin, documentation, client, pricing and creator endpoints retain their original handlers.
@@ -32,9 +40,23 @@ export async function GET(request: Request) {
    site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description,showScarf:site.showScarf},
    services:(published.state.services||[]).filter((x:any)=>x&&x.name).slice(0,5)
     .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
-   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false)
-    .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
-     image:x.image,cover:x.cover,price:x.price,enabled:x.enabled})),
+   // Public #design is a VELORYZ-curated gallery of REAL local upstream templates.
+   // The old CMS inspiration cards remain editable in Admin but no longer fill this section.
+   catalogue:[
+    'os-portfolio-and-agencies-8b-creative-agency',
+    'os-portfolio-and-agencies-8b-design-studio',
+    'os-grocery-and-delivery-8b-restaurant-site',
+    'os-dashboards-and-saas-lumen-cinematic-ai-saas',
+    'os-portfolio-and-agencies-8b-architecture',
+    'os-grocery-and-delivery-grilli-restaurant',
+    'os-publishing-and-blogs-wren-editorial',
+    'os-dashboards-and-saas-volt-arc-product-landing',
+    'os-portfolio-and-agencies-8b-coworking',
+    'os-template-libraries-start-bootstrap-agency',
+    'os-template-libraries-start-bootstrap-freelancer'
+   ].map(id=>openDesigns.items.find(item=>item.id===id)).filter((item):item is (typeof openDesigns.items)[number]=>Boolean(item))
+    .map(item=>({id:item.id,name:item.name,description:item.description,category:item.category,
+      image:item.previewImage?'/studio-preview-images/'+item.id:'',fallbackImage:item.previewImage||'',price:0,enabled:true,author:item.author})),
    documentation:Object.entries(studioDocsRoutes).map(([url,title])=>({url:htmlDocumentPath(url),title}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
@@ -59,12 +81,18 @@ export async function GET(request: Request) {
  if(path==='/admin/reviews.html')return new Response(null,{status:302,headers:{Location:new URL('/admin/#/reviews',request.url).toString(),'Cache-Control':'no-store','X-Robots-Tag':'noindex,nofollow'}});
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  // A same-origin VELORYZ studio concept; upstream websites are never embedded.
- const designMatch=path.match(/^\/design\/([a-z0-9-]+)\/?$/);
+ const designMatch=path.match(/^\/design\/([a-z0-9-]+)(?:\/|\/index\.html)?$/);
  if(designMatch){
-  const published=await getPublished(env,request.url);
-  const design=findDesignPreview(designMatch[1],published.state.catalogue||[]);
-  if(!design)return new Response('Design not found',{status:404,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
-  return secureHtml(renderDesignPreview(design),200,true);
+  // The 110 indexed sites and 12 Studio originals must never depend on CMS availability.
+  const staticDesign=findDesignPreview(designMatch[1]);
+  if(staticDesign)return secureHtml(renderDesignPreview(staticDesign),200,true);
+  // Retain historic CMS links without publishing the old inspirations in the new catalogue.
+  try{
+   const published=await getPublished(env,request.url);
+   const design=findDesignPreview(designMatch[1],published.state.catalogue||[]);
+   if(design)return secureHtml(renderDesignPreview(design),200,true);
+  }catch{/* A temporary CMS outage must not affect static design routes. */}
+  return new Response('Design not found',{status:404,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
  }
 
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){

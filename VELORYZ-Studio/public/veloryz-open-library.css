@@ -87,3 +87,19 @@
 @media(max-width:1100px){.vz-source-hero{grid-template-columns:1fr;min-height:0}.vz-source-feature-images{height:500px}.vz-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vz-source-section-head{grid-template-columns:1fr;gap:12px}}
 @media(max-width:720px){.vz-source-hero{padding-top:65px}.vz-source-hero h1{font-size:clamp(4rem,14vw,7rem)}.vz-source-feature-images{height:390px}.vz-source-ribbon{height:52px}.vz-source-section-head h2{font-size:clamp(3rem,11vw,5rem)}.vz-source-toolbar{grid-template-columns:1fr}.vz-source-grid{grid-template-columns:1fr}.vz-source-home-showcase{grid-template-columns:1fr}.vz-source-list-head span:last-child{display:none}.vz-source-card-body>p{min-height:0}}
 @media(prefers-reduced-motion:reduce){.vz-real-library *, .vz-real-library *::before,.vz-real-library *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}.vz-source-card{opacity:1!important;transform:none!important}.vz-source-feature-card{will-change:auto}}
+
+
+/* New VELORYZ gallery: safe no-JS fallback and accurate motion after SPA render.
+   Real screenshots remain readable even when IntersectionObserver is unavailable. */
+.vz-real-library .vz-source-card{opacity:1;transform:none}
+.vz-real-library.vz-reveal-enabled .vz-source-card:not(.is-visible){opacity:0;transform:translateY(42px) scale(.98)}
+.vz-real-library .vz-source-card.is-visible{opacity:1;transform:translateY(0) scale(1)}
+.vz-real-library .vz-source-card.is-visible:hover{transform:translateY(-6px)}
+.vz-real-library .vz-source-image-label{background:#1a1724d9;color:#fff;box-shadow:0 5px 16px #0002}
+.vz-real-library .vz-source-legal{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.vz-real-library .vz-source-legal>a{font-size:11px;text-decoration:underline;text-underline-offset:4px;color:#675772;font-weight:700}
+.vz-real-library .vz-source-pill.imported{background:#e3d8eb;border-color:#bca7c8;color:#4c325a}
+.vz-real-library .vz-source-pill.review{background:#f3ecee;border-color:#ddced9;color:#514553}
+.vz-real-library .vz-source-hero-text h1{max-width:840px}
+.vz-real-library .vz-source-card{transition:transform .68s cubic-bezier(.16,.9,.24,1),opacity .65s ease,box-shadow .35s}
+@media(prefers-reduced-motion:reduce){.vz-real-library .vz-source-card,.vz-real-library.vz-reveal-enabled .vz-source-card{opacity:1!important;transform:none!important}}
