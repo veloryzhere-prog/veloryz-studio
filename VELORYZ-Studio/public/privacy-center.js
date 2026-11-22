@@ -112,11 +112,17 @@ document.addEventListener('click',e=>{
  const trigger=e.target.closest('[data-privacy-settings]');
  if(trigger){e.preventDefault();ui('settings');}
 });
-function mount(){
- // Preference controls live in the site footer / policy page, not a floating pill.
+function removeObsoleteFloatingControls(){
  document.querySelector('#vz-privacy-fab')?.remove();
+ document.querySelectorAll('a.make-project-link').forEach(node=>node.remove());
+}
+function mount(){
+ // Persistent settings are available only in the footer and privacy policy.
+ removeObsoleteFloatingControls();
  if(!current&&!open)ui('banner');
 }
+document.addEventListener('studio:route',removeObsoleteFloatingControls);
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 window.VeloryzPrivacy={allowed,choice,open:()=>ui('settings'),policyVersion:VERSION};
 const legalLink=(href,text)=>'<a href="'+href+'">'+text+' ↗</a>';
