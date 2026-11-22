@@ -34,4 +34,5 @@ document.addEventListener('studio:route',mountWhenNeeded);
 window.addEventListener('pageshow',mountWhenNeeded);
 window.StudioMotion?.addEventListener('change',mountWhenNeeded);
 document.addEventListener('studio:motion-intro-complete',mountWhenNeeded);
+document.addEventListener('studio:brand-intro-complete',mountWhenNeeded);
 mountWhenNeeded();
