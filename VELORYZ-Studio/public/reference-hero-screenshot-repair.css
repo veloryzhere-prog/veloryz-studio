@@ -95,7 +95,7 @@ body.vz-reference-site .vz-material-hero #h1 {
 body.vz-reference-site .vz-material-hero #h1 .ln {
   min-height:1.08em;
   padding-bottom:.115em;
-  overflow:visible;
+  overflow:hidden;
 }
 body.vz-reference-site .vz-material-hero .lead {
   max-width:600px;
