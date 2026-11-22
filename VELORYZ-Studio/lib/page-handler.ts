@@ -5,7 +5,7 @@ import {renderIndexableBody} from './search-index-content';
 import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
-import {findDesignPreview,renderDesignPreview} from './design-detail-page';
+import {findDesignPreview,renderDesignPreview,renderDesignFullPreview} from './design-detail-page';
 import {renderDesignNoticesPage} from './design-notices-page';
 import {serveDesignAsset} from './design-asset-proxy';
 import {serveDesignImage} from './design-image-proxy';
@@ -80,7 +80,15 @@ export async function GET(request: Request) {
  if(path==='/.well-known/security.txt')return new Response('Contact: mailto:veloryz.here@gmail.com\nExpires: 2027-11-22T00:00:00Z\nPreferred-Languages: en\nCanonical: https://veloryz.online/.well-known/security.txt\n',{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'}});
  if(path==='/admin/reviews.html')return new Response(null,{status:302,headers:{Location:new URL('/admin/#/reviews',request.url).toString(),'Cache-Control':'no-store','X-Robots-Tag':'noindex,nofollow'}});
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
- // A same-origin VELORYZ studio concept; upstream websites are never embedded.
+ // Immersive first-party VELORYZ preview: no outer-page scrolling, so original
+ // scroll-driven motion runs inside the actual source site's own document.
+ const previewMatch=path.match(/^\/design\/([a-z0-9-]+)\/preview\/?$/);
+ if(previewMatch){
+  const design=findDesignPreview(previewMatch[1]);
+  if(!design)return new Response('Preview not available',{status:404});
+  return secureHtml(renderDesignFullPreview(design),200,true);
+ }
+ // Full VELORYZ project detail page with independent real-site preview.
  const designMatch=path.match(/^\/design\/([a-z0-9-]+)(?:\/|\/index\.html)?$/);
  if(designMatch){
   // The 110 indexed sites and 12 Studio originals must never depend on CMS availability.
@@ -177,7 +185,7 @@ export async function GET(request: Request) {
  };
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
- if(['/design','/designs','/create'].includes(normal))html=html.replace('</head>',`<script>window.VELORYZ_OPEN_DESIGNS=${serialise([...openDesigns.originals,...openDesigns.items])};</script></head>`);
+ if(['/design','/designs','/create'].includes(normal))html=html.replace('</head>',`<script>window.VELORYZ_OPEN_DESIGNS=${serialise(openDesigns.items.filter(item=>item.enabled!==false))};</script></head>`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  const pageTitle=normal==='/'?'VELORYZ Studio | Website Design, Development & Creative Technology':(pages[normal]||'Page not found')+' — VELORYZ Studio';
