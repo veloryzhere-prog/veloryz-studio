@@ -7,6 +7,7 @@ class VeloryzFrameCut extends HTMLElement {
  mount(){
   const video=this.querySelector('.frame-scarf');if(!video)return;
   const controller=new AbortController(),signal=controller.signal;
+  const setState=value=>this.setAttribute('data-scarf-state',value);
   const listen=(el,name,fn)=>el?.addEventListener?.(name,fn,{signal});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
@@ -25,12 +26,12 @@ class VeloryzFrameCut extends HTMLElement {
    if(!video.paused||attempting)return;
    attempting=true;
    try {
-    Promise.resolve(video.play()).then(()=>{lastError='';this.dataset.scarfState='playing';},error=>{
-     lastError=error?.name||'PlaybackError';this.dataset.scarfState='blocked';
+    Promise.resolve(video.play()).then(()=>{lastError='';setState('playing');},error=>{
+     lastError=error?.name||'PlaybackError';setState('blocked');
      // Browsers can deny autoplay. Retry once media is ready or after user interaction.
      // Do not spam play() from a timer if permissions forbid it.
     }).finally(()=>{attempting=false;});
-   }catch(error){attempting=false;lastError=error?.name||'PlaybackError';this.dataset.scarfState='blocked';}
+   }catch(error){attempting=false;lastError=error?.name||'PlaybackError';setState('blocked');}
   };
   const onUserGesture=()=>{if(lastError&&allowed()&&visible){lastError='';sync();}};
   if(typeof IntersectionObserver==='function'){
@@ -45,9 +46,9 @@ class VeloryzFrameCut extends HTMLElement {
   listen(video,'stalled',()=>{if(visible&&allowed()){clearRetry();retryTimer=setTimeout(sync,1500);}});
   listen(video,'waiting',()=>{if(visible&&allowed()){clearRetry();retryTimer=setTimeout(sync,1500);}});
   listen(video,'ended',()=>{try{video.currentTime=0;}catch{}sync();});
-  listen(video,'error',()=>{this.dataset.scarfState='unavailable';});
-  listen(video,'playing',()=>{this.dataset.scarfState='playing';});
-  listen(video,'pause',()=>{if(this.dataset.scarfState==='playing')this.dataset.scarfState='paused';});
+  listen(video,'error',()=>{setState('unavailable');});
+  listen(video,'playing',()=>{setState('playing');});
+  listen(video,'pause',()=>{if(this.getAttribute?.('data-scarf-state')==='playing')setState('paused');});
   listen(document,'visibilitychange',sync);
   listen(window,'pageshow',sync);
   listen(window,'focus',sync);
