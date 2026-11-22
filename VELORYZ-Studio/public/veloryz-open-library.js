@@ -39,8 +39,10 @@ function entries(){
  return [...unique.values()];
 }
 const local=p=>'/design/'+encodeURIComponent(p.id)+'/';
+const createUrl=p=>p.originalTemplateId?'/create/?template='+encodeURIComponent(p.originalTemplateId):'/create/?reference='+encodeURIComponent(p.id);
 const imageClass=p=>{let a=0;for(const c of p.id)a=(a*31+c.charCodeAt(0))%360;return a};
 function badge(p){
+ if(p.rights==='original')return ['Original VELORYZ','original'];
  if(p.rights==='candidate')return ['Source candidate','candidate'];
  if(p.rights==='restricted')return ['Reference only','restricted'];
  return ['Needs license review','review'];
@@ -60,10 +62,11 @@ function card(p,i){
  '<div class="vz-open-meta">'+esc(p.category)+'</div>'+
  '<h3><a href="'+local(p)+'">'+esc(p.name)+'</a></h3><p>'+esc(detail)+'</p>'+
  '<div class="vz-open-credit">Source: '+esc(p.author||'Independent creator')+(isCode?' · GitHub':' · External')+'</div>'+
- '<div class="vz-open-actions"><a href="'+local(p)+'">Open VELORYZ preview ↗</a><a href="/create/?reference='+encodeURIComponent(p.id)+'">Create with VELORYZ +</a></div></div></article>';
+ '<div class="vz-open-actions"><a href="'+local(p)+'">Open VELORYZ preview ↗</a><a href="'+createUrl(p)+'">Create with VELORYZ +</a></div></div></article>';
 }
 function counts(all){return{
- total:all.length,candidate:all.filter(p=>p.rights==='candidate').length,
+ total:all.length,original:all.filter(p=>p.rights==='original').length,
+ candidate:all.filter(p=>p.rights==='candidate').length,
  review:all.filter(p=>p.rights==='review').length,restricted:all.filter(p=>p.rights==='restricted').length
 }}
 function render(){
@@ -74,7 +77,7 @@ function render(){
  '<h1>Find your next<br><em>big beginning.</em></h1>'+
  '<p>Discover original VELORYZ concepts, independently developed templates, open-source project references and motion systems. Every preview opens here inside VELORYZ—not on somebody else’s website.</p>'+
  '<div class="vz-open-hero-buttons"><a href="#vz-open-collection">Explore all designs ↗</a><a href="/create/">Create your project +</a></div>'+
- '<div class="vz-open-hero-foot"><span><b>'+all.length+'</b> design sources</span><span><b>'+c.candidate+'</b> permissive-license candidates</span><span><b>16+</b> specialist categories</span></div></div>'+
+ '<div class="vz-open-hero-foot"><span><b>'+all.length+'</b> design directions</span><span><b>'+c.original+'</b> original live templates</span><span><b>'+c.candidate+'</b> license candidates</span></div></div>'+
  '<div class="vz-open-feature-art" aria-label="VELORYZ original illustrated design collection"><div class="vz-open-window window-a"><span>V / PORTFOLIO</span><strong>Design in motion.</strong><div class="vz-open-window-art"></div><small>CREATIVE / ORIGINAL CONCEPT</small></div><div class="vz-open-window window-b"><span>V / COMMERCE</span><strong>Objects with character.</strong><div class="vz-open-window-circle"></div><small>SHOP / ORIGINAL CONCEPT</small></div><div class="vz-open-feature-watermark">CREATED WITH VELORYZ</div></div></header>'+
  '<div class="vz-open-bar"><span>CURATED, CODE-READY & CONCEPTUAL DESIGNS</span><span>STUDIO ARCHIVE / VOL. 01 — 2026</span></div>'+
  '<section id="vz-open-collection" class="vz-open-catalogue">'+
@@ -83,7 +86,7 @@ function render(){
  '<label class="vz-open-select"><span>Category</span><select data-open-category>'+categories.map(x=>'<option value="'+esc(x)+'"'+(x===category?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select></label>'+
  '<label class="vz-open-select"><span>Sort</span><select data-open-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Featured</option><option value="name"'+(sort==='name'?' selected':'')+'>Name A–Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion-rich first</option></select></label></div>'+
  '<div class="vz-open-status" aria-label="Source rights filter">'+[
- ['All','All ('+c.total+')'],['candidate','Source candidates ('+c.candidate+')'],['review','License review ('+c.review+')'],['restricted','Reference only ('+c.restricted+')']
+ ['All','All ('+c.total+')'],['original','Original VELORYZ ('+c.original+')'],['candidate','Source candidates ('+c.candidate+')'],['review','License review ('+c.review+')'],['restricted','Reference only ('+c.restricted+')']
  ].map(([value,label])=>'<button type="button" data-open-status="'+value+'" aria-pressed="'+(status===value)+'">'+label+'</button>').join('')+'</div>'+
  '<div class="vz-open-result-bar"><span id="vz-open-count" aria-live="polite">'+rows.length+' matching design sources</span><span>LOCAL VELORYZ PREVIEWS / ORIGINAL SOURCE CREDIT RETAINED</span></div>'+
  '<div class="vz-open-grid" id="vz-open-grid">'+visible.map(card).join('')+'</div>'+
@@ -98,7 +101,7 @@ function filtered(all){
   (!term||[p.name,p.category,p.description,p.author,p.license].join(' ').toLowerCase().includes(term)));
  if(sort==='name')result.sort((a,b)=>a.name.localeCompare(b.name));
  else if(sort==='motion')result.sort((a,b)=>(/very high|high/i.test(b.motion||'')?1:0)-(/very high|high/i.test(a.motion||'')?1:0));
- else result.sort((a,b)=>Number(b.rights==='candidate')-Number(a.rights==='candidate'));
+ else result.sort((a,b)=>Number(b.rights==='original')-Number(a.rights==='original')||Number(b.rights==='candidate')-Number(a.rights==='candidate'));
  return result;
 }
 function syncResults(){
@@ -118,7 +121,7 @@ function refreshIfPresent(){
 function syncOpenSource(){
  if(open.length||loading)return;loading=true;
  fetch('/veloryz-open-designs.json',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('Catalogue unavailable');return r.json()})
- .then(data=>{if(!Array.isArray(data.items))throw Error('Invalid catalogue');open=data.items;window.VELORYZ_OPEN_DESIGNS=open;refreshIfPresent();document.dispatchEvent(new CustomEvent('veloryz:open-designs-ready'));})
+ .then(data=>{if(!Array.isArray(data.items))throw Error('Invalid catalogue');open=[...(data.originals||[]),...data.items];window.VELORYZ_OPEN_DESIGNS=open;refreshIfPresent();document.dispatchEvent(new CustomEvent('veloryz:open-designs-ready'));})
  .catch(()=>{/* Keep published CMS references visible while static catalogue is unavailable. */}).finally(()=>{loading=false});
 }
 document.addEventListener('click',function(e){
