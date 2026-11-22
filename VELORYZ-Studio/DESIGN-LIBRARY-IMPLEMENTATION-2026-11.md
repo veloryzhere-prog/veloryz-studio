@@ -1,47 +1,54 @@
-# VELORYZ Design Explorer — 23 November 2026
+# VELORYZ authentic open-source design library — 23 November 2026
 
-## Purpose
+## What the studio now serves
 
-This change makes each design card open a **VELORYZ-hosted URL** such as `/design/os-grocery-and-delivery-grocergo/` instead of opening the third-party website. The full `/design/` gallery is organized by niche and source-clearance status and links into `/create/`.
+This release replaces the generic generated concept screens with **real upstream source media and actual MIT-licensed website HTML** wherever it has been imported. Each design has a same-origin detail URL under `/design/{slug}/`. The top navigation, “Made with VELORYZ” source-viewer watermark, device-size controls, source/author/license details and “Create with VELORYZ” CTA belong to VELORYZ; the underlying code/visuals remain credited to their original creators.
 
-It is intentionally **not a bulk copy of 110 repositories**. The new catalogue records third-party sources, their current research classifications, categories, and rights notices. A displayed motion effect or landing page is an **original VELORYZ concept demonstration**, not the linked project's original UI/source and not an assertion of upstream authorship. This distinction must remain visible to customers.
+| Entry group | Quantity | Viewer behavior | Status |
+|---|---:|---|---|
+| Original VELORYZ HTML templates | 12 | Real existing first-party generated HTML under `/template-previews/{id}.html` | Locally runnable |
+| Imported open-source source sites | 11 | **Actual upstream HTML** under `/design-source-previews/{id}/index.html` loaded in a sandboxed iframe | Locally staged; some source dependencies/media load from upstream domains |
+| Remaining researched sources | 99 | Actual publisher screenshot when verified, otherwise clearly labeled repository cover or no-media notice; optional verified official live demo within wrapper | Not all cloned or deployable |
+| Existing CMS inspirations | Published entries | Existing published reference image; source rights disclosed | Reference only |
 
-## Inventory / authoritative data
+The source catalogue has 110 external records in 16 niches plus the 12 original VELORYZ templates. It is wrong to describe the 110 records as 110 installed production websites. Some records describe **libraries, frameworks, backends, design collections or GPL/AGPL/proprietary products**, not standalone static websites. Those require project-specific imports, dependencies, legal assessment and deployment.
 
-| Group | Count | Preview | CTA |
-| --- | ---: | --- | --- |
-| Original VELORYZ templates | 12 | Actual first-party prebuilt HTML demos at `/template-previews/{originalTemplateId}.html` in a same-origin framed viewer | `/create/?template={originalTemplateId}` |
-| Research catalogue (external repos/tools) | 110 | Original VELORYZ category-based interactive concept preview | `/create/?reference={catalogueId}` |
-| Existing CMS-managed inspiration entries | Up to 40 by current CMS validator; seed contains 20 | Original VELORYZ category-based concept preview with published source metadata | `/create/?reference={cmsId}` |
+## The eleven imported real designs
 
-The catalogue JSON is `public/veloryz-open-designs.json`; `items[]` is the third-party research catalogue and `originals[]` is the twelve original product templates. CMS references remain governed by `lib/defaults.json` and published `state.catalogue`, and are merged on the client; no unpublished draft items are exposed.
+These copies are based on actual upstream MIT website source, and each staged site includes the original `LICENSE` and `README.md` (8B sites additionally include `CREDITS.md`).
 
-## Routes and implementation
+| Category | Website | Upstream author | Asset mode |
+|---|---|---|---|
+| Creative agency | Sillage — Creative Agency | 8B | Original HTML/JS/CSS; remote Unsplash photos / fonts, detailed CREDITS.md |
+| Design studio | Onda — Design Studio | 8B | Original HTML/JS/CSS; remote photos/fonts with credits |
+| Architecture | Midblock — Architecture | 8B | Original HTML/JS/CSS; linked original media |
+| Coworking | Isoline — Coworking | 8B | Original HTML/JS/CSS; linked original media |
+| Restaurant | Ombrelle — Restaurant | 8B | Original HTML/JS/CSS; linked original media |
+| Restaurant | Grilli | codewithsadee | Original HTML, upstream-hosted relative CSS/JS/photos (base URL) |
+| Editorial | Wren | codewithsadee | Original HTML, upstream-hosted relative CSS/JS/photos (base URL) |
+| Agency | Agency | Start Bootstrap | Original dist HTML, upstream GitHub Pages styles/assets |
+| Personal portfolio | Freelancer | Start Bootstrap | Original dist HTML, upstream GitHub Pages styles/assets |
+| Cinematic SaaS | Lumen | Vantle/MiddleSugar7000 | Original HTML, upstream GitHub Pages linked CSS/Three.js/assets |
+| Product launch | Volt Arc | Vantle/MiddleSugar7000 | Original HTML, upstream GitHub Pages linked photos/JS/media |
 
-- `lib/page-handler.ts`: intercepts safe `/design/{id}/` paths, resolves only IDs in the catalogue or published CMS and returns a secure, index-excluded HTML page. Injects the 122 static records into the main gallery and create pages to support direct/refresh project URLs.
-- `lib/design-detail-page.ts`: server-rendered branded VELORYZ design detail with source and license information, original VELORYZ watermark and local project creator CTA. It **does not fetch, proxy, embed or copy remote websites**.
-- `public/veloryz-design-preview.{js,css}`: first-party interactive ecommerce, grocery/delivery, project management, agency/portfolio, dashboard, editorial, travel/hospitality, jobs, community, healthcare, logistics, education, real estate and motion components concept UI. Only the twelve original VELORYZ starters open genuine local template demos.
-- `public/veloryz-open-library.{js,css}`: searchable, paginated, niche- and rights-filterable catalogue, enhanced original-branded card artwork and local preview links. Uses `window.VeloryzExternalDesignLibrary` and the existing SPA `designPage` integration. The old unrelated catalogue/store files are preserved.
-- `public/creator-v4.js`: uses the same consolidated library, directs its thumbnail previews internally, maps new niches to creator purposes and retains the selected reference in a brief.
-- `public/reference-site-upgrade.js` and `public/claude-reference-enhancements.js`: homepage slides and cards link to local detail URLs.
+Other repo entries use actual README screenshot URLs where available; a GitHub OpenGraph cover is **not** misidentified as a screenshot. User-visible source labels distinguish these cases.
 
-## Licensing and attribution
+## Route and security controls
 
-- **Original** means built by VELORYZ, with the original template's one-project license terms.
-- **Source candidate** means potentially permissive code with rights **not yet cleared**. Do not treat a metadata classification as a legal license review or asset clearance.
-- **License review** means unknown, split or additional terms require inspection.
-- **Reference only** means restricted, proprietary, license missing or noncommercial. Do not distribute or rebrand upstream code/assets without permission.
-- MIT/BSD license requirements and original author notices must be retained when creating actual derivative source kits. Third-party images, trademarks, fonts, datasets and subdependencies need separate review. GPL/AGPL obligations apply when relevant.
-- Do not make false claims like `built by VELORYZ` about upstream projects; VELORYZ branding and `Made with VELORYZ` denote **our original demo and project service**, not upstream intellectual property.
-- Customer-facing "Create" routes collect a project brief, not a payment, license transfer or completed source download.
+- `public/veloryz-open-designs.json`: catalogue, upstream screenshot URL, original demo URL, license classification, importStatus and `localSource` allowlisted path.
+- `lib/design-detail-page.ts`: server source resolver allows only predeclared `/design-source-previews/{id}/index.html` when `importStatus=real-upstream-html`, or original first-party template builds.
+- `public/veloryz-design-preview.js`: embeds real local or independently hosted upstream content using `sandbox="allow-scripts allow-forms"` **without allow-same-origin**. External sites that forbid embedding can be viewed as publisher screenshots. Never relay authentication tokens to iframe scripts.
+- `public/veloryz-open-library.js/.css`: responsive images, original-source badges, niche filters, paginated results and intersection-observed scrolling transitions; CSS `animation-timeline:view()` where available, with reduced-motion support.
+- `public/creator-v4.js`: project creator shows source thumbnails and links to the same in-house viewer. It passes the selected design/source into the project brief. No automatic claim that software and image redistribution rights are cleared.
+- Existing checkout is a request/proposal workflow, **not** a completed e-commerce sale or transfer of third-party licenses.
 
-## How to add fully imported templates later
+## Important upstream rights
 
-For each candidate: verify the **exact upstream commit**, license and source assets; request permission where necessary; create a distinct *first-party licensed derivative* in its own directory; remove or replace the original branding with licensed VELORYZ assets without erasing author/notice files; implement responsive interactions, reduced-motion and accessibility; run real build/CI; write deployment/fulfillment instructions; and only then change `importStatus` / `previewType` from `catalogued` / `veloryz-original-concept` to a verified local import. Do not switch those metadata fields on the basis of a screenshot.
+The MIT license of a repository is not necessarily an MIT license for external imagery, fonts, third-party scripts and customer-specific content. Preserve the source's `LICENSE`, `README`, `CREDITS` and any included author notices in redistributed material. 8B photo credits list separate Unsplash licenses. Do not rebrand the original design as solely authored by VELORYZ. The watermark means “previewed/assisted by VELORYZ Studio”.
 
-The existing live payment flow remains a pre-invoice request; third-party products are not sold by this change.
+Restricted/no-license/CC BY-NC/Commons-Clause inspirations remain references; they are **not** installed as licensed source products. GPL/AGPL project adaptations must comply with their obligations and may require source disclosure.
 
-## QA
+## Verification
 
 ```bash
 cd VELORYZ-Studio
@@ -50,4 +57,6 @@ corepack pnpm exec tsc --noEmit
 corepack pnpm build
 ```
 
-The PR workflow `.github/workflows/veloryz-documentation.yml` runs the new design-library regression suite plus existing checks. Verify `/design/`, direct `/design/{id}/` navigation and browser refresh, original and external project handoff, 320/390/768/1440 widths, generated original source previews, keyboard navigation, reduced motion and screen-reader descriptions. Run production browser QA after deployment. **Passing static checks does not prove production publishing or full source-kit installation.**
+Check direct routes and refresh, all eleven imported desktop/mobile pages, scroll-gallery motion on real images, 320/390/768/1440 responsive views, iframe isolation, reduced-motion, source credits, image loading from GitHub/CDN, and create-project selection.
+
+Remaining work for a true 110-site offline library: audit each repo's exact pinned commit/license, identify a runnable website target, install dependencies in an isolated build, pin/archive assets under their rightful licenses, deploy each separately (including databases/APIs), generate screenshots from the **running actual source**, add preview route and CI, and mark `importStatus` only once tested. Static component packages and repository lists cannot honestly be presented as standalone live websites.
