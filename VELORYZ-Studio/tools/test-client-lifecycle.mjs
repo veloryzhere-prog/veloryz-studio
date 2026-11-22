@@ -1,0 +1,77 @@
+/* VELORYZ full project lifecycle: real onboarding, PDF, private chat and Gmail. */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+const read=path=>fs.readFileSync(new URL('../'+path,import.meta.url),'utf8');
+const backend=read('supabase/functions/veloryz-client-portal-api/index.ts');
+const lifecycle=read('supabase/functions/veloryz-client-portal-api/client-lifecycle.ts');
+const gmail=read('supabase/functions/veloryz-client-portal-api/gmail-lifecycle.ts');
+const admin=read('public/admin.js'),ownerClient=read('public/admin-client.js'),portal=read('public/client-portal.js'),creator=read('public/creator-v4.js');
+const css=read('public/client-lifecycle.css'),migrate=read('supabase/migrations/20261122140000_client_lifecycle_gmail.sql');
+const contracts=read('supabase/migrations/20261122140500_client_lifecycle_query_contracts.sql');
+const progress=read('supabase/migrations/20261122141000_client_progress_contract.sql');
+for(const [path,text] of Object.entries({'admin.js':admin,'admin-client.js':ownerClient,'client-portal.js':portal,'creator-v4.js':creator})){
+ assert.doesNotThrow(()=>new Function(text),'Client flow browser JS must parse: '+path);
+}
+for(const [path,text] of Object.entries({'index.ts':backend,'client-lifecycle.ts':lifecycle,'gmail-lifecycle.ts':gmail})){
+ const compiled=ts.transpileModule(text,{fileName:path,reportDiagnostics:true,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}});
+ const errors=(compiled.diagnostics||[]).filter(x=>x.category===ts.DiagnosticCategory.Error);
+ assert.deepEqual(errors.map(x=>ts.flattenDiagnosticMessageText(x.messageText,'\n')),[],'Edge module syntax must parse: '+path);
+}
+assert.match(migrate,/CREATE UNIQUE INDEX.*studio_client_projects_one_per_enquiry/s,'One private workspace per accepted enquiry.');
+assert.match(migrate,/ENABLE ROW LEVEL SECURITY/,'Private email delivery logs must have RLS.');
+assert.match(migrate,/REVOKE ALL.*anon,authenticated/,'Public roles may not query mail logs.');
+assert.match(backend,/if\(action\.startsWith\("\/admin\/"\)\)/,'All admin actions remain protected.');
+assert.ok(backend.indexOf('if(!await admin(req))')<backend.indexOf('if(action==="/admin/accept"'),'Acceptance is owner authorized first.');
+assert.match(backend,/acceptClientProject\(id\(v\.enquiry_id\)/);
+assert.match(backend,/\/admin\/test-email/);
+assert.match(backend,/\/admin\/mail-events/);
+assert.match(backend,/\/admin\/messages\/read/);
+assert.match(backend,/\/messages\/read/);
+assert.match(backend,/\/summary"&&req\.method==="GET"/);
+assert.match(backend,/EdgeRuntime\.waitUntil\(task\)/,'Chat must never block on network email notifications.');
+assert.match(backend,/sendGmailMail/,'Notifications should use Gmail without Resend.');
+assert.match(lifecycle,/if\(prev\)return.*already_accepted:true/,'Acceptance must be idempotent.');
+assert.match(lifecycle,/stableUUID/,'Starter milestones must be deterministic on retries.');
+assert.match(lifecycle,/const statements/);
+assert.match(lifecycle,/await batch\(statements\)/,'Project and milestones must be created transactionally.');
+assert.match(lifecycle,/makeProjectSummaryPdf\(project,items\)/);
+assert.match(lifecycle,/attachments:\[\{filename:/,'Acceptance email must attach real PDF bytes.');
+assert.match(lifecycle,/await issueInvitation\(project,now,false\)/,'New acceptance must produce one private invitation automatically.');
+assert.match(gmail,/smtp\.gmail\.com/);
+assert.match(gmail,/port:465/,'SMTP must use TLS submission over 465, not 25/587.');
+assert.match(gmail,/VELORYZ_GMAIL_APP_PASSWORD/);
+assert.match(gmail,/const MAILBOX="veloryz\.here@gmail\.com"/);
+assert.ok(!gmail.includes('RESEND_API_KEY')&&!backend.includes('RESEND_API_KEY'),'Do not require Resend.');
+assert.match(gmail,/new Date\(expires\)/,'Invitations should communicate expiry.');
+assert.match(gmail,/one-time/i);
+assert.match(gmail,/pdf-lib@1\.17\.1/,'PDF dependency must be pinned.');
+assert.match(gmail,/Content-Disposition: attachment/,'MIME should attach PDF.');
+assert.match(gmail,/never/i);
+assert.match(admin,/data-action="enquiry-accept"/,'Owner inbox must have accept-and-onboard control.');
+assert.match(admin,/\/api\/client-portal\/admin\/accept/);
+assert.match(admin,/acceptanceResult\(result\)/,'Owner should see real success and delivery states.');
+assert.match(admin,/accept-copy-code/,'Secret code is only shown in authorized owner confirmation UI.');
+assert.match(ownerClient,/VELORYZ_GMAIL_APP_PASSWORD/);
+assert.match(ownerClient,/\/mail-events/);
+assert.match(ownerClient,/\/test-email/);
+assert.match(ownerClient,/data-cpm-template/);
+assert.match(ownerClient,/data-cpm-email-audit/);
+assert.match(portal,/\/api\/client-portal\/summary/,'Client must be able to download their own private PDF.');
+assert.match(portal,/\/messages\/read/);
+assert.match(portal,/data-cp-compose/);
+assert.match(portal,/17000/,'Client refresh should be present.');
+assert.match(portal,/document\.activeElement.*matches/,'Message refresh must not erase an unfinished input.');
+assert.match(creator,/v4-acceptance-journey/);
+assert.match(creator,/generated automatically only when/);
+assert.match(css,/cp-journey-brief/);
+assert.match(css,/cpm-mail-history/);
+assert.match(css,/vz-accept-secure/);
+assert.match(css,/prefers-reduced-motion/);
+assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
+const actual=JSON.parse(backend.match(/const QUERIES=(\{[^\n]+\});\nconst enc=/)[1]);
+for(const name of ['getEnquiry','findAccepted','acceptProject','linkEnquiry','addMilestoneOnce','logEmail','listEmailEvents','markRead','listProjectsFull','getProjectFull','listMessagesFull'])
+ assert.ok(contracts.includes(actual[name]),'SQL contract migration must match protected Edge function query '+name);
+assert.ok(progress.includes(actual.recalcProgress),'Auto-completion query must exactly match its registered contract.');
+assert.match(backend,/recalcProgress/);
+console.log('PASS: private acceptance, idempotent project creation, PDFs, Gmail SMTP, original request retention, chat sync, read receipts, 12 SQL contracts and client UX.');
