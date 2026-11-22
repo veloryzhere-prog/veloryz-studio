@@ -14,7 +14,7 @@ class VeloryzFrameCut extends HTMLElement {
   video.defaultMuted=true;video.muted=true;video.loop=true;video.autoplay=true;video.playsInline=true;
   video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('loop','');video.setAttribute('playsinline','');
   video.preload='auto';
-  const allowed=()=>this.isConnected&&!document.hidden&&!reduced.matches&&!connection?.saveData&&
+  const allowed=()=>this.isConnected&&!document.hidden&&!(reduced.matches&&window.StudioMotion?.level!=='full')&&!connection?.saveData&&
     !['paused','reduced'].includes(window.StudioMotion?.level)&&!window.StudioMotion?.onboardingActive;
   const clearRetry=()=>{if(retryTimer){clearTimeout(retryTimer);retryTimer=0;}};
   const load=()=>{if(loaded)return;loaded=true;video.src='/assets/frame-cut/scarf.mp4';video.load();};
@@ -47,6 +47,7 @@ class VeloryzFrameCut extends HTMLElement {
   listen(video,'ended',()=>{try{video.currentTime=0;}catch{}sync();});
   listen(video,'error',()=>{this.dataset.scarfState='unavailable';});
   listen(video,'playing',()=>{this.dataset.scarfState='playing';});
+  listen(video,'pause',()=>{if(this.dataset.scarfState==='playing')this.dataset.scarfState='paused';});
   listen(document,'visibilitychange',sync);
   listen(window,'pageshow',sync);
   listen(window,'focus',sync);
