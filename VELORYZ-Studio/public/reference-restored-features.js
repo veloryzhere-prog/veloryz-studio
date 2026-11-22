@@ -8,6 +8,7 @@ const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const motion=()=>window.StudioMotion?.level||((matchMedia('(prefers-reduced-motion: reduce)').matches)?'reduced':'full');
 const reduce=()=>motion()!=='full';
 const live=window.VELORYZ_REFERENCE_DATA||{};
+window.StudioMotion?.addEventListener?.('change',()=>window.dispatchEvent(new Event('vz:reference-motion-change')));
 const short=(s,n=260)=>{s=String(s??'').trim();return s.length>n?s.slice(0,n-1)+'…':s;};
 const safeUrl=(v)=>{try{const u=new URL(String(v),location.origin);return (u.origin===location.origin||u.protocol==='https:')?u.href:'';}catch{return '';}};
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;}
