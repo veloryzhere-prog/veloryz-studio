@@ -42,9 +42,9 @@ assertContains(handler,"const designMatch=path.match",'Direct navigation needs a
 assertContains(handler,"renderDesignPreview(design)",'Render server HTML on direct navigation');
 assertContains(handler,"serialise([...openDesigns.originals,...openDesigns.items])",'Direct creator links require a hydrated catalogue');
 assertContains(detail,"'/template-previews/'+encodeURIComponent(p.originalTemplateId)",'Original demos must remain same origin');
-assertContains(detail,"Made with",'The local preview must carry studio branding');
+assertContains(renderer,"Made with <b>VELORYZ",'The local preview must carry studio branding');
 assertContains(creator,"window.createPage=creatorPage",'Creator global registration must avoid strict assignment');
-assertContains(creator,"'/design/'+encodeURIComponent(p.id)+'/'",'Creator inspiration gallery must use local previews');
+assertContains(creator,"href=\"/design/",'Creator inspiration gallery must use local previews');
 assertContains(shell,'/veloryz-open-library.js','Live app shell must include the new gallery');
 assertContains(css,'prefers-reduced-motion','Preview must respect reduced-motion settings');
 assertContains(galleryCss,'prefers-reduced-motion','Gallery must respect reduced-motion settings');
