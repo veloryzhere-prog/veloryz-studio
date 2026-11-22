@@ -47,6 +47,7 @@ function sidebar(section,navigation,workspace,icon,E,counts={}){
    '<nav class="admin-nav" aria-label="'+E(g.title)+'">'+items.map(id=>{
      const [key,label,ico]=map.get(id),active=section===id;
      const badge=id==='projects'?workspace.state.projects?.length:
+        id==='reviews'&&counts.reviewsLoaded?counts.pendingReviewCount:
         id==='enquiries'&&counts.enquiriesLoaded?counts.enquiryTotal:
         id==='media'&&counts.mediaLoaded?counts.mediaCount:
         id==='client-portal'&&counts.clientsLoaded?counts.clientCount:null;
@@ -91,7 +92,8 @@ function operations(workspace,icon,E){
    numericCard(featured,'Featured projects','Public homepage selections','projects',E)+
    numericCard(running,'Active campaigns','Currently scheduled and enabled','offers',E)+
    numericCard(catalogue,'Enabled designs','Published draft catalogue entries','catalogue',E)+'</div>'+
-  '<div class="ad-ops-actions"><a href="#/enquiries"><span>'+icon('content')+'</span><strong>Review requests</strong><small>Briefs & follow-ups</small><b>↗</b></a>'+
+  '<div class="ad-ops-actions"><a href="#/reviews"><span>'+icon('content')+'</span><strong>Community reviews</strong><small>Moderate visitor feedback</small><b>↗</b></a>'+
+  '<a href="#/enquiries"><span>'+icon('content')+'</span><strong>Review requests</strong><small>Briefs & follow-ups</small><b>↗</b></a>'+
   '<a href="#/client-portal"><span>'+icon('work')+'</span><strong>Client operations</strong><small>Projects & milestones</small><b>↗</b></a>'+
   '<a href="#/ai-control"><span>'+icon('settings')+'</span><strong>AI Control Centre</strong><small>Manage five advisers + four assistants</small><b>↗</b></a>'+
   '<a href="#/media"><span>'+icon('media')+'</span><strong>Asset production</strong><small>Photos, logo files & films</small><b>↗</b></a></div></section>';
