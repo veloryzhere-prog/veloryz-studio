@@ -1,13 +1,21 @@
 import { env } from 'cloudflare:workers';
 import siteShell from './site-shell';
 import {renderIndexableBody} from './search-index-content';
+import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
+import { renderReviewsPage } from './reviews-page';
+import { renderRoadmapPage } from './roadmap-page';
 import { secureHtml,pageMetadata } from './response-security';
 import { publicOrigin,canonicalPath } from './site-origin.mjs';
 import { getPublished, handleApi } from './cms-api.mjs';
 import { studioDocsRoutes, studioDocsSummaries, studioDocsCategories } from './studio-docs-routes.mjs';
 export const dynamic = 'force-dynamic';
+const isDocumentPath=(p:string)=>p==='/docs'||p.startsWith('/docs/')||p==='/help/studio'||p.startsWith('/help/studio/');
+const htmlDocumentPath=(p:string)=>{
+ const base=canonicalPath(p);
+ return isDocumentPath(base)?(base==='/docs'||base==='/docs/studio'||base==='/help/studio'?base+'/index.html':base+'.html'):base;
+};
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
@@ -16,6 +24,10 @@ export async function GET(request: Request) {
  if(path==='/googleb802659617480672.html')return new Response('google-site-verification: googleb802659617480672.html',{
   status:200,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300','X-Content-Type-Options':'nosniff'}
  });
+ if(path==='/reviews.html'||path==='/reviews'||path==='/reviews/')return secureHtml(renderReviewsPage(),200);
+ if(path==='/roadmap.html'||path==='/roadmap'||path==='/roadmap/')return secureHtml(renderRoadmapPage(),200);
+ if(path==='/.well-known/security.txt')return new Response('Contact: mailto:veloryz.here@gmail.com\nExpires: 2027-11-22T00:00:00Z\nPreferred-Languages: en\nCanonical: https://veloryz.online/.well-known/security.txt\n',{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'}});
+ if(path==='/admin/reviews.html')return secureHtml(renderReviewsPage(true),200,true);
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
@@ -52,7 +64,7 @@ export async function GET(request: Request) {
   return secureHtml(siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({...data,preview:true})};</script>${match}`),200,true);
  }
  const data=await getPublished(env,request.url);
- const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
+ const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/index\.html$/,'').replace(/\.html$/,'').replace(/\/+$/,'')||'/';
  const slug=(value:string)=>value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
  const people=[{name:data.state.site.founderName,slug:slug(data.state.site.founderName)},...data.state.team];
  const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/sitemap':'Site map','/help/assistant':'Help Centre AI','/support':'Contact Support AI','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/privacy':'Privacy policy','/cookies':'Cookie and storage policy','/terms':'Website terms','/privacy/choices':'Privacy rights and preferences','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
@@ -69,14 +81,15 @@ export async function GET(request: Request) {
  if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /client\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  if(normal==='/sitemap.xml'){
   const escapeXml=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const urls=Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)).map(p=>{
+  const urls=[...new Set([...Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)),'/reviews.html','/roadmap.html'])].sort().map(p=>{
    const href=base+canonicalPath(p);
-   return `<url><loc>${escapeXml(href)}</loc></url>`;
+    const finalHref=isDocumentPath(p)?base+htmlDocumentPath(p):href;
+   return `<url><loc>${escapeXml(finalHref)}</loc></url>`;
   }).join('');
   return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  }
  const routeDescriptions:Record<string,string>={
-  '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from Bokaro, India.',
+  '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from India, collaborating across Asia.',
   '/help/assistant':'Chat with the VELORYZ AI Help Assistant, grounded in official public documentation.',
   '/support':'Contact VELORYZ Studio support AI for guidance and the correct human support channel.',
   '/docs':'Find the complete VELORYZ Studio Help Centre, product documentation, services, security, copyright and project workflow guides.',
@@ -87,7 +100,7 @@ export async function GET(request: Request) {
   '/pricing':'Review VELORYZ Studio starting prices, project-scope assumptions and a pathway to a tailored written proposal.',
   '/create':'Plan your next website or digital product, review an illustrative budget range and prepare a project brief.',
   '/book':'Request a VELORYZ Studio discovery conversation. Preferred dates are requests until the studio confirms availability.',
-  '/contact':'Contact VELORYZ Studio in Bokaro, Jharkhand, about websites, design, software and digital projects.',
+  '/contact':'Contact VELORYZ Studio in India, about websites, design, software and digital projects.',
   '/developers':'Explore practical web development, APIs, integration design, protected systems and backend delivery approaches.',
   '/studio':'Meet VELORYZ Studio and explore its design, development and creative direction team.',
   '/privacy':'Read how VELORYZ Studio uses enquiry, client, AI and browser preference data, and how to request correction or deletion.',
@@ -100,11 +113,13 @@ export async function GET(request: Request) {
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  const pageTitle=normal==='/'?'VELORYZ Studio | Website Design, Development & Creative Technology':(pages[normal]||'Page not found')+' — VELORYZ Studio';
- html=pageMetadata(html,{title:pageTitle,description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ html=pageMetadata(html,{title:pageTitle,description,url:base+htmlDocumentPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
  // The initial HTML must already contain readable page content. Once JS loads
  // the SPA replaces this same <main>, preserving the existing motion experience.
- if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
-   '<main id="main" tabindex="-1">'+renderIndexableBody(normal,pages[normal],description)+'</main>');
+ const actualDocument=isDocumentPath(normal)?renderHtmlDocument(normal,docEdits):'';
+  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"></head>');
+  if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
+   '<main id="main" tabindex="-1">'+(actualDocument||renderIndexableBody(normal,pages[normal],description))+'</main>');
  // Use the actual official brand name; misspellings are explained in visible
  // Studio content, never masquerading as registered alternate organisation names.
  if(known){
@@ -117,17 +132,17 @@ export async function GET(request: Request) {
   const crumbs=[{name:'VELORYZ Studio',item:base+'/'}];
   if(normal==='/sitemap')crumbs.push({name:'Site map',item:base+'/sitemap/'});
   else {
-   crumbs.push({name:'Documentation',item:base+'/docs/'});
-   if(normal.startsWith('/docs/studio'))crumbs.push({name:'Studio documentation',item:base+'/docs/studio/'});
-   if(normal.startsWith('/help/studio'))crumbs.push({name:'Help Centre',item:base+'/help/studio/'});
+   crumbs.push({name:'Documentation',item:base+'/docs/index.html'});
+   if(normal.startsWith('/docs/studio'))crumbs.push({name:'Studio documentation',item:base+'/docs/studio/index.html'});
+   if(normal.startsWith('/help/studio'))crumbs.push({name:'Help Centre',item:base+'/help/studio/index.html'});
    const current=pages[normal]||'Documentation';
-   const at=base+canonicalPath(normal);
+   const at=base+htmlDocumentPath(normal);
    if(crumbs[crumbs.length-1].item!==at)crumbs.push({name:current,item:at});
   }
   const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:crumbs.map((c,i)=>({'@type':'ListItem',position:i+1,name:c.name,item:c.item}))};
   const structured:Record<string,unknown>[]=[breadcrumb];
   if((studioDocsRoutes as Record<string,string>)[normal]||normal.startsWith('/docs/')&&normal!=='/docs/studio'){
-   structured.push({'@context':'https://schema.org','@type':normal.startsWith('/help/')?'Article':'TechArticle',headline:pages[normal],description,articleSection:(studioDocsCategories as Record<string,string>)[normal]||'Documentation',publisher:{'@type':'Organization',name:'VELORYZ Studio'},mainEntityOfPage:base+canonicalPath(normal)});
+   structured.push({'@context':'https://schema.org','@type':normal.startsWith('/help/')?'Article':'TechArticle',headline:pages[normal],description,articleSection:(studioDocsCategories as Record<string,string>)[normal]||'Documentation',publisher:{'@type':'Organization',name:'VELORYZ Studio'},mainEntityOfPage:base+htmlDocumentPath(normal)});
   }
   html=html.replace('</head>',`<script type="application/ld+json">${serialise(structured)}</script></head>`);
  }

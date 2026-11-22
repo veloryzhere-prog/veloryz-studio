@@ -9,13 +9,14 @@
   const edits=typeof studioCMS!=='undefined'?studioCMS?.site?.documentation?.edits||{}:{};
   return (studioCatalog?.articles||[]).map(a=>{
    const override=edits[a.path.replace(/\/$/,'')]||{};
-   return {id:a.id,label:override.title||a.title,description:override.summary||a.summary,category:a.category,markdown:override.markdown||a.markdown||'',path:a.path,kind:a.id.startsWith('H-')?'Help Centre':'Studio documentation',visible:override.visible!==false};
+   return {id:a.id,label:override.title||a.title,description:override.summary||a.summary,category:a.category,markdown:override.markdown||a.markdown||'',path:docHtmlPath(a.path),kind:a.id.startsWith('H-')?'Help Centre':'Studio documentation',visible:override.visible!==false};
   }).filter(a=>a.visible);
  };
  const docs=()=>[...serviceDocs(),...productDocs()];
- const url=id=>docs().find(x=>x.id===id)?.path||'/docs/'+id+'/';
+ const docHtmlPath=p=>{const base=String(p||'').replace(/\/+$/,'');return base==='/docs'||base==='/docs/studio'||base==='/help/studio'?base+'/index.html':base.startsWith('/docs/')||base.startsWith('/help/studio/')?base+'.html':p;};
+ const url=id=>docHtmlPath(docs().find(x=>x.id===id)?.path||'/docs/'+id+'/');
  const config=()=>({...defaults,...(typeof studioCMS!=='undefined'?studioCMS?.site?.documentation||{}:{})});
- const slug=()=>location.pathname.match(/^\/docs\/([a-z0-9-]+)\/?$/)?.[1]||'';
+ const slug=()=>{const value=location.pathname.match(/^\/docs\/([a-z0-9-]+)(?:\.html|\/)?$/)?.[1]||'';return value==='index'?'':value;};
  function href(value){
   const str=String(value||'').trim(),m=str.match(/(?:^|\/)([\w-]+\.md)(#[a-z0-9_-]+)?$/i);
   if(m){const d=docs().find(x=>x.filename===m[1]);if(d)return url(d.id)+(m[2]||'');}
