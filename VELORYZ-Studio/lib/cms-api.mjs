@@ -141,7 +141,7 @@ async function forwardKnowledgeAi(request,env){
      const conversation=input.messages.filter(m=>m&&['user','assistant'].includes(m.role)&&typeof m.content==='string').slice(-18);
      const latest=conversation.at(-1)?.content||'';
      if(latest&&conversation.at(-1)?.role==='user'){
-      const published=(await getPublished(env)).state;
+      const published=(await getPublished(env,request.url)).state;
       const chosen=retrievePublicStudioKnowledge(conversation.filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' '),published,5);
       const sources=chosen.map(x=>({title:x.title,path:x.path}));
       const sitePrompt=evidenceForPrompt(conversation,published,6).prompt;
@@ -239,7 +239,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   // Local dedicated project AI, not the legacy persona endpoint or the hosted backend proxy.
   if(new URL(request.url).pathname==='/api/project-ai'&&request.method==='POST'){
    mutationOrigin(request);
-   return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env)).state);
+   return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env,request.url)).state);
   }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
   if(usesHostedBackend(env,request.url)){
