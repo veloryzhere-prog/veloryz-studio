@@ -28,10 +28,10 @@ export async function GET(request: Request) {
   const site=published.state.site;
   const appearance={
    site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description},
-   services:(published.state.services||[]).filter(x=>x&&x.name).slice(0,5)
-    .map(x=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
-   catalogue:(published.state.catalogue||[]).filter(x=>x&&x.enabled!==false).slice(0,4)
-    .map(x=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
+   services:(published.state.services||[]).filter((x:any)=>x&&x.name).slice(0,5)
+    .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
+   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false).slice(0,4)
+    .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
      image:x.image,cover:x.cover,price:x.price,enabled:x.enabled}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
