@@ -103,7 +103,17 @@ function mount(container,softwareOnly=false,previousPose=null) {
     const auto=active&&!manual;
     let yaw=manual?0:-.4, pitch=manual?0:.085;
     if (story) {yaw=-.23+p*3.18;pitch=.08-lift*.28;}
-    else if(auto) {yaw+=view==='orbit'?elapsed*.44:Math.sin(elapsed*.38)*.15+scroll*.95;pitch+=Math.sin(elapsed*.43)*.048+scroll*.12;}
+    else if(auto) {
+      // Only the homepage official GLB makes a complete, visibly 3D orbit.
+      // Orbit the actual mesh, never the canvas DOM box.
+      if(useOriginalGlb){
+        yaw+=elapsed*.24+Math.sin(elapsed*.31)*.065+scroll*.62;
+        pitch+=Math.sin(elapsed*.39)*.085+scroll*.1;
+      }else{
+        yaw+=view==='orbit'?elapsed*.44:Math.sin(elapsed*.38)*.15+scroll*.95;
+        pitch+=Math.sin(elapsed*.43)*.048+scroll*.12;
+      }
+    }
     pivot.quaternion.setFromEuler(entryEuler.set(pitch,yaw,manual?0:-.025,'YXZ'));
     if(inspection)pivot.quaternion.premultiply(inspection.orientation);
     model.position.y=auto&&!story?Math.sin(elapsed*.75)*.038:0;
