@@ -1,0 +1,80 @@
+/* VELORYZ / Conversations 2026
+ * Shared design direction for every public AI chat. Purpose-specific accent tokens.
+ * Existing event handlers and APIs remain untouched.
+ */
+:root{
+ --vz-conversation-paper:#F6F4EE;
+ --vz-conversation-canvas:#F8FAF6;
+ --vz-conversation-ink:#20342D;
+ --vz-conversation-muted:#65746C;
+ --vz-conversation-line:#DCE5DB;
+ --vz-conversation-ease:cubic-bezier(.22,1,.36,1);
+}
+.vz-chat{--vz-chat-accent:#285D49;--vz-ink:var(--vz-conversation-ink);--vz-blue:var(--vz-chat-accent);--vz-muted:var(--vz-conversation-muted);--vz-line:var(--vz-conversation-line);
+ background:var(--vz-conversation-paper);border:1px solid #DAE1D8;border-radius:24px;
+ box-shadow:0 24px 75px #263B3020;grid-template-columns:minmax(236px,284px) minmax(0,1fr);
+}
+.vz-chat[data-vz-chat="support"]{--vz-chat-accent:#B96043}
+.vz-chat[data-vz-chat="client"]{--vz-chat-accent:#3B7084}
+.vz-chat[data-vz-chat="creator"]{--vz-chat-accent:#755B89}
+.vz-chat-side{background:#EDF1EA;border-right:1px solid #DCE4D9;padding:26px 17px}
+.vz-chat-side-head{border-color:#D5DED4}
+.vz-chat-side-title,.vz-chat-eyebrow{color:#67786C}
+.vz-chat-side nav a{border:1px solid transparent;border-radius:12px;color:#3D574A;min-height:47px;transition:background .25s var(--vz-conversation-ease),transform .25s var(--vz-conversation-ease)}
+.vz-chat-side nav a.is-active{background:#DBE8DC;color:var(--vz-chat-accent);border-color:#CBDCCC}
+.vz-chat-side nav a:hover{background:#DDE9DF;color:var(--vz-chat-accent);transform:translateX(3px)}
+.vz-chat-nav-icon{background:#D9E8DD;color:var(--vz-chat-accent);border-radius:9px}
+.vz-chat-side-info{background:#E4ECE4;border-color:#D3DED1}
+.vz-chat-side-info b{color:#355545}
+.vz-chat-side-info p{color:#61756B}
+.vz-chat-side-bottom>a,.vz-chat-quick a:hover{color:var(--vz-chat-accent)}
+.vz-chat-main,.vz-chat-header{background:#FFF}
+.vz-chat-header{border-bottom:1px solid var(--vz-conversation-line)}
+.vz-chat-avatar{background:var(--vz-chat-accent);box-shadow:0 7px 19px #29433726;border-radius:16px}
+.vz-chat-header-name b{color:var(--vz-conversation-ink);font-size:17px}
+.vz-chat-header-name span{color:var(--vz-conversation-muted)}
+.vz-chat-header-name i{background:#4A9270}
+.vz-chat-log{background-color:var(--vz-conversation-canvas);background-image:radial-gradient(circle,#E0E9DF 1px,transparent 1px);background-size:27px 27px;scroll-behavior:smooth}
+.vz-chat-welcome-art{background:#E7EEE5;border-color:#D3E2D4;border-radius:26px}
+.vz-chat-welcome h1{color:var(--vz-conversation-ink);font-weight:750;letter-spacing:-.055em}
+.vz-chat-welcome p{color:var(--vz-conversation-muted)}
+.vz-chat-bubble{color:#284238;border-color:#D6E2D7;background:#EBF2EC;border-radius:18px 18px 18px 5px;box-shadow:0 8px 28px #20382D08}
+.vz-chat-message.is-user .vz-chat-bubble{background:var(--vz-chat-accent);border-color:var(--vz-chat-accent);color:#FFF;border-radius:18px 18px 5px 18px}
+.vz-chat-message-avatar{background:#E2ECE4;color:var(--vz-chat-accent);border-radius:12px}
+.vz-chat-message-label,.vz-chat-sources strong{color:#6B8172}
+.vz-chat-sources a{background:#FFF;color:var(--vz-chat-accent);border:1px solid #DCE7DB}
+.vz-chat-sources a:hover{background:#EAF3EB}
+.vz-chat-compose{background:#FFF;border-top-color:var(--vz-conversation-line)}
+.vz-chat-reset{background:#F0F4EE;color:var(--vz-chat-accent);border-color:#DDE8DC}
+.vz-chat-reset:hover{background:#E5F0E5}
+.vz-chat button:focus-visible,.vz-chat a:focus-visible,.vz-chat textarea:focus-visible{outline:3px solid var(--vz-chat-accent);outline-offset:3px}
+.vz-chat-message{animation:vz-conversation-arrive .34s var(--vz-conversation-ease) both}
+@keyframes vz-conversation-arrive{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+/* Main-site conversational adviser uses the same design tokens without rewriting functionality. */
+body.motion-edition #modal-root .modal.expert-modal{
+ --chat-paper:var(--vz-conversation-paper);--chat-surface:#FFF;--chat-canvas:#F0F4EE;
+ --chat-ink:var(--vz-conversation-ink);--chat-muted:var(--vz-conversation-muted);
+ --chat-line:var(--vz-conversation-line);--chat-accent:#285D49;--chat-user:#E1ECE3;
+ border-radius:23px;box-shadow:0 24px 95px #1934263D;
+}
+#modal-root .expert-modal .chat-personas{background:#EEF2EB}
+#modal-root .expert-modal .chat-personas button.selected{background:#285D49;border-color:#285D49}
+#modal-root .expert-modal .chat-scroll-area{background-color:#F7F9F5}
+#modal-root .expert-modal .chat-message{border-radius:17px 17px 17px 5px;animation:vz-conversation-arrive .33s var(--vz-conversation-ease) both}
+#modal-root .expert-modal .chat-message.user{border-radius:17px 17px 5px 17px}
+#modal-root .expert-modal .chat-name-card{background:#E9F3EA;border-color:#ACD2B4}
+#modal-root .expert-modal .chat-name-card label{color:#285D49}
+#modal-root .expert-modal #expert-chat-form .button{background:#285D49}
+@media(max-width:760px){
+ .vz-chat{border-radius:16px;box-shadow:none}
+ .vz-chat-side{background:#F0F4EF}
+ .vz-chat-log{scroll-behavior:auto}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-chat-message,#modal-root .expert-modal .chat-message{animation:none!important}
+ .vz-chat-side nav a{transition:none!important;transform:none!important}
+ .vz-chat-log{scroll-behavior:auto}
+}
+html[data-motion="paused"] .vz-chat-message,html[data-motion="reduced"] .vz-chat-message,
+html[data-motion="paused"] #modal-root .expert-modal .chat-message,
+html[data-motion="reduced"] #modal-root .expert-modal .chat-message{animation:none!important}
