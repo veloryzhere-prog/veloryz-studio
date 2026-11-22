@@ -78,7 +78,7 @@ function cpItemEditor(item={}){
 function cpClientTabs(){
  const items=cpWorkspace?.items||[];
  const reviewCount=items.filter(x=>x.type==='approval'&&x.state==='waiting').length;
- const tabs=[['overview','Overview',''],['milestone','Milestones',items.filter(i=>i.type==='milestone').length],['file','Deliverables',items.filter(i=>i.type==='file').length],['approval','Approvals',reviewCount],['messages','Messages',(cpWorkspace?.messages||[]).length]];
+ const tabs=[['overview','Overview',''],['milestone','Milestones',items.filter(i=>i.type==='milestone').length],['file','Deliverables',items.filter(i=>i.type==='file').length],['approval','Approvals',reviewCount],['messages','Messages',(cpWorkspace?.messages||[]).filter(m=>m.sender==='client'&&!m.read_at).length]];
  return '<nav class="cpm-detail-tabs" aria-label="Client management sections">'+tabs.map(([id,label,count])=>'<button type="button" data-cpm="tab" data-tab="'+id+'" class="'+(cpTab===id?'is-active':'')+'" '+(cpTab===id?'aria-current="page"':'')+'>'+label+(count!==''?'<span>'+count+'</span>':'')+'</button>').join('')+'</nav>';
 }
 function cpActionButton(label,action,extra=''){return '<button type="button" class="admin-button secondary" data-cpm="'+action+'" '+extra+'>'+label+'</button>';}
@@ -175,6 +175,7 @@ async function cpLoad(selected=null){
 function cpSetTab(tab){
  if(!['overview','milestone','file','approval','messages'].includes(tab))return;
  cpTab=tab;cpEditMode='';
+ if(tab==='messages'&&cpSelected&&!cpBusy){cpReq('/messages/read',{method:'POST',body:JSON.stringify({project_id:cpSelected})}).then(()=>{if(cpWorkspace?.messages)cpWorkspace.messages.forEach(m=>{if(m.sender==='client'&&!m.read_at)m.read_at=new Date().toISOString();});}).catch(()=>{});}
  const detail=document.getElementById('cpm-detail');
  if(detail)detail.innerHTML=cpDetail();
 }
@@ -227,6 +228,8 @@ document.addEventListener('input',e=>{
 });
 document.addEventListener('change',e=>{if(e.target.id==='cpm-status-filter'){cpFilter=e.target.value;cpRefreshDirectory();}});
 document.addEventListener('click',async e=>{
+ const shortcut=e.target.closest('[data-cpm-template]');
+ if(shortcut){const textarea=document.getElementById('cpm-message-text');if(textarea){const templates={update:'Project update: We have completed the following work:\n\nNext milestone:\n\nWhat we need from you:',review:'Hello! Please review the latest shared work in your Client Portal. Let us know what feels right and list any requested changes so we can resolve them precisely.',handover:'Handover update: The agreed deliverables are ready for review in the Files section. Please confirm access and share any final observations.'};textarea.value=templates[shortcut.dataset.cpmTemplate]||'';textarea.focus();}return;}
  const copy=e.target.closest('[data-cpm-copy]');if(copy){await cpCopyFromInput(copy.dataset.cpmCopy);return;}
  const b=e.target.closest('[data-cpm]');if(!b)return;
  const action=b.dataset.cpm;
@@ -326,10 +329,30 @@ document.addEventListener('submit',async e=>{
    await cpLoad(cpSelected);
   }
   if(form.dataset.cpmForm==='message'){
-   await cpReq('/messages',{method:'POST',body:JSON.stringify({project_id:cpSelected,body:v.body})});
-   toast('Message saved to the client conversation.');
+   const result=await cpReq('/messages',{method:'POST',body:JSON.stringify({project_id:cpSelected,body:v.body})});
+   toast('Message saved to the private client conversation. '+(result.notification?.status==='not-configured'?'Gmail alerts need setup.':''));
    cpTab='messages';await cpLoad(cpSelected);
   }
  }catch(err){toast(err.message);if(button)button.disabled=false;}
  finally{cpBusy=false;}
 });
+
+/* Private owner refresh: read-only polling while the conversation editor is idle. */
+setInterval(async()=>{
+ if(section!=='client-portal'||!cpSelected||!cpLoaded||cpBusy||cpLoading||cpEditMode||document.hidden)return;
+ if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+ const selected=cpSelected;
+ try{
+  const latest=await cpReq('/projects?id='+encodeURIComponent(selected));
+  if(section!=='client-portal'||selected!==cpSelected||!latest.workspace)return;
+  const before=cpWorkspace?.messages?.at(-1)?.id||'';
+  const after=latest.workspace.messages?.at(-1)?.id||'';
+  const changed=before!==after||latest.workspace.project?.updated_at!==cpWorkspace?.project?.updated_at;
+  if(!changed)return;
+  cpWorkspace=latest.workspace;cpProjects=latest.projects||cpProjects;
+  const target=document.getElementById('cpm-detail');
+  if(target)target.innerHTML=cpDetail();
+  cpRefreshDirectory();
+  if(before!==after&&after)toast('New client conversation activity. Your workspace is up to date.');
+ }catch{ /* Keep the working console; manual Refresh remains available. */ }
+},18000);
