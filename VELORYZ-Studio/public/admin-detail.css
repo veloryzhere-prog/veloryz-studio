@@ -267,3 +267,30 @@
  .admin-layout :is(.ad-ops-actions a,.ad-console-link,.ad-stat,.ad-check-grid>a,.ad-sidebar .admin-nav a,.ad-search-trigger){transition:none!important;transform:none!important}
  .ad-sidebar::before,.ad-command-title::after,.ad-check-header::after{display:none}
 }
+
+/* Read-only diagnostics / real responses and truthful status labels */
+.ad-diagnostics-console{background:#fff;border:1px solid #e3e7ef;border-radius:17px;overflow:hidden;margin:10px 0 22px;
+ box-shadow:0 11px 33px #2836570b}
+.ad-diagnostics-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;
+ padding:28px 30px;border-bottom:1px solid #edf0f5;background:linear-gradient(120deg,#fafbfe,#f7f7fc)}
+.ad-diagnostics-heading h2{color:#2f3751;font:600 clamp(26px,2.5vw,34px)/1.1 Studio,Georgia,serif;
+ letter-spacing:-.05em;margin:9px 0}
+.ad-diagnostics-heading p{max-width:730px;font:500 11px/1.7 ui-sans-serif,system-ui,sans-serif;color:#728094}
+.ad-diagnostics-results{padding:23px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ad-diagnostic-card{padding:20px;min-height:135px;display:flex;flex-direction:column;gap:12px;
+ background:#fdfdff;border:1px solid #e8ebf3;border-radius:12px}
+.ad-diagnostic-card strong{font:750 12px/1.4 ui-sans-serif,system-ui,sans-serif;color:#38465e}
+.ad-diagnostic-card p{font:500 10px/1.7 ui-sans-serif,system-ui,sans-serif;color:#738299;overflow-wrap:anywhere}
+.ad-diagnostic-state{align-self:flex-start;border-radius:6px;padding:6px 8px;letter-spacing:.09em;
+ font:790 9px/1.25 ui-sans-serif,system-ui,sans-serif;background:#eceef6;color:#7e889b}
+.ad-diagnostic-state.is-ok{color:#2b7461;background:#e7f5f0}
+.ad-diagnostic-state.is-warning{color:#986837;background:#fff1df}
+.ad-diagnostics-pending{grid-column:1/-1;padding:26px;text-align:center;font:700 11px/1.6 ui-sans-serif,system-ui,sans-serif;color:#657388}
+.ad-diagnostics-console .ad-media-info{padding:4px 23px 23px}
+@media(max-width:950px){.ad-diagnostics-results{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){
+ .ad-diagnostics-heading{display:grid;padding:21px 17px}
+ .ad-diagnostics-heading .admin-button{justify-self:start}
+ .ad-diagnostics-results{grid-template-columns:1fr;padding:14px}
+ .ad-diagnostic-card{min-height:0;padding:16px}
+}
