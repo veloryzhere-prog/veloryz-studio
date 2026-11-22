@@ -2,9 +2,9 @@
 /* VELORYZ / project quick access, deliberately link-only.
  * Submitting a new brief does not create a private client account. */
 (()=>{
- const ROUTES_WITH_INLINE=new Set(['/','/work/','/design/','/designs/','/services/','/pricing/','/process/','/studio/','/contact/']);
+ const ROUTES_WITH_INLINE=new Set(['/','/work/','/services/','/pricing/','/process/','/studio/','/contact/']);
  const clean=()=>{let p=location.pathname;if(!p.endsWith('/'))p+='/';return p;};
- const excluded=()=>/^\/(?:admin|client|create)(?:\/|$)/.test(location.pathname);
+ const excluded=()=>/^\/(?:admin|client|create|design|designs)(?:\/|$)/.test(location.pathname);
  const accessibleLinks=()=>[
    '<a class="vz-qa-action vz-qa-action--start" href="/create/" aria-label="Create a new project with VELORYZ Studio">',
     '<span class="vz-qa-icon" aria-hidden="true">✳</span><span class="vz-qa-action-copy"><strong>Create a project</strong><small>Start a new project brief</small></span><span class="vz-qa-arrow" aria-hidden="true">↗</span></a>',
@@ -63,7 +63,13 @@
   motionIn(bar);
  }
  function mount(){
-  if(excluded())return;
+  // On SPA navigation, remove shortcuts mounted for the previous page.
+  // Keep normal product-specific CTAs; only the generic quick-actions panel is removed.
+  if(excluded()){
+   document.getElementById('vz-quick-actions-inline')?.remove();
+   document.getElementById('vz-quick-actions-footer')?.remove();
+   return;
+  }
   const route=clean();
   inlineBar(route);footerBar();
  }
