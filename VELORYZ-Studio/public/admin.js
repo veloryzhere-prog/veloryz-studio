@@ -337,8 +337,8 @@ document.addEventListener('click',async event=>{
    if(preview){toast('This needs the live signed-in owner workspace.');return;}
    const request=enquiryItems.find(x=>x.id===id);
    if(!request)return;
-   if(!confirm('Accept the project request for '+request.name+'?\n\nThis creates a private workspace with six starter milestones, generates a one-time invitation and attempts two branded Gmail emails (one with a detailed project-summary PDF). The action cannot be silently undone.'))return;
-   button.disabled=true;button.textContent='Accepting and preparing client access…';
+   if(!confirm('Accept the project request for '+request.name+'?\n\nThis creates the private client workspace and prepares the one-page order PDF. NO emails will be sent now. You will send the detailed project summary and separate invitation with two individual buttons in Client Management.'))return;
+   button.disabled=true;button.textContent='Accepting project & preparing order…';
    try{
     const result=await api('/api/client-portal/admin/accept',{method:'POST',body:JSON.stringify({enquiry_id:id}),signal:AbortSignal.timeout(100000)});
     closeModal();
@@ -440,28 +440,24 @@ function creatorBriefPanel(message){
 }
 
 function acceptanceResult(result){
- const project=result.project||{},code=result.invitation?.code||'';
- const acceptance=result.acceptance_delivery||{},invite=result.invitation?.delivery||{};
+ const project=result.project||{},pid=String(result.id||project.id||'');
  const statuses=[
-  {label:'Project linked to client workspace',state:'complete',note:'A single private workspace is associated with this project request.'},
-  {label:'Detailed PDF prepared',state:result.already_accepted?'review':'complete',note:'Download the original brief, onboarding roadmap, project reference and key links.'},
-  {label:'Acceptance email and PDF',state:acceptance.status||'review',note:acceptance.message||'Refer to the email delivery log for the original result.'},
-  {label:'Private invitation email',state:invite.status||'review',note:invite.message||(result.already_accepted?'No duplicate invitation was issued.':'Invitation code available only in this view.')}
+  {label:'Project accepted & workspace created',text:'The original enquiry is safely linked to one private client workspace.',done:true},
+  {label:'Industrial one-page project PDF',text:'The order summary is ready to download. The complete original brief is retained with the client project.',done:true},
+  {label:'Send detailed order-summary email',text:'Open Client Management and click Send Project Summary to attach and deliver the PDF.',done:false},
+  {label:'Issue private client invitation',text:'Separately click Send Client Invitation to generate and email the single-use access code.',done:false}
  ];
- const projectId=String(result.id||project.id||'');
- const codeFields=code?'<div class="vz-accept-secure"><span>ONE-TIME PRIVATE ACCESS CODE</span>'+
-  '<div class="vz-accept-copy"><input id="vz-accepted-invite-code" readonly autocomplete="off" value="'+E(code)+'">'+
-  '<button type="button" class="admin-button secondary" data-action="accept-copy-code">Copy code</button></div>'+
-  '<p>This code expires in 14 days and is only valid once. Store it securely if Gmail has not accepted the invitation. The project reference is not a login code.</p></div>':'<p class="vz-accept-existing">This request was previously accepted. Invitation codes are not stored in plaintext; issue a fresh invitation from Client Management only when necessary.</p>';
- const summary='<section class="vz-accepted"><div class="vz-accepted-heading"><span>VELORYZ / PROJECT ACCEPTANCE</span><h2>'+E(project.title||'Client project')+'</h2><p>'+E(project.client_name||'')+' · '+E(project.client_email||'')+'</p></div>'+
-  '<div class="vz-accept-ref"><strong>'+E(project.request_reference||result.reference||'VELORYZ')+'</strong><small>Official project reference</small></div>'+
-  '<div class="vz-accept-timeline">'+statuses.map((x,i)=>'<div class="vz-accept-step"><span class="vz-accept-step-dot '+(x.state==='sent'||x.state==='complete'?'is-ok':x.state==='not-configured'?'is-manual':'is-review')+'">'+(i+1)+'</span><div><strong>'+E(x.label)+'</strong><p>'+E(x.note)+'</p></div><small>'+E(x.state==='sent'?'Accepted by Gmail':x.state==='complete'?'Created':x.state==='not-configured'?'Manual delivery needed':x.state==='failed'?'Delivery needs attention':'Review')+'</small></div>').join('')+'</div>'+codeFields+'</section>';
- const pdfUrl='/api/client-portal/admin/projects/'+encodeURIComponent(projectId)+'/summary';
- showModal(result.already_accepted?'Project already onboarded':'Project accepted & workspace created',
-  'The real project record and mail status are shown below. A provider accepting an email does not guarantee inbox delivery.',
-  summary,
-  '<a href="'+E(pdfUrl)+'" class="admin-button secondary" target="_blank" rel="noopener">Download project PDF ↓</a>'+
-  '<button type="button" class="admin-button" data-action="accept-open-client" data-id="'+E(projectId)+'">Open client management ↗</button>'+
+ const html='<section class="vz-accepted"><div class="vz-accepted-heading"><span>VELORYZ / ORDER ACCEPTANCE</span>'+
+  '<h2>'+E(project.title||'Client project')+'</h2><p>'+E(project.client_name||'')+' · '+E(project.client_email||'')+'</p></div>'+
+  '<div class="vz-accept-ref"><strong>'+E(project.request_reference||result.reference||'VELORYZ PROJECT')+'</strong><small>Official project reference</small></div>'+
+  '<div class="vz-accept-timeline">'+statuses.map((x,i)=>'<div class="vz-accept-step"><span class="vz-accept-step-dot '+(x.done?'is-ok':'is-review')+'">'+(i+1)+'</span>'+
+   '<div><strong>'+E(x.label)+'</strong><p>'+E(x.text)+'</p></div><small>'+(x.done?'Ready':'Owner action needed')+'</small></div>').join('')+'</div>'+
+  '<p class="vz-accept-existing">No email or private access code is generated by accepting alone. Each email is sent only when the owner explicitly clicks its individual button in Client Management.</p></section>';
+ const pdf='/api/client-portal/admin/projects/'+encodeURIComponent(pid)+'/summary';
+ showModal(result.already_accepted?'Project already accepted':'Project accepted · ready for email handoff',
+  'The client workspace and order summary are ready. The client has not been emailed or invited by this action.',
+  html,'<a href="'+E(pdf)+'" class="admin-button secondary" target="_blank" rel="noopener">Preview one-page order PDF ↓</a>'+
+  '<button type="button" class="admin-button" data-action="accept-open-client" data-id="'+E(pid)+'">Open Client Management →</button>'+
   '<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>','medium');
 }
 
