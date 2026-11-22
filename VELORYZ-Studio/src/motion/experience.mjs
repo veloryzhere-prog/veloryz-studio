@@ -13,6 +13,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   const target=container.closest('.logo-stage');
   const story=container.closest('.assembly-sequence');
   const officialHero=!story&&container.dataset.logoSource==='official-glb';
+  const controlsRoot=officialHero?target.closest('.hero'):target;
   const economical=(navigator.hardwareConcurrency||8)<=4 || (navigator.deviceMemory||8)<=4 || matchMedia('(max-width:850px), (pointer:coarse)').matches;
   let renderer, software=softwareOnly;
   if (!softwareOnly) {
@@ -77,9 +78,9 @@ function mount(container,softwareOnly=false,previousPose=null) {
   function wake(){if(!frame && !disposed && visible && !document.hidden)frame=requestAnimationFrame(render);}
   function controls(){
     if(!officialHero)return;
-    const state=target.querySelector('[data-logo-state]');
+    const state=controlsRoot?.querySelector('[data-logo-state]');
     if(state)state.textContent=!motion()?'Site motion paused':rotationPaused?'Rotation paused':manual?'Move the V · resumes shortly':orbitStyle==='orbit'?'360° rotation':'Gentle rotation';
-    for(const button of target.querySelectorAll('[data-logo-action]')){
+    for(const button of controlsRoot?.querySelectorAll('[data-logo-action]')||[]){
       const choice=button.dataset.logoAction;
       button.setAttribute('aria-pressed',String(
         choice==='spin'?orbitStyle==='orbit'&&!rotationPaused&&!manual:
@@ -189,7 +190,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   window.StudioMotion?.addEventListener('change',changed);
   on(document,'visibilitychange',changed);
   if(story)on(story,'studio:assembly',wake);
-  on(target,'click',e=>{
+  on(controlsRoot||target,'click',e=>{
     const button=e.target.closest('button');
     if (!button) return;
     if(button.hasAttribute('data-logo-action')&&officialHero){
