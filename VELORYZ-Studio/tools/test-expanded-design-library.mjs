@@ -118,6 +118,21 @@ has(shell,'VELORYZ STUDIO / THE DESIGN COLLECTION','Homepage collection remains 
 has(creator,'minBudget=()=>data.external?6000:20000','Creator supports INR 6,000 source customization');
 has(creator,'Studio service from','Creator displays price');
 has(creator,'selectedReference&&data.external','Avoid reset loops in template selection');
+const quickActions=read('public/project-quick-actions.js');
+const quickActionsCss=read('public/project-quick-actions.css');
+const headerCss=read('public/reference-header-interactions.css');
+const referenceShell=read('lib/claude-reference-shell.ts');
+const appShell=read('lib/site-shell.ts');
+has(quickActions,"(?:admin|client|create|design|designs)",'Quick project panels excluded from Create and both Design routes');
+assert.ok(!quickActions.includes("'/design/','/designs/'"),'Do not inject inline shortcuts into the Design library');
+has(quickActions,"document.querySelector('#vz-quick-actions-inline')?.remove?.()", 'Remove obsolete shortcuts when SPA enters an excluded page');
+has(quickActions,"document.querySelector('#vz-quick-actions-footer')?.remove?.()", 'Remove footer shortcuts when SPA enters an excluded page');
+has(headerCss,'.pg[data-p="design"].act','Show no Quick Create header button on active hash-routed design page');
+has(headerCss,'.vz-header-create','Scope rule to the redundant header control, not normal per-design CTAs');
+has(referenceShell,'reference-header-interactions.css?v=20261123-quick-cta-visibility-v2','Bust previous header CSS cache');
+has(appShell,'project-quick-actions.js?v=20261123-quick-cta-visibility-v2','Bust previous Quick Actions JS cache');
+has(quickActionsCss,'.vz-quick-actions--footer','Keep the Quick Actions presentation available for unaffected routes');
+
 for(const name of ['public/veloryz-open-library.js','public/veloryz-design-preview.js','public/veloryz-preview-motion-bridge.js','public/creator-v4.js','public/reference-site-upgrade.js']){
  assert.doesNotThrow(()=>new Function(read(name)),'Invalid browser JS '+name);
 }
