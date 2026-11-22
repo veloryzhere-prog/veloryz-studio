@@ -1,6 +1,6 @@
 /* Universal VELORYZ button feedback.
-   Event listeners only observe; they never preventDefault(), stopPropagation(),
-   rewrite handlers, wrap controls, move buttons, or change their innerHTML.
+   Event listeners only observe; they leave native actions and other handlers
+   untouched and never rewrite, wrap, move, or replace button contents.
    Dynamic AI, creator, admin and portal controls are discovered as they appear. */
 (()=>{
 'use strict';
