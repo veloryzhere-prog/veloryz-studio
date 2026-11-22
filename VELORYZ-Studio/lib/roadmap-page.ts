@@ -13,7 +13,7 @@ export function renderRoadmapPage():string{
  '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
  '<title>Project roadmap & quality checks — VELORYZ Studio</title>',
  '<meta name="description" content="Explore the VELORYZ Studio project roadmap, from discovery through design, security reviews, accessibility, publishing and handover.">',
- '<link rel="canonical" href="https://veloryz.online/roadmap.html"><link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/lenis-vendored.css"><link rel="stylesheet" href="/reviews.css"><script src="/lenis-vendored.js?v=1.3.27" defer></script><script src="/smooth-scroll.js?v=20261122-global-v2" defer></script></head>',
+ '<link rel="canonical" href="https://veloryz.online/roadmap.html"><link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/lenis-vendored.css"><link rel="stylesheet" href="/reviews.css"><script src="/lenis-vendored.js?v=1.3.27" defer></script><script src="/smooth-scroll.js?v=20261122-global-v2" defer></script><link rel="stylesheet" href="/button-feedback.css?v=20261122-unified-buttons-v1"><script src="/button-feedback.js?v=20261122-unified-buttons-v1" defer></script></head>',
  '<body><a class="review-skip" href="#roadmap-main">Skip to content</a>',
  '<header class="reviews-header"><a class="reviews-brand" href="/"><span class="reviews-mark">V</span><span>VELORYZ<small>STUDIO / INDIA · ASIA</small></span></a>',
  '<nav aria-label="Primary"><a href="/work/">Work</a><a href="/process/">Process</a><a href="/docs/index.html">Docs</a><a href="/reviews.html">Reviews</a><a href="/contact/">Contact</a></nav><a class="reviews-nav-cta" href="/create/">Start a project ↗</a></header>',
