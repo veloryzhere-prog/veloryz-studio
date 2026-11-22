@@ -554,7 +554,10 @@ function startVisitorCampaigns(initial=true){
   return;
  }
  if(window.StudioMotion?.onboardingActive){
-  document.addEventListener('studio:motion-intro-complete',()=>startVisitorCampaigns(initial),{once:true});
+  // A new-session brand intro precedes the required first-visit motion choice.
+  // Resume campaigns after whichever gate is currently active, without duplicates.
+  const readyEvent=window.VeloryzIntro?.active?'studio:brand-intro-complete':'studio:motion-intro-complete';
+  document.addEventListener(readyEvent,()=>startVisitorCampaigns(initial),{once:true});
   renderOfferDock();
   return;
  }
