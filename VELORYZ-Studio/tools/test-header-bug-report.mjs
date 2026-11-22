@@ -64,7 +64,7 @@ assert(bugCSS.includes('max-width:980px')&&bugCSS.includes('max-width:580px'),'B
 
 /* A regression test for the ACTUAL route controller and header DOM:
    CSS :has() alone must never decide whether Quick Create remains clickable. */
-const quickHelper=home.match(/function syncQuickCreate\\(n\\)\\{[\\s\\S]*?\\n\\}\\nfunction show\\(n\\)/)?.[0]?.replace(/\\nfunction show\\(n\\)$/,'');
+const quickHelper=home.match(/function syncQuickCreate\(n\)\{[\s\S]*?\n\}\nfunction show\(n\)/)?.[0]?.replace(/\nfunction show\(n\)$/,'');
 assert.ok(quickHelper,'Reference router must control real Quick Create header visibility');
 const quickState={view:'',important:'',display:'',tabindex:null,ariaHidden:null,hidden:false};
 const quickLink={
@@ -95,10 +95,10 @@ for(const pageName of ['home','work','studio']){
  assert.equal(quickState.ariaHidden,'false');
  assert.equal(quickState.tabindex,null);
 }
-assert.match(home,/function route\\(\\)\\{[\\s\\S]*?syncQuickCreate\\(n\\);if\\(first\\)/,'Synchronize button immediately on hash navigation, not after animation delay');
-assert.match(chrome,/a\\.dataset\\.vzQuickCreate='footer'/,'Footer Quick Create link needs a route-targetable marker');
+assert.match(home,/function route\(\)\{[\s\S]*?syncQuickCreate\(n\);if\(first\)/,'Synchronize button immediately on hash navigation, not after animation delay');
+assert.match(chrome,/a\.dataset\.vzQuickCreate='footer'/,'Footer Quick Create link needs a route-targetable marker');
 assert.match(headerCSS,/data-vz-view="design"/,'Design hash route should also have CSS no-flash fallback');
-assert.match(headerCSS,/vz-reference-support-links \\[data-vz-quick-create\\]/,'Footer shortcut must be hidden on blocked routes');
+assert.match(headerCSS,/vz-reference-support-links \[data-vz-quick-create\]/,'Footer shortcut must be hidden on blocked routes');
 assert.ok(home.includes('reference-header-interactions.css?v=20261123-router-quick-create-v3'),'Updated header CSS must bypass old browser caches');
 assert.ok(home.includes('reference-restored-features.js?v=20261123-router-quick-create-v3'),'Updated footer JS must bypass old browser caches');
 
