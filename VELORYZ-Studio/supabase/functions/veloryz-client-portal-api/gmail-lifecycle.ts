@@ -252,20 +252,28 @@ export const makeProjectSummaryPdf=createPdf;
 type Attachment={filename:string;bytes:Uint8Array;contentType:string};
 type Outgoing={to:string;subject:string;html:string;text:string;attachments?:Attachment[]};
 export type MailOutcome={status:"sent"|"failed"|"not-configured";message:string;provider_message_id?:string};
+async function smtpTimed<T>(value:Promise<T>,ms=16000):Promise<T>{
+ let timer:number|undefined;
+ try{
+  return await Promise.race([value,new Promise<never>((_,reject)=>{
+   timer=setTimeout(()=>reject(new Error("SMTP connection timed out")),ms);
+  })]);
+ }finally{if(timer!==undefined)clearTimeout(timer);}
+}
 export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
  const pass=(Deno.env.get("VELORYZ_GMAIL_APP_PASSWORD")||"").replace(/\s/g,"");
  if(!pass)return {status:"not-configured",message:"Gmail is not connected. Set VELORYZ_GMAIL_APP_PASSWORD in Supabase Edge Function secrets. No message was sent."};
  if(!emailOk(m.to))return {status:"failed",message:"The recipient email address is invalid."};
  let socket:Deno.TlsConn|undefined;
  try{
-  socket=await Deno.connectTls({hostname:"smtp.gmail.com",port:465});
+  socket=await smtpTimed(Deno.connectTls({hostname:"smtp.gmail.com",port:465}),16000);
   const writer=socket.writable.getWriter(),reader=socket.readable.getReader(),encoder=new TextEncoder(),decoder=new TextDecoder();
   let buffer="";
   const readLine=async():Promise<string>=>{
    while(true){
     const at=buffer.indexOf("\n");
     if(at>=0){const text=buffer.slice(0,at).replace(/\r$/,"");buffer=buffer.slice(at+1);return text;}
-    const {value,done}=await reader.read();if(done)throw Error("SMTP connection closed");buffer+=decoder.decode(value,{stream:true});
+    const {value,done}=await smtpTimed(reader.read(),16000);if(done)throw Error("SMTP connection closed");buffer+=decoder.decode(value,{stream:true});
     if(buffer.length>12000)throw Error("SMTP response length exceeded");
    }
   };
@@ -275,7 +283,7 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
    if(code!==expected)throw Error("SMTP command rejected ("+code+")");
    return line;
   };
-  const write=async(v:string)=>writer.write(encoder.encode(v+"\r\n"));
+  const write=async(v:string)=>smtpTimed(writer.write(encoder.encode(v+"\r\n")),16000);
   const command=async(v:string,expect:number)=>{await write(v);return response(expect)};
   await response(220);
   await command("EHLO veloryz.online",250);
@@ -285,32 +293,42 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
   await command("MAIL FROM:<"+MAILBOX+">",250);
   await command("RCPT TO:<"+m.to+">",250);
   await command("DATA",354);
-  const boundary="vz-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
+  const boundary="vz-"+crypto.randomUUID(),alternative="vzalt-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
+  const subject=safe(m.subject).normalize("NFKD").replace(/[^\x20-\x7E]/g,"-");
   const headers=[
    "From: VELORYZ <"+MAILBOX+">","To: <"+m.to+">","Reply-To: "+MAILBOX,
-   "Subject: "+safe(m.subject),"Date: "+new Date().toUTCString(),
+   "Subject: "+subject,"Date: "+new Date().toUTCString(),
    "Message-ID: <"+id+">","MIME-Version: 1.0",
    'Content-Type: multipart/mixed; boundary="'+boundary+'"'
   ];
-  const part=(type:string,value:string)=>["--"+boundary,"Content-Type: "+type+'; charset="UTF-8"',
-   "Content-Transfer-Encoding: base64","",wrapped(utf64(value)),""].join("\r\n");
-  const mime=[headers.join("\r\n"),"",
-   part("text/plain",m.text),part("text/html",m.html)];
+  const altPart=(type:string,value:string)=>[
+   "--"+alternative,'Content-Type: '+type+'; charset="UTF-8"',
+   "Content-Transfer-Encoding: base64","",wrapped(utf64(value)),""
+  ].join("\r\n");
+  // Real email clients should choose either plain text or HTML, not display both.
+  const mime=[
+   headers.join("\r\n"),"",
+   "--"+boundary,'Content-Type: multipart/alternative; boundary="'+alternative+'"',"",
+   altPart("text/plain",m.text),altPart("text/html",m.html),
+   "--"+alternative+"--",""
+  ];
   for(const attachment of (m.attachments||[])){
-   mime.push(["--"+boundary,'Content-Type: '+attachment.contentType+'; name="'+safe(attachment.filename)+'"',
-    "Content-Disposition: attachment; filename=\""+safe(attachment.filename)+"\"",
-    "Content-Transfer-Encoding: base64","",wrapped(b64(attachment.bytes)),""].join("\r\n"));
+   mime.push([
+    "--"+boundary,'Content-Type: '+attachment.contentType+'; name="'+safe(attachment.filename)+'"',
+    'Content-Disposition: attachment; filename="'+safe(attachment.filename)+'"',
+    "Content-Transfer-Encoding: base64","",wrapped(b64(attachment.bytes)),""
+   ].join("\r\n"));
   }
   mime.push("--"+boundary+"--","");
-  const full=mime.join("\r\n").replace(/^\./gm,"..");
-  // SMTP DATA terminator is sent only once. Base64 encoded body prevents dot injection.
-  await writer.write(encoder.encode(full+"\r\n.\r\n"));
-  await response(250);
-  await command("QUIT",221);
+  const raw=mime.join("\r\n").replace(/^\./gm,"..");
+  await smtpTimed(writer.write(encoder.encode(raw+"\r\n.\r\n")),25000);
+  await response(250); // Gmail accepted responsibility for this one message.
+  try{await command("QUIT",221)}catch{} // Never report failure after successful 250 DATA.
   return {status:"sent",message:"Gmail SMTP accepted the message for "+m.to+". Delivery to Inbox is not guaranteed.",provider_message_id:id};
  }catch(e){
   // Suppress credentials and raw provider error messages.
-  const label=String((e as Error)?.message||"").includes("rejected")?"Gmail SMTP rejected the request. Check app password and mailbox permissions.":"Gmail SMTP delivery failed or timed out. Check server outbound port 465 and app password.";
+  const code=String((e as Error)?.message||"").match(/SMTP command rejected \((\d{3})\)/)?.[1];
+  const label=code==="535"||code==="534"?"Gmail SMTP authentication rejected (code "+code+"). Verify the App Password and sender account.":code?"Gmail SMTP returned "+code+". Check mailbox restrictions, recipient address and Gmail sending limits.":"Gmail SMTP connection or response timed out. Verify Supabase outbound port 465 and retry the owner-only test.";
   return {status:"failed",message:label};
  }finally{try{socket?.close()}catch{}}
 }
