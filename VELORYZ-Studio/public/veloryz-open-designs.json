@@ -17,7 +17,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/koative/cento",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-uiuxlabz-120-sites",
@@ -33,7 +35,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/uiuxlabz/uiuxlabz",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-colorlib-bootstrap-templates",
@@ -49,7 +53,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/bootstrap-templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-freeframe-templates",
@@ -65,7 +71,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/empeeryal/freeframe-templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-novpix-free-html-templates",
@@ -81,7 +89,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Novpix/free-html-templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-8b-site-template-collection",
@@ -111,9 +121,15 @@
       "caution": "Accessible utility starter",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "StartBootstrap/startbootstrap-agency",
+      "previewImage": "https://assets.startbootstrap.com/img/screenshots/themes/agency.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://startbootstrap.github.io/startbootstrap-agency/",
+      "localSource": "/design-source-previews/os-template-libraries-start-bootstrap-agency/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-template-libraries-start-bootstrap-freelancer",
@@ -127,9 +143,15 @@
       "caution": "Easy-to-customize basic",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "StartBootstrap/startbootstrap-freelancer",
+      "previewImage": "https://assets.startbootstrap.com/img/screenshots/themes/freelancer.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://startbootstrap.github.io/startbootstrap-freelancer/",
+      "localSource": "/design-source-previews/os-template-libraries-start-bootstrap-freelancer/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-template-libraries-bcms-starters",
@@ -145,7 +167,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/bcms/starters",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-template-libraries-170-html-site-collection",
@@ -161,7 +185,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/dawidolko/Website-Templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-vercel-commerce",
@@ -177,7 +203,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/vercel/commerce",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-shopify-hydrogen",
@@ -193,7 +221,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Shopify/hydrogen",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-medusa-commerce-platform",
@@ -209,7 +239,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/medusajs/medusa",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-medusa-b2b-starter",
@@ -225,7 +257,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/medusajs/b2b-starter",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-spree-storefront",
@@ -241,7 +275,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/spree/storefront",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-spree-commerce",
@@ -257,7 +293,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/spree/spree",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-vendure-storefront",
@@ -273,7 +311,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/vendurehq/storefront",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-vendure-next-starter",
@@ -289,7 +329,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/vendurehq/nextjs-starter-vendure",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-bagisto",
@@ -305,7 +347,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/bagisto/bagisto",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-the-front-kit-starter",
@@ -321,7 +365,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/thefrontkit/nextjs-ecommerce-starter",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-nextfaster-ecommerce",
@@ -337,7 +383,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ethanniser/NextFaster",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-epic-ecommerce-next-starter",
@@ -353,7 +401,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Epic-Design-Labs/nextjs-ecommerce-starter",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-commerce-and-b2b-saleor-storefront",
@@ -369,7 +419,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/saleor/storefront",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-grocergo",
@@ -385,7 +437,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Lucasdota/GrocerGo",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-next-grocery",
@@ -401,7 +455,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/alexnguyennz/grocery",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-organicfarm-multivendor",
@@ -417,7 +473,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Fouzia-Oreen/OrganicFarm_MultiVendor-Grocery-Ecommerce",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-open-food-network",
@@ -433,7 +491,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/openfoodfoundation/openfoodnetwork",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-nextorders-food",
@@ -449,7 +509,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/nextorders/food",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-meal-mart",
@@ -465,7 +527,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/design-sparx/meal-mart",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-hangry",
@@ -481,7 +545,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/aayushai/Hangry",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-react-food-ordering",
@@ -497,7 +563,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/windsuzu/react-food-ordering",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-next-restaurant-app",
@@ -513,7 +581,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/blackslashcreative/next-restaurant-app",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-grocery-and-delivery-8b-restaurant-site",
@@ -527,9 +597,15 @@
       "caution": "GSAP distribution terms separate",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "8bsite/restaurant-website-template",
+      "previewImage": "https://raw.githubusercontent.com/8bsite/restaurant-website-template/main/previews/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://8bsite.github.io/restaurant-website-template/",
+      "localSource": "/design-source-previews/os-grocery-and-delivery-8b-restaurant-site/index.html",
+      "assetMode": "original-linked-remote-photos"
     },
     {
       "id": "os-grocery-and-delivery-grilli-restaurant",
@@ -543,9 +619,15 @@
       "caution": "Useful immersive restaurant inspiration",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "codewithsadee/grilli",
+      "previewImage": "https://raw.githubusercontent.com/codewithsadee/grilli/master/readme-images/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://codewithsadee.github.io/grilli/",
+      "localSource": "/design-source-previews/os-grocery-and-delivery-grilli-restaurant/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-logistics-and-transport-the-mixly-logistics",
@@ -561,7 +643,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/themixlyweb/nextjs-logistics-website-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-logistics-and-transport-astroflow",
@@ -577,7 +661,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/sudeep2003/AstroFlow",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-logistics-and-transport-warp-tools",
@@ -593,7 +679,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/wearewarp/warp-tools",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-project-management-plane",
@@ -609,7 +697,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/makeplane/plane",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-project-management-wekan",
@@ -625,7 +715,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/wekan/wekan",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-project-management-vikunja",
@@ -641,7 +733,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/go-vikunja/vikunja",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-project-management-appflowy",
@@ -657,7 +751,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/AppFlowy-IO/AppFlowy",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-project-management-taiga-front",
@@ -673,7 +769,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/taigaio/taiga-front",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-refine",
@@ -689,7 +787,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/refinedev/refine",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-react-admin",
@@ -705,7 +805,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/marmelab/react-admin",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-tabler",
@@ -721,7 +823,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/tabler/tabler",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-coreui-free-react-admin",
@@ -737,7 +841,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/coreui/coreui-free-react-admin-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-adminlte",
@@ -753,7 +859,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/AdminLTE",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-next-js-saas-starter",
@@ -769,7 +877,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/nextjs/saas-starter",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-ixartz-saas-boilerplate",
@@ -785,7 +895,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ixartz/SaaS-Boilerplate",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-ixartz-landing-starter",
@@ -801,7 +913,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ixartz/Next-JS-Landing-Page-Starter-Template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-lumen-cinematic-ai-saas",
@@ -817,7 +931,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/MiddleSugar7000/lumen-saas-landing-page-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-volt-arc-product-landing",
@@ -833,7 +949,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/MiddleSugar7000/volt-arc-landing-page-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-motion-saas-landing",
@@ -849,7 +967,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/karthikmudunuri/saas-landing-page-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-dashboards-and-saas-shadcn-fintech",
@@ -865,7 +985,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/abderrahimghazali/shadcn-fintech",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-8b-creative-agency",
@@ -879,9 +1001,15 @@
       "caution": "GSAP license separate",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "8bsite/creative-agency-website-template",
+      "previewImage": "https://raw.githubusercontent.com/8bsite/creative-agency-website-template/main/previews/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://8bsite.github.io/creative-agency-website-template/",
+      "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-creative-agency/index.html",
+      "assetMode": "original-linked-remote-photos"
     },
     {
       "id": "os-portfolio-and-agencies-8b-design-studio",
@@ -895,9 +1023,15 @@
       "caution": "Motion-led editorial template",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "8bsite/design-studio-website-template",
+      "previewImage": "https://raw.githubusercontent.com/8bsite/design-studio-website-template/main/previews/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://8bsite.github.io/design-studio-website-template/",
+      "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-design-studio/index.html",
+      "assetMode": "original-linked-remote-photos"
     },
     {
       "id": "os-portfolio-and-agencies-8b-architecture",
@@ -911,9 +1045,15 @@
       "caution": "GSAP runtime separate",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "8bsite/architecture-website-template",
+      "previewImage": "https://raw.githubusercontent.com/8bsite/architecture-website-template/main/previews/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://8bsite.github.io/architecture-website-template/",
+      "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-architecture/index.html",
+      "assetMode": "original-linked-remote-photos"
     },
     {
       "id": "os-portfolio-and-agencies-8b-coworking",
@@ -927,9 +1067,15 @@
       "caution": "Scroll motion",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "8bsite/coworking-website-template",
+      "previewImage": "https://raw.githubusercontent.com/8bsite/coworking-website-template/main/previews/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://8bsite.github.io/coworking-website-template/",
+      "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-coworking/index.html",
+      "assetMode": "original-linked-remote-photos"
     },
     {
       "id": "os-portfolio-and-agencies-svelte-gsap-site",
@@ -945,7 +1091,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/YusufCeng1z/svelte-gsap-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-naresh-3d-portfolio",
@@ -961,7 +1109,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/Naresh-Khatri/3d-portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-trevsm-3d-bedroom-portfolio",
@@ -977,7 +1127,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/trevsm/3D-Portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-cinematic-portfolio",
@@ -993,7 +1145,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/5araang/Nextjs-cinematic-portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-gsap-lenis-portfolio",
@@ -1009,7 +1163,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/aitezazdev/Portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-motion-portfolio-starter",
@@ -1025,7 +1181,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/karthikmudunuri/portfolio-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-animated-portfolio-framer",
@@ -1041,7 +1199,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ikramdeveloper/animated-portfolio-framer-motion",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-portfolio-and-agencies-msrrana-animated-portfolio",
@@ -1057,7 +1217,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/MSRRana/animated-portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-publishing-and-blogs-wren-editorial",
@@ -1071,9 +1233,15 @@
       "caution": "Already in current inspiration library",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
-      "enabled": true
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
+      "enabled": true,
+      "originalRepo": "codewithsadee/wren",
+      "previewImage": "https://raw.githubusercontent.com/codewithsadee/wren/master/readme-images/desktop.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://codewithsadee.github.io/wren/",
+      "localSource": "/design-source-previews/os-publishing-and-blogs-wren-editorial/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-publishing-and-blogs-tailwind-next-blog",
@@ -1089,7 +1257,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/timlrx/tailwind-nextjs-starter-blog",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-publishing-and-blogs-lonestone-astro",
@@ -1105,7 +1275,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/lonestone/astro-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-education-and-lms-next-tailwind-e-learning",
@@ -1121,7 +1293,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/GetNextjsTemplates/eLearning-tailwind-nextjs-free",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-education-and-lms-eduor",
@@ -1137,7 +1311,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/TheNeovimmer/eduor",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-education-and-lms-lms-v1",
@@ -1153,7 +1329,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/TwilightLogic/lms-v1",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-tournest",
@@ -1169,7 +1347,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/themesine/TourNest",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-travel-agency-next",
@@ -1185,7 +1365,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/mafzalkalwardev/travel-agency-website",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-mixly-tourism",
@@ -1201,7 +1383,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/themixlyweb/react-tourism-website-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-hotel-booking",
@@ -1217,7 +1401,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/htoann/Hotel-Booking",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-robinson",
@@ -1233,7 +1419,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/nikcladis/robinson",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-travel-and-hotel-hotel-booking-system",
@@ -1249,7 +1437,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/thanhhoa3514/hotel-booking-system",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-real-estate-next-real-estate",
@@ -1265,7 +1455,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/hamidkhans651/nextjs-real-estate-project",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-real-estate-real-estate",
@@ -1281,7 +1473,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/tumon-art/real_estate",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-real-estate-real-estate-site",
@@ -1297,7 +1491,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/jkarelins/real-estate-site",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-jobs-and-hiring-bordful",
@@ -1313,7 +1509,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/craftled/bordful",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-jobs-and-hiring-jobhive",
@@ -1329,7 +1527,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/shouqatazeez/jobhive",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-nonprofit-and-community-smartergiving-nonprofit",
@@ -1345,7 +1545,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/smartergiving/free-nonprofit-starter-website",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-nonprofit-and-community-carbonplan-site",
@@ -1361,7 +1563,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/carbonplan/carbonplan.org",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-nonprofit-and-community-flarum",
@@ -1377,7 +1581,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/flarum/flarum",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-nonprofit-and-community-discourse",
@@ -1393,7 +1599,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/discourse/discourse",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-healthcare-and-forms-healthcare-dashboard",
@@ -1409,7 +1617,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/heyyakash/healthcare",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-healthcare-and-forms-nhs-design-system-resources",
@@ -1425,7 +1635,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/jibrel/Awesome-healthcare-UI",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-healthcare-and-forms-colorlib-html-forms",
@@ -1441,7 +1653,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/html-form-templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-healthcare-and-forms-colorlib-html-tables",
@@ -1457,7 +1671,9 @@
       "rights": "review",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/html-table-templates",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-motion-framer-motion",
@@ -1473,7 +1689,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/motiondivision/motion",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-lenis",
@@ -1489,7 +1707,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/darkroomengineering/lenis",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-motion-primitives",
@@ -1505,7 +1725,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ibelick/motion-primitives",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-magic-ui",
@@ -1521,7 +1743,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/magicuidesign/magicui",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-shadcn-ui",
@@ -1537,7 +1761,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/shadcn-ui/ui",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-react-three-fiber",
@@ -1553,7 +1779,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/pmndrs/react-three-fiber",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-drei",
@@ -1569,7 +1797,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/pmndrs/drei",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-react-spring",
@@ -1585,7 +1815,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/pmndrs/react-spring",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-anime-js",
@@ -1601,7 +1833,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/juliangarnier/anime",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-lottie-web",
@@ -1617,7 +1851,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/airbnb/lottie-web",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-uiverse-galaxy",
@@ -1633,7 +1869,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/uiverse-io/galaxy",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-velora-ui",
@@ -1649,7 +1887,9 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/velora-ui",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-motion-and-ui-components-react-bits",
@@ -1665,7 +1905,9 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/DavidHDev/react-bits",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-restricted-inspiration-anon-e-commerce",
@@ -1681,7 +1923,9 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/codewithsadee/anon-ecommerce-website",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-restricted-inspiration-gamics-gaming",
@@ -1697,7 +1941,9 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/codewithsadee/gamics",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-restricted-inspiration-magic-portfolio",
@@ -1713,7 +1959,9 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/once-ui-system/magic-portfolio",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-restricted-inspiration-cruip-landing-page",
@@ -1729,7 +1977,9 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "previewImage": "https://opengraph.githubassets.com/1/cruip/tailwind-landing-page-template",
+      "previewImageKind": "github-repository-cover"
     },
     {
       "id": "os-restricted-inspiration-framer-marketplace-examples",
