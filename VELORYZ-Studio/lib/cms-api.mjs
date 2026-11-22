@@ -166,7 +166,6 @@ async function forwardKnowledgeAi(request,env){
    }
   }catch{ /* Preserve the valid remote agent response when site context is unavailable. */ }
  }
- }
  const outgoing=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  const type=response.headers.get('content-type');if(type)outgoing.set('Content-Type',type);
  return new Response(response.body,{status:response.status,headers:outgoing});
