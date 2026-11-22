@@ -46,6 +46,7 @@ function updateLibrary(){
   screen.style.setProperty('--h',String(([215,18,160,42][i%4])));
   const url=safeUrl(item.image||item.cover||item.previewImage);
   if(url){
+   screen.classList.add('vz-lib-live-image');
    const img=document.createElement('img');
    img.className='vz-lib-cover';img.alt='';
    img.loading='lazy';img.decoding='async';img.src=url;
@@ -58,14 +59,14 @@ function updateLibrary(){
   const title=$('h3',detail),description=$('p',detail);
   if(title)title.textContent=safeText(item.name);
   if(description)description.textContent=trim(item.description,270);
-  const tag=$('.tag',detail);if(tag)tag.textContent=safeText(item.category)||'Design reference';
+  const tag=$('.tag',detail);if(tag)tag.textContent=safeText(item.category)||'Studio Collection';
   const detailsList=$('ul',detail);
   if(detailsList){
    detailsList.replaceChildren();
    const attrs=[
-    ['Category',safeText(item.category)||'Design'],
-    ['Source',safeText(item.author)||'Original creator credited in library'],
-    ['Starting estimate',Number.isFinite(Number(item.price))?'₹'+Number(item.price).toLocaleString('en-IN'):'Scope on request']
+    ['Discipline',safeText(item.category)||'Digital experience'],
+    ['Collection','VELORYZ Studio'],
+    ['Your version','Custom project on request']
    ];
    for(const [label,value]of attrs){
     const li=document.createElement('li'),caption=document.createElement('span');
