@@ -64,6 +64,8 @@ jobs:
         run: node tools/test-security-hardening.mjs
       - name: Verify public reviews, owner moderation, HTML docs and India branding
         run: node tools/test-public-reviews.mjs
+      - name: Verify immersive reviews, server-only AI, continuous motion and 120-second invitation
+        run: node tools/test-review-experience.mjs
       - name: Verify detailed Studio Control console, AI Mindset and owner actions
         run: node tools/test-admin-detail.mjs
       - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle
