@@ -13,7 +13,7 @@ const selector=[
  'a.whatsapp-float','.vz-footer-help-actions a','.vz-bug-head-actions a'
 ].join(',');
 const media=window.matchMedia?.('(prefers-reduced-motion: reduce)');
-const nonVisual=(el)=>el.matches('[data-vz-fx-off],.vz-fx-opt-out,[hidden],[disabled],[aria-disabled="true"]')||
+const nonVisual=(el)=>el.matches('[data-vz-fx-off],.vz-fx-opt-out')||
  el.closest('[data-vz-fx-off],template,noscript')||
  el.getAttribute('type')==='hidden';
 const isEnabled=(el)=>!el.matches(':disabled,[disabled],[aria-disabled="true"],[inert]')&&!el.closest('[inert]');
@@ -96,7 +96,7 @@ function boot(){
   for(const record of records){
    if(record.type!=='childList')continue;
    // Redrawn SPA, CMS, AI and admin controls are all covered without polling.
-   for(const node of record.addedNodes){if(node.nodeType===1)queue(node);}
+   for(const node of record.addedNodes){if(node.nodeType===1&&(node.matches?.(selector)||node.querySelector?.(selector)))queue(node);}
    if(record.target?.nodeType===1&&record.target.matches?.(selector))queue(record.target);
   }
  });
