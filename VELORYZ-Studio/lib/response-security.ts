@@ -5,8 +5,9 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  if(forceProduction||!import.meta.env.DEV)headers['Content-Security-Policy']=`default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; media-src 'self' blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://chatgpt.com; upgrade-insecure-requests`;
  if((forceProduction||!import.meta.env.DEV))headers['Strict-Transport-Security']='max-age=31536000';
  if(privatePage||status===404)headers['X-Robots-Tag']='noindex, nofollow';
- const projectLink='<a class="make-project-link" href="/create/"><span>Make your project</span><span class="make-project-arrow" aria-hidden="true">↗</span></a>';
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css"></head>').replace('</body>',projectLink+'</body>');
+ // The old floating create CTA was disabled in CSS but still injected on every page.
+ // Remove it at the HTML source. Keep the stylesheet for its other chat/form UI.
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css"></head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
