@@ -30,7 +30,7 @@ function buildGallery(){
  }
  const createCard=(item,i)=>{
   const article=document.createElement('article');article.className='vz-home-design-card';
-  const art=document.createElement('a');art.className='vz-home-design-art';art.href='/design/';
+  const art=document.createElement('a');art.className='vz-home-design-art';art.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';
   art.setAttribute('aria-label','Explore '+toText(item.name)+' in the VELORYZ design library');
   const image=safeImg(item.image||item.cover);
   if(image){
@@ -50,7 +50,7 @@ function buildGallery(){
   const cost=document.createElement('strong');cost.textContent=Number(item.price)>0?'From '+money(item.price):'Scope-based pricing';
   info.append(cost);
   if(item.author){const credit=document.createElement('span');credit.textContent='Source: '+truncate(item.author,48);info.append(credit);}
-  const link=document.createElement('a');link.href='/design/';link.textContent='View direction ↗';
+  const link=document.createElement('a');link.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';link.textContent='View direction ↗';
   link.setAttribute('aria-label','View published library details for '+toText(item.name));
   foot.append(info,link);body.append(tag,title,desc,foot);article.append(art,body);return article;
  };

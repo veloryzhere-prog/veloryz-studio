@@ -240,13 +240,13 @@
  }
  function categoryForExternal(p){
   const x=String(p?.category||'').toLowerCase();
-  if(x.includes('ecommerce')||x.includes('shop'))return 'Ecommerce';
-  if(x.includes('saas')||x.includes('fintech')||x.includes('dashboard'))return 'SaaS / platform';
+  if(/ecommerce|commerce|grocery|delivery|food|b2b|marketplace|shop/.test(x))return 'Ecommerce';
+  if(/saas|fintech|dashboard|project management|tasks|kanban/.test(x))return 'SaaS / platform';
   if(x.includes('social')||x.includes('community'))return 'Community';
   if(x.includes('portfolio')||x.includes('creative'))return 'Portfolio';
-  if(x.includes('agency')||x.includes('motion'))return 'Agency';
-  if(x.includes('editorial')||x.includes('publish'))return 'Editorial';
-  if(x.includes('education'))return 'Education';
+  if(/agency|motion|components/.test(x))return 'Agency';
+  if(/editorial|publish|blog|magazine/.test(x))return 'Editorial';
+  if(/education|learning|lms/.test(x))return 'Education';
   return 'Business';
  }
  function chooseExternal(p){
@@ -259,12 +259,12 @@
   data.requestId='';sync();
  }
  function library(){
-  const items=externalDesigns().filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description,p.author].join(' ').toLowerCase().includes(search.toLowerCase())));
+  const items=externalDesigns().filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description,p.author].join(' ').toLowerCase().includes(search.toLowerCase()))).slice(0,30);
   const cards=items.map(p=>'<article class="v4-template-card v4-external-card">'+
-   '<a class="v4-template-live-art" href="'+escape(p.demo||p.source)+'" target="_blank" rel="noopener noreferrer"><img src="'+escape(p.image)+'" alt="External live design reference for '+escape(p.name)+'" loading="lazy" decoding="async"><span>Explore real reference ↗</span></a>'+
+   '<a class="v4-template-live-art" href="/design/'+encodeURIComponent(p.id)+'/" aria-label="Explore VELORYZ concept for '+escape(p.name)+'"><span class="v4-veloryz-concept-art">V / STUDIO CONCEPT</span><span>Explore VELORYZ preview ↗</span></a>'+
    '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>EXTERNAL · '+escape(p.author)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p>'+
-   '<div class="v4-reference-actions"><a href="'+escape(p.source)+'" target="_blank" rel="noopener noreferrer">Original source ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Customize this direction →</button></div>'+
-   '<small>Source rights stay with the original creator. Adaptation is separately scoped.</small></div></article>').join('');
+   '<div class="v4-reference-actions"><a href="/design/'+encodeURIComponent(p.id)+'/">Preview & source credit ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Create with VELORYZ →</button></div>'+
+   '<small>VELORYZ concept preview; original project rights and attribution remain with its creator.</small></div></article>').join('');
   return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No designs match this filter. Try another category.</div>')+'</div>'+
    '<p class="v4-credits">Real third-party designs. Preview originals, then commission a licensed adaptation or independently designed experience from the Studio.</p></div>';
  }
@@ -565,6 +565,13 @@
   }
   if(b.hasAttribute('data-v4-external')){
    const ref=externalDesigns().find(r=>r.id===b.dataset.v4External);if(!ref)return;
+   if(ref.originalTemplateId){
+    const original=presets.find(p=>p.id===ref.originalTemplateId);
+    if(original){
+     Object.assign(data,{template:original.id,category:original.category,style:original.style,pages:original.pages,features:original.features.slice(),external:'',reference:'',requestId:''});
+     sync();return move(1);
+    }
+   }
    chooseExternal(ref);return move(1);
   }
   if(b.hasAttribute('data-v4-gallery')){galleryTab='studio';render();return;}
@@ -631,6 +638,6 @@
   if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
  }
- createPage=creatorPage;
+ window.createPage=creatorPage;
  window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active,renderPage:creatorPage};
 })();
