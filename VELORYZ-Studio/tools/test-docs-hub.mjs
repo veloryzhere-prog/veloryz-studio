@@ -45,7 +45,7 @@ assert.match(html,/Copyright/);
 assert.match(html,/Section 19/);
 assert.match(html,/docs-article/);
 assert(!html.includes('<script>'));
-assert(html.includes('href="/docs/privacy/"'));
+assert(html.includes('href="/docs/privacy.html"'));
 loc.pathname='/docs/unknown/';
 assert(hub.render().includes('Guide not found'));
 const app=read('public/app.js'),admin=read('public/admin.js'),shell=read('lib/site-shell.ts'),cms=read('lib/cms-api.mjs');
