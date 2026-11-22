@@ -18,7 +18,7 @@ class VeloryzFrameCut extends HTMLElement {
     !['paused','reduced'].includes(window.StudioMotion?.level)&&!window.StudioMotion?.onboardingActive;
   const clearRetry=()=>{if(retryTimer){clearTimeout(retryTimer);retryTimer=0;}};
   const load=()=>{if(loaded)return;loaded=true;video.src='/assets/frame-cut/scarf.mp4';video.load();};
-  const pause=()=>{clearRetry();if(!video.paused)video.pause();};
+  const pause=()=>{clearRetry();attempting=false;if(!video.paused)video.pause();};
   const sync=()=>{
    if(!visible||!allowed()){pause();return;}
    load();
