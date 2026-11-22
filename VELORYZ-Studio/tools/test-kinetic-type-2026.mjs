@@ -24,7 +24,7 @@ assert.match(css,/prefers-reduced-motion:reduce/);
 assert.match(css,/\.vz-kinetic-ambient::before/,'Avoid expensive always-blurred animated ambience');
 assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length,'Style rules must be balanced');
 assert.match(js,/aria-hidden/,'Decorative letter spans must be hidden from assistive technology');
-assert.doesNotMatch(js,/addEventListener\\(['\"]scroll['\"]|requestAnimationFrame/,'Hero typography must not poll scrolling or use an extra animation frame loop');
+assert(!js.includes("addEventListener('scroll'")&&!js.includes('requestAnimationFrame'),'Hero typography must not poll scrolling or use an extra animation frame loop');
 assert.match(js,/setInterval/,'Actual typography style cycling must be scheduled while visible');
 assert.match(shell,/\/kinetic-type-2026\.css/);
 assert.match(shell,/\/kinetic-type-2026\.js/);
