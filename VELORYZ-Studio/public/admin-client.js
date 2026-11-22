@@ -3,7 +3,7 @@
 let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpError='';
 let cpSearch='',cpFilter='all',cpTab='overview',cpEditMode='',cpEditingItem='',cpItemType='milestone';
 let cpNewDraft=null,cpNewProject=false,cpBusy=false,cpSequence=0;
-let cpDelivery={configured:false,provider:'Resend'},cpDeliveryLoaded=false;
+let cpDelivery={configured:false,provider:'Gmail SMTP · TLS 465'},cpDeliveryLoaded=false,cpEmailEvents=[];
 const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
 const cpE=v=>E(v??'');
 const cpStatuses=[['planning','Planning'],['in-progress','In progress'],['in-review','In review'],['on-hold','On hold'],['launched','Launched']];
@@ -38,7 +38,9 @@ function cpSummaryNumbers(){
  '<div class="cpm-metric"><span>On hold</span><strong>'+onHold+'</strong><small>Awaiting a restart</small></div></div>';
 }
 function cpDeliveryPill(){
- return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'Email connection configured':'Invitation emails: manual setup')+'</strong><small>'+(cpDelivery.configured?'Sending is attempted when you issue a code. Check each result.':'Generate codes now; send with the prepared email draft until Resend is configured.')+'</small></div><details><summary>Setup</summary><p>Add <code>RESEND_API_KEY</code> and a verified <code>PORTAL_FROM_EMAIL</code> under Supabase Edge Function secrets. These are server-only settings.</p></details></div>';
+ return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'VELORYZ Gmail connection configured':'Gmail delivery not configured yet')+'</strong>'+
+ '<small>'+(cpDelivery.configured?'Sender: VELORYZ &lt;veloryz.here@gmail.com&gt;. Provider acceptance is recorded but inbox receipt is not guaranteed.':'Private invitation codes and project PDFs still work. Automatic email needs the Gmail App Password on the server.')+'</small></div>'+
+ '<details><summary>Gmail setup</summary><p>Use <strong>veloryz.here@gmail.com</strong>. Enable 2-Step Verification, generate a Google App Password, then save <code>VELORYZ_GMAIL_APP_PASSWORD</code> in your Supabase Edge Function secrets. This integration uses encrypted SMTP port 465 and does not use Resend. Do not enter Gmail passwords in published CMS content.</p><button type="button" class="admin-button secondary" data-cpm="test-email">Send test email to studio mailbox ↗</button><p>A test is only sent after you click. It does not issue or renew client access.</p></details></div>';
 }
 function cpEditor(p={}){
  const edit=!!p.id&&!cpNewProject;
@@ -76,7 +78,7 @@ function cpItemEditor(item={}){
 function cpClientTabs(){
  const items=cpWorkspace?.items||[];
  const reviewCount=items.filter(x=>x.type==='approval'&&x.state==='waiting').length;
- const tabs=[['overview','Overview',''],['milestone','Milestones',items.filter(i=>i.type==='milestone').length],['file','Deliverables',items.filter(i=>i.type==='file').length],['approval','Approvals',reviewCount],['messages','Messages',(cpWorkspace?.messages||[]).length]];
+ const tabs=[['overview','Overview',''],['milestone','Milestones',items.filter(i=>i.type==='milestone').length],['file','Deliverables',items.filter(i=>i.type==='file').length],['approval','Approvals',reviewCount],['messages','Messages',(cpWorkspace?.messages||[]).filter(m=>m.sender==='client'&&!m.read_at).length]];
  return '<nav class="cpm-detail-tabs" aria-label="Client management sections">'+tabs.map(([id,label,count])=>'<button type="button" data-cpm="tab" data-tab="'+id+'" class="'+(cpTab===id?'is-active':'')+'" '+(cpTab===id?'aria-current="page"':'')+'>'+label+(count!==''?'<span>'+count+'</span>':'')+'</button>').join('')+'</nav>';
 }
 function cpActionButton(label,action,extra=''){return '<button type="button" class="admin-button secondary" data-cpm="'+action+'" '+extra+'>'+label+'</button>';}
@@ -105,11 +107,20 @@ function cpItems(type){
  (items.length?'<div class="cpm-item-list">'+items.map(i=>'<article class="cpm-item"><span class="cpm-item-mark '+(i.state==='done'||i.state==='approved'?'done':'')+'">'+(i.state==='done'||i.state==='approved'?'✓':type==='file'?'↗':type==='approval'?'◇':'◌')+'</span><div class="cpm-item-main"><div><strong>'+cpE(i.title)+'</strong><span class="cpm-item-state cpm-item-'+cpE(i.state)+'">'+cpE(cpStates.find(s=>s[0]===i.state)?.[1]||i.state)+'</span></div><p>'+cpE(i.details||'No notes added.')+'</p><small>'+(i.due_date?'Date: '+cpDate(i.due_date):'Date not set')+'</small>'+(type==='file'&&i.url?'<a href="'+cpE(i.url)+'" target="_blank" rel="noopener noreferrer">Open shared file ↗</a>':'')+'</div><div class="cpm-item-actions">'+(type==='milestone'&&i.state!=='done'?'<button type="button" class="cpm-advance" data-cpm="advance-item" data-id="'+cpE(i.id)+'">'+(i.state==='upcoming'?'Start':'✓ Complete')+'</button>':'')+'<button type="button" data-cpm="edit-item" data-id="'+cpE(i.id)+'">Edit</button><button type="button" class="is-danger" data-cpm="remove-item" data-id="'+cpE(i.id)+'">Remove</button></div></article>').join('')+'</div>':
  '<div class="cpm-tab-empty"><span>✳</span><h4>No '+cpE(name)+'s yet.</h4><p>Start by adding your first '+cpE(name)+'. Your client will see it in their portal.</p><button class="admin-button secondary" type="button" data-cpm="add-item" data-type="'+type+'">+ Add now</button></div>')+'</section>';
 }
+
+function cpEmailAudit(){
+ const events=cpEmailEvents||[];
+ return '<section class="cpm-mail-history"><div class="cpm-mail-header"><strong>Automatic email activity</strong><span>GMAIL / PRIVATE OWNER LOG</span></div>'+
+ (events.length?events.slice(0,15).map(e=>'<div class="cpm-mail-event"><span class="cpm-mail-state '+(e.state==='sent'?'is-sent':'is-pending')+'">'+cpE(e.state==='sent'?'Accepted by Gmail':e.state==='not-configured'?'Not configured':e.state==='failed'?'Failed':e.state)+'</span>'+
+ '<div><strong>'+cpE((e.kind||'').replaceAll('-',' '))+'</strong><small>'+cpE(e.recipient)+' · '+cpDate(e.created_at)+'</small>'+(e.error_label?'<p>'+cpE(e.error_label)+'</p>':'')+'</div></div>').join(''):
+ '<p class="cpm-mail-empty">No automated emails recorded yet. Invitation and chat notifications will appear here with their provider delivery status.</p>')+'</section>';
+}
+
 function cpMessages(){
  const messages=cpWorkspace?.messages||[];
  return '<section class="cpm-card cpm-message-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">PRIVATE CONVERSATION</span><h3>Client messages</h3><p>Write directly to your client. All messages stay with this project.</p></div><span class="cpm-conversation-count">'+messages.length+' messages</span></div>'+
- '<div class="cpm-conversation" role="log" aria-label="Client conversation">'+(messages.length?messages.slice(-75).map(m=>'<div class="cpm-message '+(m.sender==='studio'?'from-studio':'from-client')+'"><div><b>'+(m.sender==='studio'?'VELORYZ STUDIO':'CLIENT')+'</b><time>'+cpDate(m.created_at)+'</time></div><p>'+cpE(m.body)+'</p></div>').join(''):'<div class="cpm-tab-empty"><span>↗</span><h4>Start the conversation.</h4><p>Write a welcome note or share the next project step.</p></div>')+'</div>'+
- '<form data-cpm-form="message" class="cpm-message-form"><label for="cpm-message-text">New message to your client</label><textarea id="cpm-message-text" name="body" required maxlength="2000" minlength="2" rows="4" placeholder="Share an update, ask a question or leave a useful note…"></textarea><div><small>Messages save to this project immediately. Email notifications are not enabled for regular messages.</small><button class="admin-button" type="submit">Send message ↗</button></div></form></section>';
+ '<div class="cpm-conversation" role="log" aria-label="Client conversation">'+(messages.length?messages.slice(-75).map(m=>'<div class="cpm-message '+(m.sender==='studio'?'from-studio':'from-client')+'"><div><b>'+(m.sender==='studio'?'VELORYZ STUDIO':'CLIENT')+'</b><time>'+cpDate(m.created_at)+'</time></div><p>'+cpE(m.body).replace(/\n/g,'<br>')+'</p><small class="cpm-receipt">'+(m.read_at?'Seen by '+(m.sender==='studio'?'client':'studio'):'Sent · not marked read')+'</small></div>').join(''):'<div class="cpm-tab-empty"><span>↗</span><h4>Start the conversation.</h4><p>Write a welcome note or share the next project step.</p></div>')+'</div>'+
+ '<div class="cpm-reply-templates" aria-label="Quick project message starters"><button data-cpm-template="update" type="button">Progress update</button><button data-cpm-template="review" type="button">Request feedback</button><button data-cpm-template="handover" type="button">Handover note</button></div><form data-cpm-form="message" class="cpm-message-form"><label for="cpm-message-text">New message to your client</label><textarea id="cpm-message-text" name="body" required maxlength="2000" minlength="2" rows="4" placeholder="Share an update, ask a question or leave a useful note…"></textarea><div><small>Messages save directly in this private thread. Gmail sends a notification if configured; message contents stay in the portal.</small><button class="admin-button" type="submit">Send message ↗</button></div></form></section>';
 }
 function cpDetail(){
  if(cpEditMode==='project')return cpEditor(cpNewProject?(cpNewDraft||{}):(cpWorkspace?.project||{}));
@@ -118,7 +129,7 @@ function cpDetail(){
  if(!p)return '<section class="cpm-card cpm-tab-empty"><span>⌁</span><h3>Select a client</h3><p>Choose a workspace on the left to manage its progress, files and invitations.</p></section>';
  return '<div class="cpm-project-hero"><div class="cpm-project-top"><div>'+cpAvatar(p.client_name)+'<div class="cpm-project-id"><span class="cpm-eyebrow">CLIENT WORKSPACE</span><h2>'+cpE(p.title)+'</h2><p>'+cpE(p.client_name)+' <span aria-hidden="true">·</span> <a href="mailto:'+cpE(p.client_email)+'">'+cpE(p.client_email)+'</a></p></div></div><div class="cpm-project-buttons"><button type="button" class="admin-button secondary" data-cpm="edit-project">Edit details</button><button type="button" class="admin-button" data-cpm="invite">✉ Issue invitation ↗</button></div></div>'+
  '<div class="cpm-project-stats"><div>'+cpBadge(p.status)+'</div><span><b>'+cpE(p.phase)+'</b> Current phase</span><span><b>'+Number(p.progress||0)+'%</b> Progress</span><span><b>'+cpDate(p.due_date)+'</b> Target handover</span></div><div class="cpm-project-track" aria-label="Project completion"><i style="width:'+Math.max(0,Math.min(100,Number(p.progress)||0))+'%"></i></div></div>'+
- '<div class="cpm-invite-help">✉ <strong>Invitations are issued by you.</strong> '+(cpDelivery.configured?'A branded email is attempted when you issue a code.':'Email delivery isn’t configured yet; a manual email draft and copy options are available.')+' Creating a new code signs out existing sessions.</div>'+
+ '<div class="cpm-invite-help">✉ <strong>Accepted requests create invitations automatically.</strong> You can reissue a code when needed; this revokes any previous invitation and signs out old sessions. '+(cpDelivery.configured?'Gmail credentials are configured.':'Gmail is not configured. The secure manual invitation handoff is still available.')+'</div>'+(p.request_reference?'<section class="cpm-reference-panel"><span>LINKED PROJECT REQUEST</span><strong>'+cpE(p.request_reference)+'</strong><p>Accepted '+cpE(cpDate(p.accepted_at))+' · Your original submitted brief remains preserved on this project.</p><a class="admin-button secondary" href="/api/client-portal/admin/projects/'+encodeURIComponent(p.id)+'/summary" target="_blank" rel="noopener">Download full project PDF ↓</a></section>':'')+'<div data-cpm-email-audit>'+cpEmailAudit()+'</div>'+
  cpClientTabs()+
  '<div class="cpm-tab-content">'+(cpTab==='overview'?cpOverview(p):cpTab==='messages'?cpMessages():cpItems(cpTab))+'</div>';
 }
@@ -140,10 +151,11 @@ async function cpLoad(selected=null){
  const desired=selected===null?cpSelected:selected;
  try{
   const work=cpReq('/projects'+(desired?'?id='+encodeURIComponent(desired):''));
-  const delivery=!cpDeliveryLoaded?cpReq('/delivery').catch(()=>({configured:false,provider:'Resend'})):Promise.resolve(cpDelivery);
+  const delivery=!cpDeliveryLoaded?cpReq('/delivery').catch(()=>({configured:false,provider:'Gmail SMTP · TLS 465'})):Promise.resolve(cpDelivery);
   const [result,emailInfo]=await Promise.all([work,delivery]);
   if(seq!==cpSequence)return;
   cpDelivery=emailInfo;cpDeliveryLoaded=true;cpProjects=result.projects||[];
+   if(desired){cpReq('/mail-events?project_id='+encodeURIComponent(desired)).then(data=>{if(cpSelected===desired&&seq===cpSequence){cpEmailEvents=data.events||[];const box=document.querySelector('[data-cpm-email-audit]');if(box)box.innerHTML=cpEmailAudit();}}).catch(()=>{});}
   const available=cpProjects.some(p=>p.id===desired);
   cpSelected=available?desired:(cpProjects[0]?.id||'');
   cpWorkspace=available&&result.workspace?result.workspace:null;
@@ -163,6 +175,7 @@ async function cpLoad(selected=null){
 function cpSetTab(tab){
  if(!['overview','milestone','file','approval','messages'].includes(tab))return;
  cpTab=tab;cpEditMode='';
+ if(tab==='messages'&&cpSelected&&!cpBusy){cpReq('/messages/read',{method:'POST',body:JSON.stringify({project_id:cpSelected})}).then(()=>{if(cpWorkspace?.messages)cpWorkspace.messages.forEach(m=>{if(m.sender==='client'&&!m.read_at)m.read_at=new Date().toISOString();});}).catch(()=>{});}
  const detail=document.getElementById('cpm-detail');
  if(detail)detail.innerHTML=cpDetail();
 }
@@ -179,7 +192,7 @@ function cpRefreshDirectory(){
  if(count)count.textContent=cpMatches().length+' projects';
 }
 function cpInvitation(data){
- const sent=data.delivery?.status==='sent',manual=data.delivery?.status==='manual';
+ const sent=data.delivery?.status==='sent',manual=data.delivery?.status==='not-configured';
  const status=sent?'Accepted by email provider':manual?'Manual email needed':'Email delivery failed';
  const note=data.delivery?.message||'Use the secure code or link to invite the client.';
  const body='Hi '+(cpWorkspace?.project?.client_name||'')+',\n\nYour private VELORYZ Studio project workspace is ready.\n\nYour unique one-time code: '+data.code+'\n\nOpen your portal: '+data.url+'\n\nThis code expires in 14 days. Please do not share it.\n\nVELORYZ Studio';
@@ -215,10 +228,13 @@ document.addEventListener('input',e=>{
 });
 document.addEventListener('change',e=>{if(e.target.id==='cpm-status-filter'){cpFilter=e.target.value;cpRefreshDirectory();}});
 document.addEventListener('click',async e=>{
+ const shortcut=e.target.closest('[data-cpm-template]');
+ if(shortcut){const textarea=document.getElementById('cpm-message-text');if(textarea){const templates={update:'Project update: We have completed the following work:\n\nNext milestone:\n\nWhat we need from you:',review:'Hello! Please review the latest shared work in your Client Portal. Let us know what feels right and list any requested changes so we can resolve them precisely.',handover:'Handover update: The agreed deliverables are ready for review in the Files section. Please confirm access and share any final observations.'};textarea.value=templates[shortcut.dataset.cpmTemplate]||'';textarea.focus();}return;}
  const copy=e.target.closest('[data-cpm-copy]');if(copy){await cpCopyFromInput(copy.dataset.cpmCopy);return;}
  const b=e.target.closest('[data-cpm]');if(!b)return;
  const action=b.dataset.cpm;
  if(action==='from-enquiry'){cpImportedEnquiry(b.dataset.id);return;}
+ if(action==='test-email'){if(!cpDelivery.configured){toast('Gmail SMTP is not configured. Add the app password as a Supabase Edge secret first.');return;}b.disabled=true;try{const result=await cpReq('/test-email',{method:'POST',body:'{}'});toast(result.message||'Gmail connection test accepted by SMTP.');}catch(error){toast('Gmail test failed: '+error.message);}finally{b.disabled=false;}return;}
  if(section!=='client-portal')return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
@@ -314,10 +330,30 @@ document.addEventListener('submit',async e=>{
    await cpLoad(cpSelected);
   }
   if(form.dataset.cpmForm==='message'){
-   await cpReq('/messages',{method:'POST',body:JSON.stringify({project_id:cpSelected,body:v.body})});
-   toast('Message saved to the client conversation.');
+   const result=await cpReq('/messages',{method:'POST',body:JSON.stringify({project_id:cpSelected,body:v.body})});
+   toast('Message saved to the private client conversation. '+(result.notification?.status==='not-configured'?'Gmail alerts need setup.':''));
    cpTab='messages';await cpLoad(cpSelected);
   }
  }catch(err){toast(err.message);if(button)button.disabled=false;}
  finally{cpBusy=false;}
 });
+
+/* Private owner refresh: read-only polling while the conversation editor is idle. */
+setInterval(async()=>{
+ if(section!=='client-portal'||!cpSelected||!cpLoaded||cpBusy||cpLoading||cpEditMode||document.hidden)return;
+ if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+ const selected=cpSelected;
+ try{
+  const latest=await cpReq('/projects?id='+encodeURIComponent(selected));
+  if(section!=='client-portal'||selected!==cpSelected||!latest.workspace)return;
+  const before=cpWorkspace?.messages?.at(-1)?.id||'';
+  const after=latest.workspace.messages?.at(-1)?.id||'';
+  const changed=before!==after||latest.workspace.project?.updated_at!==cpWorkspace?.project?.updated_at;
+  if(!changed)return;
+  cpWorkspace=latest.workspace;cpProjects=latest.projects||cpProjects;
+  const target=document.getElementById('cpm-detail');
+  if(target)target.innerHTML=cpDetail();
+  cpRefreshDirectory();
+  if(before!==after&&after)toast('New client conversation activity. Your workspace is up to date.');
+ }catch{ /* Keep the working console; manual Refresh remains available. */ }
+},18000);

@@ -472,3 +472,22 @@ body:has(.v4-root) a.make-project-link {display:none!important}
  .v4-root .v4-existing-actions a,.v4-root .v4-client-shortcut{transition:none!important}
  .v4-root .v4-existing-actions a:hover,.v4-root .v4-client-shortcut:hover{transform:none!important}
 }
+
+/* VELORYZ / automatic client handoff explanation in the real project creator */
+.v4-root .v4-acceptance-journey{margin:clamp(23px,3vw,39px) 0 18px;padding:clamp(19px,2.5vw,29px);border-radius:17px;
+ border:1px solid #e4e4ee;background:linear-gradient(125deg,#f9f8fc,#f5f3f8);box-shadow:0 8px 30px #29304f0b}
+.v4-root .v4-acceptance-journey>span{display:block;color:#93759f;letter-spacing:.15em;font:780 10px/1.5 ui-sans-serif,system-ui,sans-serif;margin-bottom:19px}
+.v4-root .v4-acceptance-journey>div{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.v4-root .v4-acceptance-journey article{display:flex;flex-direction:column;gap:12px;min-width:0;padding:16px;
+ background:#fff;border:1px solid #e7e8f1;border-radius:12px}
+.v4-root .v4-acceptance-journey article>strong{height:28px;width:28px;border-radius:9px;display:grid;place-items:center;
+ background:#eee5f1;color:#8f5d94;font:790 11px/1 ui-sans-serif,system-ui,sans-serif}
+.v4-root .v4-acceptance-journey article p{color:#6d7387;font:500 10px/1.7 ui-sans-serif,system-ui,sans-serif}
+.v4-root .v4-acceptance-journey article b{display:block;color:#39405b;font-size:11px;line-height:1.4;margin-bottom:7px}
+@media(max-width:1020px){.v4-root .v4-acceptance-journey>div{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){
+ .v4-root .v4-acceptance-journey{padding:17px;border-radius:13px}
+ .v4-root .v4-acceptance-journey>div{grid-template-columns:1fr;gap:9px}
+ .v4-root .v4-acceptance-journey article{flex-direction:row;align-items:flex-start;padding:13px;gap:13px}
+ .v4-root .v4-acceptance-journey article>strong{flex:none}
+}
