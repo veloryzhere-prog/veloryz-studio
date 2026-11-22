@@ -40,7 +40,7 @@ function cpSummaryNumbers(){
 function cpDeliveryPill(){
  return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'VELORYZ Gmail connection configured':'Gmail delivery not configured yet')+'</strong>'+
  '<small>'+(cpDelivery.configured?'Sender: VELORYZ &lt;veloryz.here@gmail.com&gt;. Provider acceptance is recorded but inbox receipt is not guaranteed.':'Private invitation codes and project PDFs still work. Automatic email needs the Gmail App Password on the server.')+'</small></div>'+
- '<details><summary>Gmail setup</summary><p>Use <strong>veloryz.here@gmail.com</strong>. Enable 2-Step Verification, generate a Google App Password, then save <code>VELORYZ_GMAIL_APP_PASSWORD</code> in your Supabase Edge Function secrets. This integration uses encrypted SMTP port 465 and does not use Resend. Do not enter Gmail passwords in published CMS content.</p></details></div>';
+ '<details><summary>Gmail setup</summary><p>Use <strong>veloryz.here@gmail.com</strong>. Enable 2-Step Verification, generate a Google App Password, then save <code>VELORYZ_GMAIL_APP_PASSWORD</code> in your Supabase Edge Function secrets. This integration uses encrypted SMTP port 465 and does not use Resend. Do not enter Gmail passwords in published CMS content.</p><button type="button" class="admin-button secondary" data-cpm="test-email">Send test email to studio mailbox ↗</button><p>A test is only sent after you click. It does not issue or renew client access.</p></details></div>';
 }
 function cpEditor(p={}){
  const edit=!!p.id&&!cpNewProject;
@@ -234,6 +234,7 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-cpm]');if(!b)return;
  const action=b.dataset.cpm;
  if(action==='from-enquiry'){cpImportedEnquiry(b.dataset.id);return;}
+ if(action==='test-email'){if(!cpDelivery.configured){toast('Gmail SMTP is not configured. Add the app password as a Supabase Edge secret first.');return;}b.disabled=true;try{const result=await cpReq('/test-email',{method:'POST',body:'{}'});toast(result.message||'Gmail connection test accepted by SMTP.');}catch(error){toast('Gmail test failed: '+error.message);}finally{b.disabled=false;}return;}
  if(section!=='client-portal')return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
