@@ -38,6 +38,17 @@ assert.equal((await call('/api/admin/enquiries?status=confirmed',null,owner)).da
 assert.equal((await call('/api/admin/enquiries?page=1',null,owner)).data.items.length,0);
 assert.equal((await call('/api/admin/enquiries',null,{'oai-authenticated-user-id':'other','oai-authenticated-user-email':'other@example.com'})).status,403);
 assert.equal((await call('/api/site')).data.state.enquiries,undefined,'contact details never enter public CMS state');
+const bugPayload=payload({requestId:crypto.randomUUID(),kind:'bug',email:'bug-reporter@example.com',service:'Website bug report',date:'',time:'',message:'WEBSITE BUG REPORT\\nCategory: Header navigation\\nSteps: Open homepage and click Menu.\\nExpected: Menu opens immediately.\\nActual: Click does not respond.'});
+const bugSaved=await call('/api/enquiries',bugPayload);
+assert.equal(bugSaved.status,201,'Bug reports must persist without forcing users to choose a consultation date');
+assert.match(bugSaved.data.reference,/^VZ-[A-F0-9]{12}$/,'Bug submission receives a studio reference');
+const bugRow=sqlite.prepare('SELECT service,message,status FROM studio_enquiries WHERE id=?').get(bugPayload.requestId);
+assert.equal(bugRow.service,'Website bug report','Admin enquiries must distinguish bug reports from project enquiries');
+assert.match(bugRow.message,/Expected: Menu opens immediately/,'Reproduction steps and expected behaviour must persist');
+assert.equal(bugRow.status,'new');
+assert.equal((await call('/api/enquiries',bugPayload)).data.reference,bugSaved.data.reference,'Bug report retries must be idempotent');
+assert.equal((await call('/api/enquiries',payload({requestId:crypto.randomUUID(),kind:'bug',email:'short-report@example.com',date:'',time:'',message:'tiny issue'}))).status,400,'Bug reports must require useful reproduction detail');
+
 for(let i=0;i<30;i++)assert.equal((await call('/api/enquiries',payload({email:`network-${i}@example.com`}),{'cf-connecting-ip':'192.0.2.8'})).status,201);
 assert.equal((await call('/api/enquiries',payload({email:'network-last@example.com'}),{'cf-connecting-ip':'192.0.2.8'})).status,429,'network request limit enforced');
 console.log('PASS: real enquiry persistence, privacy, consent, field/body validation, spam limits, idempotency, owner-only inbox, status filters, booking conflicts and concurrent-edit protection.');
