@@ -17,7 +17,7 @@ const home=()=>`<section class="hero container motion-hero seo-first-hero" aria-
  ${p('From the first project brief through launch, VELORYZ Studio works on custom websites, responsive interfaces, brand and identity systems, interactive motion experiences, creative direction, and development for digital products. Every project starts with understanding what the client needs and which deliverables matter.')}
  ${p('Explore our design library and selected work for examples of the studio’s direction. Learn how project stages, estimates, collaboration and reviews work before requesting a tailored proposal. The studio is based in India and collaborating across Asia, and collaborates on digital projects remotely.')}
  <h2>Explore VELORYZ.</h2>
- ${related([['/services','Web design and development'],['/work','Selected work and concepts'],['/design','Design library'],['/process','How projects work'],['/pricing','Pricing and scope'],['/studio','Meet VELORYZ Studio'],['/contact','Contact the studio'],['/create','Create your project']])}
+ ${related([['/services','Web design and development'],['/work','Selected work and concepts'],['/design','Design library'],['/process','How projects work'],['/pricing','Pricing and scope'],['/studio','Meet VELORYZ Studio'],['/reviews.html','Community reviews'],['/contact','Contact the studio'],['/create','Create your project']])}
  </section>`;
 const pages:Record<string,{heading:string;lead:string;details:string;links:readonly [string,string][]}>={
  '/services':{heading:'Design & development services',lead:'VELORYZ Studio builds custom websites, digital products, brand identities, interfaces and motion experiences.',
