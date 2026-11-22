@@ -416,11 +416,11 @@
   return '';
  }
  function welcomeScreen(){
-  return '<div class="v4-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag"><i></i> VELORYZ STUDIO / THE PROJECT CREATOR</span><h1>Let’s make<br>something <em>great.</em></h1><p>Tell us what you have in mind. One thoughtful question at a time, we’ll shape a clear brief and a proposal you can keep.</p><button type="button" class="v4-primary v4-start" data-v4-action="start">Start a project <span>→</span></button>'+
+  return '<div class="v4-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag"><i></i> VELORYZ STUDIO / THE PROJECT CREATOR</span><h1>Make your<br><em>project.</em></h1><p>Shape your brief step by step and watch a real project plan develop. Choose the design, functionality, budget and timeline, then submit directly to the VELORYZ team for an official project reference.</p><button type="button" class="v4-primary v4-start" data-v4-action="start">Start your brief <span>→</span></button>'+
   (sessionStorage.getItem(KEY)?'<button class="v4-resume" type="button" data-v4-action="resume">Continue your saved brief ↗</button>':'')+
   '<aside class="v4-existing-project" aria-label="Returning client and project tracking shortcuts"><span class="v4-existing-label">ALREADY HAVE A PROJECT?</span><p>Have a private VELORYZ project workspace? Open it to check updates and continue with the team.</p><div class="v4-existing-actions"><a href="/client/" class="v4-existing-primary">Open Client Portal <span aria-hidden="true">↗</span></a><a href="/client/" class="v4-existing-secondary">Track your project <span aria-hidden="true">→</span></a></div><small>A team-issued invitation is required for new portal access.</small></aside>'+ 
    '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>TEAM-REVIEWED REQUEST</span></div></div>'+
-  '<div class="v4-welcome-art" aria-hidden="true"><div class="v4-intro-paper"><div><span>VELORYZ / YOUR IDEA</span><span>01 — DISCOVER</span></div><h2>A good project starts with the right questions.</h2><div class="v4-intro-line"></div><div class="v4-intro-row"><i></i><span>01</span><b>Discover</b></div><div class="v4-intro-row"><i></i><span>02</span><b>Define</b></div><div class="v4-intro-row"><i></i><span>03</span><b>Make it real</b></div></div></div></div>';
+  '<div class="v4-welcome-art" aria-hidden="true"><span class="vz-editorial-orbit vz-orbit-a"></span><span class="vz-editorial-orbit vz-orbit-b"></span><span class="vz-editorial-orbit vz-orbit-c"></span><img class="vz-editorial-v" src="/assets/brand/veloryz-mark.svg" width="340" height="340" alt="" fetchpriority="high"><div class="vz-editorial-caption"><span>VELORYZ / YOUR IDEA</span><span>01 · DISCOVER</span></div></div>';
  }
  function successScreen(){
   const code=escape(finished?.reference||'—'),email=escape(data.email||'your email');
@@ -440,7 +440,7 @@
   const next=active==='review'?'submit':'next';
   const label=active==='review'?'Send my project →':'Continue →';
   return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="134" height="40" alt="VELORYZ" decoding="async"><span>/ STUDIO</span></a>'+
-   (isStep?'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>':'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>')+
+   (isStep?'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>':'<span class="v4-top-center">A CREATIVE BEGINNING / PROJECT BRIEF</span>')+
    '<nav class="v4-top-actions" aria-label="Project navigation">'+
    '<a class="v4-client-shortcut" href="/client/" aria-label="Track an existing project in the Client Portal">Track project ↗</a>'+ 
     '<a class="v4-help-docs" href="/docs/">Help & guides ↗</a>'+
