@@ -44,7 +44,7 @@ const document={
  createElement:tag=>new Node(tag),
  addEventListener:(type,fn)=>{handlers[type]=fn}
 };
-const window={StudioMotion:Object.assign(new EventTarget(),{level:'full'})};
+const window={StudioMotion:Object.assign(new EventTarget(),{level:'full'}),addEventListener(){}};
 vm.runInNewContext(js,{document,window,matchMedia:()=>media,setInterval:()=>1,clearInterval:()=>{},IntersectionObserver:class{constructor(fn){observerCallback=fn}observe(n){observed=n}disconnect(){}},console});
 assert(word.classes.has('is-ready'),'Hero enhancement must be initialized');
 assert.equal(word.children.length,2,'Accessibility source text plus decorative letters');
