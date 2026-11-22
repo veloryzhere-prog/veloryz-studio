@@ -231,3 +231,134 @@
   .vz-reference-site .sc { border-radius: 26px; }
   .vz-reference-site footer { border-radius: 30px 30px 0 0; }
 }
+
+
+/* ========================================================================
+ * Silk 2026 / actual route adapters.
+ *
+ * The supplied UI sheet targets .vz-reference-site on the homepage. The
+ * working Create wizard and design detail page use completely different DOMs.
+ * These selectors apply the same depth, shimmer and editorial finish to the
+ * real pages without replacing their layout, controls, logos or content.
+ * ======================================================================== */
+
+/* CREATE / real V4 wizard — distinctive but still native to its green palette. */
+body.v4-creator-page .v4-root {
+  --vzu-create-ink:#223e31;
+  --vzu-create-tint:#e6f2e8;
+  --vzu-create-ring:rgba(54,105,74,.22);
+}
+body.v4-creator-page .v4-root .v4-topbar {
+  background:linear-gradient(115deg,rgba(255,255,255,.98),rgba(244,249,243,.98) 70%,rgba(232,243,230,.92));
+  border-bottom-color:rgba(54,105,74,.15);
+  box-shadow:0 12px 34px -29px rgba(29,72,42,.42);
+}
+body.v4-creator-page .v4-root .v4-welcome {
+  background:
+    radial-gradient(ellipse 57% 77% at 87% 52%,rgba(162,196,162,.30),transparent 76%),
+    radial-gradient(ellipse 39% 45% at 16% 83%,rgba(226,194,145,.14),transparent 80%),
+    linear-gradient(144deg,#fff 15%,#f7faf5 76%,#f1f7ee);
+}
+body.v4-creator-page .v4-root .v4-welcome h1 em {
+  background:linear-gradient(116deg,#274b36 8%,#60966b 51%,#274b36 94%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+body.v4-creator-page .v4-root .v4-welcome-tag {
+  letter-spacing:.14em;
+}
+body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card) {
+  border-color:rgba(66,117,82,.16);
+  box-shadow:0 1px 0 rgba(255,255,255,.82) inset,0 13px 30px -24px rgba(29,66,39,.32);
+  transition:
+    border-color .32s var(--vzu-ease),
+    background-color .32s var(--vzu-ease),
+    box-shadow .5s var(--vzu-ease),
+    transform .4s var(--vzu-ease);
+}
+body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card):hover {
+  border-color:rgba(77,135,95,.56);
+  box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 25px 46px -23px rgba(26,72,42,.30);
+}
+body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card).is-selected {
+  border-color:#6c9b72;
+  background-image:linear-gradient(145deg,rgba(235,246,233,.55),rgba(255,255,255,0) 71%);
+  box-shadow:inset 0 0 0 1px rgba(69,118,74,.14),0 16px 38px -28px rgba(29,80,45,.36);
+}
+body.v4-creator-page .v4-root .v4-primary {
+  background:linear-gradient(110deg,#254333,#3f7150);
+  border-color:#315b3e;
+  box-shadow:0 2px 0 rgba(255,255,255,.12) inset,0 14px 28px -16px rgba(25,72,39,.53);
+  transition:background-color .3s,box-shadow .4s var(--vzu-ease),transform .3s var(--vzu-ease);
+}
+body.v4-creator-page .v4-root .v4-primary:hover:not(:disabled) {
+  background:linear-gradient(110deg,#345c41,#528a5f);
+  box-shadow:0 2px 0 rgba(255,255,255,.15) inset,0 19px 34px -13px rgba(27,82,41,.53);
+}
+body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.v4-primary):focus-visible {
+  outline:3px solid #87ad8c;
+  outline-offset:3px;
+}
+body.v4-creator-page .v4-root .v4-progress-track {
+  box-shadow:0 0 13px rgba(75,136,76,.13);
+}
+body.v4-creator-page .v4-root .v4-preview {
+  box-shadow:0 14px 34px -25px rgba(33,55,38,.5);
+}
+body.v4-creator-page .v4-root .v4-question-view {
+  background:radial-gradient(ellipse 58% 39% at 97% 0%,rgba(213,233,209,.14),transparent);
+}
+
+/* DESIGN DETAIL / curated editorial, without touching the running source iframe. */
+body.vz-market-body:not(.vz-market-immersive) .vz-market-nav {
+  background:linear-gradient(125deg,rgba(255,255,255,.72),rgba(250,246,249,.6));
+  box-shadow:0 14px 33px -29px rgba(41,26,41,.45);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-project-hero {
+  background:
+    radial-gradient(ellipse 55% 90% at 101% 12%,rgba(212,184,220,.29),transparent 73%),
+    radial-gradient(ellipse 52% 72% at 4% 97%,rgba(226,209,196,.26),transparent 73%);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-pricebox {
+  background:linear-gradient(140deg,#fbf8f7,#eae1eb 92%);
+  border-color:rgba(123,94,122,.22);
+  box-shadow:0 1px 0 rgba(255,255,255,.92) inset,0 30px 58px -30px rgba(57,37,60,.31);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-hero-image {
+  border:1px solid rgba(82,60,82,.16);
+  border-radius:27px;
+  box-shadow:0 26px 66px -39px rgba(45,29,52,.38);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn {
+  background:linear-gradient(110deg,#211a23,#61465d);
+  box-shadow:0 12px 26px -17px rgba(52,32,61,.55);
+  transition:transform .35s var(--vzu-ease),box-shadow .45s var(--vzu-ease),background-color .25s;
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn:hover {
+  box-shadow:0 17px 32px -15px rgba(72,40,82,.56);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-related-card img {
+  border-radius:19px;
+  box-shadow:0 18px 43px -33px rgba(57,38,63,.45);
+  transition:border-radius .5s var(--vzu-ease),box-shadow .5s var(--vzu-ease);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-related-card:hover img {
+  border-radius:24px;
+  box-shadow:0 25px 48px -30px rgba(57,38,63,.45);
+}
+body.vz-market-body:not(.vz-market-immersive) :is(.vz-market-btn,.vz-market-related-card a):focus-visible {
+  outline:3px solid #b38ab8;
+  outline-offset:3px;
+}
+
+/* Physical device/touch support and existing motion accessibility. */
+@media (prefers-reduced-motion:reduce) {
+  body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.v4-primary),
+  body.vz-market-body .vz-market-btn,
+  body.vz-market-body .vz-market-related-card img {transition-duration:0s!important;animation:none!important;}
+}
+@media (max-width:690px) {
+  body.v4-creator-page .v4-root .v4-welcome {background:linear-gradient(160deg,#fff,#f0f7ee);}
+  body.vz-market-body:not(.vz-market-immersive) .vz-market-hero-image {border-radius:16px;}
+}
