@@ -97,3 +97,8 @@ body.motion-edition #modal-root .expert-modal .chat-message.user>span{color:#315
    Project Creator only. It remains available everywhere else on the site. */
 body.v4-creator-page a.make-project-link,
 body:has(.v4-root) a.make-project-link {display:none!important}
+
+
+/* The persistent floating project CTA has been retired everywhere.
+   Project creation remains available through navigation, footer and route cards. */
+a.make-project-link{display:none!important}
