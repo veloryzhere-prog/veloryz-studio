@@ -149,7 +149,7 @@ export async function GET(request: Request) {
  };
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
- if(['/design','/designs','/create'].includes(normal))html=html.replace('</head>',`<script>window.VELORYZ_OPEN_DESIGNS=${serialise(openDesigns.items)};</script></head>`);
+ if(['/design','/designs','/create'].includes(normal))html=html.replace('</head>',`<script>window.VELORYZ_OPEN_DESIGNS=${serialise([...openDesigns.originals,...openDesigns.items])};</script></head>`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  const pageTitle=normal==='/'?'VELORYZ Studio | Website Design, Development & Creative Technology':(pages[normal]||'Page not found')+' — VELORYZ Studio';
