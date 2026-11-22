@@ -1,0 +1,233 @@
+/*
+ * VELORYZ UI 2026: visual refinement layer.
+ *
+ * Loads after every existing stylesheet. It only restyles (depth, light, type, controls);
+ * it does not change markup, copy, logos, assets, routes or features.
+ *  - Homepage rules are prefixed with .vz-reference-site so they win over earlier layers.
+ *  - Rules for the other pages use :where() (zero specificity), so they only fill gaps and
+ *    never override a style that already exists.
+ *  - Palette stays the studio's own: warm paper, ink, and the #e2482b accent.
+ */
+
+/* ------------------------------------------------------------------ tokens */
+:root {
+  --vzu-ease: cubic-bezier(.16, 1, .3, 1);
+  --vzu-sheen: rgba(255, 255, 255, .42);
+  --vzu-sh-1: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 1px 2px rgba(21, 18, 14, .05), 0 16px 36px -24px rgba(21, 18, 14, .42);
+  --vzu-sh-2: 0 1px 0 rgba(255, 255, 255, .65) inset, 0 2px 5px rgba(21, 18, 14, .05), 0 34px 64px -34px rgba(21, 18, 14, .55);
+  --vzu-sh-btn: 0 1px 0 rgba(255, 255, 255, .22) inset, 0 10px 24px -14px rgba(21, 18, 14, .55);
+  --vzu-glow: 0 16px 34px -14px rgba(226, 72, 43, .65);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --vzu-sheen: rgba(255, 255, 255, .07);
+    --vzu-sh-1: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 18px 38px -24px rgba(0, 0, 0, .85);
+    --vzu-sh-2: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 36px 68px -34px rgba(0, 0, 0, .9);
+    --vzu-sh-btn: 0 1px 0 rgba(255, 255, 255, .12) inset, 0 12px 26px -14px rgba(0, 0, 0, .8);
+  }
+}
+:root[data-theme="dark"] {
+  --vzu-sheen: rgba(255, 255, 255, .07);
+  --vzu-sh-1: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 18px 38px -24px rgba(0, 0, 0, .85);
+  --vzu-sh-2: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 36px 68px -34px rgba(0, 0, 0, .9);
+  --vzu-sh-btn: 0 1px 0 rgba(255, 255, 255, .12) inset, 0 12px 26px -14px rgba(0, 0, 0, .8);
+}
+
+/* ------------------------------------------------------------------ type */
+.vz-reference-site h2.serif { letter-spacing: -.035em; line-height: 1; }
+.vz-reference-site .lead,
+.vz-reference-site .vz-home-library-intro p,
+.vz-reference-site .vz-reference-guides-head > p {
+  font-size: clamp(1rem, 1.3vw, 1.16rem);
+  line-height: 1.68;
+}
+/* Eyebrow labels get a small accent marker. */
+.vz-reference-site p.tag::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: .75em;
+  border-radius: 50%;
+  background: var(--acc);
+  vertical-align: .12em;
+  box-shadow: 0 0 0 4px rgba(226, 72, 43, .16);
+}
+/* Italic accent words in section headings: warm gradient instead of flat colour. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .vz-reference-site h2.serif em {
+    background: linear-gradient(100deg, var(--acc) 0%, #f0a24f 55%, var(--acc) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--acc);
+    padding-right: .06em; /* stops the italic tail being clipped */
+  }
+  /* The closing call-to-action animates each word with transforms; leave it untouched. */
+  .vz-reference-site .cta h2.serif em,
+  .vz-reference-site .cta .big em {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/* ------------------------------------------------------------------ buttons */
+.vz-reference-site .btn {
+  padding: 15px 28px;
+  letter-spacing: .01em;
+  box-shadow: var(--vzu-sh-btn);
+  background-image: linear-gradient(110deg, transparent 32%, var(--vzu-sheen) 50%, transparent 68%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  background-repeat: no-repeat;
+  transition:
+    background-color .4s,
+    color .4s,
+    border-color .4s,
+    box-shadow .5s var(--vzu-ease),
+    background-position 1s var(--vzu-ease),
+    transform .3s var(--vzu-ease);
+}
+.vz-reference-site .btn:hover,
+.vz-reference-site .btn:focus-visible {
+  box-shadow: var(--vzu-glow);
+  background-position: -30% 0;
+}
+.vz-reference-site .btn.fill {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .18) inset, 0 14px 28px -14px rgba(21, 18, 14, .65);
+}
+.vz-reference-site .btn.fill:hover { box-shadow: var(--vzu-glow); }
+.vz-reference-site .vz-library-pause,
+.vz-reference-site .chip { box-shadow: none; }
+.vz-reference-site .chip.on { box-shadow: 0 10px 22px -12px rgba(21, 18, 14, .65); }
+
+/* ------------------------------------------------------------------ cards: depth and light */
+.vz-reference-site :is(.pan, .dc, .fl, .pc, .brief, .mt, .vz-doc-guide, .vz-live-review-card, .ad) {
+  box-shadow: var(--vzu-sh-1);
+}
+.vz-reference-site :is(.pan, .fl, .pc, .brief, .mt) {
+  background-image: linear-gradient(180deg, var(--vzu-sheen), transparent 42%);
+}
+.vz-reference-site .pan { border-radius: 32px; }
+.vz-reference-site .pan .n,
+.vz-reference-site .sc .num,
+.vz-reference-site .fl b {
+  background: linear-gradient(160deg, var(--acc), #f0a24f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--acc);
+}
+.vz-reference-site .s3 .num { /* the accent-coloured process card keeps its white numeral */
+  background: none;
+  -webkit-text-fill-color: #fff;
+  color: #fff;
+}
+.vz-reference-site .sc {
+  border-radius: 34px;
+  box-shadow: var(--vzu-sh-2);
+}
+.vz-reference-site .cs {
+  border-radius: 36px;
+  box-shadow: 0 50px 90px -48px rgba(0, 0, 0, .6);
+}
+.vz-reference-site .pc { box-shadow: var(--vzu-sh-2); border-radius: 30px; }
+.vz-reference-site .vz-home-design-card { box-shadow: var(--vzu-sh-1); }
+.vz-reference-site .vz-home-design-card:hover { box-shadow: 0 34px 70px -34px rgba(21, 18, 14, .55); }
+.vz-reference-site .row { border-radius: 4px; }
+
+/* Cards on the other (script-rendered) pages: only where no shadow is defined already. */
+:where(.vz-kinetic-card) { box-shadow: var(--vzu-sh-1); }
+
+/* ------------------------------------------------------------------ marquee tickers */
+.vz-reference-site .mq {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+/* ------------------------------------------------------------------ progress bars */
+.vz-reference-site #prog,
+.vz-reference-site .pbar i,
+.vz-reference-site .mbar i,
+.vz-reference-site .bar i,
+.vz-reference-site .rail i b,
+.vz-reference-site .vz-library-progress i {
+  background: linear-gradient(90deg, var(--acc), #f0a24f);
+}
+.vz-reference-site #prog { height: 3px; box-shadow: 0 0 14px rgba(226, 72, 43, .55); }
+
+/* ------------------------------------------------------------------ form controls */
+.vz-reference-site .fm :is(input, textarea) {
+  transition: border-color .3s, box-shadow .4s var(--vzu-ease);
+}
+.vz-reference-site .fm :is(input, textarea):focus {
+  box-shadow: 0 1px 0 0 var(--acc);
+}
+.vz-reference-site .pg[data-p="contact"] .fm { box-shadow: var(--vzu-sh-1); }
+
+/* Range sliders (scope meter): custom track and thumb. */
+.vz-reference-site input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.vz-reference-site input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line);
+}
+.vz-reference-site input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--acc);
+  border: 3px solid var(--bg);
+  box-shadow: 0 6px 16px -4px rgba(226, 72, 43, .7);
+  transition: transform .3s var(--vzu-ease), box-shadow .3s;
+}
+.vz-reference-site input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.14); }
+.vz-reference-site input[type="range"]:active::-webkit-slider-thumb { transform: scale(.96); }
+.vz-reference-site input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line);
+}
+.vz-reference-site input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--acc);
+  border: 3px solid var(--bg);
+  box-shadow: 0 6px 16px -4px rgba(226, 72, 43, .7);
+}
+
+/* ------------------------------------------------------------------ FAQ rows */
+.vz-reference-site summary { transition: color .3s; }
+.vz-reference-site summary:hover { color: var(--acc); }
+.vz-reference-site details[open] { border-bottom-color: var(--acc); }
+
+/* ------------------------------------------------------------------ footer */
+.vz-reference-site footer {
+  border-radius: 44px 44px 0 0;
+  box-shadow: 0 -34px 80px -52px rgba(226, 72, 43, .55);
+}
+@supports (color: color-mix(in srgb, red, blue)) {
+  .vz-reference-site footer {
+    background:
+      radial-gradient(90% 120% at 88% -12%, color-mix(in srgb, var(--acc) 24%, var(--inv)) 0, transparent 58%),
+      var(--inv);
+  }
+}
+.vz-reference-site footer .end { border-top: 1px solid rgba(247, 240, 228, .12); padding-top: 22px; }
+
+/* ------------------------------------------------------------------ small screens */
+@media (max-width: 540px) {
+  .vz-reference-site .btn { padding: 13px 22px; }
+  .vz-reference-site .pan { border-radius: 26px; }
+  .vz-reference-site .sc { border-radius: 26px; }
+  .vz-reference-site footer { border-radius: 30px 30px 0 0; }
+}
