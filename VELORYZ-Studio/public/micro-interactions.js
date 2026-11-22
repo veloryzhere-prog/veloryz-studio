@@ -9,7 +9,7 @@
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const coarse=matchMedia('(pointer: coarse)');
  const root=document.documentElement;
- const motionOK=()=>root.dataset.motion==='full'&&!reduced.matches&&!document.hidden;
+ const motionOK=()=>root.dataset.motion==='full'&&!document.hidden;
  const selector='button:not([disabled]),a[href],.v4-choice,[data-v4-action],[data-v4-pick],[data-chat-agent],[data-chat-prompt],[data-chat-action],summary';
  const animated='button,.v4-choice,.v4-primary,.v4-secondary,.chat-action-button,.vz-chat-send,[data-v4-action]';
  const arrival='.chat-message.assistant,.vz-chat-message.is-assistant,.vz-chat-messages .is-assistant,.v4-success-check,.vz-chat-error:not([hidden]),.chat-error,.v4-error:not([hidden]),#v4-error:not([hidden])';
@@ -57,7 +57,7 @@
   setTimeout(()=>dot.remove(),650);
  }
  function setupCursor(){
-  if(cursor||coarse.matches||reduced.matches||!('PointerEvent' in window))return;
+  if(cursor||coarse.matches||(reduced.matches&&root.dataset.motion!=='full')||!('PointerEvent' in window))return;
   cursor=document.createElement('div');
   cursor.className='vz-micro-cursor';
   cursor.setAttribute('aria-hidden','true');
