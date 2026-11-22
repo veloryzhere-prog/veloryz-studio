@@ -262,17 +262,17 @@
   const items=externalDesigns().filter(p=>(categoryFilter==='All'||p.category===categoryFilter)&&(!search||[p.name,p.category,p.description,p.author].join(' ').toLowerCase().includes(search.toLowerCase()))).slice(0,30);
   const cards=items.map(p=>'<article class="v4-template-card v4-external-card">'+
    '<a class="v4-template-live-art" href="/design/'+encodeURIComponent(p.id)+'/" aria-label="View original source for '+escape(p.name)+'">'+
-   (p.previewImage||p.image||p.originalTemplateId?'<img class="v4-veloryz-realshot" src="'+escape(p.previewImage||p.image||'/template-covers/'+p.originalTemplateId+'.svg')+'" alt="Real source image for '+escape(p.name)+'" loading="lazy" decoding="async">':'<span class="v4-source-unavailable">No source screenshot provided by the author</span>')+
-   '<span>View real GitHub source ↗</span></a>'+
-   '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>'+escape(p.importStatus==='real-upstream-html'?'IMPORTED HTML':p.previewImageKind==='github-repository-cover'?'REPO COVER':'SOURCE')+' · '+escape(p.author)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p>'+
-   '<div class="v4-reference-actions"><a href="/design/'+encodeURIComponent(p.id)+'/">Original preview & licensing ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Create with VELORYZ →</button></div>'+
-   '<small>Real source media; upstream authorship and media licensing retained. Not a recreated AI design.</small></div></article>').join('');
+   (p.previewImage||p.image||p.originalTemplateId?'<img class="v4-veloryz-realshot" src="'+escape(p.previewImage||p.image||'/template-covers/'+p.originalTemplateId+'.svg')+'" alt="Design preview for '+escape(p.name)+'" loading="lazy" decoding="async">':'<span class="v4-source-unavailable">Preview available in studio</span>')+
+   '<span>Explore design in VELORYZ ↗</span></a>'+
+   '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>'+escape(p.importStatus==='real-upstream-html'?'INTERACTIVE':p.sourceType==='original-veloryz'?'ORIGINAL':'DESIGN')+' · '+escape(p.author)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p>'+
+   '<div class="v4-reference-actions"><a href="/design/'+encodeURIComponent(p.id)+'/">Explore studio preview ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Create with VELORYZ →</button></div>'+
+   '<small>Discover a visual direction and create a tailored project with VELORYZ Studio.</small></div></article>').join('');
   return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No designs match this filter. Try another category.</div>')+'</div>'+
-   '<p class="v4-credits">Original GitHub design media and code when available. Source rights and credits remain with each author.</p></div>';
+   '<p class="v4-credits">Browse the collection, explore a design and bring your idea to life with the studio.</p></div>';
  }
  function templateScreen(){
   const all=externalDesigns(),types=['All',...new Set(all.map(p=>p.category))];
-  return sectionTitle('01 / THE STARTING POINT','Choose an authentic source design.','Browse real GitHub site screenshots, original HTML imports and licensed references before commissioning your own project.','OPTIONAL')+
+  return sectionTitle('01 / THE STARTING POINT','Choose an authentic source design.','Explore immersive websites, visual experiences and ready-to-customize directions for your next project.','OPTIONAL')+
    '<div class="v4-library-controls"><div class="v4-tab-switch"><a href="/design/" class="v4-market-link">Open full Design Library · '+all.length+' references ↗</a></div><label class="v4-search"><span class="sr-only">Search external websites</span><input data-v4-search type="search" placeholder="Search real designs" autocomplete="off" value="'+escape(search)+'"></label></div>'+
    '<div class="v4-filter-strip" role="group" aria-label="Design reference categories">'+types.map(n=>'<button type="button" data-v4-filter="'+escape(n)+'" class="'+(categoryFilter===n?'active':'')+'" aria-pressed="'+(categoryFilter===n)+'">'+escape(n)+'</button>').join('')+'</div>'+
    '<div id="v4-gallery-holder">'+library()+'</div>'+
