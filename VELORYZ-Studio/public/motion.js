@@ -52,6 +52,7 @@
   document.body.append(gateOverlay);
  }
  function activateGate(){
+  if(window.VeloryzIntro?.active)return;
   if(gateInitialized||!needsIntro)return;
   const button=document.querySelector('.site-header .header-motion');
   if(!button){if(++gateAttempts<120)requestAnimationFrame(activateGate);else root.removeAttribute('data-motion-gate');return;}
@@ -127,7 +128,7 @@
   if(gateActive)requestAnimationFrame(()=>dialog.querySelector('[data-motion-choice=full]')?.focus());
  }
  function progress(){queued=false;const el=document.querySelector('#site-progress');if(!el)return;const total=root.scrollHeight-innerHeight;el.style.setProperty('--progress',total>0?String(Math.min(1,Math.max(0,scrollY/total))):'0');}
- window.StudioMotion={get level(){return effective();},get preference(){return preference;},get matches(){return effective()!=='full';},get onboardingActive(){return gateActive||Boolean(root.dataset.motionGate);},addEventListener(type,fn){if(type==='change')listeners.add(fn);},removeEventListener(type,fn){listeners.delete(fn);},choose,openPanel:panel,observe,sync};
+ window.StudioMotion={get level(){return effective();},get preference(){return preference;},get matches(){return effective()!=='full';},get onboardingActive(){return gateActive||Boolean(root.dataset.motionGate)||Boolean(window.VeloryzIntro?.active);},addEventListener(type,fn){if(type==='change')listeners.add(fn);},removeEventListener(type,fn){listeners.delete(fn);},choose,openPanel:panel,observe,sync};
  sync();
  document.addEventListener('click',event=>{
   const btn=event.target.closest('button');if(!btn)return;
@@ -147,6 +148,7 @@
  window.addEventListener('storage',event=>{if(event.key===key){preference=valid.has(event.newValue)?event.newValue:'auto';sync();observe();}});
  window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(progress);}},{passive:true});
  const changed=()=>{if(preference==='auto')sync();};if(media?.addEventListener)media.addEventListener('change',changed);else media?.addListener?.(changed);
+ document.addEventListener('studio:brand-intro-complete',()=>{if(needsIntro)activateGate();});
  document.addEventListener('DOMContentLoaded',()=>{sync();observe();progress();activateGate();});
  document.addEventListener('studio:route',()=>{if(!gateInitialized && needsIntro)activateGate();
   if(gateActive){lockPage();const target=document.querySelector('.site-header .header-motion');target?.classList.add('motion-gate-target');if(gateStage===1)target?.focus({preventScroll:true});}});
