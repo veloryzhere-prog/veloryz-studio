@@ -42,6 +42,8 @@ jobs:
         run: node tools/test-knowledge-ai.mjs
       - name: Verify official-logo cinematic intro and existing motion onboarding
         run: node tools/test-brand-intro.mjs
+      - name: Verify smooth closing brand film and 60 FPS opening integration
+        run: node tools/test-brand-film.mjs
       - name: Verify responsive visual system and animation performance
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
