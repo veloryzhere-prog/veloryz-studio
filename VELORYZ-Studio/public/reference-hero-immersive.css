@@ -1,90 +1,187 @@
-/* New VELORYZ interactive aurora — original scheme, no feature/layout changes. */
-.vz-reference-site .vz-aurora-hero{
+/* VELORYZ hero-only treatment. Restore the original warm palette elsewhere.
+   No neon aurora or rotating overlay; one legible, grounded hero with visible moving dust. */
+.vz-reference-site .vz-material-hero{
  position:relative;isolation:isolate;
  background:
-  radial-gradient(ellipse 40% 55% at 78% 30%,rgba(209,95,155,.145),transparent 80%),
-  radial-gradient(ellipse 52% 60% at 33% 85%,rgba(155,122,202,.085),transparent 86%),
-  radial-gradient(ellipse 44% 42% at 0 2%,rgba(244,175,130,.10),transparent 90%),
-  linear-gradient(135deg,#fbf6eb 0%,#f7f0e4 44%,#f1e5e0 100%)!important;
+   radial-gradient(ellipse 49% 60% at 81% 43%,rgba(142,94,110,.17) 0%,transparent 76%),
+   radial-gradient(ellipse 45% 46% at 10% 80%,rgba(184,121,84,.10) 0%,transparent 78%),
+   linear-gradient(126deg,#e7d9c5 0%,#ded0bd 39%,#d4c3b7 70%,#dfcbb8 100%)!important;
+ color:#211b1b;
  overflow:hidden;
 }
-.vz-reference-site .vz-aurora-hero::before{
- content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+.vz-reference-site .vz-material-hero::before{
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
  background:
-  repeating-linear-gradient(90deg,rgba(110,65,114,.025) 0 1px,transparent 1px 135px),
-  repeating-linear-gradient(0deg,rgba(110,65,114,.019) 0 1px,transparent 1px 135px);
- mask-image:radial-gradient(ellipse at 75% 43%,#000 5%,transparent 80%);
- -webkit-mask-image:radial-gradient(ellipse at 75% 43%,#000 5%,transparent 80%);
+   repeating-linear-gradient(90deg,rgba(61,48,49,.028) 0 1px,transparent 1px 148px),
+   repeating-linear-gradient(0deg,rgba(61,48,49,.024) 0 1px,transparent 1px 148px);
+ mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 85%);
+ -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 85%);
 }
-.vz-reference-site .vz-aurora-hero::after{
- content:'';position:absolute;inset:-26%;z-index:0;pointer-events:none;
- background:conic-gradient(from 40deg at 62% 46%,transparent 0deg,rgba(217,147,174,.065) 74deg,transparent 135deg,rgba(162,130,196,.055) 216deg,transparent 300deg);
- animation:vzHeroAura 42s linear infinite;
- will-change:transform;
-}
+.vz-reference-site .vz-material-hero::after{display:none!important;animation:none!important}
+.vz-reference-site .vz-material-hero .orb{opacity:.09;filter:blur(92px);z-index:0}
 .vz-reference-site #vz-hero-particles{
- position:absolute;inset:0;z-index:1;display:block;
- width:100%;height:100%;pointer-events:none;opacity:.9;
+ position:absolute;inset:0;z-index:1;pointer-events:none;
+ display:block;width:100%;height:100%;opacity:1;
 }
 .vz-reference-site #vz-hero-pointer-field{
  position:absolute;inset:0;z-index:1;pointer-events:none;
- opacity:.66;
- background:radial-gradient(ellipse min(37vw,450px) min(32vw,390px) at var(--vz-px,70%) var(--vz-py,32%),rgba(218,113,159,.095),transparent 72%);
+ background:radial-gradient(ellipse 230px 230px at var(--vz-px,70%) var(--vz-py,32%),
+ rgba(133,84,107,.13),rgba(180,128,116,.05) 52%,transparent 80%);
+ opacity:.8;
 }
-.vz-reference-site .vz-aurora-hero #bigV{z-index:2}
-.vz-reference-site .vz-aurora-hero #heroTxt{z-index:4}
-.vz-reference-site .vz-aurora-hero .meta{z-index:4}
-.vz-reference-site .vz-aurora-hero .orb{z-index:0;opacity:.22;filter:blur(95px)}
-/* Official wordmark: ensure the original dark-ink transparent logo cannot disappear into pale backgrounds */
-.vz-reference-site>nav{z-index:62;isolation:isolate}
+.vz-reference-site .vz-material-hero #bigV{
+ z-index:2;
+ width:clamp(270px,35vw,495px);
+ height:clamp(270px,35vw,495px);
+ top:clamp(85px,12vh,155px);
+ right:clamp(2px,5vw,86px);
+}
+.vz-reference-site .vz-material-hero #bigV .logo-stage,
+.vz-reference-site .vz-material-hero #bigV .logo-scene{
+ width:100%;height:100%;border-radius:0;
+}
+.vz-reference-site .vz-material-hero #bigV .logo-scene{
+ touch-action:none;cursor:grab;
+}
+.vz-reference-site .vz-material-hero #bigV .logo-scene[data-dragging]{cursor:grabbing}
+.vz-reference-site .vz-material-hero #bigV .logo-scene canvas{
+ filter:none!important;
+ box-shadow:none!important;
+}
+.vz-reference-site .vz-material-hero #bigV .logo-fallback{
+ filter:none!important;transform:none;object-fit:contain;
+}
+.vz-reference-site .vz-material-hero #heroTxt{
+ position:relative;z-index:4;
+}
+.vz-reference-site .vz-material-hero #heroTxt .lead{
+ max-width:560px;color:rgba(37,30,28,.82);
+ line-height:1.65;
+}
+.vz-reference-site .vz-material-hero .meta{
+ z-index:3;color:rgba(44,35,33,.75);
+}
+/* Keep the original approved official dark-ink wordmark, without artificial tint,
+   filtering, or a heavy floating tile. */
 .vz-reference-site .vz-official-header-brand{
- position:relative;isolation:isolate;
+ position:relative;z-index:62;isolation:isolate;
  display:inline-flex!important;
- width:clamp(150px,18vw,245px)!important;
- max-width:min(245px,45vw)!important;
- height:64px!important;
- padding:9px 11px!important;
- border:1px solid rgba(38,27,35,.09);
- border-radius:16px;
- background:rgba(251,247,240,.82);
- box-shadow:0 12px 36px rgba(56,35,53,.075);
- backdrop-filter:blur(18px);
- -webkit-backdrop-filter:blur(18px);
+ width:clamp(170px,18vw,265px)!important;
+ max-width:min(265px,45vw)!important;
+ height:clamp(53px,6vh,71px)!important;
+ padding:4px 3px!important;
+ background:transparent!important;
+ border:0!important;border-radius:0!important;
+ box-shadow:none!important;
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
  mix-blend-mode:normal!important;
 }
 .vz-reference-site .vz-official-header-brand img{
  display:block!important;
  width:100%!important;height:100%!important;
- max-width:100%!important;max-height:100%!important;
- object-fit:contain!important;object-position:center!important;
- opacity:1!important;visibility:visible!important;filter:contrast(1.2) saturate(1.1);
+ max-height:100%!important;max-width:100%!important;
+ object-fit:contain!important;object-position:left center!important;
+ opacity:1!important;visibility:visible!important;
+ filter:none!important;mix-blend-mode:normal!important;
 }
-.vz-reference-site #bigV .logo-scene{
- touch-action:none!important;
- cursor:grab;
+.vz-reference-site .vz-official-header-brand .vz-brand-text-fallback{
+ font-weight:750;font-size:1.22rem;letter-spacing:.19em;color:#211b1b;
 }
-.vz-reference-site #bigV .logo-scene[data-dragging]{cursor:grabbing}
-.vz-reference-site #bigV .logo-scene[data-logo-model="official-glb"] canvas{
- filter:drop-shadow(0 30px 45px rgba(59,30,72,.18));
+/* The 3D controls are separate from the rotatable canvas and never inherit its transforms. */
+.vz-reference-site .vz-material-hero .vz-3d-controls{
+ position:absolute;right:clamp(18px,5vw,72px);bottom:clamp(26px,5.2vh,56px);
+ z-index:7;
+ width:min(435px,42vw);max-width:calc(100% - 36px);
+ padding:13px 15px 11px;border:1px solid rgba(65,45,52,.19);
+ border-radius:18px;
+ background:rgba(236,226,214,.82);
+ box-shadow:0 14px 38px -29px rgba(47,30,38,.29);
+ backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+ color:#282022;
 }
-.vz-reference-site #bigV .vz-3d-hint{
- color:rgba(48,26,50,.78);
- font-size:.64rem;
- letter-spacing:.14em;
- font-weight:650;
+.vz-reference-site .vz-material-hero .vz-3d-control-head{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ margin-bottom:10px;
 }
-@keyframes vzHeroAura{to{transform:rotate(360deg)}}
-@media(max-width:680px){
- .vz-reference-site .vz-official-header-brand{
-  width:clamp(118px,34vw,169px)!important;
-  height:54px!important;padding:7px!important;border-radius:12px;
+.vz-reference-site .vz-material-hero .vz-3d-control-label{
+ color:#564646;font-size:.63rem;font-weight:700;letter-spacing:.15em;white-space:nowrap;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-state{
+ color:#735f5f;font-size:.69rem;text-align:right;line-height:1.3;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-buttons{
+ display:flex;flex-wrap:wrap;gap:6px;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-buttons button{
+ appearance:none;border:1px solid rgba(58,42,45,.2);
+ border-radius:999px;
+ padding:8px 11px;min-height:33px;
+ font:600 .69rem/1.1 'Inter Tight',system-ui,sans-serif;
+ background:rgba(255,250,243,.58);color:#33292d;
+ white-space:nowrap;cursor:pointer;
+ transition:background .2s,color .2s,border-color .2s;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-buttons button[aria-pressed=true]{
+ background:#31262c;color:#fff;border-color:#31262c;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-buttons button:hover{
+ background:#6e4e5a;color:#fff;border-color:#6e4e5a;
+}
+.vz-reference-site .vz-material-hero .vz-3d-control-buttons button:focus-visible{
+ outline:2px solid #412a46;outline-offset:2px;
+}
+.vz-reference-site .vz-material-hero .vz-3d-hint{
+ display:block;margin-top:9px;
+ color:#685857;font-size:.64rem;letter-spacing:.06em;line-height:1.3;
+ text-transform:none;
+}
+@media(max-width:1100px){
+ .vz-reference-site .vz-material-hero .vz-3d-controls{width:min(390px,44vw)}
+ .vz-reference-site .vz-material-hero #bigV{right:-2vw;top:12vh}
+}
+@media(max-width:920px){
+ .vz-reference-site .vz-material-hero{
+  min-height:100svh;height:auto!important;
+  padding-bottom:clamp(26px,5vw,48px)!important;
  }
- .vz-reference-site .vz-aurora-hero::after{opacity:.62;animation-duration:55s}
- .vz-reference-site #vz-hero-particles{opacity:.78}
- .vz-reference-site #bigV .vz-3d-hint{font-size:.52rem;letter-spacing:.08em}
+ .vz-reference-site .vz-material-hero #bigV{
+  width:clamp(240px,49vw,410px);height:clamp(240px,49vw,410px);
+  top:8vh;right:-7vw;
+ }
+ .vz-reference-site .vz-material-hero #heroTxt{padding-top:clamp(180px,26vh,275px)}
+ .vz-reference-site .vz-material-hero .vz-3d-controls{
+  position:relative;right:auto;bottom:auto;
+  align-self:flex-end;
+  width:min(470px,100%);max-width:100%;
+  margin:clamp(14px,3vh,26px) clamp(18px,5vw,52px) 0 auto;
+ }
+}
+@media(max-width:570px){
+ .vz-reference-site .vz-official-header-brand{
+  width:clamp(134px,37vw,180px)!important;
+  max-width:50vw!important;height:54px!important;
+ }
+ .vz-reference-site .vz-material-hero #bigV{
+  width:min(64vw,276px);height:min(64vw,276px);
+  top:8vh;right:-6vw;
+ }
+ .vz-reference-site .vz-material-hero #heroTxt{padding-top:clamp(160px,24vh,215px)}
+ .vz-reference-site .vz-material-hero .vz-3d-controls{
+  box-sizing:border-box;
+  margin:16px auto 0;
+  width:calc(100% - 36px);max-width:calc(100% - 36px);
+  padding:12px;
+  border-radius:15px;
+ }
+ .vz-reference-site .vz-material-hero .vz-3d-control-label{font-size:.58rem}
+ .vz-reference-site .vz-material-hero .vz-3d-control-state{font-size:.65rem}
+ .vz-reference-site .vz-material-hero .vz-3d-control-buttons{gap:6px}
+ .vz-reference-site .vz-material-hero .vz-3d-control-buttons button{
+  font-size:.68rem;min-height:36px;padding:7px 10px;
+ }
+ .vz-reference-site #vz-hero-particles{opacity:.96}
 }
 @media(prefers-reduced-motion:reduce){
- html:not([data-motion=full]) .vz-reference-site .vz-aurora-hero::after{animation:none!important}
+ html:not([data-motion=full]) .vz-reference-site .vz-material-hero .vz-3d-control-buttons button{transition:none}
 }
-html[data-motion=reduced] .vz-reference-site .vz-aurora-hero::after,
-html[data-motion=paused] .vz-reference-site .vz-aurora-hero::after{animation:none!important;will-change:auto}

@@ -15,7 +15,7 @@ const hero=text('public/reference-hero-immersive.js');
 const immersiveCSS=text('public/reference-hero-immersive.css'),portraitsCSS=text('public/reference-ai-avatars.css');
 const polish=text('public/reference-final-polish.css');
 assert(!html.includes('Independent creative experience / 01'),'Removed placeholder should stay removed');
-assert(html.includes('class="hero vz-aurora-hero"'),'Interactive hero needs its scoped canvas stage');
+assert(html.includes('class="hero vz-aurora-hero vz-material-hero"'),'Interactive hero needs its scoped canvas stage');
 assert(html.includes('data-logo-source="official-glb"'),'Homepage must load the actual original GLB, not only flat SVG');
 assert(html.includes('/assets/brand/official/Main-Dark-Ink-Transparent.webp'),'Original wordmark is mandatory');
 assert(html.includes('/reference-hero-immersive.js')&&html.includes('/reference-hero-immersive.css'),'Real interactive background must load');
@@ -26,7 +26,7 @@ assert(source.includes("container.dataset.logoSource==='official-glb'"),'Archive
 assert(source.includes("new GLTFLoader().load('/assets/brand/veloryz-logo.glb'"),'Load the self-hosted original actual 3D model');
 assert(source.includes("renderer.render(scene,camera)")&&source.includes("pivot.quaternion"),'True WebGL model rotation must remain active');
 assert(source.includes("model.userData.parts||[]"),'Imported rigid GLB must not be treated as procedural split mesh');
-assert(source.includes("useOriginalGlb")&&source.includes("elapsed*.24"),'Real V must orbit through the full 3D yaw range');
+assert(source.includes("useOriginalGlb")&&source.includes("elapsed*.33")&&source.includes("orbitStyle==='orbit'"),'True full-orbit rotation must be selectable while retaining recognisable gentle default');
 assert(build.includes("veloryz-logo.glb")&&build.includes("motion-3d.js"),'Prebuild must produce actual GLB and corresponding WebGL bundle');
 for(const asset of assets){
  const f='public/assets/ai-avatars/'+asset+'.webp';
@@ -40,7 +40,7 @@ assert(heritage.includes('http://www.w3.org/2000/svg')&&heritage.includes('viewB
 assert(heritage.includes('wa.me/919955326740'),'Preserve existing contact destination');
 assert(hero.includes('getContext(\'2d\'')&&hero.includes('pointermove')&&hero.includes('requestAnimationFrame'),'Original pointer-response particle system is required');
 assert(hero.includes('IntersectionObserver')&&hero.includes("document.hidden")&&hero.includes("StudioMotion"),'Hero animation must respect viewport, tab visibility and motion choices');
-assert(immersiveCSS.includes('vz-aurora-hero')&&immersiveCSS.includes('vz-official-header-brand img'),'Animated background and high-contrast logo styles must exist');
+assert(immersiveCSS.includes('vz-material-hero')&&immersiveCSS.includes('vz-official-header-brand img'),'Animated background and high-contrast logo styles must exist');
 assert(polish.includes('vz-ref-public-route')&&polish.includes('.cp-body'),'Public site and secure client portal share nonbreaking visual polish');
 assert(text('lib/site-shell.ts').includes('/reference-final-polish.css'),'Old public pages must receive scoped visual polish');
 assert(text('lib/client-portal-shell.ts').includes('/reference-final-polish.css'),'Client portal must receive matching scoped design');

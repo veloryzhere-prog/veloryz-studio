@@ -12,12 +12,15 @@ function mount(container,softwareOnly=false,previousPose=null) {
   if (scenes.has(container) || !container.isConnected) return;
   const target=container.closest('.logo-stage');
   const story=container.closest('.assembly-sequence');
+  const officialHero=!story&&container.dataset.logoSource==='official-glb';
+  const controlsRoot=officialHero?target.closest('.hero'):target;
   const economical=(navigator.hardwareConcurrency||8)<=4 || (navigator.deviceMemory||8)<=4 || matchMedia('(max-width:850px), (pointer:coarse)').matches;
   let renderer, software=softwareOnly;
   if (!softwareOnly) {
     try {
       renderer=new THREE.WebGLRenderer({alpha:true,antialias:!economical,powerPreference:'low-power'});
       renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
+      if(officialHero){renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.04;}
     } catch {software=true;}
   }
   if (software) renderer=createCanvasSculpture();
@@ -25,17 +28,21 @@ function mount(container,softwareOnly=false,previousPose=null) {
   const canvas=renderer.domElement;
   canvas.setAttribute('aria-hidden','true');
   container.append(canvas);
-  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1.05:1.35));
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,economical?1:1.35));
   const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);
-  scene.add(new THREE.HemisphereLight(0xffeaf4,0x785b76,1.65));
-  for (const [color,power,x,y,z] of [[0xfff4ed,3.7,-3,5,6],[0x9ebdff,2.5,4,2,-2],[0xff94c4,1.6,-3,-2,-3]]) {
+  // Keep the original model's material colours. Strong pink/blue light was washing out the official mark.
+  scene.add(new THREE.HemisphereLight(officialHero?0xf8f6f2:0xffeaf4,officialHero?0x686174:0x785b76,officialHero?.95:1.65));
+  const lights=officialHero
+    ? [[0xffffff,2.2,-3,5,6],[0xc7d6f2,1.05,4,2,-2],[0xffdce8,.65,-3,-2,-3]]
+    : [[0xfff4ed,3.7,-3,5,6],[0x9ebdff,2.5,4,2,-2],[0xff94c4,1.6,-3,-2,-3]];
+  for (const [color,power,x,y,z] of lights) {
     const light=new THREE.DirectionalLight(color,power);light.position.set(x,y,z);scene.add(light);
   }
   let model=createLogo();
   const pivot=new THREE.Group();pivot.add(model);scene.add(pivot);
   // Homepage only: replace the procedural preview with the actual archived VELORYZ GLB,
   // a genuinely volumetric faceted V. The procedural mesh remains a live fallback.
-  const useOriginalGlb=!software && !story && container.dataset.logoSource==='official-glb';
+  const useOriginalGlb=!software && officialHero;
   if(useOriginalGlb){
     new GLTFLoader().load('/assets/brand/veloryz-logo.glb',gltf=>{
       if(disposed){disposeModel(gltf.scene);return;}
@@ -48,8 +55,11 @@ function mount(container,softwareOnly=false,previousPose=null) {
       // Match the camera and silhouette of the original sculpted V; preserve real z depth.
       const geometry=new THREE.Group();
       geometry.name='VELORYZ / original official GLB / interactive 3D';
-      native.position.sub(centre);
-      native.scale.setScalar(2.55/major);
+      // Scale *and* translate in the same coordinate system. The former order
+      // left the imported V visibly off-centre after scaling.
+      const scale=2.55/major;
+      native.scale.setScalar(scale);
+      native.position.copy(centre).multiplyScalar(-scale);
       geometry.add(native);
       geometry.userData.parts=[]; // The imported model animates as a rigid V, not split ribs.
       pivot.remove(model);disposeModel(model);model=geometry;pivot.add(model);
@@ -64,15 +74,52 @@ function mount(container,softwareOnly=false,previousPose=null) {
   const entryEuler=new THREE.Euler(0,0,0,'YXZ');
   let visible=false, frame=0, last=0, elapsed=0, speed=1, view='front', mode='solid', explosion=0;
   let manual=false, disposed=false, inspection;
+  let rotationPaused=false,orbitStyle='gentle',autoResumeTimer=0,transitionPose=null,transitionStart=0;
   function wake(){if(!frame && !disposed && visible && !document.hidden)frame=requestAnimationFrame(render);}
+  function controls(){
+    if(!officialHero)return;
+    const state=controlsRoot?.querySelector('[data-logo-state]');
+    if(state)state.textContent=!motion()?'Site motion paused':rotationPaused?'Rotation paused':manual?'Move the V · resumes shortly':orbitStyle==='orbit'?'360° rotation':'Gentle rotation';
+    for(const button of controlsRoot?.querySelectorAll('[data-logo-action]')||[]){
+      const choice=button.dataset.logoAction;
+      button.setAttribute('aria-pressed',String(
+        choice==='spin'?orbitStyle==='orbit'&&!rotationPaused&&!manual:
+        choice==='pause'?rotationPaused:
+        choice==='continue'?!rotationPaused&&!manual:
+        false
+      ));
+    }
+    container.dataset.logoMode=rotationPaused?'paused':manual?'inspect':orbitStyle;
+  }
+  function clearResume(){if(autoResumeTimer){clearTimeout(autoResumeTimer);autoResumeTimer=0;}}
   function inspect(){
     if (!manual && inspection) inspection.orientation.copy(pivot.quaternion);
+    clearResume();transitionPose=null;transitionStart=0;
     manual=true;elapsed=Math.max(elapsed,1.6);
     target.querySelectorAll('[data-logo-view]').forEach(b=>b.setAttribute('aria-pressed','false'));
-    wake();
+    controls();wake();
+  }
+  function continueRotation(){
+    clearResume();
+    if(officialHero&&inspection){
+      transitionPose=pivot.quaternion.clone();transitionStart=0;inspection.reset();
+    }
+    rotationPaused=false;manual=false;elapsed=Math.max(elapsed,1.6);
+    controls();wake();
+  }
+  function pauseRotation(){
+    clearResume();if(inspection)inspection.orientation.copy(pivot.quaternion);
+    manual=true;rotationPaused=true;transitionPose=null;transitionStart=0;
+    controls();wake();
+  }
+  function pointerReleased(){
+    if(!officialHero||rotationPaused)return;
+    clearResume();
+    autoResumeTimer=setTimeout(()=>{autoResumeTimer=0;continueRotation();},2000);
+    controls();
   }
   if (!story) {
-    inspection=attachInspection(container,wake,inspect);
+    inspection=attachInspection(container,wake,inspect,pointerReleased);
     if (previousPose) {manual=true;inspection.orientation.copy(previousPose);}
     container.tabIndex=0;container.setAttribute('role','group');
     container.setAttribute('aria-label','Rotate sculpture. Drag in any direction, or use the arrow keys. Home returns to the front.');
@@ -82,7 +129,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
   function setSize() {
     const w=container.clientWidth,h=container.clientHeight;
     if (!w||!h) return;
-    camera.aspect=w/h;camera.position.z=(story?6.9:5.05)/Math.min(1,camera.aspect);
+    camera.aspect=w/h;camera.position.z=(story?6.9:officialHero?5.25:5.05)/Math.min(1,camera.aspect);
     camera.updateProjectionMatrix();renderer.setSize(w,h,false);wake();
   }
   function render(time) {
@@ -90,7 +137,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
     if (disposed||!visible||document.hidden) return;
     const active=motion(),dt=last?Math.min(.08,(time-last)/1000):0;
     // Keep high-frequency updates for direct inspection, limit idle GPU work.
-    const interval=manual?16:software?55:economical?34:26;
+    const interval=manual?16:software?48:economical?33:32;
     if(last&&time-last<interval){if(active||manual||story)wake();return;}
     last=time;
     if(active)elapsed+=dt*speed;
@@ -107,8 +154,9 @@ function mount(container,softwareOnly=false,previousPose=null) {
       // Only the homepage official GLB makes a complete, visibly 3D orbit.
       // Orbit the actual mesh, never the canvas DOM box.
       if(useOriginalGlb){
-        yaw+=elapsed*.24+Math.sin(elapsed*.31)*.065+scroll*.62;
-        pitch+=Math.sin(elapsed*.39)*.085+scroll*.1;
+        // Gentle mode keeps the official V recognisable. Full orbit is opt-in via visible control.
+        yaw+=orbitStyle==='orbit' ? elapsed*.33+scroll*.35 : Math.sin(elapsed*.42)*.29+scroll*.28;
+        pitch+=Math.sin(elapsed*.36)*.085+scroll*.055;
       }else{
         yaw+=view==='orbit'?elapsed*.44:Math.sin(elapsed*.38)*.15+scroll*.95;
         pitch+=Math.sin(elapsed*.43)*.048+scroll*.12;
@@ -116,7 +164,13 @@ function mount(container,softwareOnly=false,previousPose=null) {
     }
     pivot.quaternion.setFromEuler(entryEuler.set(pitch,yaw,manual?0:-.025,'YXZ'));
     if(inspection)pivot.quaternion.premultiply(inspection.orientation);
-    model.position.y=auto&&!story?Math.sin(elapsed*.75)*.038:0;
+    if(transitionPose){
+      if(!transitionStart)transitionStart=time;
+      const blend=clamp((time-transitionStart)/820);
+      pivot.quaternion.copy(transitionPose).slerp(pivot.quaternion,blend*blend*(3-2*blend));
+      if(blend>=1){transitionPose=null;transitionStart=0;}
+    }
+    model.position.y=auto&&!story?Math.sin(elapsed*.75)*.028:0;
     (model.userData.parts||[]).forEach((part,i)=>{
       const pos=part.userData.basePosition||[0,0,0],rot=part.userData.baseRotation||[0,0,0];
       const split=explosion+lift*.64;
@@ -130,15 +184,38 @@ function mount(container,softwareOnly=false,previousPose=null) {
     });
     renderer.render(scene,camera);
     container.dataset.webgl=software?'software':'ready';
-    if(active&&!story&&(!manual||Math.abs(wanted-explosion)>.002))wake();
+    if(transitionPose||(active&&!story&&(!manual||Math.abs(wanted-explosion)>.002)))wake();
   }
-  function changed(){last=0;wake();}
+  function changed(){last=0;controls();wake();}
   window.StudioMotion?.addEventListener('change',changed);
   on(document,'visibilitychange',changed);
   if(story)on(story,'studio:assembly',wake);
-  on(target,'click',e=>{
+  on(controlsRoot||target,'click',e=>{
     const button=e.target.closest('button');
     if (!button) return;
+    if(button.hasAttribute('data-logo-action')&&officialHero){
+      const action=button.dataset.logoAction;
+      if(action==='spin'){orbitStyle='orbit';continueRotation();}
+      if(action==='gentle'){orbitStyle='gentle';continueRotation();}
+      if(action==='pause')pauseRotation();
+      if(action==='continue')continueRotation();
+      if(action==='reset'){
+        clearResume();transitionPose=pivot.quaternion.clone();transitionStart=0;
+        inspection?.reset();manual=false;rotationPaused=false;orbitStyle='gentle';elapsed=1.6;
+        controls();wake();
+      }
+      if(action==='front'){
+        clearResume();transitionPose=pivot.quaternion.clone();transitionStart=0;
+        inspection?.reset();manual=true;rotationPaused=true;
+        controls();wake();
+      }
+      if(action==='left'||action==='right'){
+        inspect();rotationPaused=true;
+        inspection?.rotateYaw(action==='left'?-Math.PI/6:Math.PI/6);
+        controls();wake();
+      }
+      return;
+    }
     if(button.hasAttribute('data-logo-material')){mode=button.dataset.logoMaterial;setLogoMaterial(model,mode);target.querySelectorAll('[data-logo-material]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}
     if(button.hasAttribute('data-logo-view')){
       view=button.dataset.logoView;manual=view==='front';elapsed=Math.max(elapsed,1.6);inspection?.reset();
@@ -160,7 +237,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
     if(visible)wake();else{cancelAnimationFrame(frame);frame=0;}
   },{rootMargin:'40px'});visibility.observe(container);
   function dispose(){
-    disposed=true;cancelAnimationFrame(frame);controller.abort();inspection?.dispose();
+    disposed=true;clearResume();cancelAnimationFrame(frame);controller.abort();inspection?.dispose();
     resize.disconnect();visibility.disconnect();window.StudioMotion?.removeEventListener('change',changed);
     disposeModel(model);renderer.dispose();canvas.remove();container.removeAttribute('tabindex');
   }
@@ -169,7 +246,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
     dispose();scenes.delete(container);mount(container,true,pose);
   });
   scenes.set(container,dispose);
-  setSize();
+  controls();setSize();
 }
 const near=new IntersectionObserver(entries=>{
   for(const entry of entries)if(entry.isIntersecting){near.unobserve(entry.target);mount(entry.target);}
