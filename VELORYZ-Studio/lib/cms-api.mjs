@@ -3,7 +3,7 @@ import {evidenceForPrompt,retrievePublicStudioKnowledge} from './public-site-kno
 import {studioEnvironment} from './supabase-backend.mjs';
 import {auditStudioContent} from './content-audit.mjs';
 import defaults from './defaults.json' with { type: 'json' };
-import { passwordSession,unlockAdmin,lockAdmin,adviserChat,paymentApi,aiConnection,checkAiConnection,projectCreatorAi } from './studio-platform.mjs';
+import { passwordSession,unlockAdmin,lockAdmin,adviserChat,paymentApi,aiConnection,checkAiConnection,projectCreatorAi,sharedKnowledgeAi } from './studio-platform.mjs';
 import {aiSettingsMetadata,saveAiSettings} from './ai-settings.mjs';
 import {boundedBody,rateLimit} from './studio-platform.mjs';
 import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
@@ -145,6 +145,10 @@ async function forwardKnowledgeAi(request,env){
       const chosen=retrievePublicStudioKnowledge(conversation.filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' '),published,5);
       const sources=chosen.map(x=>({title:x.title,path:x.path}));
       const sitePrompt=evidenceForPrompt(conversation,published,6).prompt;
+      // Use the owner's existing secured Studio AI configuration when an
+      // individual knowledge agent has no live credential; never share keys to clients.
+      const shared=await sharedKnowledgeAi(studioEnvironment(env),input.agent,conversation,published).catch(()=>null);
+      if(shared?.ok&&shared.answer)return json({...upstream,mode:'ai',answer:shared.answer.slice(0,3400),sources,notice:'Live VELORYZ AI · Grounded in published Studio sources; verify important details.'});
       if(env.AI){
        const roles={help:'Answer documentation and help questions.',support:'Help troubleshoot issues and point to human support at /contact/ when needed.',client:'Explain how the private Client Portal works. Never claim to read private projects, milestones or messages.',creator:'Help plan practical project requirements. No guaranteed quote, date or acceptance.'};
        try{
