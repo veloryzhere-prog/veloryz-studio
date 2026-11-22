@@ -32,9 +32,23 @@ export async function GET(request: Request) {
    site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description,showScarf:site.showScarf},
    services:(published.state.services||[]).filter((x:any)=>x&&x.name).slice(0,5)
     .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
-   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false)
-    .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
-     image:x.image,cover:x.cover,price:x.price,enabled:x.enabled})),
+   // Public #design is a VELORYZ-curated gallery of REAL local upstream templates.
+   // The old CMS inspiration cards remain editable in Admin but no longer fill this section.
+   catalogue:[
+    'os-portfolio-and-agencies-8b-creative-agency',
+    'os-portfolio-and-agencies-8b-design-studio',
+    'os-grocery-and-delivery-8b-restaurant-site',
+    'os-dashboards-and-saas-lumen-cinematic-ai-saas',
+    'os-portfolio-and-agencies-8b-architecture',
+    'os-grocery-and-delivery-grilli-restaurant',
+    'os-publishing-and-blogs-wren-editorial',
+    'os-dashboards-and-saas-volt-arc-product-landing',
+    'os-portfolio-and-agencies-8b-coworking',
+    'os-template-libraries-start-bootstrap-agency',
+    'os-template-libraries-start-bootstrap-freelancer'
+   ].map(id=>openDesigns.items.find(item=>item.id===id)).filter((item):item is (typeof openDesigns.items)[number]=>Boolean(item))
+    .map(item=>({id:item.id,name:item.name,description:item.description,category:item.category,
+      image:item.previewImage||'',price:0,enabled:true,author:item.author})),
    documentation:Object.entries(studioDocsRoutes).map(([url,title])=>({url:htmlDocumentPath(url),title}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
