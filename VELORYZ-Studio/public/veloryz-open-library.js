@@ -9,7 +9,8 @@ const perPage=24;
 let observer=null,loadStarted=false;
 const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const path=p=>'/design/'+encodeURIComponent(p.id)+'/';
-const createPath=p=>p.originalTemplateId?'/create/?template='+encodeURIComponent(p.originalTemplateId):'/create/?reference='+encodeURIComponent(p.id);
+const money=n=>'₹'+Math.max(6000,Math.min(50000,Math.round(Number(n)||6000))).toLocaleString('en-IN');
+const createPath=p=>'/create/?reference='+encodeURIComponent(p.id)+'&estimate='+Math.round(Number(p.price)||6000);
 const categoryMap={
  'Ecommerce · Shopify':'Ecommerce & B2B','Ecommerce · Fashion':'Ecommerce & B2B',
  'Ecommerce · Furniture':'Ecommerce & B2B','Ecommerce · Motion':'Ecommerce & B2B',
@@ -25,7 +26,7 @@ function entries(){
  // Their records remain untouched in Admin for optional re-publishing later.
  const cms=[];
  const found=new Map();
- for(const item of [...imported,...cms])if(item?.id&&!found.has(item.id))found.set(item.id,item);
+ for(const item of [...imported,...cms])if(item?.id&&item.enabled!==false&&item.sourceType!=='original-veloryz'&&!found.has(item.id))found.set(item.id,item);
  return [...found.values()];
 }
 const prettyStatus=p=>p.sourceType==='original-veloryz'?['VELORYZ Original','original']:
@@ -45,12 +46,12 @@ function art(p){
  '<span class="vz-source-image-label">EXPLORE WITH VELORYZ</span></a>';
 }
 function card(p,i){
- const [label,tone]=prettyStatus(p),source=String(p.source||'');
+ const [label,tone]=prettyStatus(p);
  return '<article class="vz-source-card" data-source-card style="--source-order:'+(i%6)+'">'+art(p)+
  '<div class="vz-source-meta"><span>'+escape(p.category)+'</span><span class="vz-source-pill '+tone+'">'+escape(label)+'</span></div>'+
  '<div class="vz-source-card-body"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
- '<div class="vz-source-credit">The VELORYZ design collection</div>'+
- '<div class="vz-source-card-actions"><a href="'+path(p)+'">Explore design ↗</a><a href="'+createPath(p)+'">Create with VELORYZ +</a></div></div></article>';
+ '<div class="vz-source-price"><span>STUDIO SERVICE FROM</span><strong>'+money(p.price)+'</strong></div>'+
+ '<div class="vz-source-card-actions"><a href="'+path(p)+'">Explore project ↗</a><a href="'+path(p)+'preview/">Full preview ↗</a></div></div></article>';
 }
 function score(p){
  return p.importStatus==='real-upstream-html'?400:
@@ -60,12 +61,14 @@ function score(p){
 }
 function filtered(items){
  const q=query.toLowerCase();
- const res=items.filter(p=>(category==='All'||p.category===category)&&
+ const res=items.filter(p=>p.sourceType!=='original-veloryz'&&(category==='All'||p.category===category)&&
   (rights==='All'||(rights==='imported'?p.importStatus==='real-upstream-html':
   rights==='original'?p.sourceType==='original-veloryz':p.rights===rights))&&
   (!q||[p.name,p.category,p.description,p.author,p.license].join(' ').toLowerCase().includes(q)));
  if(sort==='name')res.sort((a,b)=>a.name.localeCompare(b.name));
  else if(sort==='motion')res.sort((a,b)=>Number(/very high|high/i.test(b.motion||''))-Number(/very high|high/i.test(a.motion||'')));
+ else if(sort==='price-asc')res.sort((a,b)=>(a.price||6000)-(b.price||6000));
+ else if(sort==='price-desc')res.sort((a,b)=>(b.price||6000)-(a.price||6000));
  else res.sort((a,b)=>score(b)-score(a)||a.name.localeCompare(b.name));
  return res;
 }
@@ -78,7 +81,7 @@ function showcase(){
  const picks=entries().filter(p=>p.importStatus==='real-upstream-html').slice(0,3);
  return '<div class="vz-source-home-showcase">'+picks.map(p=>
  '<article class="vz-source-home-card">'+art(p)+'<div><span class="vz-source-home-category">'+escape(p.category)+' / VELORYZ STUDIO</span>'+
- '<h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p><a href="'+path(p)+'">Explore design ↗</a></div></article>'
+ '<h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p><strong>From '+money(p.price)+'</strong><a href="'+path(p)+'">Explore design ↗</a></div></article>'
  ).join('')+'</div><p class="vz-source-home-note">Made for exploring ideas with VELORYZ Studio.</p>';
 }
 function featured(items){
@@ -94,24 +97,24 @@ function render(){
  return '<section class="vz-real-library container" id="vz-real-library">'+
  '<div class="vz-source-hero"><div class="vz-source-hero-text"><span class="vz-source-eyebrow">VELORYZ / INDEPENDENT CREATIVE STUDIO / DESIGN COLLECTION</span>'+
  '<h1>Designs with<br><em>a point of view.</em></h1>'+
- '<p>A considered collection of distinctive websites, interactive experiences and digital ideas. Explore the visuals, experience the motion and turn your chosen direction into a tailored VELORYZ project.</p>'+
+ '<p>Explore real digital experiences, full-site previews and responsive project concepts. Choose a direction, compare transparent starting estimates and build a customized VELORYZ Studio project.</p>'+
  '<div class="vz-source-hero-actions"><a href="#vz-source-collection">Explore the collection ↗</a><a href="/create/">Create with VELORYZ +</a></div>'+
- '<div class="vz-source-counts"><span><b>'+s.total+'</b> Design directions</span><span><b>'+s.live+'</b> Interactive previews</span><span><b>'+s.originals+'</b> Studio originals</span></div></div>'+
+ '<div class="vz-source-counts"><span><b>'+s.total+'</b> Curated directions</span><span><b>'+s.live+'</b> Interactive previews</span><span><b>₹6k–₹50k</b> Studio starting estimates</span></div></div>'+
  featured(items)+'</div>'+
  '<div class="vz-source-ribbon" aria-hidden="true"><div>THE VELORYZ DESIGN COLLECTION <span>✳</span> IDEAS IN MOTION <span>✳</span> CREATE WITH VELORYZ <span>✳</span> THE VELORYZ DESIGN COLLECTION <span>✳</span></div></div>'+
  '<section class="vz-source-collection" id="vz-source-collection"><div class="vz-source-section-head"><span class="vz-source-eyebrow">01 / EXPLORE BY INDUSTRY</span>'+
  '<div><h2>Find your<br><em>next direction.</em></h2><p>Explore a carefully curated set of website experiences, portfolios, storefronts, dashboards and motion systems. Every project begins with a direction worth making your own.</p></div></div>'+
  '<div class="vz-source-toolbar"><label><span>Search</span><input type="search" data-source-search placeholder="Explore brands, portfolios, commerce, motion..." value="'+escape(query)+'" autocomplete="off"></label>'+
  '<label><span>Niche</span><select data-source-category>'+categories.map(c=>'<option value="'+escape(c)+'"'+(c===category?' selected':'')+'>'+escape(c)+'</option>').join('')+'</select></label>'+
- '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="name"'+(sort==='name'?' selected':'')+'>A to Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
+ '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="price-asc"'+(sort==='price-asc'?' selected':'')+'>Price: Low to high</option><option value="price-desc"'+(sort==='price-desc'?' selected':'')+'>Price: High to low</option><option value="name"'+(sort==='name'?' selected':'')+'>A to Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
  '<div class="vz-source-filters" role="group" aria-label="Experience type">'+[
- ['All','All designs ('+s.total+')'],['imported','Interactive ('+s.live+')'],['original','Studio originals ('+s.originals+')'],['candidate','More designs'],['restricted','Creative ideas']
+ ['All','All designs ('+s.total+')'],['imported','Live website ('+s.live+')'],['candidate','More designs'],['restricted','Creative references']
  ].map(([value,label])=>'<button type="button" data-source-rights="'+value+'" aria-pressed="'+(rights===value)+'">'+label+'</button>').join('')+'</div>'+
  '<div class="vz-source-list-head"><span id="vz-source-result-count" aria-live="polite">'+list.length+' design directions</span><span>VELORYZ / CURATED DIGITAL EXPERIENCES</span></div>'+
  '<div class="vz-source-grid" id="vz-source-grid">'+visible.map(card).join('')+'</div>'+
  (!list.length?'<div class="vz-source-empty">No matching source designs. Try another search or category.</div>':'')+
  (visible.length<list.length?'<div class="vz-source-load"><button type="button" data-source-more>Load more designs ('+(list.length-visible.length)+' remaining) ↓</button></div>':'')+
- '<div class="vz-source-legal"><span>VELORYZ Studio — designed to help you find a direction.</span><a href="/legal/design-notices/">Legal acknowledgements</a></div></section></section>';
+ '<div class="vz-source-legal"><span>Prices shown are VELORYZ Studio customization starting estimates, not a sale or relicensing of third-party source code. Confirmed scope and rights are agreed before delivery.</span><a href="/legal/design-notices/">Legal notices</a></div></section></section>';
 }
 function animateCards(root=document){
  observer?.disconnect();observer=null;
@@ -136,7 +139,7 @@ function refresh(){
  let more=root.querySelector('.vz-source-load');
  if(visible.length<list.length){
   if(!more){more=document.createElement('div');more.className='vz-source-load';more.innerHTML='<button type="button" data-source-more></button>';grid.after(more)}
-  more.querySelector('button').textContent='Load more authentic designs ('+(list.length-visible.length)+' remaining) ↓';
+  more.querySelector('button').textContent='Load more designs ('+(list.length-visible.length)+' remaining) ↓';
  }else more?.remove();
  let empty=root.querySelector('.vz-source-empty');if(empty)empty.hidden=list.length!==0;
  animateCards(root);
@@ -167,7 +170,7 @@ document.addEventListener('error',e=>{
  }
  const art=el.closest('.vz-source-shot');if(!art){el.hidden=true;return}
  el.remove();
- const div=document.createElement('span');div.className='vz-source-noimage';div.textContent='Source image unavailable — open details for the original repository';
+ const div=document.createElement('span');div.className='vz-source-noimage';div.textContent='Preview image unavailable — view project details';
  art.prepend(div);
 },{capture:true});
 document.addEventListener('studio:route',bootstrap);

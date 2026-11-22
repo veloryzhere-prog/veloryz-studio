@@ -19,7 +19,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/koative/cento",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 11000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-uiuxlabz-120-sites",
@@ -37,7 +42,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/uiuxlabz/uiuxlabz",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-colorlib-bootstrap-templates",
@@ -55,7 +65,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/bootstrap-templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 12000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-freeframe-templates",
@@ -73,7 +88,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/empeeryal/freeframe-templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 14000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-novpix-free-html-templates",
@@ -91,7 +111,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Novpix/free-html-templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-8b-site-template-collection",
@@ -107,7 +132,12 @@
       "rights": "candidate",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "price": 9000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-start-bootstrap-agency",
@@ -129,7 +159,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://startbootstrap.github.io/startbootstrap-agency/",
       "localSource": "/design-source-previews/os-template-libraries-start-bootstrap-agency/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 12000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-start-bootstrap-freelancer",
@@ -151,7 +186,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://startbootstrap.github.io/startbootstrap-freelancer/",
       "localSource": "/design-source-previews/os-template-libraries-start-bootstrap-freelancer/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 6000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-bcms-starters",
@@ -169,7 +209,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/bcms/starters",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 9000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-template-libraries-170-html-site-collection",
@@ -187,7 +232,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/dawidolko/Website-Templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 10000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-vercel-commerce",
@@ -205,7 +255,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/vercel/commerce",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 28000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-shopify-hydrogen",
@@ -223,7 +278,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Shopify/hydrogen",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 36000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-medusa-commerce-platform",
@@ -241,7 +301,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/medusajs/medusa",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 35000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-medusa-b2b-starter",
@@ -259,7 +324,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/medusajs/b2b-starter",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 33000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-spree-storefront",
@@ -277,7 +347,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/spree/storefront",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 18000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-spree-commerce",
@@ -295,7 +370,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/spree/spree",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 18000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-vendure-storefront",
@@ -313,7 +393,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/vendurehq/storefront",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 23000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-vendure-next-starter",
@@ -331,7 +416,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/vendurehq/nextjs-starter-vendure",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 32000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-bagisto",
@@ -349,7 +439,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/bagisto/bagisto",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-the-front-kit-starter",
@@ -367,7 +462,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/thefrontkit/nextjs-ecommerce-starter",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-nextfaster-ecommerce",
@@ -386,7 +486,12 @@
       "enabled": true,
       "previewImage": "https://github.com/user-attachments/assets/810bc4c7-2e01-422d-9c3d-45daf5fb13ce",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://next-faster.vercel.app"
+      "liveDemo": "https://next-faster.vercel.app",
+      "price": 24000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-epic-ecommerce-next-starter",
@@ -405,7 +510,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Epic-Design-Labs/nextjs-ecommerce-starter",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://nextjs-ecommerce-starter-phi.vercel.app"
+      "liveDemo": "https://nextjs-ecommerce-starter-phi.vercel.app",
+      "price": 40000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-commerce-and-b2b-saleor-storefront",
@@ -423,7 +533,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/saleor/storefront",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 24000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-grocergo",
@@ -442,7 +557,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Lucasdota/GrocerGo",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://grocergo.vercel.app"
+      "liveDemo": "https://grocergo.vercel.app",
+      "price": 27000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-next-grocery",
@@ -460,7 +580,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/alexnguyennz/grocery",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 30000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-organicfarm-multivendor",
@@ -478,7 +603,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Fouzia-Oreen/OrganicFarm_MultiVendor-Grocery-Ecommerce",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 15000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-open-food-network",
@@ -496,7 +626,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/openfoodfoundation/openfoodnetwork",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 21000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-nextorders-food",
@@ -515,7 +650,12 @@
       "enabled": true,
       "previewImage": "https://github.com/nextorders/food/blob/main/.github/media/main-screen-desktop.jpg?raw=true",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://demo.nextorders.space"
+      "liveDemo": "https://demo.nextorders.space",
+      "price": 35000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-meal-mart",
@@ -534,7 +674,12 @@
       "enabled": true,
       "previewImage": "https://user-images.githubusercontent.com/26582923/224567129-9ac0ef33-71f3-43ba-b519-34227977d0d9.png",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://meal-mart.netlify.app/"
+      "liveDemo": "https://meal-mart.netlify.app/",
+      "price": 30000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-hangry",
@@ -552,7 +697,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/aayushai/Hangry",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 17000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-react-food-ordering",
@@ -571,7 +721,12 @@
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/windsuzu/react-food-ordering/main/images/web-screenshot/1.png",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://windsuzu.github.io/react-food-ordering"
+      "liveDemo": "https://windsuzu.github.io/react-food-ordering",
+      "price": 32000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-next-restaurant-app",
@@ -589,7 +744,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/blackslashcreative/next-restaurant-app",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 31000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-8b-restaurant-site",
@@ -611,7 +771,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://8bsite.github.io/restaurant-website-template/",
       "localSource": "/design-source-previews/os-grocery-and-delivery-8b-restaurant-site/index.html",
-      "assetMode": "original-linked-remote-photos"
+      "assetMode": "original-linked-remote-photos",
+      "price": 22000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-grocery-and-delivery-grilli-restaurant",
@@ -633,7 +798,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://codewithsadee.github.io/grilli/",
       "localSource": "/design-source-previews/os-grocery-and-delivery-grilli-restaurant/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 35000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-logistics-and-transport-the-mixly-logistics",
@@ -651,7 +821,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/themixlyweb/nextjs-logistics-website-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 32000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-logistics-and-transport-astroflow",
@@ -669,7 +844,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/sudeep2003/AstroFlow",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 20000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-logistics-and-transport-warp-tools",
@@ -687,7 +867,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/wearewarp/warp-tools",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 20000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-project-management-plane",
@@ -705,7 +890,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/makeplane/plane",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 44000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-project-management-wekan",
@@ -723,7 +913,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/wekan/wekan",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 41000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-project-management-vikunja",
@@ -741,7 +936,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/go-vikunja/vikunja",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 30000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-project-management-appflowy",
@@ -759,7 +959,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/AppFlowy-IO/AppFlowy",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 40000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-project-management-taiga-front",
@@ -777,7 +982,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/taigaio/taiga-front",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 39000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-refine",
@@ -795,7 +1005,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://refine.ams3.cdn.digitaloceanspaces.com/assets/refine-mui-simple-example-screenshot-rounded.webp",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 38000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-react-admin",
@@ -813,7 +1028,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://marmelab.com/react-admin/img/react-admin-demo-still.png",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 24000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-tabler",
@@ -831,7 +1051,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/tabler/tabler/dev/shared/static/tabler-preview@2x.png",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-coreui-free-react-admin",
@@ -849,7 +1074,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/coreui/coreui-free-react-admin-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 41000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-adminlte",
@@ -867,7 +1097,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/ColorlibHQ/AdminLTE/master/.github/assets/dashboard-light.webp",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 25000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-next-js-saas-starter",
@@ -885,7 +1120,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/nextjs/saas-starter",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 45000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-ixartz-saas-boilerplate",
@@ -903,7 +1143,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ixartz/SaaS-Boilerplate",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 48000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-ixartz-landing-starter",
@@ -921,7 +1166,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ixartz/Next-JS-Landing-Page-Starter-Template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 28000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-lumen-cinematic-ai-saas",
@@ -942,7 +1192,12 @@
       "previewImageKind": "upstream-preview-graphic",
       "liveDemo": "https://middlesugar7000.github.io/lumen-saas-landing-page-template/",
       "localSource": "/design-source-previews/os-dashboards-and-saas-lumen-cinematic-ai-saas/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 50000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-volt-arc-product-landing",
@@ -963,7 +1218,12 @@
       "previewImageKind": "upstream-preview-graphic",
       "liveDemo": "https://middlesugar7000.github.io/volt-arc-landing-page-template/",
       "localSource": "/design-source-previews/os-dashboards-and-saas-volt-arc-product-landing/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 45000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-motion-saas-landing",
@@ -982,7 +1242,12 @@
       "enabled": true,
       "previewImage": "https://github.com/user-attachments/assets/54c559b8-0dd1-4ef8-a3d0-06f5086224b0",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://saas-landing-page-template-eldoraui.vercel.app"
+      "liveDemo": "https://saas-landing-page-template-eldoraui.vercel.app",
+      "price": 40000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-dashboards-and-saas-shadcn-fintech",
@@ -1000,7 +1265,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/abderrahimghazali/shadcn-fintech",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 44000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-8b-creative-agency",
@@ -1022,7 +1292,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://8bsite.github.io/creative-agency-website-template/",
       "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-creative-agency/index.html",
-      "assetMode": "original-linked-remote-photos"
+      "assetMode": "original-linked-remote-photos",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-8b-design-studio",
@@ -1044,7 +1319,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://8bsite.github.io/design-studio-website-template/",
       "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-design-studio/index.html",
-      "assetMode": "original-linked-remote-photos"
+      "assetMode": "original-linked-remote-photos",
+      "price": 8000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-8b-architecture",
@@ -1066,7 +1346,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://8bsite.github.io/architecture-website-template/",
       "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-architecture/index.html",
-      "assetMode": "original-linked-remote-photos"
+      "assetMode": "original-linked-remote-photos",
+      "price": 28000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-8b-coworking",
@@ -1088,7 +1373,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://8bsite.github.io/coworking-website-template/",
       "localSource": "/design-source-previews/os-portfolio-and-agencies-8b-coworking/index.html",
-      "assetMode": "original-linked-remote-photos"
+      "assetMode": "original-linked-remote-photos",
+      "price": 12000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-svelte-gsap-site",
@@ -1107,7 +1397,12 @@
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/YusufCeng1z/svelte-gsap-template/main/aura-preview.png",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://svelte-gsap-template.vercel.app/"
+      "liveDemo": "https://svelte-gsap-template.vercel.app/",
+      "price": 7000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-naresh-3d-portfolio",
@@ -1126,7 +1421,12 @@
       "enabled": true,
       "previewImage": "https://github.com/Naresh-Khatri/3d-portfolio/blob/main/public/assets/projects-screenshots/portfolio/landing.png?raw=true",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://nareshkhatri.dev"
+      "liveDemo": "https://nareshkhatri.dev",
+      "price": 13000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-trevsm-3d-bedroom-portfolio",
@@ -1144,7 +1444,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/trevsm/3D-Portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 12000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-cinematic-portfolio",
@@ -1163,7 +1468,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/5araang/Nextjs-cinematic-portfolio",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://www.sarang-space.site"
+      "liveDemo": "https://www.sarang-space.site",
+      "price": 15000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-gsap-lenis-portfolio",
@@ -1182,7 +1492,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/aitezazdev/Portfolio",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://aitezaz.xyz"
+      "liveDemo": "https://aitezaz.xyz",
+      "price": 13000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-motion-portfolio-starter",
@@ -1201,7 +1516,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/karthikmudunuri/portfolio-template",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://karthikeyavarmamudunuri.vercel.app/"
+      "liveDemo": "https://karthikeyavarmamudunuri.vercel.app/",
+      "price": 23000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-animated-portfolio-framer",
@@ -1220,7 +1540,12 @@
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ikramdeveloper/animated-portfolio-framer-motion",
       "previewImageKind": "github-repository-cover",
-      "liveDemo": "https://framer-motion-portfolio-next.vercel.app/"
+      "liveDemo": "https://framer-motion-portfolio-next.vercel.app/",
+      "price": 8000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-portfolio-and-agencies-msrrana-animated-portfolio",
@@ -1238,7 +1563,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/MSRRana/animated-portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 24000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-publishing-and-blogs-wren-editorial",
@@ -1260,7 +1590,12 @@
       "previewImageKind": "upstream-screenshot",
       "liveDemo": "https://codewithsadee.github.io/wren/",
       "localSource": "/design-source-previews/os-publishing-and-blogs-wren-editorial/index.html",
-      "assetMode": "upstream-hosted-assets"
+      "assetMode": "upstream-hosted-assets",
+      "price": 14000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-publishing-and-blogs-tailwind-next-blog",
@@ -1279,7 +1614,12 @@
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/timlrx/tailwind-nextjs-starter-blog/main/public/static/images/twitter-card.png",
       "previewImageKind": "upstream-preview-graphic",
-      "liveDemo": "https://tailwind-nextjs-starter-blog.vercel.app/"
+      "liveDemo": "https://tailwind-nextjs-starter-blog.vercel.app/",
+      "price": 10000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-publishing-and-blogs-lonestone-astro",
@@ -1297,7 +1637,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/lonestone/astro-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 17000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-education-and-lms-next-tailwind-e-learning",
@@ -1316,7 +1661,12 @@
       "enabled": true,
       "previewImage": "https://adminmart.github.io/template_api/images/website-template/E-learning-Free-NextJs-Landing-Page-Template-Tailwind-Headless-UI.jpg",
       "previewImageKind": "upstream-screenshot",
-      "liveDemo": "https://e-learning-tailwind-nextjs-free.vercel.app/"
+      "liveDemo": "https://e-learning-tailwind-nextjs-free.vercel.app/",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-education-and-lms-eduor",
@@ -1334,7 +1684,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/TheNeovimmer/eduor",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 26000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-education-and-lms-lms-v1",
@@ -1352,7 +1707,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/TwilightLogic/lms-v1",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 31000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-tournest",
@@ -1370,7 +1730,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://cdn.dribbble.com/users/1914192/screenshots/4242909/tournest-travel-agency-responsive-html5-website-template-free-download-.jpg",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 24000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-travel-agency-next",
@@ -1388,7 +1753,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/mafzalkalwardev/travel-agency-website",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-mixly-tourism",
@@ -1406,7 +1776,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/themixlyweb/react-tourism-website-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 27000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-hotel-booking",
@@ -1424,7 +1799,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/htoann/Hotel-Booking",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 20000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-robinson",
@@ -1442,7 +1822,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/nikcladis/robinson",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-travel-and-hotel-hotel-booking-system",
@@ -1460,7 +1845,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/thanhhoa3514/hotel-booking-system",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-real-estate-next-real-estate",
@@ -1478,7 +1868,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/hamidkhans651/nextjs-real-estate-project/main/public/assets/screenshots/homepage.png",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 30000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-real-estate-real-estate",
@@ -1496,7 +1891,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/tumon-art/real_estate",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 29000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-real-estate-real-estate-site",
@@ -1514,7 +1914,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://github.com/jkarelins/real-estate-site/blob/master/images/ready-screens/manager-agent-roles.gif?raw=true",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 25000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-jobs-and-hiring-bordful",
@@ -1532,7 +1937,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/craftled/bordful",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 27000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-jobs-and-hiring-jobhive",
@@ -1550,7 +1960,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/shouqatazeez/jobhive",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-nonprofit-and-community-smartergiving-nonprofit",
@@ -1568,7 +1983,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://raw.githubusercontent.com/smartergiving/free-nonprofit-starter-website/main/screenshots/screenshot.png",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 15000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-nonprofit-and-community-carbonplan-site",
@@ -1586,7 +2006,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/carbonplan/carbonplan.org",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 18000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-nonprofit-and-community-flarum",
@@ -1604,7 +2029,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/flarum/flarum",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 22000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-nonprofit-and-community-discourse",
@@ -1622,7 +2052,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/discourse/discourse",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 15000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-healthcare-and-forms-healthcare-dashboard",
@@ -1640,7 +2075,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://user-images.githubusercontent.com/85030597/203619867-2762f161-42ad-47fe-8c23-6573cb009497.png",
-      "previewImageKind": "upstream-screenshot"
+      "previewImageKind": "upstream-screenshot",
+      "price": 28000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-healthcare-and-forms-nhs-design-system-resources",
@@ -1658,7 +2098,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/jibrel/Awesome-healthcare-UI",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 43000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-healthcare-and-forms-colorlib-html-forms",
@@ -1676,7 +2121,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/html-form-templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 26000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-healthcare-and-forms-colorlib-html-tables",
@@ -1694,7 +2144,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/html-table-templates",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 34000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-motion-framer-motion",
@@ -1712,7 +2167,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/motiondivision/motion",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 11000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-lenis",
@@ -1730,7 +2190,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/darkroomengineering/lenis",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 28000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-motion-primitives",
@@ -1748,7 +2213,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ibelick/motion-primitives",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 19000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-magic-ui",
@@ -1766,7 +2236,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/magicuidesign/magicui",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 22000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-shadcn-ui",
@@ -1784,7 +2259,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/shadcn-ui/ui",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 27000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-react-three-fiber",
@@ -1802,7 +2282,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/pmndrs/react-three-fiber",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 22000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-drei",
@@ -1820,7 +2305,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/pmndrs/drei",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 12000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-react-spring",
@@ -1838,7 +2328,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/pmndrs/react-spring",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 9000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-anime-js",
@@ -1856,7 +2351,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/juliangarnier/anime",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 9000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-lottie-web",
@@ -1874,7 +2374,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/airbnb/lottie-web",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 25000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-uiverse-galaxy",
@@ -1892,7 +2397,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/uiverse-io/galaxy",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 13000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-velora-ui",
@@ -1910,7 +2420,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/velora-ui",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 13000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-motion-and-ui-components-react-bits",
@@ -1928,7 +2443,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/DavidHDev/react-bits",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 16000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-anon-e-commerce",
@@ -1946,7 +2466,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/codewithsadee/anon-ecommerce-website",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 11000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-gamics-gaming",
@@ -1964,7 +2489,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/codewithsadee/gamics",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 7000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-magic-portfolio",
@@ -1982,7 +2512,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/once-ui-system/magic-portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 7000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-cruip-landing-page",
@@ -2000,7 +2535,12 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/cruip/tailwind-landing-page-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "price": 8000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-framer-marketplace-examples",
@@ -2016,7 +2556,12 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "price": 9000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     },
     {
       "id": "os-restricted-inspiration-gsap",
@@ -2032,213 +2577,22 @@
       "rights": "restricted",
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
-      "enabled": true
+      "enabled": true,
+      "price": 11000,
+      "currency": "INR",
+      "priceModel": "starting_customization_quote",
+      "studioDeliverable": "VELORYZ Studio design adaptation, setup and approved customization. Scope and license obligations confirmed before any purchase.",
+      "studioLicense": "VELORYZ-delivered custom work under project agreement; upstream code and media retain their own licenses."
     }
   ],
-  "originals": [
-    {
-      "id": "original-studio",
-      "name": "The Practice",
-      "category": "Business & Architecture",
-      "description": "Architectural business website with services, case studies and responsive animation.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 7999,
-      "originalTemplateId": "studio",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-edit",
-      "name": "The Edit",
-      "category": "Ecommerce & B2B",
-      "description": "Editorial lifestyle ecommerce front end with product browsing and demonstration bag.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 10999,
-      "originalTemplateId": "edit",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-works",
-      "name": "Selected Works",
-      "category": "Portfolio & Agency",
-      "description": "Visual artist portfolio with interactive project gallery.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 8999,
-      "originalTemplateId": "works",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-collective",
-      "name": "The Collective",
-      "category": "Portfolio & Agency",
-      "description": "Motion-led creative agency presentation with kinetic typography.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 14999,
-      "originalTemplateId": "collective",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-saas",
-      "name": "Launchpad",
-      "category": "SaaS & Dashboards",
-      "description": "SaaS marketing and interactive task-board front end.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 16999,
-      "originalTemplateId": "saas",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-gather",
-      "name": "Gather",
-      "category": "Travel & Hospitality",
-      "description": "Atmospheric restaurant and hospitality concept with demonstration booking form.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 8999,
-      "originalTemplateId": "gather",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-personal",
-      "name": "Independent",
-      "category": "Portfolio & Agency",
-      "description": "Expressive creative portfolio for independent artists and makers.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 7999,
-      "originalTemplateId": "personal",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-book",
-      "name": "The Appointment",
-      "category": "Healthcare & Forms",
-      "description": "Wellness and services website with appointment intake demonstration.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 9999,
-      "originalTemplateId": "book",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-journal",
-      "name": "Paper & Ink",
-      "category": "Editorial & Publishing",
-      "description": "Editorial publication layout with topic filtering and reading panels.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 8999,
-      "originalTemplateId": "journal",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-together",
-      "name": "Common Ground",
-      "category": "Community & Nonprofit",
-      "description": "Community events and membership-interest experience.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 12999,
-      "originalTemplateId": "together",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-learn",
-      "name": "Open Classroom",
-      "category": "Education & Learning",
-      "description": "Education website with course catalogue, search and curriculum previews.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 11999,
-      "originalTemplateId": "learn",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    },
-    {
-      "id": "original-product",
-      "name": "New Territory",
-      "category": "SaaS & Dashboards",
-      "description": "Immersive digital product website with capability tabs and dashboard previews.",
-      "source": "",
-      "author": "VELORYZ Studio",
-      "license": "Original VELORYZ front-end source; one end-product license after verified purchase; no resale of template source.",
-      "price": 18999,
-      "originalTemplateId": "product",
-      "motion": "High",
-      "rights": "original",
-      "importStatus": "original",
-      "sourceType": "original-veloryz",
-      "previewType": "original-live-template",
-      "enabled": true
-    }
-  ]
+  "originals": [],
+  "publicCollection": "github-sourced-projects-only",
+  "pricingPolicy": {
+    "currency": "INR",
+    "minimum": 6000,
+    "maximum": 50000,
+    "display": "starting-from",
+    "isDirectPurchase": false,
+    "offer": "VELORYZ Studio adaptation and project services; third-party code and assets remain under original licenses."
+  }
 }

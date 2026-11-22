@@ -103,3 +103,19 @@
 .vz-real-library .vz-source-hero-text h1{max-width:840px}
 .vz-real-library .vz-source-card{transition:transform .68s cubic-bezier(.16,.9,.24,1),opacity .65s ease,box-shadow .35s}
 @media(prefers-reduced-motion:reduce){.vz-real-library .vz-source-card,.vz-real-library.vz-reveal-enabled .vz-source-card{opacity:1!important;transform:none!important}}
+
+
+/* 2026 studio collection: public pricing for real design references.
+   Displayed INR figures are starting service estimates only. */
+.vz-real-library .vz-source-price{display:flex;align-items:center;justify-content:space-between;gap:11px;margin:17px 0 0;padding:15px 0 0;border-top:1px solid #e4d8df}
+.vz-real-library .vz-source-price>span{font-size:9px;line-height:1.45;letter-spacing:.12em;color:#887887;font-weight:790}
+.vz-real-library .vz-source-price strong{font-size:clamp(21px,2.3vw,29px);font-weight:780;line-height:1.1;letter-spacing:-.065em;white-space:nowrap;color:#2d202d;font-variant-numeric:tabular-nums}
+.vz-real-library .vz-source-card-actions>a:first-child{background:#241c29;border:1px solid #241c29;color:#fff}
+.vz-real-library .vz-source-card-actions>a:last-child{background:transparent;color:#35273b;border:1px solid #d5c5d6}
+.vz-real-library .vz-source-card-actions>a:last-child:hover{color:white;border-color:#8e759c;background:#75567e}
+.vz-real-library .vz-source-card-actions>a{flex:1;min-width:125px}
+.vz-real-library .vz-source-home-card>div>strong{display:block;margin:12px 0 4px;font-size:21px;letter-spacing:-.06em}
+.vz-real-library .vz-source-home-card>div>a{display:inline-block;margin-top:9px}
+.vz-real-library .vz-source-counts span>b{white-space:nowrap}
+.vz-real-library .vz-source-legal span{max-width:820px}
+@media(max-width:640px){.vz-real-library .vz-source-price strong{font-size:26px}.vz-real-library .vz-source-price>span{max-width:115px}.vz-real-library .vz-source-counts b{font-size:22px}}
