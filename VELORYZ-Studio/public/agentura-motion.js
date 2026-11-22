@@ -8,16 +8,13 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const coarse=matchMedia('(pointer: coarse)');
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
 const quality=()=>!reduced.matches&&!connection?.saveData&&(!navigator.deviceMemory||navigator.deviceMemory>2)&&window.StudioMotion?.level==='full'&&!document.hidden;
+// Avoid the section-heading, card and service reveals already owned by Site Kinetics.
 const selector=[
- '#selected-work .section-head',
  '#selected-work .vz-home-featured article',
  '.vz-external-store .vz-external-hero > *',
  '.vz-external-store .vz-ext-head',
- '.vz-external-store .vz-external-card',
  '.services-section .split-intro',
- '.services-section .service-item',
  '.studio-band .mini-facts',
- '.faq-section .faq-grid',
  '.journey-grid .journey-chapter'
  ].join(',');
 let io=null, nodes=new Set(), raf=0;

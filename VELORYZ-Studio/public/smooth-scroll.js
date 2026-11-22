@@ -1,83 +1,70 @@
 'use strict';
 /**
- * VELORYZ / Fluid Scroll
- * Lenis v1.3.27 (self-hosted) for desktop wheel input only.
- * Phones/tablets retain native touch inertia; no scroll-jacking of chat,
- * forms, dialogs, docs sidebars or project creation.
+ * VELORYZ / Lenis Global Scrolling, Edition 2026
+ * Engine: pinned self-hosted Lenis 1.3.27 (MIT / github.com/darkroomengineering/lenis).
+ * ONE scroll owner site-wide. Shared rAF with the existing motion clock; no
+ * homemade wheel physics, scroll-jacking, duplicate easing, or transformed body.
  *
- * Balanced: lerp 0.14 and wheelMultiplier 0.94 are deliberately responsive:
- * no artificially slow, multi-second trailing scroll or acceleration.
+ * Desktop wheels receive slow, precise interpolation. Touch retains the device's
+ * native momentum; Lenis still coordinates anchor/keyboard navigation where safe.
+ * Modal dialogs, CMS/editor sidebars, forms and embedded previews scroll natively.
  */
 (()=>{
+ if(window.VeloryzScroll?.version==='lenis-2026-global')return;
  const root=document.documentElement;
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const coarse=matchMedia('(pointer: coarse)');
  const narrow=matchMedia('(max-width: 900px)');
- const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- const lowPower=()=>Boolean(connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
- let lenis=null,resizeFrame=0;
- const selectors=[
-  'dialog',
-  '.modal-backdrop',
-  '.modal',
-  '.vz-ext-cart-dialog',
-  '.vz-ext-dialog',
-  '.vz-ext-frame-wrap',
-  '.mobile-nav',
-  '.vz-chat-log',
-  '.vz-chat-side',
-  '.kb-service-toc',
-  '.kb-search-results',
-  '.kb-command-results',
-  '.docs-sidebar',
-  '.studio-docs-sidebar',
-  '.studio-docs-toc',
-  '.v4-ai-messages',
-  '.chat-scroll-area',
-  '.chat-log',
-  '.chat-name-slot',
-  '.expert-chat',
-  '.chat-personas',
-  '[role="log"]',
-  '.v4-steps',
-  '.v4-step-nav',
-  '.booking-main',
-  '.campaign-modal',
-  '.campaign-design',
-  'textarea',
-  'select',
-  '[contenteditable]',
-  '[data-lenis-prevent]'
+ const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+ const lowPower=()=>Boolean(network?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
+ let engine=null,routeFrame=0,awaitingMotion=false;
+ const selector=[
+  'dialog','[role="dialog"]','[aria-modal="true"]',
+  '.modal','.modal-backdrop','.motion-dialog','.campaign-modal',
+  '.vz-review-invite-shade','.vz-review-invite','.vz-ext-dialog','.vz-ext-cart-dialog','.vz-ext-frame-wrap',
+  '.mobile-nav','.admin-sidebar','.admin-panel-scroll',
+  '.kb-service-toc','.kb-search-results','.kb-command-results',
+  '.docs-sidebar','.studio-docs-sidebar','.studio-docs-toc',
+  '.vz-chat-log','.vz-chat-side','.v4-ai-messages','.chat-scroll-area','.cp-conversation','.cp-chat-card',
+  '.chat-log','.expert-chat','.chat-personas','.v4-steps','.v4-step-nav',
+  '.booking-main','.campaign-design','[role="log"]',
+  '[data-lenis-prevent]','[data-lenis-prevent-wheel]',
+  'textarea','select','input','[contenteditable]','iframe'
  ].join(',');
- const shouldSmooth=()=>Boolean(
-  root.dataset.motion==='full'&&
-  window.StudioMotion?.level==='full'&&
-  !window.StudioMotion?.onboardingActive&&
-  !reduced.matches&&!coarse.matches&&!narrow.matches&&!lowPower()&&
-  !document.hidden&&typeof window.Lenis==='function'
- );
- const prevent=node=>Boolean(node?.matches?.(selectors));
- function cleanup(){
-  if(!lenis)return;
-  window.VeloryzMotionClock?.detachLenis(lenis);
-  lenis.destroy();
-  lenis=null;
-  root.removeAttribute('data-vz-smooth-wheel');
+ const prevent=node=>Boolean(node?.matches?.(selector));
+ const motionPermits=()=>{
+  const motion=window.StudioMotion;
+  if(root.dataset.motion==='paused'||root.dataset.motion==='reduced')return false;
+  if(root.dataset.motionGate||window.VeloryzIntro?.active||motion?.onboardingActive)return false;
+  if(motion&&motion.level!=='full')return false;
+  return true;
+ };
+ const canSmooth=()=>typeof window.Lenis==='function'&&!reduced.matches&&!lowPower()&&motionPermits();
+ function clearEngine(){
+  if(!engine)return;
+  window.VeloryzMotionClock?.detachLenis(engine);
+  engine.destroy();
+  engine=null;
+  delete root.dataset.vzSmoothWheel;
  }
  function sync(){
-  if(!shouldSmooth()){
-   cleanup();
-   root.style.scrollBehavior=window.StudioMotion?.level==='full'&&!reduced.matches?'smooth':'auto';
+  if(document.hidden){
+   engine?.stop?.();
    return;
   }
-  root.style.scrollBehavior='auto'; // Never combine browser smooth scroll with Lenis smoothing.
-  if(lenis)return;
+  if(!canSmooth()){
+   clearEngine();
+   root.style.scrollBehavior='auto';
+   return;
+  }
+  root.style.scrollBehavior='auto';
+  if(engine){engine.start?.();return;}
   try{
-   lenis=new window.Lenis({
+   engine=new window.Lenis({
     autoRaf:!window.VeloryzMotionClock,
-    anchors:{offset:-96},
-    lerp:0.14,
-    wheelMultiplier:0.94,
+    anchors:{offset:-82},
+    lerp:0.105,
+    wheelMultiplier:0.92,
     smoothWheel:true,
     syncTouch:false,
     overscroll:true,
@@ -87,45 +74,54 @@
     respectReducedMotion:true
    });
    root.dataset.vzSmoothWheel='lenis';
-   window.VeloryzMotionClock?.attachLenis(lenis);
-  }catch{
-   cleanup();root.style.scrollBehavior='auto'; // Keep the page navigable if vendor JS fails.
+   window.VeloryzMotionClock?.attachLenis(engine);
+  }catch(error){
+   console.warn('VELORYZ native scrolling fallback:',error);
+   clearEngine();root.style.scrollBehavior='auto';
   }
  }
  function onRoute(){
-  // The SPA swaps page DOM and may jump to the top. Keep Lenis dimensions and
-  // animated position synchronized with actual document scroll after repaint.
-  cancelAnimationFrame(resizeFrame);
-  resizeFrame=requestAnimationFrame(()=>{
-   resizeFrame=0;
+  cancelAnimationFrame(routeFrame);
+  routeFrame=requestAnimationFrame(()=>{
+   routeFrame=0;
    sync();
-   if(lenis){
-    lenis.resize();
-    lenis.scrollTo(window.scrollY,{immediate:true,force:true});
+   if(engine){
+    engine.resize();
+    engine.scrollTo(window.scrollY,{immediate:true,force:true});
    }
   });
  }
  const jump=(target,options={})=>{
-  if(lenis)return lenis.scrollTo(target,{offset:-96,duration:0.65,...options});
-  if(typeof target==='number')window.scrollTo({top:target,behavior:reduced.matches?'instant':'smooth'});
-  else if(typeof target==='string')document.querySelector(target)?.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'});
+  const offset=options.offset??-82;
+  if(engine)return engine.scrollTo(target,{offset,duration:0.9,...options});
+  const behavior=reduced.matches?'instant':'smooth';
+  if(typeof target==='number'){
+   window.scrollTo({top:target,behavior});
+   return;
+  }
+  const node=typeof target==='string'?document.querySelector(target):target;
+  if(node?.scrollIntoView)node.scrollIntoView({block:'start',behavior});
  };
- window.VeloryzScroll={
-  get active(){return Boolean(lenis);},
-  get engine(){return lenis;},
-  settings:{lerp:0.14,wheelMultiplier:0.94,touch:'native',clock:'shared'},
-  sync,scrollTo:jump
+ const api={
+  version:'lenis-2026-global',
+  get active(){return Boolean(engine);},
+  get engine(){return engine;},
+  get mode(){return engine?(coarse.matches||narrow.matches?'native-touch-lenis':'lenis-wheel'):'native';},
+  settings:{lerp:0.105,wheelMultiplier:0.92,touch:'native',clock:'shared',library:'lenis@1.3.27'},
+  sync,scrollTo:jump,destroy:clearEngine
  };
- window.StudioMotion?.addEventListener('change',sync);
+ window.VeloryzScroll=api;
+ window.StudioMotion?.addEventListener?.('change',sync);
  document.addEventListener('studio:motion-intro-complete',sync);
  document.addEventListener('studio:brand-intro-complete',sync);
  document.addEventListener('studio:route',onRoute);
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
+ window.addEventListener('pagehide',()=>engine?.stop?.());
  reduced.addEventListener?.('change',sync);
  coarse.addEventListener?.('change',sync);
  narrow.addEventListener?.('change',sync);
- connection?.addEventListener?.('change',sync);
+ network?.addEventListener?.('change',sync);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});
  else sync();
 })();
