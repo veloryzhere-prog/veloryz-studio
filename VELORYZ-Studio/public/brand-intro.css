@@ -18,6 +18,14 @@ html[data-vz-intro="preparing"] .vz-intro-overlay,
 html[data-vz-intro="playing"] .vz-intro-overlay,
 html[data-vz-intro="exiting"] .vz-intro-overlay{display:grid}
 .vz-intro-overlay *{box-sizing:border-box}
+/* The owned high-frame-rate MP4 is optional: CSS and original logos always render. */
+.vz-intro-film-clip{position:absolute;inset:0;z-index:5;display:block;width:100%;height:100%;
+ object-fit:cover;pointer-events:none;opacity:0;transform:translateZ(0) scale(1.012);
+ transition:opacity 180ms ease;will-change:opacity;backface-visibility:hidden}
+.vz-intro-overlay.vz-intro-clip-ready .vz-intro-film-clip{opacity:1}
+html[data-vz-intro="exiting"] .vz-intro-overlay.vz-intro-clip-ready .vz-intro-film-clip{
+ opacity:0;transform:translateZ(0) scale(1.035);transition:opacity 380ms ease,transform 420ms ease}
+
 .vz-intro-shutters{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;z-index:-1}
 .vz-intro-shutter{height:100%;width:100%;background:linear-gradient(120deg,#0a0a22 0%,#100a2d 52%,#12091f 100%);will-change:transform}
 .vz-intro-shutter:first-child{background:radial-gradient(ellipse at 96% 52%,#38214d 0%,#160e30 27%,#090a1d 78%);}
@@ -93,32 +101,32 @@ html[data-vz-intro="exiting"] .vz-intro-overlay{display:grid}
  transition:border-color .2s,background-color .2s}
 .vz-intro-skip:hover{background:#ffffff1c;border-color:#e7ccf4}
 .vz-intro-skip:focus-visible{outline:3px solid #8eddfc;outline-offset:4px}
-html[data-vz-intro="playing"] .vz-intro-center{animation:vz-i-stage 650ms cubic-bezier(.22,1,.36,1) 70ms both;}
-html[data-vz-intro="playing"] .vz-intro-symbol{animation:vz-i-sculpt 870ms cubic-bezier(.2,.75,.2,1) 120ms both}
-html[data-vz-intro="playing"] .vz-intro-ring.r1{animation:vz-i-ring1 1350ms cubic-bezier(.15,.85,.22,1) 120ms both}
-html[data-vz-intro="playing"] .vz-intro-ring.r2{animation:vz-i-ring2 1320ms cubic-bezier(.15,.85,.22,1) 260ms both}
-html[data-vz-intro="playing"] .vz-intro-ring.r3{animation:vz-i-ring3 1550ms cubic-bezier(.15,.85,.22,1) 80ms both}
-html[data-vz-intro="playing"] .vz-intro-streak.s1{animation:vz-i-streak1 850ms cubic-bezier(.25,.65,.15,1) 350ms both}
-html[data-vz-intro="playing"] .vz-intro-streak.s2{animation:vz-i-streak2 850ms cubic-bezier(.25,.65,.15,1) 620ms both}
-html[data-vz-intro="playing"] .vz-intro-wordmark{animation:vz-i-logo 720ms cubic-bezier(.22,1,.36,1) 880ms both}
-html[data-vz-intro="playing"] .vz-intro-wordmark-wrap:after{animation:vz-i-line 650ms cubic-bezier(.2,.7,.2,1) 1000ms both}
-html[data-vz-intro="playing"] .vz-intro-tagline{animation:vz-i-tag 650ms cubic-bezier(.22,1,.36,1) 1250ms both}
-html[data-vz-intro="playing"] .vz-intro-particles i{animation:vz-i-particle 1200ms ease-in-out 350ms both}
-html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(2){animation-delay:580ms}
-html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(3){animation-delay:760ms}
-html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(4){animation-delay:900ms}
-html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(5){animation-delay:480ms}
-html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(6){animation-delay:1000ms}
-html[data-vz-intro="playing"] .vz-intro-progress:after{animation:vz-i-progress 2.08s linear forwards}
-html[data-vz-intro="exiting"] .vz-intro-center{animation:vz-i-exit-center 640ms cubic-bezier(.7,0,.3,1) both}
+html[data-vz-intro="playing"] .vz-intro-center{animation:vz-i-stage 462ms cubic-bezier(.22,1,.36,1) 50ms both;}
+html[data-vz-intro="playing"] .vz-intro-symbol{animation:vz-i-sculpt 618ms cubic-bezier(.2,.75,.2,1) 85ms both}
+html[data-vz-intro="playing"] .vz-intro-ring.r1{animation:vz-i-ring1 959ms cubic-bezier(.15,.85,.22,1) 85ms both}
+html[data-vz-intro="playing"] .vz-intro-ring.r2{animation:vz-i-ring2 937ms cubic-bezier(.15,.85,.22,1) 185ms both}
+html[data-vz-intro="playing"] .vz-intro-ring.r3{animation:vz-i-ring3 1101ms cubic-bezier(.15,.85,.22,1) 57ms both}
+html[data-vz-intro="playing"] .vz-intro-streak.s1{animation:vz-i-streak1 604ms cubic-bezier(.25,.65,.15,1) 249ms both}
+html[data-vz-intro="playing"] .vz-intro-streak.s2{animation:vz-i-streak2 604ms cubic-bezier(.25,.65,.15,1) 440ms both}
+html[data-vz-intro="playing"] .vz-intro-wordmark{animation:vz-i-logo 511ms cubic-bezier(.22,1,.36,1) 625ms both}
+html[data-vz-intro="playing"] .vz-intro-wordmark-wrap:after{animation:vz-i-line 462ms cubic-bezier(.2,.7,.2,1) 710ms both}
+html[data-vz-intro="playing"] .vz-intro-tagline{animation:vz-i-tag 462ms cubic-bezier(.22,1,.36,1) 888ms both}
+html[data-vz-intro="playing"] .vz-intro-particles i{animation:vz-i-particle 852ms ease-in-out 249ms both}
+html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(2){animation-delay:412ms}
+html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(3){animation-delay:540ms}
+html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(4){animation-delay:639ms}
+html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(5){animation-delay:341ms}
+html[data-vz-intro="playing"] .vz-intro-particles i:nth-child(6){animation-delay:710ms}
+html[data-vz-intro="playing"] .vz-intro-progress:after{animation:vz-i-progress 1.72s linear forwards}
+html[data-vz-intro="exiting"] .vz-intro-center{animation:vz-i-exit-center 422ms cubic-bezier(.7,0,.3,1) both}
 html[data-vz-intro="exiting"] .vz-intro-rail,
 html[data-vz-intro="exiting"] .vz-intro-skip,
-html[data-vz-intro="exiting"] .vz-intro-progress{animation:vz-i-exit-fade 240ms ease both}
+html[data-vz-intro="exiting"] .vz-intro-progress{animation:vz-i-exit-fade 158ms ease both}
 html[data-vz-intro="exiting"] .vz-intro-grid,
 html[data-vz-intro="exiting"] .vz-intro-glow,
-html[data-vz-intro="exiting"] .vz-intro-particles{animation:vz-i-exit-fade 420ms ease both}
-html[data-vz-intro="exiting"] .vz-intro-shutter:first-child{animation:vz-i-shutter-left 660ms cubic-bezier(.75,0,.15,1) 40ms both}
-html[data-vz-intro="exiting"] .vz-intro-shutter:last-child{animation:vz-i-shutter-right 660ms cubic-bezier(.75,0,.15,1) 40ms both}
+html[data-vz-intro="exiting"] .vz-intro-particles{animation:vz-i-exit-fade 277ms ease both}
+html[data-vz-intro="exiting"] .vz-intro-shutter:first-child{animation:vz-i-shutter-left 436ms cubic-bezier(.75,0,.15,1) 26ms both}
+html[data-vz-intro="exiting"] .vz-intro-shutter:last-child{animation:vz-i-shutter-right 436ms cubic-bezier(.75,0,.15,1) 26ms both}
 @keyframes vz-i-stage{0%{opacity:0;transform:translate3d(0,20px,0)}100%{opacity:1;transform:translate3d(0,0,0)}}
 @keyframes vz-i-sculpt{0%{opacity:0;transform:translate3d(0,24px,0) rotateY(-35deg) scale(.73)}63%{opacity:1;transform:translate3d(0,-6px,0) rotateY(6deg) scale(1.07)}100%{opacity:1;transform:translate3d(0,0,0) rotateY(0) scale(1)}}
 @keyframes vz-i-ring1{0%{opacity:0;transform:rotate(-95deg) scaleX(.28) scale(.65)}45%{opacity:.9}100%{opacity:.62;transform:rotate(30deg) scaleX(.68) scale(1)}}
