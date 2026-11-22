@@ -1,0 +1,248 @@
+/* Screenshot-based hero corrections.
+   Only the reference homepage header, hero typography, and model controls are affected.
+   Navigation, AI, WhatsApp, scrollbar, all other pages and interactions remain unchanged. */
+
+/* The global reference nav used mix-blend-mode:difference, which inverted dark
+   official-logo pixels against the pale hero and made the wordmark disappear.
+   Never composite the official image with the background. */
+body.vz-reference-site > nav {
+  mix-blend-mode:normal !important;
+  isolation:isolate;
+  color:#241c1c !important;
+  z-index:80;
+}
+body.vz-reference-site > nav .vz-official-header-brand {
+  position:relative;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:flex-start;
+  flex:none;
+  width:clamp(174px,17vw,255px) !important;
+  min-width:160px;
+  height:clamp(51px,6vh,68px) !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  mix-blend-mode:normal !important;
+  filter:none !important;
+  opacity:1 !important;
+}
+body.vz-reference-site > nav .vz-official-header-brand img {
+  position:relative;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  mix-blend-mode:normal !important;
+  filter:none !important;
+}
+
+/* Keep text in normal document flow. The former 21vh absolutely-positioned
+   location subtitle crossed straight through the first title line. */
+body.vz-reference-site .vz-material-hero {
+  box-sizing:border-box;
+  min-height:max(100svh,855px);
+  padding-top:0;
+  overflow:hidden;
+}
+body.vz-reference-site .vz-material-hero #heroTxt {
+  box-sizing:border-box;
+  padding-top:clamp(140px,17svh,190px);
+  padding-bottom:clamp(20px,3svh,34px);
+  position:relative;
+  z-index:4;
+}
+body.vz-reference-site .vz-material-hero .vz-hero-eyebrow {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  column-gap:clamp(14px,2.5vw,34px);
+  row-gap:8px;
+  margin:0 0 clamp(15px,2.5svh,25px);
+  max-width:100%;
+  isolation:isolate;
+}
+body.vz-reference-site .vz-material-hero .vz-hero-eyebrow > .tag {
+  position:static !important;
+  margin:0 !important;
+  padding:0 !important;
+  max-width:100%;
+  font-size:clamp(.66rem,.75vw,.8rem);
+  line-height:1.5;
+  letter-spacing:.12em;
+  color:rgba(42,32,30,.74);
+  white-space:normal;
+}
+body.vz-reference-site .vz-material-hero .vz-hero-eyebrow .vz-hero-location {
+  border-left:1px solid rgba(47,35,34,.33);
+  padding-left:clamp(14px,2vw,28px) !important;
+  color:rgba(48,38,34,.72);
+}
+body.vz-reference-site .vz-material-hero #h1 {
+  font-size:clamp(3.2rem,9vw,9rem);
+  line-height:1.01;
+  letter-spacing:-.049em;
+  margin:0;
+  max-width:min(100%,1040px);
+  text-wrap:balance;
+  overflow:visible;
+}
+body.vz-reference-site .vz-material-hero #h1 .ln {
+  min-height:1.08em;
+  padding-bottom:.115em;
+  overflow:hidden;
+}
+body.vz-reference-site .vz-material-hero .lead {
+  max-width:600px;
+  margin-top:clamp(16px,3svh,29px);
+  margin-bottom:clamp(18px,2.8svh,30px);
+}
+body.vz-reference-site .vz-material-hero .btns {
+  max-width:min(100%,900px);
+  gap:clamp(8px,1vw,14px);
+}
+
+/* Smaller, true-3D sculpture with its controls in a separate, unobstructed
+   visual zone. Happy AI remains in the existing bottom-right position. */
+body.vz-reference-site .vz-material-hero #bigV {
+  width:clamp(280px,31vw,430px);
+  height:clamp(280px,31vw,430px);
+  top:clamp(80px,11svh,126px);
+  right:clamp(16px,5vw,90px);
+}
+body.vz-reference-site .vz-material-hero #bigV .logo-stage {
+  width:100%;height:100%;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-controls {
+  box-sizing:border-box;
+  position:absolute;
+  top:calc(clamp(80px,11svh,126px) + clamp(280px,31vw,430px) + 10px);
+  right:clamp(255px,22vw,390px);
+  bottom:auto;
+  width:min(440px,41vw);
+  max-width:calc(100vw - 40px);
+  margin:0;
+  padding:12px 14px;
+  z-index:8;
+  border-radius:17px;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-control-head {
+  margin:0 0 9px;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-control-buttons {
+  gap:6px;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
+  padding:7px 11px;
+  min-height:32px;
+  line-height:1.1;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-controls .vz-3d-hint {
+  display:block !important;
+  position:static !important;
+  inset:auto !important;
+  margin:10px 0 0 !important;
+  max-width:100%;
+  font-size:.69rem;
+  line-height:1.45;
+  text-transform:none;
+  text-align:left;
+  white-space:normal;
+  color:rgba(60,47,47,.7);
+}
+
+/* Stop fixed chat/WhatsApp from covering the model controls.
+   On the desktop, the panel ends before the AI column begins. */
+@media (min-width:1081px) {
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    right:clamp(260px,22vw,390px);
+  }
+}
+@media (min-width:921px) and (max-width:1350px) {
+  body.vz-reference-site .vz-material-hero #h1 {
+    font-size:clamp(4.2rem,8.4vw,7.4rem);
+    max-width:73%;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    width:min(405px,39vw);
+    right:clamp(235px,22vw,305px);
+  }
+  body.vz-reference-site .vz-material-hero #bigV {
+    right:1vw;
+    width:clamp(280px,31vw,410px);
+    height:clamp(280px,31vw,410px);
+  }
+}
+@media (max-width:920px) {
+  body.vz-reference-site .vz-material-hero {
+    min-height:100svh;
+    height:auto !important;
+    padding-bottom:clamp(120px,16svh,150px) !important;
+  }
+  body.vz-reference-site .vz-material-hero #bigV {
+    width:clamp(215px,42vw,365px);
+    height:clamp(215px,42vw,365px);
+    top:clamp(82px,11svh,120px);
+    right:-3vw;
+  }
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    padding-top:clamp(270px,41svh,435px);
+    padding-bottom:15px;
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    font-size:clamp(3rem,9.1vw,6rem);
+    max-width:100%;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:min(480px,calc(100% - 36px)) !important;
+    max-width:calc(100% - 36px) !important;
+    margin:20px clamp(18px,5vw,48px) 0 auto !important;
+    align-self:flex-end;
+  }
+}
+@media (max-width:570px) {
+  body.vz-reference-site > nav {
+    padding:13px 18px;
+  }
+  body.vz-reference-site > nav .vz-official-header-brand {
+    width:clamp(137px,39vw,180px) !important;
+    min-width:0;
+    height:49px !important;
+  }
+  body.vz-reference-site .vz-material-hero #bigV {
+    width:min(58vw,260px);
+    height:min(58vw,260px);
+    top:91px;
+    right:-6vw;
+  }
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    padding-top:clamp(270px,42svh,350px);
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    font-size:clamp(2.55rem,10.9vw,4.6rem);
+    line-height:1.06;
+  }
+  body.vz-reference-site .vz-material-hero .vz-hero-eyebrow {
+    display:grid;
+    row-gap:7px;
+    margin-bottom:13px;
+  }
+  body.vz-reference-site .vz-material-hero .vz-hero-eyebrow .vz-hero-location {
+    border-left:0;
+    padding-left:0 !important;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    margin:17px auto 0 !important;
+    width:calc(100% - 36px) !important;
+    padding:12px;
+  }
+}
