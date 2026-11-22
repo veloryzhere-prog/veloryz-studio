@@ -13,6 +13,7 @@ const aliases=[
  [/\b(create|new project|start project|brief|creator)\b/i,'create creator brief project request'],
  [/\b(ai|chatbot|bot|gemini|model|agent|assistant)\b/i,'assistant ai model support project'],
  [/\b(website|landing page|web design)\b/i,'website design pages responsive'],
+ [/\b(what is veloryz|who are you|tell me about veloryz|what do you do|what kind of studio|who founded)\b/i,'independent creative technology studio founder services'],
  [/\b(account|login|sign in|password)\b/i,'portal invitation account login access'],
  [/\b(publish|live|deploy|domain)\b/i,'publish deployment website domain'],
  [/\b(licen[sc]e|copyright|ownership|template)\b/i,'copyright license templates original']
@@ -70,6 +71,7 @@ export function retrievePublicStudioKnowledge(query,state={},limit=6){
   [/\b(price|pricing|cost|budget|quote|estimate|charges?|inr|rupees)\b/i,'/pricing/'],
   [/\b(book|appointment|meeting|schedule|consultation|call)\b/i,'/book/'],
   [/\b(contact|reach|email|whatsapp|speak to the team|human support)\b/i,'/contact/'],
+  [/\b(what is veloryz|tell me about veloryz|who founded|who are you)\b/i,'/studio/'],
   [/\b(services|capabilities|what do you do)\b/i,'/services/'],
   [/\b(create|new project|start project|brief|creator)\b/i,'/create/']
  ];
