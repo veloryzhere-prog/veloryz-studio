@@ -51,7 +51,7 @@ assert.match(adminReviews,/api\('\/api\/reviews\/admin\/moderate'/,'Moderation m
 assert.match(adminReviews,/data-review-filter/);
 assert.match(adminReviews,/data-review-moderate/);
 assert.match(adminReviews,/E\(review\.body/,'Do not insert unescaped user reviews into admin HTML');
-assert.doesNotMatch(adminReviews,/fabricated testimonials?/i);
+assert.doesNotMatch(adminReviews,/sampleReviews|mockReviews|fakeReviewData/,'No synthetic review data may appear in moderation');
 assert.match(adminAI,/knowledgeAiAdmin\(\)/,'AI hub must reuse working secure agent editor');
 assert.match(adminAI,/aiMindsetPage\(\)/,'AI hub must reuse CMS-bound adviser editor');
 assert.match(adminAI,/aiSettingsForm\(\)/,'AI hub must reuse secure provider form');
