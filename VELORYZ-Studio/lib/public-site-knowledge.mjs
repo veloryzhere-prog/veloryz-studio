@@ -62,6 +62,19 @@ export function retrievePublicStudioKnowledge(query,state={},limit=6){
   return {item,score};
  }).filter(({score})=>score>4).sort((a,b)=>b.score-a.score||a.item.title.localeCompare(b.item.title));
  const seen=new Set(),out=[];
+ // Put the verified task destination before broad handbook articles, so
+ // a pricing/booking/portal question doesn't disappear among generic guides.
+ const intents=[
+  [/\b(track|progress|milestone|already created|existing project|portal|invitation)\b/i,'/client/'],
+  [/\b(price|pricing|cost|budget|quote|estimate|charges?|inr|rupees)\b/i,'/pricing/'],
+  [/\b(book|appointment|meeting|schedule|consultation|call)\b/i,'/book/'],
+  [/\b(contact|reach|email|whatsapp|speak to the team|human support)\b/i,'/contact/'],
+  [/\b(services|capabilities|what do you do)\b/i,'/services/'],
+  [/\b(create|new project|start project|brief|creator)\b/i,'/create/']
+ ];
+ const preferred=intents.find(([pattern])=>pattern.test(input))?.[1];
+ const direct=preferred?sources.find(x=>x.kind==='route'&&x.path===preferred):null;
+ if(direct){out.push(direct);seen.add(direct.path+'|'+direct.title.toLowerCase());}
  for(const {item} of ranked){
   const key=item.path+'|'+item.title.toLowerCase();if(seen.has(key))continue;
   seen.add(key);out.push(item);
