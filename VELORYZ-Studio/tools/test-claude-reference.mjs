@@ -13,7 +13,7 @@ const security=read('lib/response-security.ts');
 assert(html.startsWith('<!DOCTYPE html>'),'Keep supplied full HTML document');
 for(const name of ['home','services','work','design','process','pricing','studio','reviews','contact','create','client']){
  assert(html.includes('data-p="'+name+'"'),'Missing supplied full UI page: '+name);
- assert(html.includes('href="#'+name+'"'),'Missing original circular-menu route: '+name);
+ assert(html.includes(name==='create'?'href="/create/"':name==='client'?'href="/client/"':'href="#'+name+'"'),'Missing functional circular-menu route: '+name);
 }
 assert(html.includes('id="mn"')&&html.includes('id="curt"'),'Full-screen circular menu and route curtain remain');
 assert(html.includes('clip-path:circle('),'Menu and opening circular masks must remain');
@@ -22,6 +22,9 @@ assert(html.includes('id="load"')&&html.includes('id="skip"'),'Skippable fullscr
 assert(html.includes('id="hzs"')&&html.includes('id="trk"'),'Scroll-controlled service panels remain');
 assert(html.includes('id="libs"')&&html.includes('id="decks"'),'Scroll-controlled showcase decks remain');
 assert(html.includes('id="vz-live-reviews-track"'),'Continuous review ribbon exists');
+assert(html.includes('id="vz-home-library-track"'),'Original homepage has automatic design library');
+assert(html.includes('id="vz-reference-guides"'),'Reference includes complete animated documentation footer');
+assert(html.includes('/reference-ai-dock.js'),'All five adviser personalities must be available from a visible side dock');
 assert(html.includes('href="/create/"')&&html.includes('href="/client/"'),'Real project creator and private client portal remain linked');
 assert(html.includes('href="/privacy/choices/"'),'Privacy controls must lead to a working route');
 const scripts=[...html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);
