@@ -10,8 +10,7 @@
 }
 .vz-fx-button:is(.vz-fx-primary,.vz-fx-secondary,.vz-fx-navigation,.vz-fx-ai,
  .vz-fx-ai-send,.vz-fx-toggle,.vz-fx-sculpture,.vz-fx-submit,.vz-fx-admin,
- .vz-fx-portal,.vz-fx-portal-primary,.vz-fx-icon,.vz-fx-danger,.vz-fx-text-link)
-:not(:disabled):not([aria-disabled="true"]){
+ .vz-fx-portal,.vz-fx-portal-primary,.vz-fx-icon,.vz-fx-danger,.vz-fx-text-link):not(:disabled):not([aria-disabled="true"]){
  transition-duration:.32s;
  transition-timing-function:cubic-bezier(.16,1,.3,1);
 }
