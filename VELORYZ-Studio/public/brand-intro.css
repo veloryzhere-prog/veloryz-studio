@@ -2,6 +2,9 @@
  * GPU-friendly transform/opacity choreography, optional once-per-session intro.
  * The real rotating 3D V, public hero, motion gate and scroll engine are untouched.
  */
+html[data-vz-intro="preparing"] body,
+html[data-vz-intro="playing"] body,
+html[data-vz-intro="exiting"] body{overflow:hidden!important}
 .vz-intro-overlay[hidden]{display:none!important}
 .vz-intro-overlay{
  --vz-i-night:#090a1d;--vz-i-panel:#10122e;--vz-i-hot:#f83b9d;--vz-i-purple:#9174ff;--vz-i-cyan:#39c4fd;
