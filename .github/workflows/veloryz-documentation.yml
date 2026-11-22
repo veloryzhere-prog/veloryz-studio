@@ -98,6 +98,8 @@ jobs:
         run: node tools/test-google-verification.mjs
       - name: Verify indexable HTML, brand schema and canonical sitemap URLs
         run: node tools/test-search-indexability.mjs
+      - name: Verify uploaded VELORYZ Silk motion and UI 2026 integration
+        run: node tools/test-silk-ui-2026.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application

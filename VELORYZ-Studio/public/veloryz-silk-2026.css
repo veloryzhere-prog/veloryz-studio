@@ -1,0 +1,107 @@
+/*
+ * VELORYZ Silk 2026: additive motion and polish layer.
+ *
+ * Design rules
+ *  - Never replaces an existing rule: typography uses :where() (zero specificity)
+ *    and every animation lives on a property nothing else uses (translate / scale /
+ *    opacity / block-size), so it composes with the existing transform-based motion.
+ *  - Compositor-friendly only. No layout-thrashing properties are animated per frame.
+ *  - Scroll-linked effects use native CSS scroll/view timelines (no scroll listeners).
+ *  - Respects prefers-reduced-motion and the site's own html[data-motion] switch.
+ *  - Touches no logo, asset, copy, route or feature.
+ */
+
+:root {
+  --vz-ease-out: cubic-bezier(.16, 1, .3, 1);
+  --vz-ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --vz-ease-inout: cubic-bezier(.65, 0, .35, 1);
+}
+
+/* ---------- Typography polish (zero specificity: never overrides existing rules) ---------- */
+:where(h1, h2, h3) { text-wrap: balance; }
+:where(p, li, .lead) { text-wrap: pretty; }
+
+/* ---------- Scroll progress bar (pages that do not already have #prog) ---------- */
+.vz-silk-progress {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  height: 3px;
+  z-index: 1000;
+  pointer-events: none;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: var(--acc, #e2482b);
+}
+@supports (animation-timeline: scroll()) {
+  .vz-silk-progress {
+    animation: vz-silk-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes vz-silk-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+html[data-motion="paused"] .vz-silk-progress,
+html[data-motion="reduced"] .vz-silk-progress { display: none; }
+
+/* ---------- Magnetic buttons: spring back instead of snapping ---------- */
+/* The existing script clears the inline transform on mouseleave; this class (added just
+   before that by veloryz-silk-2026.js) gives the return trip a soft, springy ease. */
+html .mag.vz-mag-release {
+  transition:
+    transform .8s var(--vz-ease-spring),
+    background-color .4s,
+    color .4s,
+    border-color .4s !important;
+}
+
+/* ---------- Accordions glide open and closed (progressive enhancement) ---------- */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size .6s var(--vz-ease-out),
+      content-visibility .6s allow-discrete;
+  }
+  details[open]::details-content { block-size: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content { transition: none; }
+}
+
+/* ---------- Footer settles into place as it scrolls into view ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:not([data-motion="paused"]):not([data-motion="reduced"]) footer {
+      animation: vz-silk-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 65%;
+    }
+  }
+}
+/* Scale and opacity only: neither can extend the scrollable page height. */
+@keyframes vz-silk-settle {
+  from { scale: .965; opacity: .55; }
+  to   { scale: 1;    opacity: 1; }
+}
+
+/* ---------- Footer and policy links: underline sweep ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  footer :is(ul a, .vz-reference-policies a) {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    padding-bottom: 2px;
+    transition: background-size .5s var(--vz-ease-out), color .3s;
+  }
+  footer :is(ul a, .vz-reference-policies a):hover,
+  footer :is(ul a, .vz-reference-policies a):focus-visible {
+    background-size: 100% 1px;
+  }
+}
