@@ -50,7 +50,7 @@ function updateLibrary(){
    const img=document.createElement('img');
    img.className='vz-lib-cover';img.alt='';
    img.loading='lazy';img.decoding='async';img.src=url;
-   img.addEventListener('error',()=>img.remove(),{once:true});
+   img.addEventListener('error',()=>{const fallback=safeUrl(item.fallbackImage);if(fallback&&!img.dataset.retry){img.dataset.retry='1';img.src=fallback;return}img.remove()});
    screen.prepend(img);
   }
  });
