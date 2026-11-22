@@ -18,7 +18,7 @@ test('hero word cycles four motion-safe styles while retaining accessible text',
   assert.ok(css.includes('data-type-phase="'+phase+'"'),phase);
  }
  assert.ok(js.includes("readable.textContent=original"));
- assert.ok(js.includes("reduced.matches"));
+ assert.ok(js.includes("data-motion==='full'"));
 });
 test('reviews use identical cloned groups and keep honest empty state',()=>{
  const js=asset('review-experience.js'),css=asset('review-experience.css');
@@ -34,5 +34,9 @@ test('all conversation surfaces load a shared theme',()=>{
  for(const agent of ['support','client','creator'])assert.ok(css.includes('data-vz-chat="'+agent+'"'));
  assert.ok(css.includes('.expert-modal'));
  assert.ok(shell.includes('conversation-redesign-2026.css'));
- assert.ok(shell.includes('scarf-autoplay-v5'));
+ assert.ok(shell.includes('scarf-auto-v6')||shell.includes('scarf-autoplay-v5'));
+ assert.ok(shell.includes('motion-recovery-v3.css'));
+ assert.ok(shell.includes('ai-universe-v3.css'));
+ assert.ok(asset('review-experience.js').includes('vz-reviews-spotlight-invites'));
+ assert.ok(asset('platform.js').includes("id:'madherchod'"));
 });
