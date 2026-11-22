@@ -43,7 +43,7 @@ jobs:
       - name: Verify official-logo cinematic intro and existing motion onboarding
         run: node tools/test-brand-intro.mjs
       - name: Validate supplied full-site reference motion, menu and CMS integration
-        run: node tools/test-claude-reference.mjs
+        run: node tools/test-claude-reference.mjs && node tools/test-reference-site-upgrade.mjs
       - name: Verify all six AI personalities and visible motion recovery
         run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration
