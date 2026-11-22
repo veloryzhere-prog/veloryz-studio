@@ -87,7 +87,13 @@ function updateStudioAgents(){
  $$('.pg[data-p="studio"] .ag .ad').forEach((card,i)=>{
   const info=personalities[i];if(!info)return;
   const mark=$('i',card),heading=$('b',card),description=$('span',card),tag=$('em',card);
-  if(mark)mark.textContent=info[2];
+  if(mark){
+   const portrait=document.createElement('img');
+   portrait.src='/assets/ai-avatars/'+['happy','nikhil','milky','ritik','aryan'][i]+'.webp';
+   portrait.alt=info[0]+' AI portrait';
+   portrait.width=80;portrait.height=80;portrait.decoding='async';portrait.loading='lazy';
+   mark.classList.add('vz-studio-agent-portrait');mark.replaceChildren(portrait);
+  }
   if(heading)heading.textContent=info[0];
   if(description)description.textContent=info[1];
   if(tag)tag.textContent='AI persona';
