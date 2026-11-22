@@ -1,58 +1,45 @@
-# VELORYZ Client Lifecycle and Gmail Delivery Setup
+# VELORYZ — Private Client Email and Order PDF Workflow
 
-## Acceptance to onboarding
-A visitor submits a full project brief at https://veloryz.online/create/. The request appears privately in Studio Control / Project Console with a reference code that is NOT a private portal password.
+## Each email is sent only by an individual Admin button
 
-The authorized owner selects Accept & Onboard Client. The server checks the owner session, creates only one client project per enquiry, retains the full original specification, and prepares six starter milestones. The acceptance step uses a single database transaction and stable milestone identifiers to avoid duplicate client workspaces on retries.
+1. A visitor submits a full project request in /create/. The original brief, reference, contact details, selected options, budget, and links reach Studio Control → Project Console.
+2. The authorized owner clicks **Accept & Onboard Client**. This saves one linked private client workspace and six initial milestones. **Accepting does NOT send any email or generate a private access code.**
+3. In **Client Management**, open the accepted project and click **Send Project Summary + PDF**. Confirm the email address. The server builds and attempts one branded Gmail email with the complete original order data, all submitted reference links, studio URLs, milestone roadmap, and an attached official **one-page A4 PDF**.
+4. When the client should receive access, click **Send Client Invitation** separately. That action creates a single-use 14-day activation code and attempts a second email containing the project reference, activation code, private portal link, expiry and instructions. Reissuing access revokes older invitations and client sessions.
+5. Each attempt creates an owner-only email activity record. A status of SENT means Gmail SMTP accepted the message after SMTP DATA 250, **not** proof of Inbox delivery. Failed delivery leaves the project safe. Summary mail can be sent again from its own button; a failed invitation gives the owner the secret code for a secure manual handoff.
 
-On acceptance, the server prepares a detailed multi-page PDF with the client information, original project brief and planning notes, request reference, milestone roadmap, next steps, scope caveats, studio links and security rules.
+## Industrial email and PDF design
 
-The server then attempts two separate branded Gmail messages:
-1. VELORYZ project acceptance, with the detailed PDF attached.
-2. Private client invitation with the cryptographically random single-use activation code.
+The official email uses VELORYZ vector-inspired V mark and wordmark, clean charcoal-and-paper industrial typography, a prominent order reference, clear section rules and accessible email-client-compatible tables. It includes HTML and plain text versions.
 
-Invitation codes expire after 14 days. Only a SHA-256 hash is stored. The one-time code is separate from the PDF and the public request reference.
+The PDF has exactly **one A4 page**, a VELORYZ vector brand mark, order reference, client and project identity, acceptance date, status/phase, initial roadmap and important internal/external links. A long project cannot physically fit unabridged on one readable page: the complete request is retained in the HTML/plain-text email and included as an embedded TXT attachment inside the same PDF, plus the original private project record. No access code is included in the summary PDF or acceptance email.
 
-Once the code is activated at https://veloryz.online/client/, the client can review stages, deliverables, private messages and approval decisions. Milestone completion automatically updates overall project progress. The admin interface includes the original request reference, PDF download and private email audit. Chat messages are stored immediately and email notifications are best-effort.
+This summary is not a binding final invoice, guaranteed delivery date or payment receipt. Separate written contractual terms prevail.
 
-## Configure the Gmail mailbox without Resend
+## Gmail connection (no Resend)
 
-Sender mailbox: veloryz.here@gmail.com
-Sender display name: VELORYZ
-SMTP host: smtp.gmail.com
-SMTP port: 465 with implicit TLS, not ports 25 or 587
-Credential secret name: VELORYZ_GMAIL_APP_PASSWORD
-SMTP provider cost: Gmail's regular account sending within its current limits; no Resend subscription.
+From: VELORYZ <veloryz.here@gmail.com>
+Host: smtp.gmail.com
+Transport: implicit TLS on port 465
+Supabase secret: VELORYZ_GMAIL_APP_PASSWORD
+Supabase project: vgxdfjlqstpbtezxmxtq
 
-1. Sign into the correct Google account, veloryz.here@gmail.com.
-2. Enable Google 2-Step Verification.
-3. If offered under Google Account security, generate an App Password for the studio's server application. Standard Gmail account passwords must not be used. App Passwords may be unavailable for some organization-managed or Advanced Protection accounts.
-4. In Supabase project vgxdfjlqstpbtezxmxtq, open Edge Functions > Secrets and create an encrypted secret named VELORYZ_GMAIL_APP_PASSWORD with that App Password as its value. NEVER put it in GitHub, Studio CMS, public source or browser requests.
-5. Open Studio Control > Client Management > Gmail setup and choose Send test email to studio mailbox. The test does not create any client record or invitation.
-6. Check the test message in Gmail inbox, Spam and Sent. A successful SMTP acceptance is not proof of final inbox receipt.
-7. Check project-level Automatic email activity to see the actual result of acceptance, invitation or message notifications.
+The secret must be a Google App Password associated with the correct account, stored only in Supabase Edge Function Secrets. Do not paste it into the public CMS, code or chat. Ports 25 and 587 and the Resend service are not used.
 
-## When Gmail is unavailable
-The accepted project, detailed PDF and private invite still exist, but the backend records not-configured or failed instead of claiming email delivery. The owner must copy the private code securely while it is shown. Previously generated secret codes cannot be recovered; explicit reissue revokes the previous code and active project sessions.
+Use the protected **Send test email to studio mailbox** button for an intentional live delivery test. A configured secret is not proof that the Gmail SMTP connection can authenticate or that messages arrive; inspect the result and Gmail Inbox, Sent and Spam. Sending is subject to Google limits.
 
-Gmail has sending limits and anti-spam policies. Port 465 must be reachable from Supabase Edge Functions. Do not use the client chat for bulk marketing.
+## Protected routes
 
-## Boundaries and privacy
-The full PDF contains project references and planning information, not the secret invitation code. The private client PDF is accessible only through an authorized owner or active client session. Client portal data, messages and Gmail secrets are never included in public CMS indexes. Email notifications do not copy private chat message bodies into mail.
+- POST /api/client-portal/admin/accept: create client workspace only.
+- POST /api/client-portal/admin/send-summary: send full order email + one-page PDF, owner-only.
+- POST /api/client-portal/admin/invite: create and send private one-time code, owner-only.
+- GET /api/client-portal/admin/projects/<id>/summary: view protected PDF.
+- GET /api/client-portal/admin/mail-events?project_id=<id>: owner-only delivery results.
+- POST /api/client-portal/admin/test-email: explicit test only to the studio sender mailbox.
+- GET /api/client-portal/summary: authenticated client downloads their own PDF.
 
-## Protected API
-Owner-only:
-POST /api/client-portal/admin/accept
-GET /api/client-portal/admin/projects/<project-id>/summary
-GET /api/client-portal/admin/mail-events?project_id=<project-id>
-POST /api/client-portal/admin/test-email
-POST /api/client-portal/admin/invite
-POST /api/client-portal/admin/messages/read
+## Release steps
 
-Client session:
-GET /api/client-portal/summary
-POST /api/client-portal/messages/read
-Existing project messages, milestones, approval decisions and private session endpoints.
+Run node tools/test-premium-mail-handoff.mjs and node tools/test-client-lifecycle.mjs, followed by TypeScript checks and production build. Deploy the updated Supabase Edge Function independently from the GitHub website build. The website host must also publish the updated Admin JavaScript to show the separate buttons.
 
-## Verification and deployment
-Run node tools/test-client-lifecycle.mjs, corepack pnpm exec tsc --noEmit and the production build. Supabase database migrations and Edge Functions are deployed independently from GitHub. Deploy the updated website host before expecting these changes on veloryz.online. Do not accept a real customer's request or issue a real invitation as a smoke test without authorization.
+Privacy choices persist in the public website footer and privacy policy, not a floating pill. The floating Make your project button is removed, while normal project navigation links remain.
