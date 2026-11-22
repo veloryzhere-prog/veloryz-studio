@@ -1,4 +1,5 @@
-import { mailIsConfigured,mailStatus,sendGmailMail,invitationMail,acceptanceMail,messageMail,makeProjectSummaryPdf } from './gmail-lifecycle.ts';
+import {mailStatus,sendGmailMail,invitationMail,messageMail,makeProjectSummaryPdf} from './gmail-lifecycle.ts';
+import {acceptClientProject} from './client-lifecycle.ts';
 // Isolated VELORYZ client portal API. Never import a service key into the browser.
 const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
@@ -34,6 +35,35 @@ async function logDelivery(project,kind,recipient,result){
  catch{console.error("Could not record email delivery status");}
 }
 async function stableId(source){const h=await sha(source),b=Array.from({length:16},(_,i)=>h.slice(i*2,i*2+2));b[6]=(parseInt(b[6],16)&15|64).toString(16).padStart(2,"0");b[8]=(parseInt(b[8],16)&63|128).toString(16).padStart(2,"0");const s=b.join("");return [s.slice(0,8),s.slice(8,12),s.slice(12,16),s.slice(16,20),s.slice(20,32)].join("-")}
+async function dbBatch(statements){
+ if(!BASE||!KEY)fail("Studio client backend is not configured.",503);
+ const p_statements=await Promise.all(statements.map(async entry=>({key:await sha(QUERIES[entry[0]]),params:entry.slice(1)})));
+ const response=await fetch(BASE+"/rest/v1/rpc/veloryz_studio_query",{
+  method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
+  body:JSON.stringify({p_statements}),signal:AbortSignal.timeout(24000)
+ });
+ if(!response.ok){console.error("Portal transaction failure",response.status);fail("Project acceptance failed. Please refresh and retry.",503)}
+ return response.json();
+}
+async function logDelivery(project,kind,recipient,result){
+ try{const now=new Date().toISOString();
+  await db("logEmail",crypto.randomUUID(),project.id,kind,recipient,"veloryz.here@gmail.com",
+   "gmail-smtp-465",result.status,result.provider_message_id||"",
+   result.status==="sent"?"":String(result.message||"").slice(0,180),now,now);
+ }catch{console.error("Client email delivery audit could not be saved");}
+}
+async function issueInvite(project,now,revokeOld=true){
+ const code=inviteCode(),expires=new Date(Date.now()+14*86400000).toISOString();
+ const url="https://veloryz.online/client/#invite="+encodeURIComponent(code);
+ if(revokeOld){
+  await db("revokeInvites",now,project.id);
+  await db("revokeSessionsByProject",now,project.id);
+ }
+ await db("addInvite",crypto.randomUUID(),project.id,await sha(normalizedInvite(code)),expires,"",now);
+ const delivery=await sendInvitation(project,code,url,expires);
+ await logDelivery(project,"invitation",project.client_email,delivery);
+ return {code,url,email:project.client_email,expires_at:expires,one_time:true,delivery};
+}
 async function db(name,...params){
  if(!BASE||!KEY)fail("Studio client backend is not configured.",503);
  const sql=QUERIES[name];if(!sql)fail("Unsupported operation.",404);
@@ -113,9 +143,9 @@ async function main(req){
  }
  if(action.startsWith("/admin/")){
   if(!await admin(req))return send({error:"Studio owner login required."},401);
-  if(action==="/admin/delivery"&&req.method==="GET")return send({configured:!!(Deno.env.get("RESEND_API_KEY")&&Deno.env.get("PORTAL_FROM_EMAIL")),provider:"Resend",senderConfigured:!!Deno.env.get("PORTAL_FROM_EMAIL")});
+  if(action==="/admin/delivery"&&req.method==="GET")return send(mailStatus());
   if(action==="/admin/projects"&&req.method==="GET"){
-   const projects=await db("listProjects"),pid=u.searchParams.get("id");
+   const projects=await db("listProjectsFull"),pid=u.searchParams.get("id");
    return send(pid?{projects,workspace:await view(id(pid))}:{projects});
   }
   if(action==="/admin/projects"&&req.method==="POST"){
