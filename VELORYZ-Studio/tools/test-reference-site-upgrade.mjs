@@ -12,7 +12,7 @@ const scripts=['reference-site-upgrade.js','reference-ai-dock.js','reference-sha
 for(const file of scripts)assert.doesNotThrow(()=>new vm.Script(read('public/'+file)),'Invalid JS: '+file);
 for(const file of styles){const css=read('public/'+file);assert.equal(css.split('{').length,css.split('}').length,'Unbalanced CSS: '+file);}
 assert(home.includes('id="vz-home-library-track"'),'Homepage must contain moving real product gallery');
-assert(home.includes('id="vz-library-pause"'),'Home library must support pause');
+assert(home.includes('id="vz-library-progress-fill"'),'Pinned library must show scroll progress');
 assert(home.includes('id="vz-reference-guides"'),'Documents grid must appear below homepage');
 assert(home.includes('href="/create/"'),'Project CTA must open actual creator page');
 assert(home.includes('href="/client/"'),'Portal CTA must open secure client route');
@@ -23,12 +23,18 @@ assert(home.includes('/reference-site-upgrade.css')&&home.includes('/reference-s
 assert(home.includes('/reference-ai-dock.js')&&home.includes('/reference-ai-dock.css'),'Actual studio AI dock is visible on reference');
 assert(shell.includes('/reference-global-theme.css')&&shell.includes('/reference-shared-menu.js'),'Public real routes share reference visual design');
 assert(client.includes('/reference-global-theme.css')&&client.includes('/reference-shared-menu.js'),'Secure portal shares reference visual design');
-assert(page.includes('.slice(0,12)'),'Home design gallery uses real published CMS entries');
+assert(page.includes('published.state.catalogue')&&!page.includes('.slice(0,12)'),'All published CMS design entries must be available');
 const library=read('public/reference-site-upgrade.js'),dock=read('public/reference-ai-dock.js'),shared=read('public/reference-shared-menu.js');
 assert(library.includes('published.catalogue'),'Gallery must use real CMS catalogue');
 assert(library.includes('createCard'),'Gallery must render item previews, descriptions and prices');
-assert(library.includes('root.replaceChildren(group,second)'),'Gallery must clone a complete set for a seamless loop');
-assert(library.includes('vz-home-library-duration'),'Gallery animation speed adapts to actual measured width');
+assert(library.includes('track.replaceChildren(...items.map(createCard))'),'Full homepage library must render each published design once');
+assert(library.includes('window.VeloryzReferenceGallery={update')&&home.includes('VeloryzReferenceGallery.update'),'Gallery must use the original requestAnimationFrame scroll clock');
+assert(home.includes('/reference-review-loop.js'),'Seamless review controller is loaded');
+assert.doesNotThrow(()=>new vm.Script(read('public/reference-review-loop.js')),'Review loop JavaScript must parse');
+const reviewLoop=read('public/reference-review-loop.js');
+assert(reviewLoop.includes("track.animate(")&&reviewLoop.includes("groupWidth+gap"),'Reviews must use the exact measured seamless-loop distance');
+assert(reviewLoop.includes("iterations:Infinity,easing:'linear'"),'Reviews must slide continuously without resets');
+assert(home.includes('id="vz-home-reviews-track"'),'Reviews must appear on the homepage');
 assert(dock.includes("fetch('/api/adviser'"),'Side AI must call live existing advisor endpoint');
 for(const id of ['happy','nikhil','milky','ritik','aryan'])assert(dock.includes("id:'"+id+"'"),'Missing live personality '+id);
 assert(!dock.includes('madherchod'),'Deleted assistant must not be reintroduced');
