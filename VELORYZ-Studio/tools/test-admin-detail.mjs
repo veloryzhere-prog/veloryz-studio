@@ -57,9 +57,9 @@ const sandbox={
 vm.runInNewContext(helper,sandbox,{timeout:2000});
 const detail=sandbox.window.VeloryzAdminDetail;
 assert.ok(detail&&detail.sidebar&&detail.openSearch&&detail.insights&&detail.operations&&detail.overview&&detail.mediaHeader);
-const routes=['overview','command','projects','enquiries','client-portal','catalogue','platform','payments','content','documentation','knowledge-ai','ai-mindset','offers','branding' ,'media','history','health','settings'];
+const routes=['overview','reviews','ai-control','command','projects','enquiries','client-portal','catalogue','platform','payments','content','documentation','knowledge-ai','ai-mindset','offers','branding' ,'media','history','health','settings'];
 const labels={
- overview:'Overview',command:'Command center',projects:'Projects & work',enquiries:'Project console',
+ overview:'Overview',reviews:'Community Reviews','ai-control':'AI Control Centre',command:'Command center',projects:'Projects & work',enquiries:'Project console',
  'client-portal':'Client management',catalogue:'Design catalogue',platform:'Platform pages',
  payments:'Payment requests',content:'Site content',documentation:'Documentation','knowledge-ai':'AI Management',
  'ai-mindset':'AI Mindset',offers:'Broadcasts & ads',branding:'Brand & logos',media:'Media library',history:'Version history',health:'System diagnostics',settings:'Studio settings'
@@ -81,7 +81,11 @@ for(const route of routes){
 }
 const operations=detail.operations(workspace,icon,E);
 assert.ok(operations.includes('Portfolio projects')&&operations.includes('Active campaigns')&&operations.includes('Featured projects'));
-assert.ok(operations.includes('href="#/ai-mindset"'));
+assert.ok(operations.includes('href="#/ai-control"')&&operations.includes('href="#/reviews"'));
+assert.match(shell,/admin-community\.js/);
+assert.match(shell,/admin-ai-control\.js/);
+assert.match(core,/adminReviewPage/);
+assert.match(core,/aiControlPage/);
 assert.ok(detail.overview(workspace,icon,E).includes('Essential checks'));
 const media=detail.mediaHeader([{mime:'image/png',size:1048576},{mime:'video/mp4',size:2097152}],true,E);
 assert.ok(media.includes('Stored assets')&&media.includes('3.0 MB'));
@@ -93,4 +97,4 @@ assert.ok(shown&&shown[0]==='Go to a console');
 assert.ok(shown[2].includes('data-ad-destination="ai-mindset"'));
 assert.ok(shown[2].includes('data-ad-palette-search'));
 assert.ok(!shown[2].includes('api/admin/'),'Search list must expose only UI routes, not secret API paths.');
-console.log('PASS: all 18 consoles, dedicated five-persona AI Mindset, native project/media actions, command search, owner privacy, grounded metrics, mobile and reduced-motion styles.');
+console.log('PASS: all 20 consoles, dedicated five-persona AI Mindset, native project/media actions, command search, owner privacy, grounded metrics, mobile and reduced-motion styles.');
