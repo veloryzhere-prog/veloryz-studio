@@ -255,10 +255,10 @@ body.motion-edition .vz-footer-help::after{content:"";position:absolute;top:-42%
  body.motion-edition .project-link .project-art{box-shadow:0 10px 30px rgba(48,30,42,.06)}
 }
 @media (prefers-reduced-motion:reduce){
- html{scroll-behavior:auto!important}
- html body.motion-edition :is(.sculpture,.ticker-track,.orbit-lines ellipse){animation:none!important;transition:none!important}
- html body.motion-edition .vz-footer-help::after{animation:none!important;transition:none!important}
- html body.motion-edition :is(.project-link,.button,.design-card,.feature-card,.process-card,.price-card,.team-card,.people-card,.service-item,.contact-channel){transform:none!important;transition:none!important}
+ html:not([data-motion='full']){scroll-behavior:auto!important}
+ html:not([data-motion='full']) body.motion-edition :is(.sculpture,.ticker-track,.orbit-lines ellipse){animation:none!important;transition:none!important}
+ html:not([data-motion='full']) body.motion-edition .vz-footer-help::after{animation:none!important;transition:none!important}
+ html:not([data-motion='full']) body.motion-edition :is(.project-link,.button,.design-card,.feature-card,.process-card,.price-card,.team-card,.people-card,.service-item,.contact-channel){transform:none!important;transition:none!important}
 }
 html[data-motion="paused"] body.motion-edition *,html[data-motion="reduced"] body.motion-edition .vz-footer-help::after{animation-play-state:paused!important}
 @media print{
