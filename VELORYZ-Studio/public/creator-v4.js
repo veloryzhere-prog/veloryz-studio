@@ -565,6 +565,13 @@
   }
   if(b.hasAttribute('data-v4-external')){
    const ref=externalDesigns().find(r=>r.id===b.dataset.v4External);if(!ref)return;
+   if(ref.originalTemplateId){
+    const original=presets.find(p=>p.id===ref.originalTemplateId);
+    if(original){
+     Object.assign(data,{template:original.id,category:original.category,style:original.style,pages:original.pages,features:original.features.slice(),external:'',reference:'',requestId:''});
+     sync();return move(1);
+    }
+   }
    chooseExternal(ref);return move(1);
   }
   if(b.hasAttribute('data-v4-gallery')){galleryTab='studio';render();return;}
