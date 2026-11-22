@@ -47,15 +47,14 @@ function buildGallery(){
   desc.textContent=truncate(item.description||'Explore this design direction and its project requirements in the published VELORYZ library.',185);
   const foot=document.createElement('div');foot.className='vz-home-design-meta';
   const info=document.createElement('div');info.className='vz-home-design-byline';
-  const cost=document.createElement('strong');cost.textContent=Number(item.price)>0?'From '+money(item.price):'Scope-based pricing';
-  info.append(cost);
-  if(item.author){const credit=document.createElement('span');credit.textContent='Source: '+truncate(item.author,48);info.append(credit);}
-  const link=document.createElement('a');link.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';link.textContent='View direction ↗';
+  const studio=document.createElement('strong');studio.textContent='VELORYZ Studio / Curated design';
+  info.append(studio);
+  const link=document.createElement('a');link.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';link.textContent='Explore design ↗';
   link.setAttribute('aria-label','View published library details for '+toText(item.name));
   foot.append(info,link);body.append(tag,title,desc,foot);article.append(art,body);return article;
  };
  track.replaceChildren(...items.map(createCard)); // one complete set, no duplicate artificial items
- track.setAttribute('aria-label',items.length+' published designs, presented through scrolling');
+ track.setAttribute('aria-label',items.length+' real website design directions, presented through scrolling');
  let travel=0,lastW=0,lastViewW=0;
  const motionIsFull=()=>!window.StudioMotion||window.StudioMotion.level==='full';
  const clamp=v=>Math.max(0,Math.min(1,v));
@@ -84,7 +83,7 @@ function buildGallery(){
   lastW=track.scrollWidth;lastViewW=viewWidth;
   travel=Math.max(0,lastW-viewWidth);
   section.style.setProperty('--vz-library-scroll-distance',Math.max(1,Math.ceil(travel*1.12))+'px');
-  if(count)count.textContent=String(items.length).padStart(2,'0')+' published design directions';
+  if(count)count.textContent=String(items.length).padStart(2,'0')+' VELORYZ selected designs';
   if(index&&!section.classList.contains('is-static'))index.textContent='01 / '+String(items.length).padStart(2,'0');
  };
  window.VeloryzReferenceGallery={update,refresh:recalc,get count(){return items.length}};
