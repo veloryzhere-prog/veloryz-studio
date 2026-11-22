@@ -88,7 +88,8 @@
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
 
  const oldKey='veloryz.creator.v3';
- const budgetOptions=()=>isApp()?[100000,250000,500000,1000000,1500000]:data.category==='Ecommerce'?[50000,100000,250000,500000,1000000]:[25000,50000,100000,200000,300000];
+ const budgetOptions=()=>data.external?[6000,12000,20000,35000,50000]:isApp()?[100000,250000,500000,1000000,1500000]:data.category==='Ecommerce'?[50000,100000,250000,500000,1000000]:[25000,50000,100000,200000,300000];
+ const minBudget=()=>data.external?6000:20000;
  const maxBudget=()=>isApp()?1500000:data.category==='Ecommerce'?1000000:300000;
  const palettes=[
   ['Warm white','#ffffff','#eee6df','#9a7169'],
@@ -130,7 +131,7 @@
  data.answers=data.answers&&typeof data.answers==='object'&&!Array.isArray(data.answers)?data.answers:{};
  data.assets=Array.isArray(data.assets)?data.assets.filter(a=>VeloryzPlanner.assets.includes(a)):[];
  data.pages=VeloryzPlanner.pages.includes(Number(data.pages))?Number(data.pages):4;
- data.budget=Math.min(1500000,Math.max(20000,Math.round(Number(data.budget||55000)/5000)*5000));
+ data.budget=Math.min(1500000,Math.max(6000,Math.round(Number(data.budget||55000)/1000)*1000));
  if(!categories.includes(data.category))data.category='Business';
  if(!styles.some(([s])=>s===data.style))data.style='Minimal';
  let stageFromURL;
@@ -251,8 +252,9 @@
  }
  function chooseExternal(p){
   data.template='';
-  data.external=p.name+' — '+p.author+' — '+p.source;
-  data.reference=p.demo||p.source;
+  data.external='VELORYZ Studio design: '+p.name+' ('+p.id+')';
+  data.reference=new URL('/design/'+p.id+'/',location.origin).href;
+  data.budget=Math.min(50000,Math.max(6000,Math.round(Number(p.price||6000)/1000)*1000));
   data.category=categoryForExternal(p);
   data.style=/motion|agency|portfolio/i.test(p.category)?'Immersive':/ecommerce|editorial/i.test(p.category)?'Editorial':/social|community|gaming/i.test(p.category)?'Bold':'Minimal';
   // Preserve the user's requested features, but clear template-specific source assumptions.
@@ -264,7 +266,7 @@
    '<a class="v4-template-live-art" href="/design/'+encodeURIComponent(p.id)+'/" aria-label="View original source for '+escape(p.name)+'">'+
    (p.previewImage||p.image||p.originalTemplateId?'<img class="v4-veloryz-realshot" src="'+escape(p.previewImage||p.image||'/template-covers/'+p.originalTemplateId+'.svg')+'" alt="Design preview for '+escape(p.name)+'" loading="lazy" decoding="async">':'<span class="v4-source-unavailable">Preview available in studio</span>')+
    '<span>Explore design in VELORYZ ↗</span></a>'+
-   '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>'+escape(p.importStatus==='real-upstream-html'?'INTERACTIVE':p.sourceType==='original-veloryz'?'ORIGINAL':'DESIGN')+' · '+escape(p.author)+'</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p>'+
+   '<div class="v4-template-info"><div><span>'+escape(p.category)+'</span><span>VELORYZ DESIGN COLLECTION</span></div><h3>'+escape(p.name)+'</h3><p>'+escape(p.description)+'</p><p class="v4-source-price">Studio service from '+money(p.price||6000)+'</p>'+
    '<div class="v4-reference-actions"><a href="/design/'+encodeURIComponent(p.id)+'/">Explore studio preview ↗</a><button type="button" data-v4-external="'+escape(p.id)+'">Create with VELORYZ →</button></div>'+
    '<small>Discover a visual direction and create a tailored project with VELORYZ Studio.</small></div></article>').join('');
   return '<div class="v4-library" id="v4-library-results"><div class="v4-library-grid">'+(cards||'<div class="v4-empty">No designs match this filter. Try another category.</div>')+'</div>'+
@@ -358,7 +360,7 @@
  function budgetScreen(){
   const e=estimate(),below=data.budget<e.low;
   return sectionTitle('05 / THE INVESTMENT','What budget are you comfortable with?','This helps us recommend a realistic first release—not change the price to fit a number.')+
-   '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="20000" max="'+maxBudget()+'" step="5000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>₹20,000</span><span>'+money(maxBudget())+'+</span></div><div class="v4-budget-chips">'+budgetOptions().map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
+   '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="'+minBudget()+'" max="'+maxBudget()+'" step="1000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>'+money(minBudget())+'</span><span>'+money(maxBudget())+'+</span></div><div class="v4-budget-chips">'+budgetOptions().map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
    '<div class="v4-budget-context"><div><span>EARLY PLANNING RANGE</span><strong>'+money(e.low)+' – '+money(e.high)+'</strong></div><p id="v4-budget-guidance">'+(below?'Your target is below the preliminary scope. Our team can discuss phasing, fewer screens or a leaner first release.':'Our team reviews the scope and provides an individual quote. Pricing may change with requirements, availability and delivery complexity.')+'</p></div>'+
   '<div class="v4-budget-disclaimer">✳ The estimate is not a final price. The team can consult on scope, package options and applicable active offers. Taxes, hosting and external service fees may be additional.</div>'+marketingInfo();
  }
@@ -629,7 +631,7 @@
   const params=new URL(location.href).searchParams,selected=params.get('template');
   const requestedReference=params.get('reference');
   const selectedReference=externalDesigns().find(p=>p.id===requestedReference);
-  if(selectedReference&&data.reference!==selectedReference.demo){chooseExternal(selectedReference);categoryFilter='All';}
+  if(selectedReference&&data.external!=='VELORYZ Studio design: '+selectedReference.name+' ('+selectedReference.id+')'){chooseExternal(selectedReference);categoryFilter='All';}
 
   const chosen=presets.find(p=>p.id===selected);
   if(chosen&&data.template!==chosen.id){
