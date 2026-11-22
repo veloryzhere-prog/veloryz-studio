@@ -140,6 +140,7 @@ function showcase(){
   '<article><a href="'+local(p)+'"><div class="vz-os-feature-cover" style="--os-hue:'+imageClass(p)+'"><span>VELORYZ / CONCEPT '+(i+1)+'</span><strong>'+esc(p.name)+'</strong><small>VIEW ON VELORYZ ↗</small></div><div><span>0'+(i+1)+' / '+esc(p.category)+'</span><h3>'+esc(p.name)+'</h3><p>'+esc(p.description)+'</p><strong>Open VELORYZ preview ↗</strong></div></a><a class="vz-home-create-link" href="/create/?reference='+encodeURIComponent(p.id)+'">Create with VELORYZ ↗</a></article>'
  ).join('')+'</div><p class="vz-ext-credit">VELORYZ original concept views of third-party design directions · Source credits on detail pages.</p>';
 }
+window.designPage=render;
 window.VeloryzOpenDesigns={entries,render,get total(){return entries().length}};
 window.VeloryzExternalDesignLibrary={...previous,render,entries,showcase};
 if(window.VeloryzTemplateStore)window.VeloryzTemplateStore.render=render;
