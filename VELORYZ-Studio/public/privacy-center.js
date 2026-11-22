@@ -22,7 +22,7 @@ function allowed(category){if(category==='necessary')return true;const value=cho
 function cleanStorage(){
  if(!allowed('analytics')){try{localStorage.removeItem(MEASURE);localStorage.removeItem(DATA);}catch{}}
  if(!allowed('preferences')){
-  for(const k of ['veloryz.consultation.no-auto','veloryz.workInvitation.v1','veloryz.motion.v2','veloryz.motion.welcome.v1']){
+  for(const k of ['veloryz.consultation.no-auto','veloryz.workInvitation.v1']){
    try{localStorage.removeItem(k)}catch{}
   }
   try{const keys=Object.keys(localStorage);for(const k of keys)if(k.startsWith('vz-campaign:'))localStorage.removeItem(k)}catch{}
@@ -145,7 +145,7 @@ function policyPage(type){
   'We do not currently install third-party advertising pixels or an IAB advertising-vendor framework on the website. If such technologies are introduced, their disclosure and consent mechanisms must be reviewed before activation.'])+
   '<div class="vz-cookie-table-wrap"><table class="vz-cookie-table"><thead><tr><th>Category</th><th>Examples and purpose</th><th>Choice</th><th>Retention / location</th></tr></thead><tbody>'+
   '<tr><td><strong>Necessary</strong></td><td>Private owner/client authentication, user-entered project draft within the active tab, consent receipt and security.</td><td>Always active</td><td>Session cookies follow their own expiry; consent selection is reconsidered after about 180 days.</td></tr>'+
-  '<tr><td><strong>Preferences</strong></td><td>Motion preference, dismissed announcements and consultation auto-open preference.</td><td>Optional</td><td>First-party local or session storage until cleared, browser expiry or consent withdrawal.</td></tr>'+
+  '<tr><td><strong>Preferences</strong></td><td>Dismissed announcements and consultation auto-open preference. User-selected accessibility motion settings may be retained as necessary.</td><td>Optional</td><td>First-party local or session storage until cleared, browser expiry or consent withdrawal.</td></tr>'+
   '<tr><td><strong>Local analytics</strong></td><td>First-party navigation and performance counters stored only on your device; not uploaded as site-wide analytics.</td><td>Optional, off by default</td><td>Browser local storage until cleared or consent withdrawn.</td></tr>'+
   '<tr><td><strong>Advertising tracking</strong></td><td>No behavioural advertising trackers are currently installed by this implementation.</td><td>Not active</td><td>No marketing-tracker retention.</td></tr>'+
   '</tbody></table></div>'+
