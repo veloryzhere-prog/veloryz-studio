@@ -1,0 +1,87 @@
+
+/* Faithful reference 'Live brief' side panel; real VELORYZ Creator V4 state. */
+body.motion-edition .v4-root .v4-question-wrap:has(#vz-creator-live){
+ width:min(1440px,100%);
+ grid-template-columns:clamp(38px,6vw,75px) minmax(0,1fr) minmax(255px,330px);
+ gap:clamp(14px,3vw,50px);
+}
+body.motion-edition .v4-root #vz-creator-live{
+ min-width:0;position:sticky;top:105px;align-self:start;max-height:calc(100dvh - 128px);
+ overflow:auto;scrollbar-width:thin;
+ border:1px solid var(--vz-ref-line);border-radius:25px;
+ background:color-mix(in srgb,var(--vz-ref-card) 90%,transparent);
+ padding:24px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+ box-shadow:0 23px 58px -45px rgba(21,18,14,.26);
+ color:var(--vz-ref-ink);font-family:var(--vz-ref-sans);isolation:isolate;
+}
+body.motion-edition .v4-root .vz-live-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+body.motion-edition .v4-root .vz-live-header h3{
+ font:300 1.65rem/1 var(--vz-ref-serif)!important;
+ color:var(--vz-ref-ink);letter-spacing:-.03em;
+}
+body.motion-edition .v4-root .vz-live-toggle{
+ border:0;background:transparent;color:var(--vz-ref-accent);font-size:.77rem;
+ display:none;cursor:pointer;padding:8px;
+}
+body.motion-edition .v4-root .vz-live-ring{
+ display:flex;align-items:center;gap:15px;margin:22px 0;padding-bottom:22px;
+ border-bottom:1px solid var(--vz-ref-line);
+}
+body.motion-edition .v4-root .vz-live-ring svg{width:82px;height:82px;flex:none;transform:rotate(-90deg)}
+body.motion-edition .v4-root .vz-live-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+body.motion-edition .v4-root .vz-live-ring .vz-live-track{stroke:var(--vz-ref-line)}
+body.motion-edition .v4-root .vz-live-ring .vz-live-progress{
+ stroke:var(--vz-ref-accent);stroke-dasharray:289;stroke-dashoffset:289;
+ transition:stroke-dashoffset 1.1s cubic-bezier(.16,1,.3,1);
+}
+body.motion-edition .v4-root .vz-live-ring-text{display:grid;gap:5px}
+body.motion-edition .v4-root .vz-live-ring-text strong{
+ font:300 1.9rem/1.05 var(--vz-ref-serif);color:var(--vz-ref-accent);
+}
+body.motion-edition .v4-root .vz-live-ring-text span{
+ font-size:.68rem;letter-spacing:.12em;color:var(--vz-ref-muted);
+}
+body.motion-edition .v4-root .vz-live-brief-rows{
+ display:grid;gap:0;font-size:.82rem;line-height:1.45;
+}
+body.motion-edition .v4-root .vz-live-brief-row{
+ display:grid;grid-template-columns:100px minmax(0,1fr);gap:11px;
+ padding:12px 0;border-bottom:1px solid var(--vz-ref-line);
+}
+body.motion-edition .v4-root .vz-live-brief-row dt{color:var(--vz-ref-muted)}
+body.motion-edition .v4-root .vz-live-brief-row dd{font-weight:550;overflow-wrap:anywhere}
+body.motion-edition .v4-root .vz-live-brief-empty{font-size:.8rem;color:var(--vz-ref-muted)}
+body.motion-edition .v4-root .vz-live-estimate-label{
+ margin:22px 0 8px;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--vz-ref-muted);
+}
+body.motion-edition .v4-root .vz-live-estimate{
+ display:block;font:300 1.33rem/1.22 var(--vz-ref-serif);
+ color:var(--vz-ref-accent);letter-spacing:-.025em;
+}
+body.motion-edition .v4-root .vz-live-note{
+ font-size:.71rem;line-height:1.6;color:var(--vz-ref-muted);margin-top:19px;
+}
+@media(max-width:1100px){
+ body.motion-edition .v4-root .v4-question-wrap:has(#vz-creator-live){
+  grid-template-columns:45px minmax(0,1fr);max-width:920px;
+ }
+ body.motion-edition .v4-root #vz-creator-live{
+  grid-column:2;position:relative;top:auto;max-height:none;margin-top:25px;
+ }
+}
+@media(max-width:700px){
+ body.motion-edition .v4-root .v4-question-wrap:has(#vz-creator-live){grid-template-columns:1fr}
+ body.motion-edition .v4-root #vz-creator-live{
+  position:fixed;grid-column:auto;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  top:auto;z-index:43;max-height:76dvh;overflow:auto;
+  border-radius:20px;padding:15px 20px;
+  transform:translateY(calc(100% - 58px));transition:transform .55s cubic-bezier(.16,1,.3,1);
+ }
+ body.motion-edition .v4-root #vz-creator-live.is-open{transform:translateY(0)}
+ body.motion-edition .v4-root .vz-live-header{min-height:28px}
+ body.motion-edition .v4-root .vz-live-toggle{display:inline-block}
+ body.motion-edition .v4-root .v4-question-view{padding-bottom:120px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.motion-edition .v4-root :is(#vz-creator-live,.vz-live-progress){transition:none}
+}

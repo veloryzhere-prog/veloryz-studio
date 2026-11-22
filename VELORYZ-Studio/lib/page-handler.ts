@@ -30,7 +30,7 @@ export async function GET(request: Request) {
    site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description},
    services:(published.state.services||[]).filter((x:any)=>x&&x.name).slice(0,5)
     .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
-   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false).slice(0,4)
+   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false).slice(0,12)
     .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
      image:x.image,cover:x.cover,price:x.price,enabled:x.enabled}))
   };
@@ -141,7 +141,7 @@ export async function GET(request: Request) {
  // The initial HTML must already contain readable page content. Once JS loads
  // the SPA replaces this same <main>, preserving the existing motion experience.
  const actualDocument=isDocumentPath(normal)?renderHtmlDocument(normal,docEdits):'';
-  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"></head>');
+  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"><link rel="stylesheet" href="/reference-global-theme.css?v=20261122-docs-v2"></head>');
   if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
    '<main id="main" tabindex="-1">'+(actualDocument||renderIndexableBody(normal,pages[normal],description))+'</main>');
  // Use the actual official brand name; misspellings are explained in visible

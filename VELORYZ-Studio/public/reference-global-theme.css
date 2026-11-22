@@ -1,0 +1,411 @@
+/* Unified VELORYZ editorial design — exact visual language from the supplied references.
+   Visual-only. The actual V4 creator, knowledge base, support and client APIs stay intact. */
+:root{
+ --vz-ref-bg:#f7f0e4;--vz-ref-ink:#15120e;--vz-ref-muted:#6f6658;
+ --vz-ref-line:rgba(21,18,14,.16);--vz-ref-accent:#e2482b;--vz-ref-card:#efe4d0;
+ --vz-ref-serif:'Fraunces',Georgia,serif;--vz-ref-sans:'Inter Tight',Inter,system-ui,sans-serif;
+}
+/* Keep auth and admin functional; scope the reference style to the public site. */
+body.motion-edition{
+ --vz-ref-bg:#f7f0e4;--vz-ref-ink:#15120e;
+ background:var(--vz-ref-bg);color:var(--vz-ref-ink);
+ font-family:var(--vz-ref-sans);overflow-x:clip;
+}
+body.motion-edition :is(.page-intro,.container,.kb-v4,.kb-root,.site-map-root,.docs-studio-root){min-width:0;max-width:100%}
+body.motion-edition :is(.page-intro,.page-intro h1,.page-intro h2,.hero h1,.page-title,.section-title){
+ overflow-wrap:break-word;text-wrap:balance;
+}
+body.motion-edition :is(h1,h2,h3,.page-intro h1,.page-intro h2){
+ font-family:var(--vz-ref-serif);font-weight:300;letter-spacing:-.032em;
+}
+body.motion-edition :is(.button,.primary-button,button){font-family:var(--vz-ref-sans)}
+body.motion-edition :is(a,button,input,textarea,select):focus-visible,
+.cp-body :is(a,button,input,textarea):focus-visible{
+ outline:3px solid var(--vz-ref-accent);outline-offset:3px;
+}
+/* Content sections inherit the same cream/ink/copper art direction, not a new layout engine */
+body.motion-edition :is(.docs-hub,.kb-v4,.docs-studio,.site-map,.doc-article,.support-section,.knowledge-root){
+ --line:var(--vz-ref-line);--accent:var(--vz-ref-accent);
+ font-family:var(--vz-ref-sans);color:var(--vz-ref-ink);
+}
+body.motion-edition :is(.kb-v4,.docs-hub,.site-map) :is(h1,h2,h3,.section-title,.kb-v4-title,.docs-heading){
+ font-family:var(--vz-ref-serif);font-weight:300;letter-spacing:-.04em;
+}
+body.motion-edition #main :is(.kb-v4,.docs-hub,.docs-studio,.site-map,.knowledge-root) :is(article,.card,.topic-card,.doc-card){
+ max-width:100%;overflow-wrap:anywhere;
+}
+body.motion-edition #main :is(.kb-v4,.docs-hub,.docs-studio,.site-map) a{
+ text-underline-offset:.22em;
+}
+body.motion-edition .kb-v4 :is(button,a),body.motion-edition .docs-hub :is(button,a){
+ transition:color .4s,border-color .4s,background .45s,transform .45s cubic-bezier(.16,1,.3,1);
+}
+body.motion-edition .kb-v4 :is(button,a):hover,body.motion-edition .docs-hub :is(button,a):hover{
+ border-color:var(--vz-ref-accent);
+}
+/* Project Creator — preserve all required fields, pricing model and /api/enquiries submission */
+body.motion-edition:has(.v4-root){background:var(--vz-ref-bg)!important;color:var(--vz-ref-ink)!important}
+body.motion-edition .v4-root{
+ --v4-ink:var(--vz-ref-ink);--v4-ink-soft:#362e27;--v4-sub:var(--vz-ref-muted);
+ --v4-line:var(--vz-ref-line);--v4-paper:var(--vz-ref-bg);--v4-soft:#faf5eb;
+ --v4-green:var(--vz-ref-accent);--v4-olive:#c78b6e;
+ color:var(--vz-ref-ink)!important;background:var(--vz-ref-bg)!important;
+ font-family:var(--vz-ref-sans);line-height:1.52;
+}
+body.motion-edition .v4-root :is(h1,h2,h3,h4){
+ font-family:var(--vz-ref-serif)!important;font-weight:300;letter-spacing:-.038em;
+ line-height:1.06;text-transform:none;color:var(--vz-ref-ink);
+}
+body.motion-edition .v4-root :is(h1,h2,h3) em{
+ font-family:var(--vz-ref-serif)!important;font-style:italic;font-weight:300;
+ color:var(--vz-ref-accent)!important;letter-spacing:-.055em;
+}
+body.motion-edition .v4-root .v4-topbar{
+ position:sticky;top:0;z-index:42;
+ min-height:76px;background:color-mix(in srgb,var(--vz-ref-bg) 86%,transparent);
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+ border-bottom:1px solid var(--vz-ref-line);
+ padding:10px clamp(18px,4vw,70px);
+}
+body.motion-edition .v4-root .v4-logo img{width:125px;height:auto;max-height:44px;object-fit:contain}
+body.motion-edition .v4-root .v4-logo{white-space:nowrap}
+body.motion-edition .v4-root .v4-top-center,
+body.motion-edition .v4-root .v4-top-progress{
+ font-weight:600;font-size:.68rem;letter-spacing:.14em;color:var(--vz-ref-muted);
+}
+body.motion-edition .v4-root .v4-top-actions{gap:clamp(7px,1.2vw,17px)}
+body.motion-edition .v4-root .v4-client-shortcut,
+body.motion-edition .v4-root .v4-help-docs{max-width:145px;white-space:normal}
+body.motion-edition .v4-root .v4-progress-track{height:4px;background:var(--vz-ref-line)}
+body.motion-edition .v4-root .v4-progress-track i{
+ background:var(--vz-ref-accent);transition:width .7s cubic-bezier(.16,1,.3,1);
+}
+body.motion-edition .v4-root .v4-welcome{
+ grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
+ padding:clamp(55px,8vh,110px) clamp(22px,5vw,72px);
+ min-height:calc(100dvh - 80px);gap:clamp(22px,5vw,72px);
+ background:radial-gradient(ellipse at 80% 44%,rgba(226,72,43,.12),transparent 52%),var(--vz-ref-bg);
+ overflow:hidden;
+}
+body.motion-edition .v4-root .v4-welcome-copy{position:relative;z-index:2;max-width:720px}
+body.motion-edition .v4-root .v4-welcome-tag{color:var(--vz-ref-muted);letter-spacing:.18em}
+body.motion-edition .v4-root .v4-welcome-tag i{
+ background:var(--vz-ref-accent);box-shadow:0 0 0 5px rgba(226,72,43,.12);
+}
+body.motion-edition .v4-root .v4-welcome h1{
+ font-size:clamp(3.2rem,8.35vw,8.5rem)!important;
+ margin:20px 0 25px;line-height:.94;letter-spacing:-.058em;max-width:100%;
+ overflow-wrap:break-word;
+}
+body.motion-edition .v4-root .v4-welcome-copy>p{
+ color:var(--vz-ref-muted);font-size:clamp(.98rem,1.35vw,1.15rem);line-height:1.66;
+}
+body.motion-edition .v4-root .v4-welcome-meta{color:var(--vz-ref-muted);font-weight:500}
+body.motion-edition .v4-root .v4-welcome-art{
+ min-height:390px;height:clamp(370px,38vw,580px);position:relative;display:grid;place-items:center;
+ perspective:1050px;isolation:isolate;
+}
+body.motion-edition .v4-root .v4-welcome-art:before{
+ content:'';position:absolute;inset:20%;border-radius:50%;filter:blur(60px);
+ background:var(--vz-ref-accent);opacity:.22;pointer-events:none;
+}
+body.motion-edition .v4-root .vz-editorial-orbit{
+ position:absolute;width:59%;aspect-ratio:1;border:1px solid var(--vz-ref-accent);
+ border-radius:50%;opacity:.5;animation:vzCreatorOrbit 5s ease-in-out infinite;
+}
+body.motion-edition .v4-root .vz-editorial-orbit.vz-orbit-b{width:84%;border-color:var(--vz-ref-line);animation-delay:1s}
+body.motion-edition .v4-root .vz-editorial-orbit.vz-orbit-c{width:106%;border-color:var(--vz-ref-line);animation-delay:2s}
+body.motion-edition .v4-root .vz-editorial-v{
+ position:relative;width:min(68%,340px);height:auto;
+ animation:vzCreatorSpin 14s linear infinite;filter:drop-shadow(0 26px 50px rgba(113,60,55,.15));
+ will-change:transform;
+}
+body.motion-edition .v4-root .vz-editorial-caption{
+ position:absolute;bottom:7%;right:2%;padding:15px 17px;
+ border:1px solid var(--vz-ref-line);background:var(--vz-ref-card);
+ border-radius:17px;display:grid;gap:7px;max-width:235px;
+ box-shadow:0 22px 60px rgba(21,18,14,.1);
+ font-size:.66rem;letter-spacing:.14em;color:var(--vz-ref-muted);
+ animation:vzCreatorFloat 5s ease-in-out infinite alternate;
+}
+@keyframes vzCreatorSpin{to{transform:rotateY(360deg)}}
+@keyframes vzCreatorOrbit{50%{transform:scale(1.07);opacity:.19}}
+@keyframes vzCreatorFloat{to{transform:translateY(-10px)}}
+body.motion-edition .v4-root :is(.v4-primary,.v4-choice,.v4-template-card,.v4-start){
+ border-radius:22px;
+}
+body.motion-edition .v4-root .v4-primary{
+ background:var(--vz-ref-ink);border-color:var(--vz-ref-ink);color:var(--vz-ref-bg)!important;
+ border-radius:99px;min-height:52px;padding:13px 25px;
+ transition:background .4s,color .4s,transform .4s cubic-bezier(.16,1,.3,1),border-color .4s;
+}
+body.motion-edition .v4-root .v4-primary:hover{
+ background:var(--vz-ref-accent);border-color:var(--vz-ref-accent);color:#fff!important;
+ transform:translateY(-2px);
+}
+body.motion-edition .v4-root .v4-choice{
+ background:var(--vz-ref-card);border:1px solid var(--vz-ref-line);
+ border-radius:22px;padding:clamp(15px,2.5vw,25px);
+ transition:background .36s,border-color .36s,transform .5s cubic-bezier(.16,1,.3,1),box-shadow .4s;
+ overflow-wrap:anywhere;
+}
+body.motion-edition .v4-root .v4-choice:hover{
+ border-color:var(--vz-ref-accent);transform:translateY(-3px);
+ box-shadow:0 20px 55px -34px rgba(226,72,43,.45);
+}
+body.motion-edition .v4-root .v4-choice.is-selected{
+ border-color:var(--vz-ref-accent);background:#f5d9cc;
+ box-shadow:inset 0 0 0 1px var(--vz-ref-accent);
+}
+body.motion-edition .v4-root .v4-choice-visual,
+body.motion-edition .v4-root .v4-choice-check{border-color:var(--vz-ref-line);color:var(--vz-ref-accent)}
+body.motion-edition .v4-root .v4-choice.is-selected .v4-choice-check{background:var(--vz-ref-accent);color:#fff}
+body.motion-edition .v4-root .v4-choice-copy strong{
+ font-family:var(--vz-ref-serif);font-weight:300;
+ font-size:clamp(1.12rem,1.7vw,1.5rem);
+}
+body.motion-edition .v4-root .v4-choice-copy small{color:var(--vz-ref-muted)}
+body.motion-edition .v4-root .v4-question-view{
+ padding:clamp(55px,8vh,100px) clamp(20px,5vw,76px) 80px;
+ min-height:calc(100dvh - 87px);
+ background:radial-gradient(ellipse at 85% 30%,rgba(226,72,43,.045),transparent 49%);
+}
+body.motion-edition .v4-root .v4-question-wrap{
+ width:min(1200px,100%);grid-template-columns:clamp(40px,9vw,145px) minmax(0,1fr);
+ gap:clamp(16px,3vw,58px);align-items:start;
+}
+body.motion-edition .v4-root .v4-side-number{
+ position:relative;padding-top:10px;
+ font:300 clamp(2.4rem,5vw,6rem)/1 var(--vz-ref-serif);
+ letter-spacing:-.08em;color:transparent;
+ -webkit-text-stroke:1px var(--vz-ref-line);text-wrap:nowrap;
+}
+body.motion-edition .v4-root .v4-question-heading h1{
+ font-size:clamp(2.5rem,5.6vw,5.2rem);line-height:1.04;
+ max-width:min(850px,100%);overflow-wrap:break-word;
+}
+body.motion-edition .v4-root .v4-question-heading p{color:var(--vz-ref-muted)}
+body.motion-edition .v4-root .v4-kicker{color:var(--vz-ref-accent);letter-spacing:.15em}
+body.motion-edition .v4-root :is(.v4-question-inner,.v4-question-inner>div){max-width:100%;min-width:0}
+body.motion-edition .v4-root :is(input,textarea,select){max-width:100%}
+body.motion-edition .v4-root .v4-reference,
+body.motion-edition .v4-root .v4-existing-project{
+ background:var(--vz-ref-card);border:1px solid var(--vz-ref-line);
+ border-radius:22px;color:var(--vz-ref-ink);max-width:100%;
+}
+body.motion-edition .v4-root .v4-existing-project :is(a,button){border-radius:99px}
+body.motion-edition .v4-root .v4-success h1{
+ font-family:var(--vz-ref-serif);font-weight:300;line-height:1.02;
+}
+body.motion-edition .v4-root .v4-success .v4-reference strong{color:var(--vz-ref-accent)}
+body.motion-edition .v4-root .v4-success .v4-success-check{color:var(--vz-ref-accent)}
+/* Scope creator-like design across docs and source editor, but not unrelated admin UI. */
+body.motion-edition .kb-v4 :is(.kb-card,.kb-topic-card,.kb-guide-card),
+body.motion-edition .docs-hub :is(.docs-card,.docs-link),
+body.motion-edition .site-map :is(.sm-page,.sm-card){
+ border-radius:20px;max-width:100%;overflow-wrap:anywhere;
+}
+body.motion-edition .kb-v4 :is(.kb-card,.kb-topic-card,.kb-guide-card):hover,
+body.motion-edition .docs-hub :is(.docs-card,.docs-link):hover{
+ transform:translateY(-3px);
+}
+/* The portal keeps its secure workflow and data but shares reference art direction. */
+body.cp-body{
+ --cp-bg:#f7f0e4;--cp-side:#f7f0e4;--cp-white:#fffbf5;--cp-ink:#15120e;
+ --cp-text:#272017;--cp-sub:#70665b;--cp-line:rgba(21,18,14,.16);
+ --cp-soft:#f1e7d7;--cp-green:#e2482b;--cp-blue:#a45449;--cp-orange:#e2482b;
+ --cp-radius:18px;
+ background:var(--cp-bg);color:var(--cp-text);
+ font-family:var(--vz-ref-sans);
+ overflow-x:clip;
+}
+.cp-body :is(h1,h2,h3,.cp-auth-head h1){
+ font-family:var(--vz-ref-serif);font-weight:300;letter-spacing:-.035em;line-height:1.08;
+}
+.cp-body .cp-auth-head h1{font-size:clamp(2.8rem,5.6vw,6rem);color:var(--cp-ink)}
+.cp-body .cp-auth-head h1 .cp-auth-stop{color:var(--vz-ref-accent)}
+.cp-body .cp-header{background:var(--cp-bg);border-bottom:1px solid var(--cp-line)}
+.cp-body .cp-header-label{font-size:.7rem;letter-spacing:.16em}
+.cp-body .cp-auth-shell{max-width:1500px;min-width:0}
+.cp-body .cp-auth-main{min-width:0}
+.cp-body .cp-auth-card{
+ background:var(--cp-white);border-color:var(--cp-line);border-radius:24px;
+ box-shadow:0 28px 65px -42px rgba(21,18,14,.25);
+}
+.cp-body .cp-auth-preview{
+ background:linear-gradient(140deg,#ead6c4,#efe4d0 64%,#f7f0e4);
+ border-color:var(--cp-line);border-radius:28px;
+}
+.cp-body .cp-button{
+ background:var(--cp-ink);border-radius:99px;
+ transition:transform .4s cubic-bezier(.16,1,.3,1),background .35s;
+}
+.cp-body .cp-button:hover{background:var(--vz-ref-accent);transform:translateY(-2px)}
+.cp-body .cp-app-sidebar{background:var(--cp-bg);border-right:1px solid var(--cp-line)}
+.cp-body .cp-app-layout{background:var(--cp-bg)}
+.cp-body .cp-footer{background:var(--cp-bg);border-top:1px solid var(--cp-line)}
+.cp-body :is(.cp-auth-card,.cp-preview-app,.cp-main,.cp-app-content){min-width:0;max-width:100%}
+.cp-body :is(.cp-auth-card,.cp-auth-card p,.cp-auth-head p,.cp-auth-head h1){overflow-wrap:anywhere}
+@media(max-width:1000px){
+ body.motion-edition .v4-root .v4-welcome{grid-template-columns:1fr}
+ body.motion-edition .v4-root .v4-welcome-art{order:-1;min-height:270px;height:30vh}
+ body.motion-edition .v4-root .vz-editorial-v{width:min(48%,230px)}
+ body.motion-edition .v4-root .v4-welcome{gap:30px}
+}
+@media(max-width:700px){
+ body.motion-edition .v4-root .v4-topbar{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 14px}
+ body.motion-edition .v4-root .v4-top-center,body.motion-edition .v4-root .v4-top-progress{display:none}
+ body.motion-edition .v4-root .v4-logo img{max-width:105px}
+ body.motion-edition .v4-root .v4-welcome{padding:55px 20px 75px}
+ body.motion-edition .v4-root .v4-welcome h1{font-size:clamp(3rem,12vw,5rem)!important}
+ body.motion-edition .v4-root .v4-question-wrap{grid-template-columns:1fr;gap:13px}
+ body.motion-edition .v4-root .v4-side-number{font-size:3rem;line-height:1}
+ body.motion-edition .v4-root .v4-question-view{padding:65px 20px 70px}
+ body.motion-edition .v4-root .v4-question-heading h1{font-size:clamp(2.35rem,8.4vw,4rem)}
+ .cp-body .cp-auth-shell{grid-template-columns:1fr;gap:30px}
+ .cp-body .cp-auth-preview{min-height:330px}
+}
+@media(max-width:380px){
+ body.motion-edition .v4-root .v4-welcome{padding-inline:16px}
+ body.motion-edition .v4-root .v4-welcome h1{font-size:2.9rem!important}
+ body.motion-edition .v4-root .v4-category-grid{grid-template-columns:1fr}
+ .cp-body .cp-header{padding:9px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.motion-edition .v4-root :is(.vz-editorial-orbit,.vz-editorial-v,.vz-editorial-caption){
+  animation:none!important;transition:none!important;transform:none!important;
+ }
+}
+
+/* Design store and real third-party reference library: visual only; prices, licensing and source credits remain truthful. */
+body.motion-edition .vz-store{
+ --vzm:#15120e;--vza:#e2482b;--vzb:#f7f0e4;--vzl:rgba(21,18,14,.17);
+ background:var(--vz-ref-bg);color:var(--vz-ref-ink);
+ font-family:var(--vz-ref-sans);
+}
+body.motion-edition .vz-store .vz-store-hero{
+ background:radial-gradient(ellipse at 85% 35%,rgba(226,72,43,.09),transparent 52%),var(--vz-ref-bg);
+ min-height:min(740px,100dvh);gap:clamp(25px,4vw,80px);
+}
+body.motion-edition .vz-store :is(h1,h2,h3){
+ color:var(--vz-ref-ink);font-family:var(--vz-ref-serif)!important;
+ font-weight:300;letter-spacing:-.04em;
+}
+body.motion-edition .vz-store .vz-store-hero h1{
+ font-size:clamp(3.1rem,8vw,8.5rem);line-height:1.04;max-width:100%;
+}
+body.motion-edition .vz-store :is(.vz-store-hero h1 em,.vz-store-section-head h2 em,.vz-store-license h2 em){
+ color:var(--vz-ref-accent);font-weight:300;
+}
+body.motion-edition .vz-store :is(.vz-store-hero-copy>p,.vz-store-hero-note){
+ color:var(--vz-ref-muted);
+}
+body.motion-edition .vz-store .vz-store-button{
+ background:var(--vz-ref-ink);border-color:var(--vz-ref-ink);
+ color:var(--vz-ref-bg)!important;border-radius:99px;
+}
+body.motion-edition .vz-store .vz-store-button:hover{background:var(--vz-ref-accent);border-color:var(--vz-ref-accent)}
+body.motion-edition .vz-store .vz-store-ghost{color:var(--vz-ref-ink);border-color:var(--vz-ref-line)}
+body.motion-edition .vz-store .vz-store-ghost:hover{background:var(--vz-ref-card)}
+body.motion-edition .vz-store :is(.vz-store-card,.vz-store-product,.vz-store-gallery-card){
+ border-radius:23px;max-width:100%;overflow:hidden;
+}
+/* Source metadata stays attached to third-party references. */
+body.motion-edition :is(.vz-external-hero,.vz-ext-grid,.vz-external-disclaimer){max-width:100%;min-width:0}
+body.motion-edition .vz-external-hero p{color:var(--vz-ref-muted)}
+body.motion-edition .vz-external-card{
+ border-color:var(--vz-ref-line);border-radius:22px;
+ background:#fdf8f0;transition:transform .55s cubic-bezier(.16,1,.3,1),box-shadow .5s;
+}
+body.motion-edition .vz-external-card:hover{transform:translateY(-6px);box-shadow:0 25px 55px -28px rgba(21,18,14,.25)}
+body.motion-edition .vz-external-detail p{color:var(--vz-ref-muted)}
+body.motion-edition .vz-ext-actions button{background:var(--vz-ref-ink);color:var(--vz-ref-bg);border-radius:99px}
+body.motion-edition .vz-ext-actions button:hover{background:var(--vz-ref-accent)}
+body.motion-edition .vz-ext-actions a{border:1px solid var(--vz-ref-line);border-radius:99px;background:var(--vz-ref-card)}
+body.motion-edition .vz-external-hero-image{border-radius:24px}
+/* Published, server-rendered technical articles (when JavaScript is disabled too). */
+body.motion-edition .seo-doc-reader{
+ width:min(100% - 32px,1150px);max-width:100%;
+ padding:clamp(60px,8vh,120px) clamp(13px,3vw,45px);
+ color:var(--vz-ref-ink);font-family:var(--vz-ref-sans);
+}
+body.motion-edition .seo-doc-reader h1{
+ font:300 clamp(2.8rem,6vw,5.6rem)/1.07 var(--vz-ref-serif);
+ color:var(--vz-ref-ink);letter-spacing:-.045em;
+}
+body.motion-edition .seo-doc-body :is(h2,h3){
+ font-family:var(--vz-ref-serif);font-weight:300;
+ color:var(--vz-ref-ink);line-height:1.2;
+}
+body.motion-edition .seo-doc-body{color:var(--vz-ref-ink)}
+body.motion-edition .seo-doc-reader :is(p,li,.seo-doc-reader header>p){color:var(--vz-ref-muted)}
+body.motion-edition .seo-doc-links a{
+ border:1px solid var(--vz-ref-line);background:var(--vz-ref-card);border-radius:18px;
+ padding:23px;
+ transition:transform .5s cubic-bezier(.16,1,.3,1),background .4s;
+}
+body.motion-edition .seo-doc-links a:hover{
+ transform:translateY(-4px);background:#f9dccc;border-color:var(--vz-ref-accent);
+}
+body.motion-edition .seo-doc-reader :is(footer a,.seo-doc-links a){color:var(--vz-ref-ink)}
+body.motion-edition .seo-doc-body :is(pre,code){max-width:100%;overflow-x:auto}
+body.motion-edition .seo-doc-body :is(pre,code):not(pre code){overflow-wrap:anywhere}
+body.motion-edition .seo-doc-body code{background:var(--vz-ref-card);color:var(--vz-ref-ink)}
+body.motion-edition .seo-doc-body pre{background:var(--vz-ref-ink);color:var(--vz-ref-bg)}
+body.motion-edition .seo-doc-body pre code{color:inherit}
+/* Interactive documentation cards use the same serif title / moving borders as the reference. */
+body.motion-edition #docs-app{
+ --docs-ink:var(--vz-ref-ink);--docs-muted:var(--vz-ref-muted);
+ --docs-green:var(--vz-ref-accent);--docs-line:var(--vz-ref-line);
+ --docs-soft:var(--vz-ref-card);
+ font-family:var(--vz-ref-sans);color:var(--vz-ref-ink);
+}
+body.motion-edition #docs-app .docs-hero{
+ background:radial-gradient(ellipse at 86% 25%,rgba(226,72,43,.08),transparent 48%),var(--vz-ref-bg);
+ border-color:var(--vz-ref-line);border-radius:26px;
+}
+body.motion-edition #docs-app .docs-hero :is(h1,h2,h3),
+body.motion-edition #docs-app .docs-item :is(h3,h4){
+ font-family:var(--vz-ref-serif);font-weight:300;
+}
+body.motion-edition #docs-app .docs-item{
+ border-color:var(--vz-ref-line);background:var(--vz-ref-card);border-radius:20px;
+ transition:transform .5s cubic-bezier(.16,1,.3,1),background .4s,border-color .4s;
+}
+body.motion-edition #docs-app .docs-item:hover{background:#f6d9cd;border-color:var(--vz-ref-accent);transform:translateY(-5px)}
+body.motion-edition #docs-app :is(.docs-category-row button.active,.docs-category-row button:hover){
+ background:var(--vz-ref-ink);border-color:var(--vz-ref-ink);color:var(--vz-ref-bg);
+}
+body.motion-edition #docs-app :is(.docs-eyebrow,.docs-read){color:var(--vz-ref-accent)}
+/* Dedicated WhatsApp-style Help/Support chat retains live request and keyboard interactions. */
+body.motion-edition .vz-chat{
+ --vz-ink:#15120e;--vz-blue:#e2482b;--vz-cyan:#c8875c;
+ --vz-muted:#766959;--vz-line:rgba(21,18,14,.16);
+ background:#fffbf5;color:var(--vz-ref-ink);
+ border:1px solid var(--vz-ref-line);border-radius:24px;
+ font-family:var(--vz-ref-sans);
+ box-shadow:0 28px 75px -39px rgba(21,18,14,.23);
+}
+body.motion-edition .vz-chat-side{
+ background:var(--vz-ref-bg);border-color:var(--vz-ref-line);
+}
+body.motion-edition .vz-chat-header{background:var(--vz-ref-bg);border-color:var(--vz-ref-line)}
+body.motion-edition .vz-chat-main{background:#fffaf4}
+body.motion-edition .vz-chat-header-name b{
+ font:300 clamp(1.4rem,2.4vw,2rem)/1.1 var(--vz-ref-serif);
+ color:var(--vz-ref-ink);
+}
+body.motion-edition .vz-chat-side nav a.is-active{
+ background:var(--vz-ref-card);color:var(--vz-ref-ink);
+ border-color:var(--vz-ref-accent);
+}
+body.motion-edition .vz-chat-side-info{
+ background:var(--vz-ref-card);border:1px solid var(--vz-ref-line);
+ border-radius:17px;
+}
+body.motion-edition .vz-chat :is(.vz-chat-side-info b,.vz-chat-side-bottom>a){color:var(--vz-ref-accent)}
+body.motion-edition .vz-chat :is(.vz-chat-side,.vz-chat-main){min-width:0}
+@media(max-width:820px){
+ body.motion-edition .vz-store .vz-store-hero{grid-template-columns:1fr;min-height:auto}
+ body.motion-edition .seo-doc-reader{width:100%;padding-inline:18px}
+}
