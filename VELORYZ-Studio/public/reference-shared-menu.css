@@ -118,3 +118,37 @@ body.motion-edition:has(.v4-root) .vz-shared-brand,
  .vz-shared-menu,.vz-shared-menu a,.vz-shared-curtain,.vz-shared-guide-card{transition:none}
  .vz-shared-guide-card{opacity:1;transform:none}
 }
+
+/* Desktop-only quick project shortcut on functional pages; original motion remains functional.
+   Hide on small widths instead of covering the mobile native header controls. */
+.vz-shared-quick-create {
+ position:fixed;
+ top:calc(15px + env(safe-area-inset-top,0px));
+ right:calc(clamp(18px,4vw,60px) + 91px);
+ z-index:111;
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:40px;
+ padding:9px 16px;
+ border-radius:99px;
+ border:1px solid #2d272a;
+ background:#2d272a;
+ color:#f7f0e4;
+ text-decoration:none;
+ font:600 .72rem/1 'Inter Tight',system-ui,sans-serif;
+ letter-spacing:.04em;
+ box-shadow:0 8px 24px rgba(44,30,38,.13);
+ -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+ transition:background .3s,transform .3s,box-shadow .3s;
+}
+.vz-shared-quick-create:hover{background:#6d4c58;transform:translateY(-3px);box-shadow:0 14px 30px rgba(44,30,38,.19)}
+.vz-shared-quick-create:focus-visible{outline:3px solid #c66e8a;outline-offset:3px}
+.vz-shared-chrome.is-open .vz-shared-quick-create{opacity:0;visibility:hidden;pointer-events:none}
+.vz-shared-menu a[href="/report-bug/"]{color:#e6b5a9;font-style:italic}
+@media(min-width:1151px){
+ body.motion-edition:not(:has(.v4-root)) #header.site-header .header-end{
+  padding-right:clamp(235px,22vw,340px)!important;
+ }
+}
+@media(max-width:1150px){
+ .vz-shared-quick-create{display:none}
+}
