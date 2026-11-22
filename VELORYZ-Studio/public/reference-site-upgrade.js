@@ -99,6 +99,24 @@ function documentLinks(){
   if(!a.getAttribute('href')?.startsWith('/'))a.href='/docs/';
  });
 }
+let crossing=false;
+function curtainNavigate(destination){
+ if(crossing)return;
+ crossing=true;
+ const backdrop=$('#curt');
+ if(backdrop&&!reduce){backdrop.className='up';setTimeout(()=>location.assign(destination),560);}
+ else location.assign(destination);
+}
+function crossPageCurtain(){
+ document.addEventListener('click',ev=>{
+  if(ev.defaultPrevented||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
+  const a=ev.target.closest('a[href]');if(!a||a.target==='_blank'||a.hasAttribute('download'))return;
+  if(a.href.startsWith('mailto:')||a.href.startsWith('tel:'))return;
+  let url;try{url=new URL(a.href,location.href)}catch{return}
+  if(url.origin!==location.origin||url.pathname===location.pathname&&url.search===location.search)return;
+  ev.preventDefault();curtainNavigate(url.href);
+ },true);
+}
 function directCreator(){
  // All links that say Start/Create/Make your project go to real /create/ and preserve the existing
  // validated submission, official reference number and private portal onboarding workflow.
@@ -106,7 +124,7 @@ function directCreator(){
   const a=ev.target.closest('a[href="#create"],a[href="#client"]');
   if(!a||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;
   ev.preventDefault();
-  location.assign(a.getAttribute('href')==='#client'?'/client/':'/create/');
+  curtainNavigate(a.getAttribute('href')==='#client'?'/client/':'/create/');
  },true);
 }
 function hydrateContact(){
@@ -127,5 +145,5 @@ function hydrateContact(){
   }
  });
 }
-buildGallery();menuFocus();directCreator();documentLinks();hydrateContact();
+buildGallery();menuFocus();directCreator();crossPageCurtain();documentLinks();hydrateContact();
 })();
