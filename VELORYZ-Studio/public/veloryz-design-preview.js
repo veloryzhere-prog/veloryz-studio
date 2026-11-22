@@ -22,7 +22,7 @@ function makeScreenshot(){
  }
  const pic=document.createElement('img');pic.className='vz-studio-preview-image';pic.src=image;
  pic.alt=design.name+' — published project preview';pic.decoding='async';pic.referrerPolicy='no-referrer';
- pic.addEventListener('error',()=>showUnavailable(),{once:true});
+ pic.addEventListener('error',()=>{if(!pic.dataset.fallbackTried&&design.fallbackImage&&pic.src!==design.fallbackImage){pic.dataset.fallbackTried='1';pic.src=design.fallbackImage;return}showUnavailable()});
  frameRoot.replaceChildren(pic);
  setStatus('Gallery view');
 }
