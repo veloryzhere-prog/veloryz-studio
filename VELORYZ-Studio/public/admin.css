@@ -30,3 +30,27 @@
 .docs-admin-note strong{font-size:12px;color:#527455}
 .docs-admin-note p{margin-top:6px;font-size:11px;line-height:1.75;color:#7b8d7d}
 @media(max-width:860px){.docs-admin-list{grid-template-columns:1fr}}
+
+/* Security release · refined Studio Control legibility, affordance, and motion safety. */
+.admin-layout{background:radial-gradient(circle at 86% 0%,#eff3e9 0,transparent 38%),var(--bg)}
+.sidebar{background:linear-gradient(160deg,#2d3b25 0%,#202c1c 100%)}
+.admin-topbar{background:rgba(255,255,255,.93);border-bottom-color:#dbe4d3}
+.admin-panel,.form-card,.metric,.media-card,.logo-card,.offer-card{border-radius:12px;box-shadow:0 6px 22px rgba(32,48,26,.035);transition:border-color .23s ease,box-shadow .23s ease,transform .23s ease}
+.admin-panel:hover,.metric:hover,.media-card:hover,.logo-card:hover{border-color:#cad9be;box-shadow:0 10px 30px rgba(32,48,26,.07)}
+.admin-nav a{font-size:12px;border-radius:9px;min-height:42px}
+.sidebar-label,.admin-eyebrow{font-size:10px}
+.breadcrumbs,.metric-label,.panel-header p,.admin-field small{font-size:11px}
+.metric small,.project-table th{font-size:10px}
+.admin-field>label{font-size:12px}
+.admin-button{font-size:11px;border-radius:8px;min-height:40px}
+.admin-field input,.admin-field select,.admin-field textarea{border-radius:8px;font-size:12px;background:#fff}
+.upload-zone{border-radius:12px;border-width:2px;transition:background .2s ease,border-color .2s ease}
+.upload-zone:focus-within{background:#edf5e4;border-color:#789c60}
+.admin-content a:focus-visible,.admin-content button:focus-visible,.sidebar a:focus-visible,
+.admin-content input:focus-visible,.admin-content textarea:focus-visible,.admin-content select:focus-visible{
+outline:3px solid #5a7f3c;outline-offset:3px
+}
+@media(max-width:650px){.admin-nav a{font-size:12px}.admin-button{min-height:38px}.metric-label,.panel-header p{font-size:10px}}
+@media(prefers-reduced-motion:reduce){
+*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
