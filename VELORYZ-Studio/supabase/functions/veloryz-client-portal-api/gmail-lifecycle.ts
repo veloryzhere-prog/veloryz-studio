@@ -203,7 +203,7 @@ async function createPdf(project:ProjectEmail,items:DocumentMilestone[]){
  brief.slice(0,maxLines).forEach((line,i)=>{if(line)fitted(line,M,537-i*briefLine,width,briefFont,false,C.ink)});
  if(brief.length>maxLines)fitted("CONTINUED IN ORIGINAL BRIEF ATTACHMENT + ACCEPTANCE EMAIL",M,292,width,7.1,true,C.accent);
  else fitted("ORIGINAL SUBMISSION / STORED WITH YOUR ORDER",M,287,width,7.05,true,C.muted);
- const roadmap=items.filter(x=>x.type!=="file").slice(0,6);
+ const roadmap=items.slice(0,6);
  let y=537;
  roadmap.forEach((item,i)=>{
   fitted(String(i+1).padStart(2,"0"),376,y,24,9.2,true,C.accent);
