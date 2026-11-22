@@ -35,6 +35,8 @@ assert.match(page,/if\(path==='\/reviews\.html'/);
 assert.match(page,/htmlDocumentPath/);
 assert.match(page,/reviews\.html/,'Review page must appear in XML sitemap');
 assert.match(page,/roadmap\.html/,'Public project roadmap should be discoverable');
+assert.match(page,/\.well-known\/security\.txt/,'Responsible disclosure endpoint must exist');
+assert.match(file('lib/response-security.ts'),/Strict-Transport-Security/,'HTTPS pages should announce HSTS');
 assert.match(file('lib/docs-server-html.ts'),/renderHtmlDocument/,'Initial HTML must contain actual handbook content');
 assert.match(docs,/docHtmlPath/);
 assert.match(hub,/docHtmlPath/);
