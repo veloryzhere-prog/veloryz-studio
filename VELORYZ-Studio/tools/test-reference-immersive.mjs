@@ -31,7 +31,7 @@ assert(build.includes("veloryz-logo.glb")&&build.includes("motion-3d.js"),'Prebu
 for(const asset of assets){
  const f='public/assets/ai-avatars/'+asset+'.webp';
  assert(fs.statSync(new URL('../'+f,import.meta.url)).size>10000,'Real official avatar missing: '+f);
- assert(ai.includes("id:'"+asset+"'")&&ai.includes("'"+asset+".webp'"),'Registered AI portrait must match '+asset);
+ assert(ai.includes("id:'"+asset+"'")&&ai.includes("ai-avatars/"+asset+".webp"),'Registered AI portrait must match '+asset);
  assert(studio.includes("'"+asset+"'")||studio.includes("'"+asset+".webp'"),'Studio chooser must resolve the correct avatar '+asset);
 }
 assert(ai.includes('headerPortrait')&&ai.includes("portrait.src=a.avatar")&&ai.includes('img.src=agent.avatar'),'Portraits must appear for current persona, selector tabs and launcher');
