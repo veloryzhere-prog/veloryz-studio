@@ -31,7 +31,7 @@
   clearTimeout(runTimer);clearTimeout(exitTimer);clearTimeout(safetyTimer);
   runTimer=exitTimer=safetyTimer=0;
  }
- function removeClip(){if(clip){clip.pause();clip.removeAttribute('src');clip.remove();clip=null;}overlay?.classList.remove('vz-intro-clip-ready');}
+ function removeClip(){if(clip){clip.pause();clip.removeAttribute('src');clip.remove();clip=null;}overlay?.classList?.remove('vz-intro-clip-ready');}
  function tryHighFpsFilm(){
   // CSS animation is a fully working offline fallback. MP4 enables a true native 60fps film.
   if(overlay?.dataset.concept!=='prism'||typeof document.createElement!=='function')return;
