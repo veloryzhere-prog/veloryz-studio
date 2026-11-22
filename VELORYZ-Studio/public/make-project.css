@@ -1,4 +1,5 @@
 a.make-project-link {
+  display:none!important; /* Remove floating Make your project CTA on every page. */
   position: fixed;
   z-index: 34;
   left: max(14px, env(safe-area-inset-left));
