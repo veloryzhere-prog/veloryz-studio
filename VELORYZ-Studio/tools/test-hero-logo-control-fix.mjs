@@ -20,7 +20,7 @@ for(const action of ['gentle','spin','pause','continue','left','right','front','
  assert(model.includes("action==='"+action+"'"),'3D action not connected: '+action);
 }
 assert(html.includes('data-logo-state')&&html.includes('aria-live="polite"'),'Expose rotation state visibly and accessibly');
-assert(!html.includes('rotateY(\'+(t*18'),'Canvas must not simulate rotation in 2D');
+assert(!/bigV\\.style\\.transform=[^\\n]*rotateY/.test(html),'Canvas must not simulate rotation in 2D');
 assert(model.includes('GLTFLoader')&&model.includes("'/assets/brand/veloryz-logo.glb'"),'Use real GLB geometry');
 assert(model.includes('native.position.copy(centre).multiplyScalar(-scale)'),'GLB centre must be rescaled in correct order');
 assert(model.includes('renderer.toneMapping=THREE.ACESFilmicToneMapping'),'Correct physically plausible material lighting');
