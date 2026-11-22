@@ -31,7 +31,7 @@ export async function rateLimit(env,key,limit,seconds){
  if(Math.random()<.02)await env.DB.prepare('DELETE FROM studio_limits WHERE expires_at<?').bind(Math.floor(Date.now()/1000)).run();
 }
 export async function passwordSession(request,env,user){
- if(!env.ADMIN_PASSWORD_HASH)return true;
+ if(!env.ADMIN_PASSWORD_HASH||!env.ADMIN_SESSION_SECRET)return false;
  const token=request.headers.get('cookie')?.match(/(?:^|;\s*)vz_admin=([^;]+)/)?.[1]||'';
  const [expires,signature]=token.split('.');if(!/^\d{13}$/.test(expires)||Number(expires)<Date.now()||Number(expires)>Date.now()+8*3600000||!signature||!env.ADMIN_SESSION_SECRET)return false;
  return equal(signature,await sign(user.id+':'+expires+':'+env.ADMIN_PASSWORD_HASH,env.ADMIN_SESSION_SECRET));
@@ -41,6 +41,7 @@ export async function unlockAdmin(request,env,user){
  await rateLimit(env,'unlock:'+user.id,5,900);
  const data=await boundedBody(request,1000),password=String(data.password??'');if(password.length>128)fail('The password is incorrect.',401);
  const [iterations,salt,expected]=env.ADMIN_PASSWORD_HASH.split(':');
+ if(!/^\d{5,6}$/.test(iterations)||Number(iterations)<100000||Number(iterations)>600000||!/^([0-9a-f]{2}){16,64}$/i.test(salt)||!/^[0-9a-f]{64}$/i.test(expected))fail('Administrator password verification is misconfigured.',503);
  const actual=await passwordHash(password,salt,Number(iterations));if(!equal(actual,expected))fail('The password is incorrect.',401);
  const expires=String(Date.now()+8*3600000),token=expires+'.'+await sign(user.id+':'+expires+':'+env.ADMIN_PASSWORD_HASH,env.ADMIN_SESSION_SECRET);
  return reply({ok:true},200,{'Set-Cookie':`vz_admin=${token}; Path=/; Max-Age=28800; HttpOnly; Secure; SameSite=Strict`});
