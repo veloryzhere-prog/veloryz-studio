@@ -48,6 +48,8 @@ jobs:
         run: node tools/test-project-shortcuts.mjs
       - name: Verify grounded site knowledge across all nine AI roles and real logo film fallback
         run: node tools/test-public-ai-knowledge.mjs
+      - name: Validate kinetic headline typography and no extra scroll loops
+        run: node tools/test-kinetic-type-2026.mjs
       - name: Verify responsive visual system and animation performance
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
