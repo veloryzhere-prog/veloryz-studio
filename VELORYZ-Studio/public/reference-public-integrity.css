@@ -1,0 +1,110 @@
+/* Only restyle the *real* public SPA routes.
+   All original controls, interactions, 3D renderer, FAQs, help and policy components remain intact.
+   Documentation and private Client Portal are explicitly excluded. */
+body.vz-ref-public-route{
+ --paper:#f7f0e4;--white:#fffbf5;--ink:#15120e;--muted:#746b60;--line:rgba(21,18,14,.16);
+ --soft:#efe4d0;--accent:#e2482b;--pink:#e2482b;--blue:#c47d63;
+ background:#f7f0e4!important;color:#15120e!important;font-family:'Inter Tight',system-ui,sans-serif;
+}
+body.vz-ref-public-route #header.site-header{
+ display:flex!important;visibility:visible!important;
+ background:color-mix(in srgb,#f7f0e4 84%,transparent)!important;
+ border-color:rgba(21,18,14,.15)!important;
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+ box-shadow:0 7px 35px rgba(21,18,14,.055);
+ color:#15120e!important;overflow:visible;
+}
+body.vz-ref-public-route #header.site-header .brand--official{
+ max-width:clamp(132px,16vw,235px);overflow:visible;
+ display:inline-flex;align-items:center;justify-content:flex-start;
+}
+body.vz-ref-public-route #header.site-header .brand-official-wordmark{
+ display:block!important;width:100%;max-width:100%;height:auto;max-height:60px;object-fit:contain;object-position:left center;
+}
+body.vz-ref-public-route #header.site-header .header-motion{
+ border:1px solid rgba(21,18,14,.2);background:transparent;color:#15120e;border-radius:50%;
+ display:grid;place-items:center;min-width:39px;min-height:39px;
+}
+body.vz-ref-public-route #header.site-header .header-motion:hover{
+ background:#e2482b;color:#fff;border-color:#e2482b;
+}
+body.vz-ref-public-route #header.site-header .button.small{
+ background:#15120e!important;color:#f7f0e4!important;border-radius:99px;border-color:#15120e;
+ max-width:170px;white-space:nowrap;
+}
+body.vz-ref-public-route #header.site-header .button.small:hover{
+ background:#e2482b!important;border-color:#e2482b;
+}
+body.vz-ref-public-route .page-intro,
+body.vz-ref-public-route .platform-intro,
+body.vz-ref-public-route #main .hero{
+ background:radial-gradient(ellipse 45% 65% at 80% 21%,rgba(226,72,43,.1),transparent 76%),
+ radial-gradient(ellipse 20% 50% at 12% 70%,rgba(229,175,103,.07),transparent 87%),
+ #f7f0e4!important;
+ overflow:clip;isolation:isolate;
+}
+body.vz-ref-public-route #main :is(.page-intro h1,.platform-intro h1,.hero h1,.section-head h2,.platform-title-line h1){
+ font:300 clamp(2.9rem,7.4vw,7.8rem)/1.06 'Fraunces',Georgia,serif!important;
+ color:#15120e;letter-spacing:-.052em;max-width:100%;overflow-wrap:break-word;text-wrap:balance;
+}
+body.vz-ref-public-route #main :is(.page-intro h1 em,.platform-intro h1 em,.section-head h2 em,.split-intro h2 em){
+ color:#e2482b!important;font-style:italic;font-weight:300;
+}
+body.vz-ref-public-route #main :is(.page-intro p,.platform-intro p,.section-head p,.hero-desc){
+ color:#6f6658;line-height:1.7;overflow-wrap:anywhere;
+}
+body.vz-ref-public-route #main :is(.button,.primary-button,.text-link){
+ font-family:'Inter Tight',system-ui,sans-serif;letter-spacing:0;
+ transition:background .4s,color .4s,border-color .4s,transform .55s cubic-bezier(.16,1,.3,1);
+}
+body.vz-ref-public-route #main a.button,
+body.vz-ref-public-route #main button.button{
+ border-radius:99px;border-color:#15120e;
+}
+body.vz-ref-public-route #main a.button:hover,
+body.vz-ref-public-route #main button.button:hover{
+ border-color:#e2482b;background:#e2482b;color:#fff;transform:translateY(-3px);
+}
+body.vz-ref-public-route #main :is(.design-card,.feature-card,.process-card,.project-card,.service-item,.value,.price-card,.delivery-card,.people-card,.ui-study-card,.journey-stage){
+ border-radius:clamp(17px,2.3vw,28px);max-width:100%;min-width:0;
+ overflow-wrap:anywhere;isolation:isolate;
+ transition:transform .65s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .5s;
+}
+body.vz-ref-public-route #main :is(.design-card,.feature-card,.process-card,.project-card,.service-item,.price-card):hover{
+ transform:translateY(-4px);border-color:rgba(226,72,43,.4);box-shadow:0 22px 50px -32px rgba(21,18,14,.19);
+}
+body.vz-ref-public-route #main :is(.form-panel,.contact-layout,.contact-channel,.pricing-grid,.service-grid,.design-grid,.work-grid){min-width:0;max-width:100%}
+body.vz-ref-public-route #main :is(input,textarea,select){max-width:100%;min-width:0}
+body.vz-ref-public-route #main :is(.cta-section,.studio-band,.footer-help){isolation:isolate}
+body.vz-ref-public-route #footer{color:#f7f0e4;background:#15120e}
+body.vz-ref-public-route #footer .footer-dir-group a:hover,
+body.vz-ref-public-route #footer button:hover{color:#e2482b}
+body.vz-ref-public-route #expert-launcher{
+ right:clamp(15px,2vw,28px);bottom:88px!important;z-index:65;
+ border-radius:99px;background:#faf9f3f2;border:1px solid #d9d2c5;
+}
+body.vz-ref-public-route .whatsapp-float{right:clamp(15px,2vw,28px);bottom:18px;z-index:65}
+.vz-ref-cross-cursor{
+ position:fixed;top:0;left:0;z-index:130;pointer-events:none;
+ width:14px;height:14px;border-radius:50%;background:#fff;
+ mix-blend-mode:difference;opacity:0;
+ transition:width .25s,height .25s,opacity .2s;
+ will-change:transform;
+}
+body.vz-shared-menu-open .vz-ref-cross-cursor{opacity:0!important}
+@media(hover:none),(pointer:coarse){.vz-ref-cross-cursor{display:none}}
+@media(max-width:840px){
+ body.vz-ref-public-route #main :is(.page-intro h1,.platform-intro h1,.section-head h2){font-size:clamp(2.4rem,9vw,5rem)!important}
+ body.vz-ref-public-route #header.site-header .button.small{display:none}
+}
+@media(max-width:580px){
+ body.vz-ref-public-route #header.site-header .brand--official{max-width:38vw}
+ body.vz-ref-public-route #header.site-header .brand-official-wordmark{max-height:48px}
+ body.vz-ref-public-route #header.site-header .header-end{padding-right:60px!important}
+ body.vz-ref-public-route #main .page-intro{padding-top:125px}
+ body.vz-ref-public-route #expert-launcher{right:12px;bottom:69px!important}
+ body.vz-ref-public-route .whatsapp-float{right:12px;bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion=full]) .vz-ref-cross-cursor{display:none}
+}
