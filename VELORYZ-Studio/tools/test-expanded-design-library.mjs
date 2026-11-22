@@ -67,7 +67,7 @@ has(gallery,'STUDIO SERVICE FROM','Gallery shows real service starting estimates
 has(gallery,'STUDIO SERVICE FROM','All cards show INR pricing');
 has(gallery,'price-asc','Price ascending sort');
 has(gallery,'price-desc','Price descending sort');
-has(gallery,"path(p)+'preview/'",'Every design has VELORYZ full preview link');
+has(gallery,"path(p)+'preview/",'Every design has VELORYZ full preview link');
 has(gallery,'IntersectionObserver','Genuine motion-rich scrolling gallery');
 has(galleryCss,'prefers-reduced-motion','Respect reduced-motion');
 has(galleryCss,'.vz-source-price','Studio pricing visual design');
@@ -93,7 +93,7 @@ has(preview,"msg.id!==id",'Reject foreign preview identifiers');
 has(preview,"type:'veloryz:preview-command'",'Forward scroll to real iframe document');
 has(preview,"command('wheel',event.deltaY)",'Scrolling over viewer overlay scrolls actual site');
 has(preview,"requestFullscreen",'Full-screen controls');
-has(preview,"dlg?.showModal()",'Made with Studio modal');
+has(preview,"dlg?.showModal",'Made with Studio modal');
 has(preview,"updateProgress(percent)",'Full-page motion progress');
 has(bridge,"window.parent.postMessage",'Return real site position to parent');
 has(bridge,"event.source!==window.parent",'Motion bridge only accepts parent commands');
