@@ -25,21 +25,6 @@ async function dbBatch(statements){
  const p_statements=await Promise.all(statements.map(async entry=>({key:await sha(QUERIES[entry[0]]),params:entry.slice(1)})));
  const response=await fetch(BASE+"/rest/v1/rpc/veloryz_studio_query",{
   method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
-  body:JSON.stringify({p_statements}),signal:AbortSignal.timeout(22000)
- });
- if(!response.ok){console.error("Portal transaction contract failure",response.status);fail("The studio database could not process the project acceptance.",503)}
- return await response.json();
-}
-async function logDelivery(project,kind,recipient,result){
- try{const now=new Date().toISOString();await db("logEmail",crypto.randomUUID(),project.id,kind,recipient,"veloryz.here@gmail.com","gmail-smtp-465",result.status,result.provider_message_id||"",result.status==="sent"?"":String(result.message||"").slice(0,180),now,now)}
- catch{console.error("Could not record email delivery status");}
-}
-async function stableId(source){const h=await sha(source),b=Array.from({length:16},(_,i)=>h.slice(i*2,i*2+2));b[6]=(parseInt(b[6],16)&15|64).toString(16).padStart(2,"0");b[8]=(parseInt(b[8],16)&63|128).toString(16).padStart(2,"0");const s=b.join("");return [s.slice(0,8),s.slice(8,12),s.slice(12,16),s.slice(16,20),s.slice(20,32)].join("-")}
-async function dbBatch(statements){
- if(!BASE||!KEY)fail("Studio client backend is not configured.",503);
- const p_statements=await Promise.all(statements.map(async entry=>({key:await sha(QUERIES[entry[0]]),params:entry.slice(1)})));
- const response=await fetch(BASE+"/rest/v1/rpc/veloryz_studio_query",{
-  method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},
   body:JSON.stringify({p_statements}),signal:AbortSignal.timeout(24000)
  });
  if(!response.ok){console.error("Portal transaction failure",response.status);fail("Project acceptance failed. Please refresh and retry.",503)}
