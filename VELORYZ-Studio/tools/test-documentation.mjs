@@ -94,7 +94,7 @@ assert.ok(!header.includes('Useful Links'),'Header must not duplicate Docs with 
 const footer=app.slice(app.indexOf('function footer(){'),app.indexOf('function motionGlyph(){'));
 assert.ok(footer.includes("['https://veloryz.online/docs','Useful Links']"),'Useful Links should remain available in footer');
 assert.ok(footer.includes('footer-knowledge-index'),'Footer must have expandable complete article index');
-for(const link of ['/docs/studio/','/help/studio/','/sitemap/','/sitemap.xml','/docs/privacy/','/docs/copyright/'])assert.ok(footer.includes(link),'Footer directory link missing '+link);
+for(const link of ['/docs/studio/index.html','/help/studio/index.html','/sitemap/','/sitemap.xml','/docs/privacy.html','/docs/copyright.html'])assert.ok(footer.includes(link),'Footer directory link missing '+link);
 assert.ok(ui.includes('data-kb-map-zoom')&&ui.includes('data-kb-map-node')&&ui.includes('data-kb-map-filter'),'Site-map zoom and node interactions missing');
 assert.ok(ui.includes('data-kb-search')&&ui.includes('kb-command-input'),'Command search UI is missing');
 assert.ok(ui.includes('kb-reader-progress')&&ui.includes('kb-reader-rail-collapsed'),'Reading progress / collapsible sidebar missing');
