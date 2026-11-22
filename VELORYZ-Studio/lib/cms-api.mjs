@@ -175,6 +175,7 @@ const reviewsOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/velor
 async function forwardReviews(request){
  const url=new URL(request.url),path=url.pathname.replace(/\/+$/,'');
  const allowed=(path==='/api/reviews'&&['GET','POST'].includes(request.method))||
+ (path==='/api/reviews/assist'&&request.method==='POST')||
  (path==='/api/reviews/admin'&&request.method==='GET')||
  (path==='/api/reviews/admin/moderate'&&request.method==='POST');
  if(!allowed)return json({error:'Not found.'},404);
