@@ -27,7 +27,7 @@ for(const name of urls)assert.ok(security.includes('/'+name+'?v=20261123-route-r
 assert.ok(urls.every((s,i)=>i===0||security.indexOf(urls[i-1])<security.indexOf(s)),'CSS must load before additive motion JS, with UI polish last among styles');
 
 const designDetail=read('lib/design-detail-page.ts');
-for (const selector of ['body.v4-creator-page .v4-root .v4-welcome','body.v4-creator-page .v4-root .v4-primary','body.v4-creator-page .v4-root .v4-choice','body.v4-creator-page .v4-root .v4-template-card','body.vz-market-body:not(.vz-market-immersive) .vz-market-project-hero','body.vz-market-body:not(.vz-market-immersive) .vz-market-pricebox']) {
+for (const selector of ['body.v4-creator-page .v4-root .v4-welcome','body.v4-creator-page .v4-root .v4-primary','body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card','body.vz-market-body:not(.vz-market-immersive) .vz-market-project-hero','body.vz-market-body:not(.vz-market-immersive) .vz-market-pricebox']) {
  assert.ok(uiCss.includes(selector),'Real Create and Design DOM must have visible Silk UI: '+selector);
 }
 for (const selector of ['.v4-choice','.v4-feature-card','.v4-template-card','.v4-primary','.vz-market-related-card','.vz-market-btn']) {
