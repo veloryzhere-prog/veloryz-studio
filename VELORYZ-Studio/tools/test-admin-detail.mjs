@@ -27,6 +27,11 @@ assert.match(core,/preload="none" muted aria-label="Preview/,'Video assets need 
 assert.match(core,/event\.ctrlKey\|\|event\.metaKey/,'Admin console finder must support keyboard shortcuts.');
 assert.match(core,/saveDraft\(\)/,'Existing protected draft update remains.');
 assert.match(core,/async function publish\(\)/,'Existing protected publication remains.');
+assert.match(core,/function healthPage\(\)/,'Read-only System Diagnostics must have a real admin page.');
+assert.match(core,/async function runAdminDiagnostics\(\)/,'Diagnostics must call real deployed endpoints.');
+assert.match(core,/api\('\/api\/health'\)/,'Diagnostics must check the real backend health route.');
+assert.match(core,/\/assets\/frame-cut\/reveal\.mp4/,'Check the already-in-repository logo movie.');
+assert.match(core,/\/assets\/brand\/intro\/veloryz-cinematic-full\.mp4/,'Check optional custom motion asset.');
 assert.match(core,/api\('\/api\/admin\/media'/,'Real owner media API remains.');
 assert.match(core,/if\(action==='enquiry-save'\)/,'Private project-request actions remain.');
 assert.match(core,/if\(action==='confirm-action'\|\|action==='confirm-publish'\)/,'Existing confirmation dialogs remain.');
@@ -43,12 +48,12 @@ const sandbox={
 vm.runInNewContext(helper,sandbox,{timeout:2000});
 const detail=sandbox.window.VeloryzAdminDetail;
 assert.ok(detail&&detail.sidebar&&detail.openSearch&&detail.insights&&detail.operations&&detail.overview&&detail.mediaHeader);
-const routes=['overview','command','projects','enquiries','client-portal','catalogue','platform','payments','content','documentation','knowledge-ai','ai-mindset','offers','branding','media','history','settings'];
+const routes=['overview','command','projects','enquiries','client-portal','catalogue','platform','payments','content','documentation','knowledge-ai','ai-mindset','offers','branding' ,'media','history','health','settings'];
 const labels={
  overview:'Overview',command:'Command center',projects:'Projects & work',enquiries:'Project console',
  'client-portal':'Client management',catalogue:'Design catalogue',platform:'Platform pages',
  payments:'Payment requests',content:'Site content',documentation:'Documentation','knowledge-ai':'AI Management',
- 'ai-mindset':'AI Mindset',offers:'Broadcasts & ads',branding:'Brand & logos',media:'Media library',history:'Version history',settings:'Studio settings'
+ 'ai-mindset':'AI Mindset',offers:'Broadcasts & ads',branding:'Brand & logos',media:'Media library',history:'Version history',health:'System diagnostics',settings:'Studio settings'
 };
 const nav=routes.map(id=>[id,labels[id],'grid']);
 const workspace={state:structuredClone(defaults),dirty:false,hasDraft:false,publishedVersion:5};
@@ -79,4 +84,4 @@ assert.ok(shown&&shown[0]==='Go to a console');
 assert.ok(shown[2].includes('data-ad-destination="ai-mindset"'));
 assert.ok(shown[2].includes('data-ad-palette-search'));
 assert.ok(!shown[2].includes('api/admin/'),'Search list must expose only UI routes, not secret API paths.');
-console.log('PASS: all 17 consoles, dedicated five-persona AI Mindset, native project/media actions, command search, owner privacy, grounded metrics, mobile and reduced-motion styles.');
+console.log('PASS: all 18 consoles, dedicated five-persona AI Mindset, native project/media actions, command search, owner privacy, grounded metrics, mobile and reduced-motion styles.');
