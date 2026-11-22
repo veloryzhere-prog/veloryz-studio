@@ -33,7 +33,7 @@ console.log('PASS: device preference, explicit full override, persistence, pause
 for(const saved of ['paused','reduced','full']){
  for(const reload of [false,true]){
   const {root}=runtime({saved,guided:true,reload});
-  assert.equal(root['data-motion-gate'],saved==='full'?undefined:'boot');
+  assert.equal(root['data-motion-gate'],undefined,'The motion gate must not freeze the page');
  }
 }
-assert.equal(runtime({saved:'auto',systemReduced:true,guided:true,reload:true}).root['data-motion-gate'],'boot');
+assert.equal(runtime({saved:'auto',systemReduced:true,guided:true,reload:true}).root['data-motion-gate'],undefined);
