@@ -21,6 +21,11 @@ assert.match(core,/aiMindsetPage/,'AI Mindset must be routed by main admin rende
 assert.match(core,/site\.'\+id\+'Brief'/,'AI Mindset must edit existing published adviser fields, not inert controls.');
 assert.match(core,/window\.VeloryzAdminDetail\?\.operations/,'Command center must include real operating counters.');
 assert.match(core,/window\.VeloryzAdminDetail\?\.overview/,'Dashboard must include a source-backed publication checklist.');
+
+assert.match(core,/let enquiryItems=\[\],enquiryTotal=0,[^;]*enquiryLoaded=false/,'Admin must declare the singular enquiryLoaded state.');
+assert.match(core,/sidebar\(section,navigation,workspace,icon,E,\{enquiriesLoaded:enquiryLoaded,/,'Pass the existing singular state using the detailed sidebar API property name.');
+assert.doesNotMatch(core,/\{enquiriesLoaded,enquiryTotal,/,'Never pass undeclared enquiriesLoaded shorthand: this used to crash Studio Control.');
+
 assert.match(core,/window\.VeloryzAdminDetail\?\.mediaHeader/,'Media Library must show actual data and filters.');
 assert.match(core,/if\(action==='reload-media'\)/,'Refresh action must reload stored media.');
 assert.match(core,/preload="none" muted aria-label="Preview/,'Video assets need on-demand browser playback previews.');
