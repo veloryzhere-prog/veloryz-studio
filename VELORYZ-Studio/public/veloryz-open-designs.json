@@ -384,8 +384,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/ethanniser/NextFaster",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://github.com/user-attachments/assets/810bc4c7-2e01-422d-9c3d-45daf5fb13ce",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://next-faster.vercel.app"
     },
     {
       "id": "os-commerce-and-b2b-epic-ecommerce-next-starter",
@@ -403,7 +404,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Epic-Design-Labs/nextjs-ecommerce-starter",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://nextjs-ecommerce-starter-phi.vercel.app"
     },
     {
       "id": "os-commerce-and-b2b-saleor-storefront",
@@ -439,7 +441,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/Lucasdota/GrocerGo",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://grocergo.vercel.app"
     },
     {
       "id": "os-grocery-and-delivery-next-grocery",
@@ -510,8 +513,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/nextorders/food",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://github.com/nextorders/food/blob/main/.github/media/main-screen-desktop.jpg?raw=true",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://demo.nextorders.space"
     },
     {
       "id": "os-grocery-and-delivery-meal-mart",
@@ -528,8 +532,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/design-sparx/meal-mart",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://user-images.githubusercontent.com/26582923/224567129-9ac0ef33-71f3-43ba-b519-34227977d0d9.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://meal-mart.netlify.app/"
     },
     {
       "id": "os-grocery-and-delivery-hangry",
@@ -564,8 +569,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/windsuzu/react-food-ordering",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/windsuzu/react-food-ordering/main/images/web-screenshot/1.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://windsuzu.github.io/react-food-ordering"
     },
     {
       "id": "os-grocery-and-delivery-next-restaurant-app",
@@ -788,8 +794,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/refinedev/refine",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://refine.ams3.cdn.digitaloceanspaces.com/assets/refine-mui-simple-example-screenshot-rounded.webp",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-dashboards-and-saas-react-admin",
@@ -806,8 +812,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/marmelab/react-admin",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://marmelab.com/react-admin/img/react-admin-demo-still.png",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-dashboards-and-saas-tabler",
@@ -824,8 +830,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/tabler/tabler",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/tabler/tabler/dev/shared/static/tabler-preview@2x.png",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-dashboards-and-saas-coreui-free-react-admin",
@@ -860,8 +866,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/ColorlibHQ/AdminLTE",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/ColorlibHQ/AdminLTE/master/.github/assets/dashboard-light.webp",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-dashboards-and-saas-next-js-saas-starter",
@@ -929,11 +935,14 @@
       "caution": "Three, GSAP, Lenis; library licenses separate",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/MiddleSugar7000/lumen-saas-landing-page-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/MiddleSugar7000/lumen-saas-landing-page-template/main/.github/assets/hero.svg",
+      "previewImageKind": "upstream-preview-graphic",
+      "liveDemo": "https://middlesugar7000.github.io/lumen-saas-landing-page-template/",
+      "localSource": "/design-source-previews/os-dashboards-and-saas-lumen-cinematic-ai-saas/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-dashboards-and-saas-volt-arc-product-landing",
@@ -947,11 +956,14 @@
       "caution": "Animation first; performance gating",
       "sourceType": "repository",
       "rights": "candidate",
-      "importStatus": "catalogued",
-      "previewType": "veloryz-original-concept",
+      "importStatus": "real-upstream-html",
+      "previewType": "real-upstream-site",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/MiddleSugar7000/volt-arc-landing-page-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/MiddleSugar7000/volt-arc-landing-page-template/main/.github/assets/hero.svg",
+      "previewImageKind": "upstream-preview-graphic",
+      "liveDemo": "https://middlesugar7000.github.io/volt-arc-landing-page-template/",
+      "localSource": "/design-source-previews/os-dashboards-and-saas-volt-arc-product-landing/index.html",
+      "assetMode": "upstream-hosted-assets"
     },
     {
       "id": "os-dashboards-and-saas-motion-saas-landing",
@@ -968,8 +980,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/karthikmudunuri/saas-landing-page-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://github.com/user-attachments/assets/54c559b8-0dd1-4ef8-a3d0-06f5086224b0",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://saas-landing-page-template-eldoraui.vercel.app"
     },
     {
       "id": "os-dashboards-and-saas-shadcn-fintech",
@@ -1092,8 +1105,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/YusufCeng1z/svelte-gsap-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/YusufCeng1z/svelte-gsap-template/main/aura-preview.png",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://svelte-gsap-template.vercel.app/"
     },
     {
       "id": "os-portfolio-and-agencies-naresh-3d-portfolio",
@@ -1110,8 +1124,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/Naresh-Khatri/3d-portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://github.com/Naresh-Khatri/3d-portfolio/blob/main/public/assets/projects-screenshots/portfolio/landing.png?raw=true",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://nareshkhatri.dev"
     },
     {
       "id": "os-portfolio-and-agencies-trevsm-3d-bedroom-portfolio",
@@ -1147,7 +1162,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/5araang/Nextjs-cinematic-portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://www.sarang-space.site"
     },
     {
       "id": "os-portfolio-and-agencies-gsap-lenis-portfolio",
@@ -1165,7 +1181,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/aitezazdev/Portfolio",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://aitezaz.xyz"
     },
     {
       "id": "os-portfolio-and-agencies-motion-portfolio-starter",
@@ -1183,7 +1200,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/karthikmudunuri/portfolio-template",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://karthikeyavarmamudunuri.vercel.app/"
     },
     {
       "id": "os-portfolio-and-agencies-animated-portfolio-framer",
@@ -1201,7 +1219,8 @@
       "previewType": "veloryz-original-concept",
       "enabled": true,
       "previewImage": "https://opengraph.githubassets.com/1/ikramdeveloper/animated-portfolio-framer-motion",
-      "previewImageKind": "github-repository-cover"
+      "previewImageKind": "github-repository-cover",
+      "liveDemo": "https://framer-motion-portfolio-next.vercel.app/"
     },
     {
       "id": "os-portfolio-and-agencies-msrrana-animated-portfolio",
@@ -1258,8 +1277,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/timlrx/tailwind-nextjs-starter-blog",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/timlrx/tailwind-nextjs-starter-blog/main/public/static/images/twitter-card.png",
+      "previewImageKind": "upstream-preview-graphic",
+      "liveDemo": "https://tailwind-nextjs-starter-blog.vercel.app/"
     },
     {
       "id": "os-publishing-and-blogs-lonestone-astro",
@@ -1294,8 +1314,9 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/GetNextjsTemplates/eLearning-tailwind-nextjs-free",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://adminmart.github.io/template_api/images/website-template/E-learning-Free-NextJs-Landing-Page-Template-Tailwind-Headless-UI.jpg",
+      "previewImageKind": "upstream-screenshot",
+      "liveDemo": "https://e-learning-tailwind-nextjs-free.vercel.app/"
     },
     {
       "id": "os-education-and-lms-eduor",
@@ -1348,8 +1369,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/themesine/TourNest",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://cdn.dribbble.com/users/1914192/screenshots/4242909/tournest-travel-agency-responsive-html5-website-template-free-download-.jpg",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-travel-and-hotel-travel-agency-next",
@@ -1456,8 +1477,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/hamidkhans651/nextjs-real-estate-project",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/hamidkhans651/nextjs-real-estate-project/main/public/assets/screenshots/homepage.png",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-real-estate-real-estate",
@@ -1492,8 +1513,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/jkarelins/real-estate-site",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://github.com/jkarelins/real-estate-site/blob/master/images/ready-screens/manager-agent-roles.gif?raw=true",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-jobs-and-hiring-bordful",
@@ -1546,8 +1567,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/smartergiving/free-nonprofit-starter-website",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://raw.githubusercontent.com/smartergiving/free-nonprofit-starter-website/main/screenshots/screenshot.png",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-nonprofit-and-community-carbonplan-site",
@@ -1618,8 +1639,8 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://opengraph.githubassets.com/1/heyyakash/healthcare",
-      "previewImageKind": "github-repository-cover"
+      "previewImage": "https://user-images.githubusercontent.com/85030597/203619867-2762f161-42ad-47fe-8c23-6573cb009497.png",
+      "previewImageKind": "upstream-screenshot"
     },
     {
       "id": "os-healthcare-and-forms-nhs-design-system-resources",
