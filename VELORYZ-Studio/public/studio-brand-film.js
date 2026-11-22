@@ -14,7 +14,7 @@ const compact=typeof matchMedia==='function'?matchMedia('(max-width: 700px)'):nu
 let section=null,video=null,observer=null,visible=false,loaded=false,failed=false,complete=false;
 let frame=0,queued=false,manuallyPlayed=false,pendingManualPlay=false,sourceAttempt=0,fallTimer=0;
 const homepage=()=>location.pathname==='/'||location.pathname==='/index.html';
-const allowMotion=()=>!reduce?.matches&&!navigator.connection?.saveData&&!['paused','reduced'].includes(window.StudioMotion?.level)&&!document.hidden;
+const allowMotion=()=>(!reduce?.matches||window.StudioMotion?.level==='full')&&!navigator.connection?.saveData&&!['paused','reduced'].includes(window.StudioMotion?.level)&&!document.hidden;
 const markup=()=>[
 '<section class="vz-closing-film" id="vz-closing-film" aria-labelledby="vz-film-title">',
 '<div class="vz-film-heading"><div><span class="vz-film-eyebrow"><i aria-hidden="true"></i> VELORYZ / IDENTITY NO. 001</span><h2 id="vz-film-title">A little more<br><em>than a logo.</em></h2></div>',
@@ -162,6 +162,6 @@ const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(mount);};
 document.addEventListener('studio:route',schedule);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
 window.StudioMotion?.addEventListener('change',()=>{if(!allowMotion())pause();});
-reduce?.addEventListener?.('change',()=>{if(reduce.matches)pause();});
+reduce?.addEventListener?.('change',()=>{if(reduce.matches&&window.StudioMotion?.level!=='full')pause();});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
 })();
