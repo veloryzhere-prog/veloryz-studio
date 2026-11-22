@@ -5,7 +5,7 @@ const escapeHTML=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const E=escapeHTML;
 const icons={grid:'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',work:'M3 7h18v13H3zM8 7V4h8v3',content:'M6 3h9l4 4v14H6zM9 11h7M9 15h7M14 3v5h5',offer:'M20 13 11 22 2 13V3h10l8 8zM7 7h.01',brand:'m12 3 9 17H3zM8 16h8',media:'M3 4h18v16H3zM3 16l6-6 4 4 3-3 5 5M15 8h.01',history:'M3 11a9 9 0 1 1 2 7M3 4v7h7M12 7v5l4 2',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2',arrow:'M6 18 18 6M6 6h12v12',plus:'M12 4v16M4 12h16',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',save:'M4 3h13l4 4v14H3V3zM7 3v6h10V3M7 21v-8h10v8',publish:'M12 16V3M7 8l5-5 5 5M4 15v6h16v-6',edit:'m15 4 5 5M4 20l5-1L21 7l-5-5L4 14z',trash:'M3 6h18M8 6V3h8v3M5 6l1 15h12l1-15M10 10v7M14 10v7',search:'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM15 15l6 6',upload:'M12 16V3M7 8l5-5 5 5M3 15v6h18v-6',link:'M9 15l6-6M8 16l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0M16 8l1-1a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0',logout:'M9 4H3v16h6M9 12h13M17 7l5 5-5 5',lock:'M5 10h14v11H5zM8 10V6a4 4 0 0 1 8 0v4M12 14v3',check:'m4 12 5 5L20 6',menu:'M4 6h16M4 12h16M4 18h16',info:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 11v6M12 7h.01',film:'M3 4h18v16H3zM7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4',download:'M12 3v13M7 11l5 5 5-5M3 16v5h18v-5'};
 function icon(name){return `<svg class="a-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name]||icons.grid}"></path></svg>`;}
-const navigation=[['overview','Overview','grid'],['command','Command center','settings'],['projects','Projects & work','work'],['enquiries','Project console','content'],['client-portal','Client management','work'],['catalogue','Design catalogue','work'],['platform','Platform pages','content'],['payments','Payment requests','content'],['content','Site content','content'],['documentation','Documentation','content'],['knowledge-ai','AI Management','settings'],['ai-mindset','AI Mindset','settings'],['offers','Broadcasts & ads','offer'],['branding','Brand & logos','brand'],['media','Media library','media'],['history','Version history','history'],['settings','Studio settings','settings']];
+const navigation=[['overview','Overview','grid'],['command','Command center','settings'],['projects','Projects & work','work'],['enquiries','Project console','content'],['client-portal','Client management','work'],['catalogue','Design catalogue','work'],['platform','Platform pages','content'],['payments','Payment requests','content'],['content','Site content','content'],['documentation','Documentation','content'],['knowledge-ai','AI Management','settings'],['ai-mindset','AI Mindset','settings'],['offers','Broadcasts & ads','offer'],['branding','Brand & logos','brand'],['media','Media library','media'],['history','Version history','history'],['health','System diagnostics','info'],['settings','Studio settings','settings']];
 let workspace=null,section=location.hash.slice(2)||'command',contentTab='homepage',campaignFilter='all',editor=null,editorKind='',editorDirty=false,mediaItems=[],historyItems=[],mediaLoaded=false,historyLoaded=false,busy=false,modalFocus=null;
 const modalStack=[];
 const preview=!!window.ADMIN_VISUAL_PREVIEW;
@@ -39,7 +39,7 @@ function render(){
  if(section==='media'&&!mediaLoaded)loadMedia();if(section==='history'&&!historyLoaded)loadHistory();
 }
 function heading(label,title,description,action=''){return `<div class="admin-page-heading"><div><div class="admin-eyebrow">${label}</div><h1>${title}</h1><p>${description}</p></div>${action||`<span class="heading-date">${new Date().toLocaleDateString('en-IN',{weekday:'long'})}<br>${compactDate(Date.now())}</span>`}</div>`;}
-function pageContent(){return ({overview:overviewPage,command:commandPage,catalogue:catalogueAdmin,platform:platformPagesAdmin,payments:paymentsAdmin,enquiries:enquiriesPage,'client-portal':clientPortalAdmin,projects:projectsPage,content:contentPage,documentation:documentationPage,'knowledge-ai':knowledgeAiAdmin,'ai-mindset':aiMindsetPage,offers:offersPage,branding:brandingPage,media:mediaPage,history:historyPage,settings:settingsPage}[section])();}
+function pageContent(){return ({overview:overviewPage,command:commandPage,catalogue:catalogueAdmin,platform:platformPagesAdmin,payments:paymentsAdmin,enquiries:enquiriesPage,'client-portal':clientPortalAdmin,projects:projectsPage,content:contentPage,documentation:documentationPage,'knowledge-ai':knowledgeAiAdmin,'ai-mindset':aiMindsetPage,offers:offersPage,branding:brandingPage,media:mediaPage,history:historyPage,health:healthPage,settings:settingsPage}[section])();}
 function projectThumb(p){const cover=p.cover||(["velori","identity","aurel","orbit","forme"].includes(p.id)?`/assets/renders/${p.id}-3d-sm.webp`:" ").trim();return `<div class="work-thumb">${cover?`<img src="${E(cover)}" alt="">`:E(p.name.slice(0,1))}</div>`;}
 function commandPage(){
  const site=workspace.state.site;
@@ -101,6 +101,41 @@ function aiMindsetPage(){
   '<a href="#/knowledge-ai"><strong>Help & Support agents ↗</strong><span>Configure four independent assistants and test live provider responses.</span></a>'+
   '<a href="#/platform"><strong>Provider & model setup ↗</strong><span>Review the protected studio-wide AI connection and its response health.</span></a>'+
   '<a href="#/documentation"><strong>Public knowledge & guides ↗</strong><span>Keep source material accurate for documentation-grounded answers.</span></a></nav>';
+}
+
+function healthPage(){
+ return heading('Operations & reliability','System diagnostics','Run real owner-authorized checks for the database, media storage and AI setup, plus the current site’s video files. No checks are run until you request them.')+
+ '<section class="ad-diagnostics-console" aria-label="Service and media checks"><div class="ad-diagnostics-heading"><div><span class="ad-kicker">REAL RESPONSES / NO SIMULATED STATUSES</span><h2>Know what actually works.</h2><p>Inspect this deployed site rather than assuming a GitHub merge has appeared in production. These checks are read-only and will never send an AI prompt, upload a file or modify a client record.</p></div><button type="button" class="admin-button" data-action="run-health">Run all checks ↻</button></div>'+
+ '<div id="ad-diagnostics-results" class="ad-diagnostics-results" role="status" aria-live="polite">'+
+ ['Website backend','Media storage access','Studio AI configuration','Original logo video','Optional cinematic video'].map(name=>'<article class="ad-diagnostic-card"><span class="ad-diagnostic-state">NOT CHECKED</span><strong>'+E(name)+'</strong><p>Click Run all checks to verify the current site response.</p></article>').join('')+'</div>'+
+ '<p class="ad-media-info">A provider marked “configured” may still fail a live model request; open Provider connections and use its actual connection test. An optional film marked “missing” means the custom MP4 has not been delivered to this host.</p></section>'+
+ '<div class="ad-ai-mind-footer"><a href="#/media"><strong>Inspect the Media Library ↗</strong><span>Validate uploaded images, MP4s and reusable URLs.</span></a><a href="#/platform"><strong>Test live AI replies ↗</strong><span>Use the explicit provider test under protected Platform settings.</span></a><a href="#/history"><strong>Review site revisions ↗</strong><span>Content publishing and code hosting are separate workflows.</span></a></div>';
+}
+async function runAdminDiagnostics(){
+ const box=$('#ad-diagnostics-results');if(!box)return;
+ const action=$('[data-action="run-health"]');
+ if(action){action.disabled=true;action.textContent='Checking current site…';}
+ box.innerHTML='<p class="ad-diagnostics-pending">Requesting read-only health information from this site…</p>';
+ const checkMedia=async path=>{
+  const response=await fetch(path,{method:'HEAD',credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(9000)});
+  const type=String(response.headers.get('content-type')||'').toLowerCase();
+  if(!response.ok||!type.startsWith('video/'))throw Error('Not available as a playable video on this host (HTTP '+response.status+').');
+  return {status:'ok',message:'Video endpoint returns '+type+' · HTTP '+response.status+'. Browser playback should still be checked.'};
+ };
+ const checks=[
+  {name:'Website backend',run:async()=>{const data=await api('/api/health');if(!data?.ok)throw Error('Backend health response was not ready.');return {status:'ok',message:'Backend health API confirmed available. This does not verify a separate public deployment.'};}},
+  {name:'Media storage access',run:async()=>{const data=await api('/api/admin/media');if(!Array.isArray(data.items))throw Error('Owner media API returned an incomplete list.');return {status:'ok',message:'Owner media API responded; '+data.items.length+' current assets listed (up to 200).'};}},
+  {name:'Studio AI configuration',run:async()=>{const data=await api('/api/admin/ai/settings');if(!data?.configured)return {status:'warning',message:'No studio model key reported as configured. Open Provider connections to set one up.'};return {status:'ok',message:'Provider configuration found: '+String(data.provider||'Studio')+' / '+String(data.model||'default model')+'. A live reply still needs a separate test.'};}},
+  {name:'Original logo video',run:()=>checkMedia('/assets/frame-cut/reveal.mp4')},
+  {name:'Optional cinematic video',run:()=>checkMedia('/assets/brand/intro/veloryz-cinematic-full.mp4')}
+ ];
+ const outcomes=await Promise.all(checks.map(async c=>{
+  try{return {...c,...await c.run()};}
+  catch(error){return {name:c.name,status:'warning',message:String(error?.message||'Could not complete the check.').slice(0,270)};}
+ }));
+ if(!box.isConnected)return;
+ box.innerHTML=outcomes.map(x=>'<article class="ad-diagnostic-card"><span class="ad-diagnostic-state '+(x.status==='ok'?'is-ok':'is-warning')+'">'+(x.status==='ok'?'RESPONDING':'CHECK NEEDED')+'</span><strong>'+E(x.name)+'</strong><p>'+E(x.message)+'</p></article>').join('');
+ if(action){action.disabled=false;action.textContent='Run checks again ↻';}
 }
 
 function mediaPage(){return `${heading('Your studio assets','A home for the details.','Images, project films, logos and campaign visuals. Uploaded files can be reused across your website.')}<section class="upload-zone">${icon('upload')}<h3>Bring something new into the studio.</h3><p>PNG, JPG, WebP, GIF or AVIF up to 8 MB.<br>MP4 or WebM videos up to 25 MB.</p><button class="admin-button" data-action="upload">${icon('plus')}Upload media</button></section><div id="upload-state"></div>${window.VeloryzAdminDetail?.mediaHeader(mediaItems,mediaLoaded,E)||''}${!mediaLoaded?'<div class="empty-state"><p>Opening your media library…</p></div>':mediaItems.length?`<div class="media-grid">${mediaItems.map(m=>mediaCard(m)).join('')}</div>`:`<section class="admin-panel">${empty('media','Your asset library is ready.','Upload a logo, cover image or short film to get started.','upload','Upload your first file')}</section>`}`;}
@@ -271,6 +306,7 @@ document.addEventListener('click',async event=>{
   }
   if(action==='reload'){await loadWorkspace();return;}
   if(action==='reload-media'){mediaLoaded=false;mediaItems=[];await loadMedia();return;}
+  if(action==='run-health'){await runAdminDiagnostics();return;}
   if(action==='nav-search'){window.VeloryzAdminDetail?.openSearch(showModal,navigation,E);return;}
   if(action==='menu'){$('.sidebar').classList.toggle('open');return;}
   if(action==='close-menu'){$('.sidebar').classList.remove('open');return;}
