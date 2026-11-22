@@ -48,6 +48,8 @@ jobs:
         run: node tools/test-claude-reference.mjs && node tools/test-reference-site-upgrade.mjs && node tools/test-reference-heritage.mjs
       - name: Verify immersive cursor-responsive homepage, official WebGL model, and five real AI portraits
         run: node tools/test-reference-immersive.mjs && node tools/test-logo-model.mjs
+      - name: Verify user-controlled V rotation, calibrated original colors, and performant hero-only particles
+        run: node tools/test-hero-logo-control-fix.mjs
       - name: Verify all six AI personalities and visible motion recovery
         run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration
