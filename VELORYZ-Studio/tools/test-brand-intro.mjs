@@ -56,7 +56,7 @@ function simulate({isPreview=false,seen=false,reduced=false,saveData=false,path=
   dispatchEvent(event){events.push(event);}
  };
  const context={
-  document:fakeDocument,window:{},navigator:{deviceMemory:8,connection:{saveData,addEventListener(){}}},
+  document:fakeDocument,window:{addEventListener(){}},navigator:{deviceMemory:8,connection:{saveData,addEventListener(){}}},
   location:{pathname:path},matchMedia:()=>({matches:reduced,addEventListener(){}}),
   localStorage:{getItem:()=>motionPreference},sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},
   setTimeout(callback,delay){const id=++timerIndex;timers.set(id,{callback,delay});return id;},
