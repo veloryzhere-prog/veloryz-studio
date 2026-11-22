@@ -28,7 +28,7 @@ assert.ok(backend.includes("provider!==a.provider"),'Prevent previous provider k
 assert.ok(migration.includes('enable row level security'),'Private profile RLS must exist');
 assert.ok(migration.includes('revoke all')&&migration.includes('from public,anon,authenticated'),'Public roles must not access assistant profiles');
 assert.ok(backend.includes("admin/ai/settings"),'Owner authorization must use verified existing session');
-assert.ok(route.includes('forwardKnowledgeAi(request)'),'Cloudflare proxy to Supabase AI missing');
+assert.ok(route.includes('forwardKnowledgeAi(request,env)'),'Cloudflare proxy to Supabase AI missing');
 assert.ok(route.includes("adminAllowed")&&route.includes("publicAllowed"),'Proxy method allowlists are required');
 has('lib/site-shell.ts','support-chat.js?v=20261121-multi-agent-v3');
 has('lib/site-shell.ts','creator-ai.js?v=20261121-multi-agent-v3');
