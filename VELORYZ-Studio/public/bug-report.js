@@ -56,7 +56,7 @@ const labels={
  navigation:'Navigation or quick actions',motion:'Motion controls',performance:'Scrolling / animation performance',
  logo:'Official logo / 3D',layout:'Layout or text overlap',media:'Media upload',ai:'AI chat',other:'Other problem'
 };
-const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;':'&quot;',"'":'&#39;'}[c]));
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=(q,root=document)=>root.querySelector(q);
 const initialPath=()=>{
  try{const ref=new URL(document.referrer);if(ref.origin===location.origin&&ref.pathname!=='/report-bug/')return ref.pathname.slice(0,160);}catch{}
