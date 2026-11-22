@@ -44,6 +44,8 @@ jobs:
         run: node tools/test-brand-intro.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration
         run: node tools/test-brand-film.mjs
+      - name: Verify project creation and client portal quick action routes
+        run: node tools/test-project-shortcuts.mjs
       - name: Verify responsive visual system and animation performance
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
