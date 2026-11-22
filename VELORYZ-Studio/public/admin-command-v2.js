@@ -7,7 +7,7 @@
     {title:'WORKSPACE', links:[['command','Command center','grid'],['overview','Studio overview','grid'],['enquiries','Enquiry inbox','content'],['client-portal','Client workspaces','work'],['payments','Payment requests','offer']]},
     {title:'STUDIO INTELLIGENCE', links:[['ai-minds','AI character minds','brand'],['knowledge-ai','AI agent console','settings'],['platform','AI & platform settings','settings']]},
     {title:'CREATIVE CONTROL', links:[['projects','Projects & showcases','work'],['catalogue','Design library','brand'],['media','Media studio','media'],['offers','Ads & announcements','offer'],['content','Pages & copy','content'],['branding','Brand assets','brand'],['documentation','Documentation CMS','content']]},
-    {title:'OPERATIONS', links:[['settings','Site settings','settings'],['history','Version history','history']]}
+    {title:'OPERATIONS', links:[['settings','Site settings','settings'],['system-health','System health','settings'],['history','Version history','history']]}
   ];
   const characters = [
     {id:'aryan',name:'ARYAN',role:'Flagship adviser',focus:'Decisions, creative direction and escalation',line:'Confident / decisive / composed',color:'peach'},
@@ -117,6 +117,20 @@
       '<section class="sc-media-empty"><strong>Start with your first upload.</strong><p>Uploaded images and videos will be reusable throughout your studio.</p><button class="admin-button" data-action="upload">Upload your first file</button></section>')+
       '<p class="sc-media-footnote">Archiving hides an asset from new selections; already-published links may still reference it. Storage status depends on server configuration and cannot be confirmed from browser controls alone.</p>';
   }
+  function health(){
+    return heading('Operations / diagnostics','System Health','Check your private integration configuration, upload listing, AI connections and source-content validation without exposing secrets.')+
+      '<section class="sc-health-lead"><div><span class="sc-kicker">OWNER-ONLY DIAGNOSTICS</span><h2>Know what is connected.<br>Know what needs attention.</h2><p>Run on-demand checks against the actual authenticated endpoints. These show configuration and request results, not a guarantee of live-provider response or permission to upload.</p></div><button type="button" class="admin-button" data-sc-run-health>Run system checks ↗</button></section>'+
+      '<div class="sc-health-grid">'+
+      [['◈','AI provider','Main character AI provider and encrypted key configuration'],['▣','Media storage','Server storage mode and library listing availability'],['◎','Service agents','Four independent assistant profiles and configuration'],['◇','Content integrity','CMS source-data validation and published revision']].map(([symbol,title,detail])=>
+      '<section class="sc-health-card"><span>'+symbol+'</span><strong>'+title+'</strong><small>'+detail+'</small></section>').join('')+'</div>'+
+      '<div id="sc-health-results" role="status" aria-live="polite" class="sc-health-results"><p>Checks have not been run in this session. Click Run system checks to query your real service endpoints.</p></div>'+
+      '<div class="sc-two-column"><section class="sc-panel"><div class="sc-panel-head"><span class="sc-kicker">CONFIGURATION</span><h2>Connected services</h2></div><div class="sc-action-list">'+
+      '<a href="#/platform"><span>✳</span> AI provider and model <b>↗</b></a><a href="#/knowledge-ai"><span>◈</span> Independent assistant settings <b>↗</b></a><a href="#/media"><span>▣</span> Media files and upload testing <b>↗</b></a></div></section>'+
+      '<section class="sc-panel"><div class="sc-panel-head"><span class="sc-kicker">RELEASE CONTROL</span><h2>Before publishing</h2></div><div class="sc-action-list">'+
+      '<a href="#/history"><span>↶</span> Review publication history <b>↗</b></a><a href="#/documentation"><span>≡</span> Review documentation CMS <b>↗</b></a>'+
+      '<button data-action="content-audit"><span>✓</span> Review site content <b>↗</b></button></div></section></div>'+
+      '<p class="sc-media-footnote">Server-side provider keys remain hidden. For upload problems, verify credentials, storage bucket permissions, and host request-size limits; a successful library-list check alone cannot validate uploads.</p>';
+  }
   function applyMediaFilter(){
     const input=document.querySelector('[data-sc-media-search]');
     if(input)mediaQuery=input.value.trim().toLowerCase();
@@ -145,6 +159,34 @@
     document.body.append(panel);panel.querySelector('input').focus();
   }
   document.addEventListener('click',async event=>{
+    const runHealth=event.target.closest('[data-sc-run-health]');
+    if(runHealth){
+      const out=document.getElementById('sc-health-results');runHealth.disabled=true;
+      if(out)out.innerHTML='<p>Checking database, media, AI configuration and content integrity…</p>';
+      try{
+        if(preview)throw Error('Live diagnostics require the deployed owner workspace.');
+        const requests=[
+          ['Connections','/api/admin/connections'],
+          ['Media library','/api/admin/media'],
+          ['AI provider','/api/admin/ai/settings'],
+          ['Service agents','/api/admin/knowledge-ai/agents'],
+          ['Content review','/api/admin/quality']
+        ];
+        const results=await Promise.allSettled(requests.map(([,path])=>api(path)));
+        const rows=results.map((outcome,i)=>{
+          const label=requests[i][0],ok=outcome.status==='fulfilled',data=ok?outcome.value:null;
+          let detail=ok?'Endpoint responded.':'Request failed: '+String(outcome.reason?.message||'Unknown error');
+          if(ok&&i===0)detail='Database: '+(data.database||'not reported')+' · Media storage: '+(data.storage||'not reported');
+          if(ok&&i===1)detail='Library endpoint available · '+Number(data.items?.length||0)+' assets returned';
+          if(ok&&i===2)detail='Provider: '+(data.provider||'not selected')+' · '+(data.configured?'Credential configured':'Credential not configured');
+          if(ok&&i===3)detail=Number(data.profiles?.length||0)+' role agents loaded · '+Number((data.profiles||[]).filter(p=>p.configured).length)+' with configured credentials';
+          if(ok&&i===4)detail=Number(data.count||0)+' source-content review findings'+(data.ok?' · No blocking data issues':'');
+          return '<div class="sc-health-result"><span class="'+(ok?'ok':'fail')+'">'+(ok?'CHECKED':'ATTENTION')+'</span><strong>'+htmlSafe(label)+'</strong><small>'+htmlSafe(detail)+'</small></div>';
+        }).join('');
+        if(out)out.innerHTML='<div class="sc-health-result-grid">'+rows+'</div><p class="sc-health-caveat">Configuration and successful reads do not prove live AI replies, media writes, payments or production deployment.</p>';
+      }catch(error){if(out)out.innerHTML='<p>'+htmlSafe(error.message)+'</p>';}
+      finally{runHealth.disabled=false;}return;
+    }
     const mind=event.target.closest('[data-sc-mind]');
     if(mind){mindId=mind.dataset.scMind;render();return;}
     if(event.target.closest('[data-sc-jump]')){openJump();return;}
@@ -190,5 +232,5 @@
     if(files.length>1)toast('Please upload one asset at a time.');
     if(files[0])uploadFile(files[0]);
   });
-  window.AdminCommandV2={sidebar,command,minds,media,applyMediaFilter};
+  window.AdminCommandV2={sidebar,command,minds,media,health,applyMediaFilter};
 })();
