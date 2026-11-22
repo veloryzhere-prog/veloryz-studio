@@ -1,71 +1,69 @@
+/* Standalone scarf video regression: no scroll-pinning, logo transition or rAF loop. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-
-let FrameCut, visibility;
-const frames=new Map();
-let frameId=0;
-const window=Object.assign(new EventTarget(),{innerHeight:800,StudioMotion:Object.assign(new EventTarget(),{level:'full'})});
+const src=fs.readFileSync(new URL('../public/frame-cut.js',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../public/frame-cut.css',import.meta.url),'utf8');
+const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+assert.doesNotThrow(()=>new vm.Script(src));
+assert.doesNotMatch(src,/addEventListener\(\s*['"](?:scroll|wheel)['"]/,'The scarf must not observe scroll or wheel events.');
+assert.doesNotMatch(src,/requestAnimationFrame|subscribeScroll|--scarf-progress/,'The scarf must not run a scroll rAF controller.');
+assert.doesNotMatch(css,/340svh|280svh|position:sticky|\.frame-emblem|\.frame-rings/,'Remove all tall scroll-linked stage and logo styling.');
+assert.match(css,/\.frame-scarf/);
+assert.match(app,/assets\/frame-cut\/scarf\.mp4|assets\/frame-cut\/scarf\.jpg/);
+assert.doesNotMatch(app,/class="frame-emblem"|class="frame-rings"|class="frame-mark"/,'Homepage should show only the scarf film, no moving V or rings.');
+assert.match(app,/aria-label="VELORYZ moving scarf film"/);
+let Constructor,callback,disconnects=0;
+const window=Object.assign(new EventTarget(),{StudioMotion:Object.assign(new EventTarget(),{level:'full',onboardingActive:false})});
 const document=Object.assign(new EventTarget(),{hidden:false});
-class Element extends EventTarget {
-  attrs=new Map();hidden=false;isConnected=true;
-  hasAttribute(k){return this.attrs.has(k);}
-  toggleAttribute(k,on){if(on)this.attrs.set(k,'');else this.attrs.delete(k);}
-  removeAttribute(k){this.attrs.delete(k);}
-  setAttribute(k,v){this.attrs.set(k,String(v));}
+const device=Object.assign(new EventTarget(),{saveData:false});
+const media=Object.assign(new EventTarget(),{matches:false});
+class Node extends EventTarget{
+ constructor(){super();this.attrs=new Map();this.hidden=false;this.isConnected=true;this.textContent='';this.disabled=false;}
+ hasAttribute(k){return this.attrs.has(k);}
+ setAttribute(k,v){this.attrs.set(k,String(v));}
+ removeAttribute(k){this.attrs.delete(k);}
+ toggleAttribute(k,enabled){if(enabled)this.setAttribute(k,'');else this.removeAttribute(k);}
 }
-class Video extends Element {
-  paused=true;readyState=4;
-  set src(v){this.attrs.set('src',v);}
-  play(){this.paused=false;this.dispatchEvent(new Event('play'));return Promise.resolve();}
-  pause(){this.paused=true;this.dispatchEvent(new Event('pause'));}
-  load(){}
+class Video extends Node{
+ paused=true;loads=0;plays=0;preload='none';
+ set src(value){this.setAttribute('src',value);}
+ get src(){return this.attrs.get('src');}
+ play(){this.paused=false;this.plays++;this.dispatchEvent(new Event('play'));return Promise.resolve();}
+ pause(){this.paused=true;this.dispatchEvent(new Event('pause'));}
+ load(){this.loads++;}
 }
-function flush(){let ticks=0;while(frames.size){if(++ticks>30)throw Error('rAF loop never settled');for(const [id,cb] of [...frames]){frames.delete(id);cb();}}}
-vm.runInNewContext(fs.readFileSync(new URL('../public/frame-cut.js',import.meta.url),'utf8'),{
-  window,document,HTMLElement:Element,AbortController,queueMicrotask,
-  customElements:{get(){return undefined;},define(name,clazz){FrameCut=clazz;}},
-  requestAnimationFrame(fn){frames.set(++frameId,fn);return frameId;},
-  cancelAnimationFrame(id){frames.delete(id);},
-  IntersectionObserver:class {constructor(callback){visibility=callback;}observe(){}disconnect(){}}
+vm.runInNewContext(src,{
+ window,document,navigator:{connection:device},matchMedia:()=>media,HTMLElement:Node,
+ queueMicrotask,AbortController,
+ customElements:{get:()=>undefined,define:(name,klass)=>{assert.equal(name,'veloryz-frame-cut');Constructor=klass;}},
+ IntersectionObserver:class{constructor(fn){callback=fn;}observe(){}disconnect(){disconnects++;}},
+ console
 });
-const scene=new FrameCut(),scarf=new Video(),button=new Element();
-const vars=new Map();
-scene.style={setProperty(k,v){vars.set(k,v)}};
-const stage={clientHeight:800};
-scene.querySelector=s=>({'.frame-scarf':scarf,'.frame-toggle':button,'.frame-stage':stage})[s];
-let top=0;
-scene.getBoundingClientRect=()=>({top,bottom:top+1960,height:1960});
-scene.mount();flush();
-assert.equal(scene.hasAttribute('data-full'),true);
-assert.equal(Number(vars.get('--scarf-scale')),4.1);
-assert.equal(scarf.hasAttribute('src'),false);
-visibility([{isIntersecting:true}]);flush();
-const scroll=y=>{top=-y;window.dispatchEvent(new Event('scroll'));flush()};
-scroll(522);
-assert.ok(Math.abs(Number(vars.get('--scarf-progress'))-.45)<.001);
-assert.equal(Number(vars.get('--scarf-rings-opacity')),1);
-assert.equal(scarf.hasAttribute('src'),true);
-assert.equal(scarf.paused,true);
-scroll(850);
-assert.equal(scarf.paused,false);
-assert.ok(Number(vars.get('--scarf-film-opacity'))>.5);
-assert.ok(Number(vars.get('--scarf-emblem-opacity'))<.5);
-assert.equal(button.hidden,false);
-button.dispatchEvent(new Event('click'));flush();
-assert.equal(scarf.paused,true);
-scroll(180);
-assert.ok(Math.abs(Number(vars.get('--scarf-progress'))-180/1160)<.001);
-assert.equal(Number(vars.get('--scarf-film-opacity')),0);
-assert.equal(button.hidden,true);
-window.StudioMotion.level='reduced';
-window.StudioMotion.dispatchEvent(new Event('change'));flush();
-assert.equal(scene.hasAttribute('data-full'),false);
-assert.equal(scarf.paused,true);
-assert.equal(button.hidden,true);
-window.StudioMotion.level='full';
-window.StudioMotion.dispatchEvent(new Event('change'));flush();
-assert.equal(scene.hasAttribute('data-full'),true);
+const scene=new Constructor(),video=new Video(),button=new Node();
+scene.querySelector=k=>({'.frame-scarf':video,'.frame-toggle':button})[k];
+scene.mount();
+assert.equal(video.hasAttribute('src'),false,'Do not load 7MB scarf before intersection');
+assert.equal(video.paused,true);
+callback([{target:scene,isIntersecting:true,intersectionRatio:.25}]);
+assert.equal(video.src,'/assets/frame-cut/scarf.mp4','Load the real bundled scarf when needed');
+assert.equal(video.paused,false,'Scarf begins playing when visible');
+button.dispatchEvent(new Event('click'));
+assert.equal(video.paused,true,'Viewer can pause scarf');
+button.dispatchEvent(new Event('click'));
+assert.equal(video.paused,false,'Viewer can resume scarf');
+callback([{target:scene,isIntersecting:false,intersectionRatio:0}]);
+assert.equal(video.paused,true,'Offscreen video pauses; not tied to scroll progress');
+document.hidden=true;document.dispatchEvent(new Event('visibilitychange'));
+assert.equal(video.paused,true);
+document.hidden=false;
+media.matches=true;media.dispatchEvent(new Event('change'));
+callback([{target:scene,isIntersecting:true,intersectionRatio:.4}]);
+assert.equal(video.paused,true,'Reduced-motion preference disables autoplay');
+button.dispatchEvent(new Event('click'));
+assert.equal(video.paused,false,'Explicit manual play remains possible');
 scene.disconnectedCallback();
-assert.equal(frames.size,0);
-console.log('PASS: scroll-controlled original V/rings/scarf, both directions, preload, playback, pause, motion preference and teardown.');
+assert.equal(video.hasAttribute('src'),false,'Unloaded film does not linger across route changes');
+assert(disconnects>0,'Visibility observer must be disconnected');
+assert(video.paused);
+console.log('PASS: one original scarf video, lazy play/pause, no 3D logo/rings, no sticky scroll, reduced-motion/manual control and teardown.');
