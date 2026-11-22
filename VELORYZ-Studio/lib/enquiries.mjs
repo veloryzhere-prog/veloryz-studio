@@ -25,14 +25,15 @@ export async function submitEnquiry(request,env,state){
  const input=await readBody(request);
  if(input.consent!==true)reject('Please agree to share your enquiry with the studio.');
  if(input.website)reject('The request could not be accepted.');
- const discussion=['design','project','payment'].includes(input.kind);
+ const discussion=['design','project','payment','bug'].includes(input.kind);
  const data={id:clean(input.requestId,36,true),name:clean(input.name,100,true),email:clean(input.email,180,true).toLowerCase(),phone:clean(input.phone,20),service:discussion?'Studio discussion':clean(input.service,120,true),budget:clean(input.budget,100),preferred_date:discussion?'':clean(input.date,10,true),preferred_time:discussion?'':clean(input.time,40,true),company:clean(input.company,200),message:clean(input.message,2000,true)};
  if(!uuid(data.id))reject('Please reload the form and try again.');
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))reject('Enter a valid email address.');
  if(data.phone&&(!/^\+?[0-9 ()-]{8,20}$/.test(data.phone)||!/^\d{8,15}$/.test(data.phone.replace(/\D/g,''))))reject('Enter a phone number with its country code, or leave it empty.');
  if(data.message.length<10)reject('Tell us a little more about your project.');
+ if(input.kind==='bug'&&data.message.length<45)reject('Please include the bug, the steps to reproduce it, and what should happen.');
  if(discussion){
-  let context=input.kind==='payment'?'Payment discussion':'Custom project';
+  let context=input.kind==='payment'?'Payment discussion':input.kind==='bug'?'Website bug report':'Custom project';
   if(input.kind==='design'){
    const design=state.catalogue.find(d=>d.enabled&&d.id===input.designId);
    if(!design)reject('This direction is no longer available.',409);
