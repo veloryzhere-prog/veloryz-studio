@@ -51,3 +51,11 @@
 .vz-privacy-layer button:focus-visible,.vz-legal-page :is(a,button):focus-visible{outline:3px solid #739cd4;outline-offset:3px}
 @media(max-width:680px){.vz-privacy-layer{padding:7px;align-items:end}.vz-privacy-panel{border-radius:14px;padding:18px;max-height:93dvh}.vz-consent-choices{grid-template-columns:1fr}.vz-privacy-actions{grid-template-columns:1fr 1fr}.vz-choice-save{grid-column:1/-1}.vz-privacy-panel h2{font-size:27px}.vz-legal-page{padding:20px 14px 65px}}
 @media(prefers-reduced-motion:reduce){.vz-privacy-layer{backdrop-filter:none}.vz-privacy-panel *{animation:none!important;transition:none!important}}
+
+
+/* Footer-only persistent privacy control; the first-visit consent modal is separate. */
+.vz-footer-privacy-control{display:block;border:0;background:transparent;padding:0;margin:0;
+ font:inherit;letter-spacing:inherit;text-align:left;color:inherit;text-decoration:none;cursor:pointer}
+.vz-footer-privacy-control:hover{text-decoration:underline;text-underline-offset:4px}
+.vz-footer-privacy-control:focus-visible{outline:3px solid #739cd4;outline-offset:4px}
+#vz-privacy-fab{display:none!important}
