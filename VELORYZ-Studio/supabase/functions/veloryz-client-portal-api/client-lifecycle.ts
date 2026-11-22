@@ -73,9 +73,7 @@ export async function acceptClientProject(
  const project=(await db('getProjectFull',linked.id))[0];
  if(!(outcome[0]?.results?.length))return {ok:true,already_accepted:true,id:project.id,project,message:"Already accepted in another session. No duplicate invitation was issued."};
  const items=(await db("listItems",project.id)).filter((x:any)=>x.type==="milestone");
- const acceptance=await sendAcceptanceSummary(project,items,recordDelivery);
- // Never issue an invitation during acceptance. Access must be approved and sent
- // explicitly by the owner from Client Management in a separate action.
  return {ok:true,already_accepted:false,id:project.id,project,reference:project.request_reference,
-  acceptance_delivery:acceptance,invitation_pending:true};
+  summary_pending:true,invitation_pending:true,
+  message:'Project accepted and prepared. The studio owner must click Send project summary and Send client invitation separately in Client Management. No email was sent.'};
 }
