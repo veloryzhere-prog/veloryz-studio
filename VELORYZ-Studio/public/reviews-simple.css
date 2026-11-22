@@ -1,0 +1,66 @@
+/* VELORYZ Community Feedback v3 — intentionally review-first, no marketing hero. */
+body[data-reviews-admin="false"]{background:#f8f6f1;color:#272823}
+body[data-reviews-admin="false"] .reviews-header{height:78px;background:#faf9f5;border-bottom:1px solid #e2ded7}
+body[data-reviews-admin="false"] .reviews-layout{padding:0 0 90px}
+body[data-reviews-admin="false"] .reviews-content{max-width:none}
+.feedback-hub,.feedback-form-sheet{width:min(1170px,calc(100% - 44px));margin-inline:auto}
+.feedback-hub{padding-top:clamp(28px,4vw,65px)}
+.feedback-heading{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-bottom:25px}
+.feedback-heading h1{margin:0;font:580 clamp(36px,5vw,67px)/1.08 Studio,Arial,sans-serif;letter-spacing:-.067em;color:#24241f}
+.feedback-label{margin:0 0 12px;color:#c06f4e;letter-spacing:.16em;font-size:10px;font-weight:780}
+.feedback-description{font-size:14px;line-height:1.7;color:#737067;max-width:610px;margin:13px 0 0}
+.feedback-start{flex:none;padding:16px 25px;font-size:13px;min-height:49px}
+.feedback-overview{display:grid;grid-template-columns:minmax(190px,.85fr) minmax(0,1.9fr);align-items:center;gap:clamp(20px,5vw,90px);background:#fff;border:1px solid #e4e0d8;border-radius:12px;padding:clamp(23px,3.4vw,45px);box-shadow:0 12px 38px #26231e07}
+.feedback-average{display:flex;gap:20px;align-items:center}
+.feedback-average>strong{font-size:clamp(61px,7vw,100px);font-weight:560;letter-spacing:-.09em;line-height:.85}
+.feedback-average>div{display:flex;flex-direction:column;gap:7px}
+.feedback-average .review-stars{color:#f17950;font-size:20px}
+.feedback-average small{color:#898278;font-size:12px;line-height:1.5}
+.feedback-overview .review-distribution{display:grid;gap:9px}
+.feedback-overview .review-rating-row{width:100%;padding:4px 10px;border:1px solid transparent;border-radius:5px;background:transparent;color:#6f6d66;display:grid;grid-template-columns:46px 1fr 34px;text-align:left;align-items:center;gap:12px;cursor:pointer;font-size:12px}
+.feedback-overview .review-rating-row:hover,.feedback-overview .review-rating-row.is-selected{background:#fff1e9;border-color:#efc6b1}
+.feedback-overview .review-rating-bar{height:7px;overflow:hidden;background:#eeeae4;border-radius:99px}
+.feedback-overview .review-rating-bar-fill{display:block;height:100%;background:#ed7c52;border-radius:99px}
+.feedback-toolbar{display:flex;flex-wrap:wrap;gap:15px;justify-content:space-between;align-items:center;margin:30px 0 15px}
+.feedback-rating-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.feedback-rating-chip{font:650 12px/1.2 Studio,Arial,sans-serif;min-height:42px;min-width:55px;padding:10px 17px;border-radius:6px;border:1px solid #ddd8d0;background:#fff;color:#62615a;cursor:pointer}
+.feedback-rating-chip span{color:#ea8059}
+.feedback-rating-chip:hover{border-color:#ee9b79;color:#2c2c28}
+.feedback-rating-chip.is-selected{background:#272821;color:#fff;border-color:#272821}
+.feedback-tools{display:flex;gap:11px;align-items:center;color:#858078;font-size:11px}
+.feedback-tools select{min-height:42px;padding:10px 13px;border-radius:6px;border:1px solid #dedbd5;background:#fff;color:#35362f}
+.feedback-feed-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px;padding:16px 0;border-block:1px solid #e5e2dc}
+.feedback-feed-meta strong{font-size:13px;font-weight:700}
+.feedback-feed-meta output{color:#8a847a;font-size:12px}
+.feedback-feed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.feedback-feed .review-card{background:#fff;border:1px solid #e7e2da;border-radius:9px;min-width:0}
+.feedback-feed .review-card:hover{transform:none;border-color:#d9cabd}
+.feedback-feed .review-copy{line-height:1.8}
+.feedback-feed .review-empty{min-height:230px;background:#fff;border:1px dashed #d8d4cb}
+.feedback-feed .review-empty h3{color:#292822;font-size:21px}
+.feedback-footnote{padding:21px 0;color:#908b82;font-size:11px;line-height:1.7}
+.feedback-form-sheet{margin-top:34px;padding:clamp(23px,4vw,50px);background:#fff;border:1px solid #e5ddd1;border-radius:12px;box-shadow:0 15px 48px #26231f0e;scroll-margin-top:24px}
+.feedback-form-sheet[hidden]{display:none!important}
+.feedback-form-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:26px;border-bottom:1px solid #e8e3dc}
+.feedback-form-top h2{font-size:clamp(30px,4vw,50px);font-weight:590;letter-spacing:-.065em;margin:0 0 8px;color:#282923}
+.feedback-form-top p:last-child{margin:0;color:#777169;font-size:13px;line-height:1.7}
+.feedback-close{width:43px;height:43px;flex:none;border-radius:50%;border:1px solid #e1ddd6;background:#fff;font-size:25px;color:#514b45;cursor:pointer}
+.feedback-close:hover{border-color:#e8825c;color:#df6c43}
+.feedback-form-sheet form{max-width:720px;display:grid;gap:21px;margin-top:24px}
+.feedback-form-sheet .review-field input,.feedback-form-sheet .review-field textarea,.feedback-form-sheet .review-field select{background:#faf9f6;border:1px solid #ddd8d1;color:#2f302b;min-height:44px;border-radius:6px}
+.feedback-form-sheet .review-rating-options{margin-top:10px}
+.feedback-form-sheet .review-rating-options label{flex:0 1 100px;border-radius:6px}
+.feedback-more{border:1px solid #e3dfd7;background:#faf9f6;border-radius:8px}
+.feedback-more summary{padding:16px 18px;font-size:13px;font-weight:700;cursor:pointer;color:#42433e}
+.feedback-more summary:hover{color:#bd6748}
+.feedback-extra-fields{display:grid;gap:18px;padding:0 19px 20px}
+.feedback-ai-disclosure .review-ai-panel{margin:0 17px 19px}
+.feedback-ai-disclosure .review-ai-panel strong{font-size:15px}
+.feedback-ai-disclosure .review-ai-panel p{font-size:12px;line-height:1.7;color:#787166}
+.feedback-form-actions{display:flex;align-items:center;gap:17px;flex-wrap:wrap}
+.feedback-form-actions span{font-size:11px;color:#868077}
+.feedback-form-sheet .review-status{min-height:20px}
+.feedback-hub button:focus-visible,.feedback-form-sheet button:focus-visible,.feedback-form-sheet input:focus-visible,.feedback-form-sheet textarea:focus-visible,.feedback-hub select:focus-visible{outline:3px solid #f0784e;outline-offset:3px}
+@media(max-width:800px){.feedback-heading{align-items:start}.feedback-overview{grid-template-columns:1fr;gap:23px}.feedback-average{justify-content:center;padding-bottom:15px;border-bottom:1px solid #f0ede6}.feedback-feed{grid-template-columns:1fr}}
+@media(max-width:570px){.feedback-hub,.feedback-form-sheet{width:min(100% - 26px,1170px)}.feedback-heading{flex-direction:column;gap:16px}.feedback-start{width:100%}.feedback-rating-tabs{width:100%}.feedback-rating-chip{flex:1 1 58px;padding:11px 7px}.feedback-overview{padding:22px 17px}.feedback-form-sheet{padding:22px 18px}.feedback-form-top{padding-bottom:19px}.feedback-overview .review-average{font-size:68px}.feedback-toolbar{margin-top:21px}}
+@media(prefers-reduced-motion:reduce){.feedback-hub *,.feedback-form-sheet *{scroll-behavior:auto!important;transition:none!important}}
