@@ -26,7 +26,7 @@ assert(source.includes("container.dataset.logoSource==='official-glb'"),'Archive
 assert(source.includes("new GLTFLoader().load('/assets/brand/veloryz-logo.glb'"),'Load the self-hosted original actual 3D model');
 assert(source.includes("renderer.render(scene,camera)")&&source.includes("pivot.quaternion"),'True WebGL model rotation must remain active');
 assert(source.includes("model.userData.parts||[]"),'Imported rigid GLB must not be treated as procedural split mesh');
-assert(source.includes("useOriginalGlb")&&source.includes("elapsed*.24"),'Real V must orbit through the full 3D yaw range');
+assert(source.includes("useOriginalGlb")&&source.includes("elapsed*.33")&&source.includes("orbitStyle==='orbit'"),'True full-orbit rotation must be selectable while retaining recognisable gentle default');
 assert(build.includes("veloryz-logo.glb")&&build.includes("motion-3d.js"),'Prebuild must produce actual GLB and corresponding WebGL bundle');
 for(const asset of assets){
  const f='public/assets/ai-avatars/'+asset+'.webp';
