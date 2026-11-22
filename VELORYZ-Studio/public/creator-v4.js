@@ -417,7 +417,8 @@
  function welcomeScreen(){
   return '<div class="v4-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag"><i></i> VELORYZ STUDIO / THE PROJECT CREATOR</span><h1>Let’s make<br>something <em>great.</em></h1><p>Tell us what you have in mind. One thoughtful question at a time, we’ll shape a clear brief and a proposal you can keep.</p><button type="button" class="v4-primary v4-start" data-v4-action="start">Start a project <span>→</span></button>'+
   (sessionStorage.getItem(KEY)?'<button class="v4-resume" type="button" data-v4-action="resume">Continue your saved brief ↗</button>':'')+
-  '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>TEAM-REVIEWED REQUEST</span></div></div>'+
+  '<aside class="v4-existing-project" aria-label="Returning client and project tracking shortcuts"><span class="v4-existing-label">ALREADY HAVE A PROJECT?</span><p>Have a private VELORYZ project workspace? Open it to check updates and continue with the team.</p><div class="v4-existing-actions"><a href="/client/" class="v4-existing-primary">Open Client Portal <span aria-hidden="true">↗</span></a><a href="/client/" class="v4-existing-secondary">Track your project <span aria-hidden="true">→</span></a></div><small>A team-issued invitation is required for new portal access.</small></aside>'+ 
+   '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>TEAM-REVIEWED REQUEST</span></div></div>'+
   '<div class="v4-welcome-art" aria-hidden="true"><div class="v4-intro-paper"><div><span>VELORYZ / YOUR IDEA</span><span>01 — DISCOVER</span></div><h2>A good project starts with the right questions.</h2><div class="v4-intro-line"></div><div class="v4-intro-row"><i></i><span>01</span><b>Discover</b></div><div class="v4-intro-row"><i></i><span>02</span><b>Define</b></div><div class="v4-intro-row"><i></i><span>03</span><b>Make it real</b></div></div></div></div>';
  }
  function successScreen(){
@@ -429,7 +430,7 @@
    '<div class="v4-success-handoff"><span class="v4-handoff-kicker">NEXT STEPS / YOUR PRIVATE PROJECT ROOM</span><div class="v4-handoff-steps">'+
    [['01','Request saved','Use your reference code when contacting the team. It is not a login password.'],['02','Check your email','Watch '+email+' and its spam folder for updates over the next 12 hours. Response times vary; this is not a guaranteed delivery deadline.'],['03','Receive your private invitation','After the team accepts the project and creates your workspace, a separate one-time invitation or activation code may be sent to this email. It is not generated on this screen.'],['04','Activate your client portal','Open veloryz.online/client/, paste the invitation code into the portal, and access your private project messages, milestones and files.']].map(([n,title,desc])=>'<div class="v4-handoff-step"><span>'+n+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></div>').join('')+'</div></div>'+
    '<div class="v4-code-clarity"><strong>Reference code vs invitation code</strong><p>The reference above confirms submission. A separate secret invitation code is created by our team only after your project workspace is approved. We cannot promise it will arrive within 12 hours.</p></div>'+
-   '<div class="v4-success-buttons"><a class="v4-primary" href="/client/">Open client portal ↗</a><a class="v4-secondary" href="'+escape(teamMessage('project'))+'" target="_blank" rel="noopener noreferrer">Message the team ↗</a><button class="v4-secondary" type="button" data-v4-action="pdf">Download proposal ↓</button><button class="v4-secondary" type="button" data-v4-action="restart">Start another project →</button></div>'+
+   '<div class="v4-success-buttons"><a class="v4-primary" href="/client/">Track your project ↗</a><a class="v4-secondary" href="'+escape(teamMessage('project'))+'" target="_blank" rel="noopener noreferrer">Message the team ↗</a><button class="v4-secondary" type="button" data-v4-action="pdf">Download proposal ↓</button><button class="v4-secondary" type="button" data-v4-action="restart">Start another project →</button></div>'+
    '<p class="v4-small-note">No payment has been taken, and no portal invitation has been issued by this submission.</p></section>';
  }
  function header(){
@@ -440,7 +441,8 @@
   return '<header class="v4-topbar"><a class="v4-logo" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="134" height="40" alt="VELORYZ" decoding="async"><span>/ STUDIO</span></a>'+
    (isStep?'<div class="v4-top-progress"><span>'+escape(group[0])+'</span><span>'+number+' / '+total+'</span></div>':'<span class="v4-top-center">A THOUGHTFUL BEGINNING</span>')+
    '<nav class="v4-top-actions" aria-label="Project navigation">'+
-   '<a class="v4-help-docs" href="/docs/">Help & guides ↗</a>'+
+   '<a class="v4-client-shortcut" href="/client/" aria-label="Track an existing project in the Client Portal">Track project ↗</a>'+ 
+    '<a class="v4-help-docs" href="/docs/">Help & guides ↗</a>'+
    (isStep?'<button type="button" class="v4-top-back" data-v4-action="back">← Back</button>'+
     (reviewVisited&&active!=='review'?'<button type="button" class="v4-top-review" data-v4-action="review">Review ↗</button>':'')+
     '<button type="button" class="v4-primary v4-top-next" data-v4-action="'+next+'" '+(busy?'disabled aria-busy="true"':'')+'>'+(busy?'Sending…':label)+'</button>':
