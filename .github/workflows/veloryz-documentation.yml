@@ -46,6 +46,8 @@ jobs:
         run: node tools/test-brand-film.mjs
       - name: Verify project creation and client portal quick action routes
         run: node tools/test-project-shortcuts.mjs
+      - name: Verify grounded site knowledge across all nine AI roles and real logo film fallback
+        run: node tools/test-public-ai-knowledge.mjs
       - name: Verify responsive visual system and animation performance
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
