@@ -61,4 +61,45 @@ for(const css of [headerCSS,bugCSS]){
  assert.equal(css.split('{').length,css.split('}').length,'Styles must have balanced blocks');
 }
 assert(bugCSS.includes('max-width:980px')&&bugCSS.includes('max-width:580px'),'Bug report must be responsive');
+
+/* A regression test for the ACTUAL route controller and header DOM:
+   CSS :has() alone must never decide whether Quick Create remains clickable. */
+const quickHelper=home.match(/function syncQuickCreate\\(n\\)\\{[\\s\\S]*?\\n\\}\\nfunction show\\(n\\)/)?.[0]?.replace(/\\nfunction show\\(n\\)$/,'');
+assert.ok(quickHelper,'Reference router must control real Quick Create header visibility');
+const quickState={view:'',important:'',display:'',tabindex:null,ariaHidden:null,hidden:false};
+const quickLink={
+ style:{setProperty(name,value,priority){assert.equal(name,'display');quickState.display=value;quickState.important=priority;}},
+ setAttribute(name,value){if(name==='tabindex')quickState.tabindex=value;if(name==='aria-hidden')quickState.ariaHidden=value;},
+ removeAttribute(name){if(name==='tabindex')quickState.tabindex=null;},
+ set hidden(value){quickState.hidden=value;},
+ get hidden(){return quickState.hidden;}
+};
+const quickEnv={
+ document:{body:{setAttribute(name,value){assert.equal(name,'data-vz-view');quickState.view=value;}},activeElement:null},
+ $:selector=>selector==='.vz-header-create'?quickLink:null
+};
+vm.runInNewContext(quickHelper+';this.quickRouter=syncQuickCreate;',quickEnv,{timeout:2000});
+for(const pageName of ['design','create','library','designs']){
+ quickEnv.quickRouter(pageName);
+ assert.equal(quickState.view,pageName);
+ assert.equal(quickState.display,'none','Quick Create must not remain visible on '+pageName);
+ assert.equal(quickState.important,'important','Inline author priority must override old component CSS');
+ assert.equal(quickState.hidden,true);
+ assert.equal(quickState.ariaHidden,'true');
+ assert.equal(quickState.tabindex,'-1','A hidden link must not be keyboard focusable');
+}
+for(const pageName of ['home','work','studio']){
+ quickEnv.quickRouter(pageName);
+ assert.equal(quickState.display,'inline-flex','Quick Create should remain available on '+pageName);
+ assert.equal(quickState.hidden,false);
+ assert.equal(quickState.ariaHidden,'false');
+ assert.equal(quickState.tabindex,null);
+}
+assert.match(home,/function route\\(\\)\\{[\\s\\S]*?syncQuickCreate\\(n\\);if\\(first\\)/,'Synchronize button immediately on hash navigation, not after animation delay');
+assert.match(chrome,/a\\.dataset\\.vzQuickCreate='footer'/,'Footer Quick Create link needs a route-targetable marker');
+assert.match(headerCSS,/data-vz-view="design"/,'Design hash route should also have CSS no-flash fallback');
+assert.match(headerCSS,/vz-reference-support-links \\[data-vz-quick-create\\]/,'Footer shortcut must be hidden on blocked routes');
+assert.ok(home.includes('reference-header-interactions.css?v=20261123-router-quick-create-v3'),'Updated header CSS must bypass old browser caches');
+assert.ok(home.includes('reference-restored-features.js?v=20261123-router-quick-create-v3'),'Updated footer JS must bypass old browser caches');
+
 console.log('PASS: clickable Quick Create/Motion/Menu, translucent logo, smooth frame-independent scroll, and persisted secure bug report with real reference and accessible entrypoints.');
