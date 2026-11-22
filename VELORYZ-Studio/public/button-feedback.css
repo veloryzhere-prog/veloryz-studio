@@ -1,0 +1,123 @@
+/* VELORYZ / Interactive feedback system
+   Adds character to controls without changing their markup, position, brand artwork,
+   click handlers, accessibility semantics, original theme, or ongoing scroll effects.
+   Only active hovers/focus/presses animate; no infinite button animation loop. */
+:root{
+ --vz-fx-ink:#b46a80;
+ --vz-fx-glow:rgba(167,86,118,.18);
+ --vz-fx-wash:rgba(180,96,128,.17);
+}
+body:has(#admin-root){
+ --vz-fx-ink:#879d59;
+ --vz-fx-glow:rgba(112,146,74,.2);
+ --vz-fx-wash:rgba(137,166,88,.2);
+}
+body:has(.cp-body),body.cp-body{
+ --vz-fx-ink:#5b7fa5;
+ --vz-fx-glow:rgba(74,112,155,.2);
+ --vz-fx-wash:rgba(98,140,173,.18);
+}
+.vz-fx-button{
+ -webkit-tap-highlight-color:transparent;
+ outline-offset:3px;
+}
+.vz-fx-button.vz-fx-position{
+ position:relative;
+}
+/* The simple, pseudo-element-safe button class receives sliding fill plus a
+   single animated gradient border. Other buttons still get focus and press effects. */
+.vz-fx-button.vz-fx-fill{
+ isolation:isolate;
+ overflow:hidden;
+}
+.vz-fx-button.vz-fx-fill::before,
+.vz-fx-button.vz-fx-fill::after{
+ content:"";
+ display:block;
+ position:absolute;
+ inset:0;
+ border-radius:inherit;
+ pointer-events:none;
+ user-select:none;
+ -webkit-user-select:none;
+}
+.vz-fx-button.vz-fx-fill::before{
+ z-index:0;
+ background:linear-gradient(108deg,transparent 0%,var(--vz-fx-wash) 26%,rgba(255,255,255,.13) 57%,var(--vz-fx-wash) 100%);
+ transform:translate3d(-103%,0,0);
+ opacity:.9;
+ transition:transform .52s cubic-bezier(.16,1,.3,1),opacity .3s ease;
+}
+.vz-fx-button.vz-fx-fill::after{
+ z-index:1;
+ padding:1px;
+ background:linear-gradient(114deg,transparent 5%,var(--vz-fx-ink) 39%,rgba(255,255,255,.53) 57%,transparent 86%) 0 0 / 230% 100% no-repeat;
+ -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+ mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+ -webkit-mask-composite:xor;
+ mask-composite:exclude;
+ opacity:0;
+ transition:opacity .26s ease,background-position .58s cubic-bezier(.2,.8,.2,1);
+}
+/* We never use transform on the host: existing magnetic effects and 3D
+   manipulators can keep controlling their own transforms without conflicts. */
+@media(hover:hover) and (pointer:fine){
+ .vz-fx-button:not(:disabled):not([aria-disabled="true"]):not([inert]):hover{
+  border-color:var(--vz-fx-ink);
+  outline:1px solid color-mix(in srgb,var(--vz-fx-ink) 26%,transparent);
+  outline-offset:2px;
+ }
+ .vz-fx-button.vz-fx-new-shadow:not(:disabled):not([aria-disabled="true"]):hover{
+  box-shadow:0 0 0 1px var(--vz-fx-glow),0 12px 28px -16px var(--vz-fx-glow);
+ }
+ .vz-fx-button.vz-fx-fill:not(:disabled):not([aria-disabled="true"]):hover::before{
+  transform:translate3d(0,0,0);opacity:1;
+ }
+ .vz-fx-button.vz-fx-fill:not(:disabled):not([aria-disabled="true"]):hover::after{
+  opacity:.82;background-position:100% 0;
+ }
+}
+.vz-fx-button:focus-visible{
+ outline:2px solid var(--vz-fx-ink);
+ outline-offset:3px;
+ box-shadow:0 0 0 4px var(--vz-fx-glow);
+}
+.vz-fx-button.vz-fx-fill:focus-visible::before{
+ transform:translate3d(0,0,0);opacity:.82;
+}
+.vz-fx-button.vz-fx-fill:focus-visible::after{
+ opacity:1;background-position:100% 0;
+}
+/* Honor native disabled styling and block all decorative overlays when unavailable. */
+.vz-fx-button:is(:disabled,[aria-disabled="true"],[inert])::before,
+.vz-fx-button:is(:disabled,[aria-disabled="true"],[inert])::after{
+ animation:none!important;
+ transition:none!important;
+}
+.vz-fx-button.vz-fx-fill:is(:disabled,[aria-disabled="true"],[inert])::before,
+.vz-fx-button.vz-fx-fill:is(:disabled,[aria-disabled="true"],[inert])::after{
+ opacity:0!important;
+}
+@media(hover:none),(pointer:coarse){
+ .vz-fx-button.vz-fx-fill::before,.vz-fx-button.vz-fx-fill::after{
+  opacity:0;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion=full]) .vz-fx-button.vz-fx-fill::before,
+ html:not([data-motion=full]) .vz-fx-button.vz-fx-fill::after{
+  transition:none!important;
+  transform:none!important;
+  opacity:0!important;
+ }
+}
+html[data-motion="paused"] .vz-fx-button.vz-fx-fill::before,
+html[data-motion="paused"] .vz-fx-button.vz-fx-fill::after,
+html[data-motion="reduced"] .vz-fx-button.vz-fx-fill::before,
+html[data-motion="reduced"] .vz-fx-button.vz-fx-fill::after{
+ transition:none!important;
+ transform:none!important;
+ opacity:0!important;
+}
+/* The native :active state remains available for pointer and keyboard inputs.
+   JS adds a 220ms independent 'scale' animation to eligible controls only. */
