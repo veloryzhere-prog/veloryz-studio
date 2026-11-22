@@ -36,6 +36,12 @@ assert(dock.includes("No AI reply was generated"),'No fabricated responses if AP
 assert(shared.includes('href=link'),'Shared menu uses real navigation');
 assert(shared.includes('vz-shared-menu-toggle')&&shared.includes('vz-shared-curtain'),'Reference circular nav and page-curtain interactions');
 assert(shared.includes('vz-shared-guides'),'Each public route receives animated docs footer');
+assert(shell.includes('/reference-creator-live.css')&&shell.includes('/reference-creator-live.js'),'Real creator should include responsive live brief panel');
+assert.doesNotThrow(()=>new vm.Script(read('public/reference-creator-live.js')),'Live brief enhancement JS must parse');
+const creatorLive=read('public/reference-creator-live.js'),creatorLiveCSS=read('public/reference-creator-live.css');
+assert(creatorLive.includes('VeloryzCreatorV4'),'Live brief must reuse the actual V4 state and estimate');
+assert(creatorLive.includes('api.estimate()')&&creatorLive.includes('api.get()'),'Live brief must display actual project scope and estimate');
+assert(creatorLiveCSS.includes('vz-live-progress')&&creatorLiveCSS.includes('max-width:700px'),'Creator live preview requires the animated ring and mobile collapsed view');
 assert(creator.includes("fetch('/api/enquiries'"),'Real creator submission API must remain');
 assert(creator.includes("finished={reference:out.reference}"),'Real project reference must remain server-issued');
 assert(creator.includes('Make your<br><em>project.</em>'),'Uploaded creator design typography implemented');
