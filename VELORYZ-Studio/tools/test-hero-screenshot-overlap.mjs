@@ -14,7 +14,7 @@ const hint=section.indexOf('<span class="vz-3d-hint"');
 const controlsEnd=section.lastIndexOf('</div>');
 assert(controlsStart>0&&hint>controlsStart&&hint<controlsEnd,'Drag instruction must live INSIDE model controls');
 assert(!section.includes('class="meta tag"'),'Floating location line crossing the heading must be removed');
-assert(section.includes('class="vz-hero-eyebrow"')&&section.includes('class="vz-hero-location"'),'Both hero labels must be grouped in normal flow');
+assert(section.includes('class="vz-hero-eyebrow"')&&section.includes('class="tag vz-hero-location"'),'Both hero labels must be grouped in normal flow');
 assert(section.includes('India · Asia / Working everywhere'),'Do not lose original studio detail');
 assert(section.includes('Design × Code × Motion'),'Do not lose original editorial category');
 assert(section.includes('Built to be')&&section.includes('remembered.'),'Keep original typography and text');
