@@ -71,7 +71,7 @@ function brand(slot='header'){
  const logo=studioCMS?.branding?.[slot==='footer'?'footerLogo':'headerLogo'];
  const label=esc(site?.name||'VELORYZ');
  // Change only the header wordmark; preserve the footer layout and all interactive V artwork.
- if(slot==='header'&&!logo)return `<a class="brand brand--official" href="/" aria-label="${label} Studio home"><img class="brand-official-wordmark" src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="880" height="263" alt="${label}" decoding="async"></a>`;
+ if(slot==='header')return `<a class="brand brand--official" href="/" aria-label="${label} Studio home"><img class="brand-official-wordmark" src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="880" height="263" alt="${label}" decoding="async"></a>`;
  return `<a class="brand" href="/" aria-label="${label} Studio home"><img src="${esc(logo||'/assets/brand/veloryz-mark.svg')}" alt="" class="veloryz-brand-icon"><span class="brand-name">${label}<small>${esc(site?.tagline||'Independent Studio')}</small></span></a>`;
 }
 function needHelpBlock(){
