@@ -66,6 +66,8 @@ jobs:
         run: node tools/test-public-reviews.mjs
       - name: Verify immersive reviews, server-only AI, continuous motion and 120-second invitation
         run: node tools/test-review-experience.mjs
+      - name: Verify simple Community Feedback UI and working owner Reviews / AI Control Centre
+        run: node tools/test-community-admin-v3.mjs
       - name: Verify detailed Studio Control console, AI Mindset and owner actions
         run: node tools/test-admin-detail.mjs
       - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle

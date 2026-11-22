@@ -4,12 +4,14 @@
 (()=>{
 'use strict';
 const GROUPS=[
- {title:'Operations',caption:'01 / KEEP THE STUDIO MOVING',items:['overview','command','enquiries','client-portal','payments']},
+ {title:'Operations',caption:'01 / KEEP THE STUDIO MOVING',items:['overview','reviews','command','enquiries','client-portal','payments']},
  {title:'Creative production',caption:'02 / MAKE & PUBLISH',items:['projects','catalogue','content','branding','media','offers']},
- {title:'Studio intelligence',caption:'03 / AI & KNOWLEDGE',items:['ai-mindset','knowledge-ai','platform','documentation']},
+ {title:'Studio intelligence',caption:'03 / AI & KNOWLEDGE',items:['ai-control','ai-mindset','knowledge-ai','platform','documentation']},
  {title:'Governance',caption:'04 / SYSTEMS & HISTORY',items:['history','health','settings']}
 ];
 const META={
+ reviews:{group:'OPERATIONS',eyebrow:'COMMUNITY MODERATION',description:'See genuine visitor feedback in one place, review incoming submissions, and approve or hide individual reviews without leaving Studio Control.',steps:['Open Needs review to see pending feedback.','Approve to make a genuine review visible publicly, or reject spam and sensitive data.','Use View public reviews to verify only approved content appears; these actions are immediate and separate from CMS publishing.'],related:[['ai-control','AI Control Centre'],['content','Site content']]},
+ 'ai-control':{group:'INTELLIGENCE',eyebrow:'UNIFIED AI OPERATIONS',description:'Manage independent help agents, the five public adviser specialties, and global provider configuration in one connected interface.',steps:['Choose the Assistants, Advisers or Provider tab.','Save agent settings securely, or save and publish adviser CMS briefs as directed.','Run the live provider test to verify actual model responses.'],related:[['knowledge-ai','Separate agents'],['ai-mindset','Adviser briefs']]},
  overview:{group:'OPERATIONS',eyebrow:'STUDIO PULSE',description:'Monitor the published content and current creative workload, then jump into the relevant editor.',steps:['Review the current published revision and outstanding draft work.','Check which projects and campaigns are ready for visitors.','Open the relevant console, make changes and publish deliberately.'],related:[['command','Command center'],['enquiries','New requests']]},
  command:{group:'OPERATIONS',eyebrow:'CENTRAL CONTROL',description:'Manage homepage visibility, campaigns, AI adviser specialties and the publishing workflow from one desk.',steps:['Choose the section or action you want to manage.','Edit the current draft and use Save draft; this does not update the live site.','Review Preview draft and Publish site when ready.'],related:[['media','Media library'],['ai-mindset','AI Mindset']]},
  enquiries:{group:'OPERATIONS',eyebrow:'PROJECT REQUEST INBOX',description:'Review incoming project briefs, contact preferences and follow-up status in the owner-only console.',steps:['Open a request and review its details carefully.','Update the internal status or notes.','Contact the customer through your approved channel; changing the status does not send a message.'],related:[['client-portal','Client management'],['payments','Payments']]},
@@ -45,6 +47,7 @@ function sidebar(section,navigation,workspace,icon,E,counts={}){
    '<nav class="admin-nav" aria-label="'+E(g.title)+'">'+items.map(id=>{
      const [key,label,ico]=map.get(id),active=section===id;
      const badge=id==='projects'?workspace.state.projects?.length:
+        id==='reviews'&&counts.reviewsLoaded?counts.pendingReviewCount:
         id==='enquiries'&&counts.enquiriesLoaded?counts.enquiryTotal:
         id==='media'&&counts.mediaLoaded?counts.mediaCount:
         id==='client-portal'&&counts.clientsLoaded?counts.clientCount:null;
@@ -89,9 +92,10 @@ function operations(workspace,icon,E){
    numericCard(featured,'Featured projects','Public homepage selections','projects',E)+
    numericCard(running,'Active campaigns','Currently scheduled and enabled','offers',E)+
    numericCard(catalogue,'Enabled designs','Published draft catalogue entries','catalogue',E)+'</div>'+
-  '<div class="ad-ops-actions"><a href="#/enquiries"><span>'+icon('content')+'</span><strong>Review requests</strong><small>Briefs & follow-ups</small><b>↗</b></a>'+
+  '<div class="ad-ops-actions"><a href="#/reviews"><span>'+icon('content')+'</span><strong>Community reviews</strong><small>Moderate visitor feedback</small><b>↗</b></a>'+
+  '<a href="#/enquiries"><span>'+icon('content')+'</span><strong>Review requests</strong><small>Briefs & follow-ups</small><b>↗</b></a>'+
   '<a href="#/client-portal"><span>'+icon('work')+'</span><strong>Client operations</strong><small>Projects & milestones</small><b>↗</b></a>'+
-  '<a href="#/ai-mindset"><span>'+icon('settings')+'</span><strong>AI mind & training</strong><small>Five advisers + four help agents</small><b>↗</b></a>'+
+  '<a href="#/ai-control"><span>'+icon('settings')+'</span><strong>AI Control Centre</strong><small>Manage five advisers + four assistants</small><b>↗</b></a>'+
   '<a href="#/media"><span>'+icon('media')+'</span><strong>Asset production</strong><small>Photos, logo files & films</small><b>↗</b></a></div></section>';
 }
 function overview(workspace,icon,E){

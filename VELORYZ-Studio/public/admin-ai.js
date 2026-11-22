@@ -7,7 +7,7 @@ async function loadAiSettings(){
  if(aiSettingsLoading)return;aiSettingsLoading=true;
  try{aiSettings=preview?{provider:'gemini',model:'gemini-3.5-flash-lite',configured:false,source:'none',version:-1,secureStorageReady:true}:await api('/api/admin/ai/settings');}
  catch(e){aiSettings={provider:'gemini',model:'gemini-3.5-flash-lite',configured:false,source:'none',version:-1,loadError:e.message};}
- finally{aiSettingsLoading=false;if(section==='platform'){render();if(aiSettings.loadError){const error=$('#ai-save-error');if(error)error.textContent=aiSettings.loadError;}}}
+ finally{aiSettingsLoading=false;if(section==='platform'||section==='ai-control'&&aiHubTab==='provider'){render();if(aiSettings.loadError){const error=$('#ai-save-error');if(error)error.textContent=aiSettings.loadError;}}}
 }
 function showAiConnectionResult(box,result){
  box.textContent=(result.status==='live'?'Live '+result.providerLabel+' reply verified. ':'Live '+result.providerLabel+' is not ready. ')+result.message+'\nStudio guide remains available when the provider cannot answer.';

@@ -11,7 +11,7 @@
  };
  const date=v=>{const d=new Date(v);return Number.isFinite(d.getTime())?new Intl.DateTimeFormat('en-IN',{month:'short',year:'numeric'}).format(d):'';};
  const stars=n=>'★'.repeat(Math.max(0,Math.min(5,Number(n)||0)))+'☆'.repeat(Math.max(0,5-(Number(n)||0)));
- let reviews=[],adminReviews=[],aiSuggestion='';
+ let reviews=[],adminReviews=[],aiSuggestion='',activeRating='all';
  async function call(path,method='GET',payload){
   const r=await fetch(path,{method,headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined,credentials:'same-origin',cache:'no-store',redirect:'error'});
   let value={};try{value=await r.json()}catch{}
@@ -70,13 +70,13 @@
  }
  function empty(message){
   const div=el('div','review-empty');
-  div.append(el('span','review-empty-symbol','✳'),el('h3','','A community starts with a conversation.'),el('p','',message));
-  const link=el('a','review-primary','Share your experience ↗');link.href='#share-review';div.append(link);
+  div.append(el('span','review-empty-symbol','☆'),el('h3','','No published feedback yet'),el('p','',message));
+  const link=el('button','review-primary','Start Rating ↗');link.type='button';link.dataset.reviewOpen='true';div.append(link);
   return div;
  }
  function renderPublic(){
   const root=$('review-feed');if(!root)return;
-  const selected=$('review-filter-rating')?.value||'all';
+  const selected=activeRating;
   const sort=$('review-sort')?.value||'newest';
   const visible=reviews.filter(x=>selected==='all'||Number(x.rating)===Number(selected)).slice();
   visible.sort((a,b)=>{
@@ -85,7 +85,7 @@
    return new Date(b.created_at)-new Date(a.created_at);
   });
   showMessage($('review-results'),visible.length+' '+(visible.length===1?'review':'reviews')+' shown');
-  if(!reviews.length){root.replaceChildren(empty('No reviews have been published yet. We never populate empty space with invented testimonials.'));return;}
+  if(!reviews.length){root.replaceChildren(empty('There are no approved reviews yet. Be the first to leave genuine feedback.'));return;}
   if(!visible.length){root.replaceChildren(el('p','review-empty','No real reviews match that rating. Try another filter.'));return;}
   root.replaceChildren(...visible.map(v=>reviewCard(v)));
  }
@@ -98,12 +98,13 @@
   const nodes=[];
   for(let n=5;n>=1;n--){
    const total=map.get(n)||0;
-   const row=el('div','review-rating-row');
+   const row=el('button','review-rating-row');row.type='button';row.dataset.reviewRating=String(n);row.setAttribute('aria-label',n+' star reviews: '+total);
    row.append(el('span','',n+' ★'));
    const track=el('span','review-rating-bar'),bar=el('span','review-rating-bar-fill');
    bar.style.width=count?Math.min(100,Math.round(total/count*100))+'%':'0%';
    track.append(bar);
-   row.append(track,el('span','',total.toLocaleString('en-IN')));
+   row.append(track,el('span','',total.toLocaleString('en-IN')));row.setAttribute('aria-pressed',String(activeRating===String(n)));
+   row.classList.toggle('is-selected',activeRating===String(n));
    nodes.push(row);
   }
   root.replaceChildren(...nodes);
@@ -113,7 +114,7 @@
    const data=await call('/api/reviews');
    reviews=Array.isArray(data.reviews)?data.reviews:[];
    const count=Math.max(0,Number(data?.summary?.count)||0);
-   showMessage($('review-stat'),count?count+' real '+(count===1?'review':'reviews')+' · '+Number(data.summary.average||0).toFixed(1)+'/5':'Community feedback / Opening chapter');
+   showMessage($('review-stat'),count?count+' published '+(count===1?'review':'reviews'):'No published reviews yet');
    ratingBreakdown(data.summary);
    renderPublic();
   }catch(err){
@@ -211,13 +212,42 @@
   });
   bindAI();
  }
+ function openReview(){
+  const form=$('share-review');if(!form)return;
+  form.hidden=false;
+  history.replaceState(history.state,'','#share-review');
+  requestAnimationFrame(()=>{form.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});form.querySelector('input[name="rating"]')?.focus({preventScroll:true});});
+ }
+ function closeReview(){
+  const form=$('share-review');if(!form)return;
+  form.hidden=true;
+  if(location.hash==='#share-review')history.replaceState(history.state,'',location.pathname+location.search);
+  $('review-start')?.focus({preventScroll:true});
+ }
+ function selectRating(rating){
+  activeRating=['all','1','2','3','4','5'].includes(String(rating))?String(rating):'all';
+  for(const button of document.querySelectorAll('[data-review-rating]')){
+   const selected=button.dataset.reviewRating===activeRating;
+   button.classList.toggle('is-selected',selected);
+   button.setAttribute('aria-pressed',String(selected));
+  }
+  renderPublic();
+ }
  if(isAdmin){
   $('review-admin-filter')?.addEventListener('change',renderAdmin);
   loadAdmin();
  }else{
-  $('review-filter-rating')?.addEventListener('change',renderPublic);
+  document.addEventListener('click',event=>{
+   const filter=event.target.closest('[data-review-rating]');
+   if(filter){selectRating(filter.dataset.reviewRating);return;}
+   if(event.target.closest('[data-review-open]'))openReview();
+  });
+  $('review-start')?.addEventListener('click',openReview);
+  $('review-close')?.addEventListener('click',closeReview);
   $('review-sort')?.addEventListener('change',renderPublic);
+  window.addEventListener('hashchange',()=>{if(location.hash==='#share-review')openReview();});
   loadPublic();
   bindForm();
+  if(location.hash==='#share-review')openReview();
  }
 })();
