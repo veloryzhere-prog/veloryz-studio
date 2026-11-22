@@ -69,90 +69,124 @@ export function messageMail(project:ProjectEmail,who:"client"|"studio"){
  return {subject,html:brandEmail("PROJECT COMMUNICATION",title,p(htmlEsc(intro))+box("PROJECT",project.title)+box("REFERENCE",project.request_reference||"VELORYZ project"),{text:"Open your project workspace",url:who==="client"?BASE+"/admin/#/client-portal":BASE+"/client/"}),
  text:intro+"\nProject: "+project.title+"\nReference: "+(project.request_reference||"VELORYZ project")+"\n\nVELORYZ Studio"};
 }
+/* Industrial one-sheet order document. The complete submission is also attached
+   as text INSIDE the PDF for requests too long to fit visibly on one A4 page. */
 async function createPdf(project:ProjectEmail,items:DocumentMilestone[]){
- const doc=await PDFDocument.create(),roman=await doc.embedFont(StandardFonts.Helvetica),bold=await doc.embedFont(StandardFonts.HelveticaBold);
- doc.setTitle("VELORYZ Project Summary | "+(project.request_reference||project.title));
- doc.setAuthor("VELORYZ Studio");doc.setSubject("Private client project brief, scope and onboarding roadmap");
- const W=595,H=842,L=48,maxX=548;
- let page:any,y=0,count=0;
- const newPage=(heading?:string)=>{
-  page=doc.addPage([W,H]);count++;
-  page.drawRectangle({x:0,y:H-13,width:W,height:13,color:color(BRAND.rose)});
-  page.drawRectangle({x:0,y:H-88,width:W,height:75,color:color(BRAND.navy)});
-  page.drawText("VELORYZ / PRIVATE PROJECT DOCUMENT",{x:L,y:H-54,size:16,font:bold,color:rgb(1,1,1)});
-  page.drawText("PROJECT SUMMARY  /  "+(project.request_reference||"STUDIO WORKSPACE").slice(0,50),{x:L,y:H-75,size:8,font:roman,color:rgb(.85,.81,.9)});
-  y=H-124;if(heading)title(heading);
- };
- const paragraph=(s:string,size=10,indent=0)=>{
-  const lines=normalPdf(s).split("\n");
-  for(const para of lines){
-   const words=para.split(/\s+/),maxWidth=W-2*L-indent;
-   let current="";
-   const draw=()=>{
-    if(y<76)newPage();
-    page.drawText(current,{x:L+indent,y,size,font:roman,color:color(BRAND.navy)});
-    y-=size+7;current="";
-   };
-   for(const word of words){
+ const doc=await PDFDocument.create(),regular=await doc.embedFont(StandardFonts.Helvetica),bold=await doc.embedFont(StandardFonts.HelveticaBold);
+ doc.setTitle("VELORYZ / Order "+(project.request_reference||project.title));
+ doc.setAuthor("VELORYZ Studio");
+ doc.setSubject("Official acceptance / one-page project and order summary");
+ doc.setCreator("VELORYZ Studio / Private Project Operations");
+ const W=595.28,H=841.89,px=doc.addPage([W,H]),M=43;
+ const C={paper:color("#f7f6f3"),ink:color("#25293d"),muted:color("#687183"),
+         accent:color("#c57e9d"),line:color("#d7d5da"),light:color("#ebe8ec"),white:rgb(1,1,1)};
+ px.drawRectangle({x:0,y:0,width:W,height:H,color:C.paper});
+ px.drawRectangle({x:0,y:H-131,width:W,height:131,color:C.ink});
+ px.drawRectangle({x:0,y:0,width:8,height:H,color:C.accent});
+ px.drawLine({start:{x:44,y:804},end:{x:63,y:761},thickness:7,color:C.white});
+ px.drawLine({start:{x:63,y:761},end:{x:82,y:804},thickness:7,color:C.accent});
+ px.drawText("VELORYZ",{x:99,y:781,size:26,font:bold,color:C.white,characterSpacing:1.7});
+ px.drawText("STUDIO / PRIVATE CLIENT OPERATIONS",{x:100,y:762,size:8,font:regular,color:color("#c9c3cd"),characterSpacing:1.3});
+ px.drawText("PROJECT ACCEPTANCE / ORDER RECORD",{x:M,y:735,size:9.2,font:bold,color:C.white,characterSpacing:1.2});
+ px.drawText("ISSUED "+normalPdf(date(project.accepted_at||new Date().toISOString())).toUpperCase(),{x:388,y:735,size:7.6,font:bold,color:C.white});
+ px.drawText("ONE-SHEET  /  A4",{x:455,y:812,size:7.2,font:regular,color:color("#d2cad4")});
+ function fitted(value:unknown,x:number,y:number,max:number,size=10,weight=false,ink=C.ink){
+  let t=normalPdf(value).replace(/\s+/g," ").trim()||"—";
+  const ft=weight?bold:regular;
+  while(t.length>1&&ft.widthOfTextAtSize(t,size)>max)t=t.slice(0,-2);
+  if(t!==normalPdf(value).replace(/\s+/g," ").trim())t=t.replace(/[ .,;:-]+$/,"")+"...";
+  px.drawText(t.slice(0,250),{x,y,size,font:ft,color:ink});
+ }
+ function rule(y:number,x=M,w=W-M*2){px.drawLine({start:{x,y},end:{x:x+w,y},thickness:.65,color:C.line});}
+ function meta(label:string,value:unknown,x:number,y:number,w:number){
+  fitted(label.toUpperCase(),x,y,w,7.2,true,C.muted);
+  fitted(value,x,y-17,w,12.2,true,C.ink);
+ }
+ function heading(text:string,x:number,y:number,w:number){
+  px.drawRectangle({x,y:y-3,width:3.5,height:15,color:C.accent});
+  fitted(text.toUpperCase(),x+11,y,w-11,9.6,true,C.ink);
+ }
+ function wrap(text:string,width:number,size:number,ft=regular){
+  const lines:string[]=[];
+  for(const paragraph of normalPdf(text).split("\n")){
+   if(!paragraph.trim()){lines.push("");continue}
+   let line="";
+   for(const word of paragraph.split(/\s+/)){
     if(!word)continue;
-    const proposed=current?current+" "+word:word;
-    if(roman.widthOfTextAtSize(proposed,size)>maxWidth&&current)draw();
-    current=word;
+    const want=line?line+" "+word:word;
+    if(ft.widthOfTextAtSize(want,size)<=width){line=want;continue}
+    if(line){lines.push(line);line=""}
+    let rest=word;
+    while(ft.widthOfTextAtSize(rest,size)>width&&rest.length>1){
+     let chunk="";
+     for(const ch of rest){if(ft.widthOfTextAtSize(chunk+ch,size)>width)break;chunk+=ch}
+     if(!chunk)break;
+     lines.push(chunk);rest=rest.slice(chunk.length);
+    }
+    line=rest;
    }
-   if(current)draw();else y-=7;
+   if(line)lines.push(line);
   }
-  y-=5;
- };
- const title=(s:string)=>{
-  if(y<115)newPage();
-  page.drawText(normalPdf(s).slice(0,68),{x:L,y,size:16,font:bold,color:color(BRAND.navy)});y-=27;
-  page.drawLine({start:{x:L,y:y+8},end:{x:maxX,y:y+8},thickness:.6,color:color(BRAND.lavender)});
- };
- const entry=(k:string,v:unknown)=>{
-  if(v===undefined||v===null||String(v).trim()==="")return;
-  if(y<120)newPage();
-  page.drawText(normalPdf(k).toUpperCase().slice(0,60),{x:L,y,size:8,font:bold,color:color(BRAND.rose)});y-=17;
-  paragraph(String(v),10,0);y-=5;
- };
- newPage();
- title("A project with direction.");
- paragraph("PRIVATE CLIENT DOCUMENT - CREATED AFTER STUDIO ACCEPTANCE");
- entry("Project name",project.title);
- entry("Official request reference",project.request_reference||"Pending assignment");
- entry("Client",project.client_name+" | "+project.client_email);
- entry("Accepted",date(project.accepted_at||new Date().toISOString()));
- entry("Current status",project.status||"Planning");
- entry("Current phase",project.phase||"Discover");
- entry("Progress",String(project.progress||0)+"% (owner-updated)");
- entry("Expected finish",date(project.due_date||""));
- entry("Next agreed action",project.next_step||"The team will review scope and propose milestones.");
- newPage("01 / Your original project request");
- paragraph("This is the original information submitted by the client and captured for studio planning; it is not an automatically accepted fixed price.");
- paragraph(project.brief_details||project.summary||"The complete original request will be confirmed with the team.");
- newPage("02 / Scope and preparation");
- entry("Project summary",project.summary||"Discuss scope with the studio.");
- paragraph("Review the requested features, pages, design direction, content and assets with the team. Unless separately agreed in writing, planning figures and timeline preferences are indicative only.");
- title("03 / Initial delivery roadmap");
- for(let i=0;i<items.length;i++){
-  entry(String(i+1).padStart(2,"0")+" / "+items[i].title,items[i].details);
-  if(items[i].due_date)entry("Target date",items[i].due_date);
+  return lines;
  }
- newPage("04 / Client access and collaboration");
- entry("Private Client Portal",BASE+"/client/");
- entry("Studio website",BASE+"/");
- entry("Contact the team",BASE+"/contact/");
- entry("Project reference",project.request_reference||"Provided in acceptance email");
- paragraph("A separate one-time private invitation code arrives in a dedicated email, or the team can provide it through an authenticated channel. The public project reference is NOT a password or invitation code. Do not forward access details.");
- paragraph("The portal provides owner-entered project stages, progress, review decisions, secure project messages and links to deliverables. External file links retain the permissions of their original file hosts.");
- title("05 / Communication and approval rules");
- paragraph("Project questions should be sent in the portal Messages tab. The studio can update phases and milestones; client approvals are only recorded for items explicitly marked for review. An accepted request does not mean a payment was collected, a fixed quotation was agreed or a deadline was guaranteed.");
- title("06 / Secure handling");
- paragraph("Do not send passwords, OTPs, payment card details or private login secrets in chat or email. Verify any invoices directly with the Studio team. Only the active private portal session exposes client project information.");
- const pages=doc.getPages();for(let i=0;i<pages.length;i++){
-  const pg=pages[i];pg.drawLine({start:{x:L,y:59},end:{x:maxX,y:59},thickness:.6,color:color(BRAND.lavender)});
-  pg.drawText("VELORYZ STUDIO  /  PRIVATE CLIENT COPY",{x:L,y:40,size:8,font:bold,color:color(BRAND.muted)});
-  pg.drawText((i+1)+" / "+pages.length,{x:522,y:40,size:8,font:roman,color:color(BRAND.muted)});
+ // Identity / project details
+ meta("ORDER / REQUEST REF",project.request_reference||"VELORYZ",M,681,246);
+ meta("PROJECT / TITLE",project.title,304,681,245);
+ meta("CLIENT",project.client_name+" / "+project.client_email,M,631,243);
+ meta("PHASE / STATUS",(project.phase||"Discover")+"  /  "+(project.status||"planning"),304,631,245);
+ rule(586);
+ heading("01   Complete original request",M,564,305);
+ heading("02   Production milestones",376,564,175);
+ px.drawLine({start:{x:359,y:282},end:{x:359,y:572},thickness:.65,color:C.line});
+ const entire=normalPdf(project.brief_details||project.summary||"Project scope will be confirmed with the team.");
+ const briefFont=8.25,briefLine=11.25,width=300,maxLines=21;
+ const brief=wrap(entire,width,briefFont);
+ brief.slice(0,maxLines).forEach((line,i)=>{if(line)fitted(line,M,537-i*briefLine,width,briefFont,false,C.ink)});
+ if(brief.length>maxLines)fitted("CONTINUED IN ORIGINAL BRIEF ATTACHMENT + ACCEPTANCE EMAIL",M,292,width,7.1,true,C.accent);
+ else fitted("ORIGINAL SUBMISSION / STORED WITH YOUR ORDER",M,287,width,7.05,true,C.muted);
+ const roadmap=items.filter(x=>x.type!=="file").slice(0,6);
+ let y=537;
+ roadmap.forEach((item,i)=>{
+  fitted(String(i+1).padStart(2,"0"),376,y,24,9.2,true,C.accent);
+  const titleLines=wrap(item.title||"Milestone",144,8.8,bold).slice(0,2);
+  titleLines.forEach((line,j)=>fitted(line,398,y-j*12,144,8.8,true,C.ink));
+  const info=(item.state&&item.state!=="upcoming"?item.state+" · ":"")+(item.due_date||"");
+  if(info.trim())fitted(info,398,y-26,145,7.3,false,C.muted);
+  y-=43;
+ });
+ rule(269);
+ heading("03   Project, reference & studio links",M,246,W-2*M);
+ const briefLinks=[...new Set((project.brief_details||project.summary||"").match(/https?:\/\/[^\s<>"']+/gi)||[])].map(v=>v.replace(/[),.;!?]+$/,"")).filter(v=>/^https?:\/\/[\w.-]+(?:[/:?#]|$)/.test(v)).slice(0,4);
+ const urls=[
+ ["CLIENT PORTAL","veloryz.online/client/"],
+ ["CONTACT","veloryz.online/contact/"],
+ ["DOCUMENTATION","veloryz.online/docs/"],
+ ["STUDIO","veloryz.online/"],
+ ...briefLinks.map((url,i)=>["CLIENT LINK "+(i+1),url.replace(/^https?:\/\//,"")])
+ ];
+ const left=urls.slice(0,4),right=urls.slice(4,8);
+ for(const [entries,x] of [[left,M],[right,302]] as [string[][],number][]){
+  let pos=222;
+  for(const [label,url] of entries){
+   fitted(label,x,pos,230,7.1,true,C.muted);
+   fitted(url,x,pos-13,230,8.3,false,C.ink);
+   pos-=31;
+  }
  }
+ rule(92);
+ fitted("ONE-TIME CLIENT ACCESS IS SENT SEPARATELY BY THE STUDIO OWNER",M,74,480,8.35,true,C.ink);
+ fitted("Reference is not a login code  /  Terms, scope and payments require a separate agreement.",M,55,505,7.8,false,C.muted);
+ fitted("VELORYZ   /   PRIVATE CLIENT COPY",M,30,330,7.6,true,C.muted);
+ fitted("01 / 01",503,30,45,8.2,true,C.ink);
+ // Full original order details remain inside this same PDF, regardless of page
+ // capacity. Many PDF viewers expose the text attachment via Attachments.
+ try{
+  const attachments="VELORYZ / COMPLETE ORIGINAL ORDER DETAILS\n"+(project.request_reference||"")+"\n\n"+
+   "PROJECT: "+project.title+"\nCLIENT: "+project.client_name+" <"+project.client_email+">\n\n"+
+   (project.brief_details||project.summary||"")+"\n\nPROJECT LINKS\n"+briefLinks.join("\n")+"\n\n"+
+   "MILESTONES\n"+items.map((x,i)=>(i+1)+". "+x.title+" / "+x.details+" / "+(x.due_date||"")).join("\n");
+  await doc.attach(new TextEncoder().encode(attachments),"VELORYZ-Full-Order-Details.txt",{mimeType:"text/plain",description:"Complete submitted scope, references, links and project milestone data"});
+ }catch{ /* Email and protected original project record still hold the full brief. */ }
  return await doc.save();
 }
 export const makeProjectSummaryPdf=createPdf;
