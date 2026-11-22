@@ -44,6 +44,10 @@ assert.match(platform,/export async function sharedKnowledgeAi/,'Shared secure S
 assert.match(platform,/NO access to private client projects/,'Client guide must never access confidential projects.');
 assert.match(platform,/evidenceForPrompt\(messages,siteState,7\)/,'Project Creator must have site context.');
 assert.match(platform,/store:false/,'OpenAI response content must not be retained by provider.');
+const edge=read('supabase/functions/veloryz-knowledge-ai/index.ts');
+assert.match(edge,/Promise\.allSettled/,'One offline index must not erase the other or built-in verified site facts.');
+assert.match(edge,/publicSiteBasics/,'Knowledge agents need verified on-site task facts even if the remote origin is unavailable.');
+assert.match(edge,/mode:'guide'/,'Reference replies must stay distinct from genuine model inference.');
 const creator=read('public/creator-ai.js');
 assert.doesNotThrow(()=>new vm.Script(creator),'Project AI browser code must parse.');
 assert.match(creator,/data\.mode==='guide'/,'Project Creator must accept grounded documentation fallback distinctly.');
