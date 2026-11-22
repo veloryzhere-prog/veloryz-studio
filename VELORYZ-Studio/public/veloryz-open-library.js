@@ -115,9 +115,12 @@ function render(){
 }
 function animateCards(root=document){
  observer?.disconnect();observer=null;
- const cards=[...root.querySelectorAll('.vz-source-card')];
+ const gallery=root.id==='vz-real-library'?root:root.querySelector?.('#vz-real-library');
+ if(!gallery)return;
+ const cards=[...gallery.querySelectorAll('.vz-source-card')];
  const reduced=window.matchMedia?.('(prefers-reduced-motion:reduce)').matches;
  if(reduced||!('IntersectionObserver' in window)){cards.forEach(x=>x.classList.add('is-visible'));return}
+ gallery.classList.add('vz-reveal-enabled');
  observer=new IntersectionObserver(list=>list.forEach(({target,isIntersecting})=>{
   if(!isIntersecting)return;
   target.classList.add('is-visible');observer.unobserve(target)
@@ -167,8 +170,14 @@ document.addEventListener('error',e=>{
 document.addEventListener('studio:route',bootstrap);
 window.addEventListener('pageshow',bootstrap);
 document.addEventListener('DOMContentLoaded',bootstrap);
-window.designPage=render;
-window.VeloryzOpenDesigns={render,entries,showcase};
-window.VeloryzExternalDesignLibrary={...previous,render,entries,showcase};
-if(window.VeloryzTemplateStore)window.VeloryzTemplateStore.render=render;
+function renderWithMotion(){
+ const page=render();
+ // The SPA inserts the HTML after this callback: wait until it is committed.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>animateCards(document)));
+ return page;
+}
+window.designPage=renderWithMotion;
+window.VeloryzOpenDesigns={render:renderWithMotion,entries,showcase};
+window.VeloryzExternalDesignLibrary={...previous,render:renderWithMotion,entries,showcase};
+if(window.VeloryzTemplateStore)window.VeloryzTemplateStore.render=renderWithMotion;
 })();
