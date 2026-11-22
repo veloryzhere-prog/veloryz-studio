@@ -5,6 +5,7 @@ const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
 const OWNER=BASE+"/functions/v1/veloryz-studio-api/api/admin/state";
 const QUERIES={"listProjects":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100","getProject":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?","addProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id","editProject":"UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id","listItems":"SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150","addItem":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id","editItem":"UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id","deleteItem":"DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id","listMessages":"SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100","addMessage":"INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id","revokeInvites":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''","revokeSessionsByProject":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''","addInvite":"INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","consumeInvite":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE token_hash=? AND revoked_at='' AND expires_at>? RETURNING project_id","verifyInvite":"SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?","addSession":"INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifySession":"SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?","revokeSession":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?","clientDecision":"UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id","getEnquiry":"SELECT id,reference,name,email,phone,service,budget,preferred_date,preferred_time,company,message,status,acceptance_status,accepted_project_id,accepted_at,created_at FROM veloryz_studio.studio_enquiries WHERE id=?","findAccepted":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?","acceptProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT (enquiry_id) WHERE enquiry_id IS NOT NULL DO NOTHING RETURNING id","linkEnquiry":"UPDATE veloryz_studio.studio_enquiries SET acceptance_status='accepted',accepted_project_id=(SELECT id FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?),accepted_at=CASE WHEN accepted_at='' THEN ? ELSE accepted_at END,status=CASE WHEN status='new' THEN 'contacted' ELSE status END,updated_at=? WHERE id=? RETURNING id,accepted_project_id","addMilestoneOnce":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT (id) DO NOTHING RETURNING id","logEmail":"INSERT INTO veloryz_studio.studio_client_email_events (id,project_id,kind,recipient,sender,transport,state,provider_message_id,error_label,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?) RETURNING id","listEmailEvents":"SELECT id,kind,recipient,sender,transport,state,error_label,created_at FROM veloryz_studio.studio_client_email_events WHERE project_id=? ORDER BY created_at DESC LIMIT 35","markRead":"UPDATE veloryz_studio.studio_client_messages SET read_at=? WHERE project_id=? AND sender=? AND read_at='' RETURNING id","listProjectsFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,accepted_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 200","getProjectFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE id=?","listMessagesFull":"SELECT id,project_id,sender,body,read_at,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 150","recalcProgress":"UPDATE veloryz_studio.studio_client_projects AS p SET progress=COALESCE((SELECT ROUND(100.0*COUNT(*) FILTER (WHERE state='done')/NULLIF(COUNT(*),0))::integer FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone'),p.progress),next_step=COALESCE((SELECT title FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone' AND state<>'done' ORDER BY created_at ASC,title ASC LIMIT 1),p.next_step),updated_at=? WHERE p.id=? RETURNING id,progress,next_step"};
+QUERIES.rateLimit="INSERT INTO veloryz_studio.studio_limits (id,count,expires_at) VALUES (?,1,?) ON CONFLICT(id) DO UPDATE SET count=studio_limits.count+1 RETURNING count";
 const enc=new TextEncoder(),common={"Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"};
 function send(data,status=200,extra={}){return Response.json(data,{status,headers:{...common,...extra}})}
 function fail(msg,status=400){throw Object.assign(new Error(msg),{status})}
@@ -75,6 +76,16 @@ async function db(name,...params){
  if(!response.ok){console.error("Portal query failure",name,response.status);fail("The studio database is temporarily unavailable.",503)}
  return (await response.json())[0]?.results||[];
 }
+async function throttle(req,action,limit,seconds){
+ const raw=(req.headers.get('cf-connecting-ip')||req.headers.get('x-forwarded-for')?.split(',')[0]||'').trim();
+ const client=/^[0-9a-f:.]{3,64}$/i.test(raw)?raw:'unidentified';
+ const bucket=Math.floor(Date.now()/(seconds*1000));
+ // Hash client identifiers with a server-only salt. The database never receives raw IPs.
+ const key=await sha('portal:'+action+':'+client+':'+bucket+':'+KEY);
+ const rows=await db('rateLimit',key,Math.ceil(Date.now()/1000)+seconds*2);
+ if(!rows.length||!Number.isFinite(Number(rows[0].count)))fail('Request rate control is temporarily unavailable.',503);
+ if(Number(rows[0].count)>limit)fail('Too many requests. Please try again later.',429);
+}
 async function payload(r){
  if(!r.headers.get("content-type")?.includes("application/json"))fail("Use a JSON request.",415);
  if(Number(r.headers.get("content-length")||0)>16000)fail("The document is too large.",413);
@@ -119,7 +130,7 @@ function itemFields(v){
 }
 function mutation(req){
  const origin=req.headers.get("origin");
- if(origin&&origin!=="https://veloryz.online"&&!/^http:\/\/localhost:\d+$/.test(origin))fail("This request must come from the studio website.",403);
+ if(origin!=="https://veloryz.online"&&!/^http:\/\/localhost:\d+$/.test(origin||""))fail("This request must come from the studio website.",403);
  if(req.headers.get("sec-fetch-site")==="cross-site")fail("Cross-origin actions are not allowed.",403);
 }
 async function main(req){
@@ -129,6 +140,7 @@ async function main(req){
  if(req.method!=="GET")mutation(req);
  const action=path.slice("/api/client-portal".length),now=new Date().toISOString();
  if(action==="/access"&&req.method==="POST"){
+   await throttle(req,"invitation-access",8,900);
   const v=await payload(req),code=normalizedInvite(v.invite);
   if(!code)fail("This invitation is invalid or expired.",401);
   const found=await db("consumeInvite",now,await sha(code),now);
@@ -150,6 +162,7 @@ async function main(req){
    return send(pid?{projects,workspace:await view(id(pid))}:{projects});
   }
   if(action==="/admin/test-email"&&req.method==="POST"){
+    await throttle(req,"email-test",6,3600);
    if(!mailStatus().configured)return send({ok:false,status:"not-configured",message:"Configure VELORYZ_GMAIL_APP_PASSWORD in Supabase first."},503);
    const recipient="veloryz.here@gmail.com";
    const outcome=await sendGmailMail({to:recipient,subject:"VELORYZ | Gmail sender connection test",
@@ -238,6 +251,7 @@ async function main(req){
    return send({ok:true,notification},201);
   }
   if(action==="/admin/invite"&&req.method==="POST"){
+    await throttle(req,"invitation-send",15,3600);
    const v=await payload(req),pid=id(v.project_id);
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
    const project=(await db("getProjectFull",pid))[0];
@@ -260,6 +274,7 @@ async function main(req){
   return send({ok:true,read:(await db("markRead",now,pid,"studio")).length});
  }
  if(action==="/messages"&&req.method==="POST"){
+   await throttle(req,"portal-message:"+pid,30,3600);
   const v=await payload(req),message=trim(v.body,2000,true);
   if(message.length<2)fail("Write at least two characters.");
   await db("addMessage",crypto.randomUUID(),pid,"client",message,now);
