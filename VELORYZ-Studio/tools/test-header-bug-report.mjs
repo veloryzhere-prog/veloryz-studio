@@ -114,7 +114,7 @@ const to=menu.indexOf(until,from);
 assert.ok(from>0&&to>from,'Shared quick-create DOM mounting must be route-aware');
 const quickMount=menu.slice(from,to+until.length);
 const routeEvents={};
-const quickElement={isConnected:false,remove(){this.isConnected=false;},setAttribute(){}};
+const quickElement={isConnected:false,remove(){this.isConnected=false;const i=sharedRoot.nodes.indexOf(this);if(i>=0)sharedRoot.nodes.splice(i,1);},setAttribute(){}};
 const sharedRoot={
  nodes:[],append(...nodes){this.nodes=nodes;},
  insertBefore(element,before){
@@ -142,6 +142,7 @@ locationState.pathname='/services/';routeEvents['studio:route']();
 assert.ok(quickElement.isConnected,'Quick Create may be mounted on allowed pages');
 locationState.pathname='/create/';routeEvents['studio:route']();
 assert.ok(!quickElement.isConnected,'SPA navigation into Create must remove Quick Create from the DOM');
+assert.ok(!sharedRoot.nodes.includes(quickElement),'The previously mounted anchor must be physically removed from shared header markup');
 assert.ok(menu.includes('root.append(brand,trigger,menu,curtain)'),'Initial HTML chrome must omit generic create CTA');
 assert.ok(shell.includes('reference-shared-menu.js?v=20261123-remove-create-dom-v2'),'Bust cached shared-menu script on creator route');
 
