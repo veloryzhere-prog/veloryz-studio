@@ -27,6 +27,7 @@
   {path:'/docs/studio/index.html',label:'Studio documentation',group:'Documentation destinations',description:'121 product and operations articles'},
   {path:'/help/studio/index.html',label:'Help Centre',group:'Documentation destinations',description:'20 help topics'},
   {path:'/sitemap/',label:'HTML site map',group:'Documentation destinations',description:'Human-readable public page index'},
+  {path:'/roadmap.html',label:'Project roadmap',group:'Work with the Studio',description:'Quality and delivery checkpoints'},
   {path:'/reviews.html',label:'Community reviews',group:'Explore VELORYZ',description:'Moderated genuine feedback'},
   {path:'/sitemap.xml',label:'XML sitemap',group:'Documentation destinations',description:'Machine-readable index for search crawlers'}
  ];
