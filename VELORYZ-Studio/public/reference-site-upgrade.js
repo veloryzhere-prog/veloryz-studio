@@ -36,7 +36,7 @@ function buildGallery(){
   if(image){
    const img=document.createElement('img');img.src=image;img.loading=i<3?'eager':'lazy';img.decoding='async';
    img.alt=toText(item.name)+' published design preview';
-   img.addEventListener('error',()=>{img.hidden=true;art.classList.add('vz-art-unavailable')},{once:true});
+   img.addEventListener('error',()=>{if(!img.dataset.retryOriginal&&safeImg(item.fallbackImage)){img.dataset.retryOriginal='1';img.src=safeImg(item.fallbackImage);return}img.hidden=true;art.classList.add('vz-art-unavailable')});
    art.append(img);
   }else art.classList.add('vz-art-unavailable');
   const body=document.createElement('div');body.className='vz-home-design-body';
