@@ -9,7 +9,7 @@ let visitorFirstName='',nameRequired=false;
 const introducedTo=new Set();
 const chatHistories=Object.create(null);
 const chatHeat=Object.create(null);
-const chatToneReady=import('/chat-tone.mjs?v=20261121-spicy-v4');
+const chatToneReady=import('/chat-tone.mjs?v=20261122-six-agents-v6');
 const advisers=[
  {id:'happy',name:'Happy',role:'First contact · Bold & friendly',color:'#eab04d'},
  {id:'nikhil',name:'Nikhil',role:'Senior intelligence · Strategy',color:'#56adbd'},
