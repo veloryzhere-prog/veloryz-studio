@@ -120,31 +120,6 @@ body.motion-edition #modal-root .expert-modal:has([data-persona="aryan"]){
  --chat-accent:#6C4B9A;--chat-user:#EFE5F8;--chat-canvas:#FBF8FF;
 }
 body.motion-edition #modal-root .expert-modal:has([data-persona="aryan"]) .chat-header{background:linear-gradient(110deg,#FCFBFE,#F1E9FA)}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]){
- --chat-paper:#101A15;--chat-surface:#192A21;--chat-canvas:#14231C;
- --chat-ink:#F7F5E9;--chat-muted:#BACABF;--chat-line:#42634B;
- --chat-accent:#D87342;--chat-user:#294A37;
- background:#111D16;color:#F7F5E9;border-color:#47604A;
-}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-header{
- background:linear-gradient(115deg,#13291E,#294023 65%,#573221);border-color:#466044;
-}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-header :is(h2,p,.eyebrow){color:#F6EFE1!important}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-header h2 span{color:#D7C0A9!important}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-scroll-area{
- background-color:#14241C;background-image:radial-gradient(#32513C 1px,transparent 1px);
-}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-message{
- background:#1F3527;border-color:#476D4C;
-}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-message p{color:#F6F3E9!important}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) .chat-message.user{background:#365944}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) #expert-chat-form,
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) :is(.chat-footer,.chat-connection,.chat-conversation-meta){background:#17271D;color:#DFE6DA;border-color:#3C5A45}
-body.motion-edition #modal-root .expert-modal:has([data-persona="madherchod"]) #expert-question{background:#233A2B;color:#FFF;border-color:#537053}
-.expert-avatar-madherchod{background:radial-gradient(circle at 30% 25%,#DFA171,#432216 76%);display:inline-grid;place-items:center}
-.expert-avatar-madherchod .vz-agent-flash{font-size:clamp(20px,2vw,35px);color:#FFE2B4;line-height:1}
-.expert-avatar-madherchod.small .vz-agent-flash{font-size:21px}
 /* Support agents share motion language; distinct accent and UX context remain. */
 .vz-chat[data-vz-chat="help"]{--vz-chat-accent:#287652}
 .vz-chat[data-vz-chat="support"]{--vz-chat-accent:#BD704E}
