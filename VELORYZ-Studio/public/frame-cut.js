@@ -5,7 +5,7 @@ class VeloryzFrameCut extends HTMLElement {
  connectedCallback(){queueMicrotask(()=>{if(this.isConnected&&!this.cleanup)this.mount();});}
  disconnectedCallback(){this.cleanup?.();this.cleanup=null;}
  mount(){
-  const video=this.querySelector('video.frame-scarf');if(!video)return;
+  const video=this.querySelector('.frame-scarf');if(!video)return;
   const controller=new AbortController(),signal=controller.signal;
   const listen=(el,name,fn)=>el?.addEventListener?.(name,fn,{signal});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
