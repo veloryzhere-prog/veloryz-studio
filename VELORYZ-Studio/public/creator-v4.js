@@ -631,6 +631,6 @@
   if(typeof document.dispatchEvent==='function'&&typeof CustomEvent==='function')setTimeout(()=>document.dispatchEvent(new CustomEvent('veloryz:creator-render')),0);
   return app();
  }
- createPage=creatorPage;
+ window.createPage=creatorPage;
  window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active,renderPage:creatorPage};
 })();
