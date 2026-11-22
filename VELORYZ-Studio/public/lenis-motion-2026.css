@@ -1,0 +1,76 @@
+/* VELORYZ / 2026 Lenis Motion Edition
+   Decorative choreography only. Actual scroll physics are provided exclusively
+   by pinned MIT-licensed Lenis; Motion mini + existing observers handle entrances.
+   Avoid layout animation, global will-change and multiple scrolling timelines.
+ */
+:root{
+ --vz-flow-ease:cubic-bezier(.22,1,.36,1);
+ --vz-flow-fast:280ms;
+ --vz-flow-medium:640ms;
+ --vz-flow-long:960ms;
+}
+html[data-vz-smooth-wheel="lenis"],html[data-vz-smooth-wheel="lenis"] body{
+ scroll-behavior:auto!important;
+}
+html.lenis{scroll-padding-top:82px}
+html.lenis [data-lenis-prevent]{overscroll-behavior:contain}
+html.lenis :is(dialog,[role="dialog"],.vz-review-invite,.mobile-nav,.docs-sidebar,.studio-docs-sidebar,.vz-chat-log,.v4-ai-messages){overscroll-behavior:contain}
+/* The old V4 blurred entrance repeatedly repainted large sections. A simple
+   composited opacity/translate reveal is gentler and keeps text crisp. */
+html[data-motion="full"] body.motion-edition .vz-enter:not(.vz-entered){filter:none!important;opacity:.92}
+html[data-motion="full"] body.motion-edition .vz-enter.vz-entered{filter:none!important}
+html[data-motion="full"] body.motion-edition :is(.site-header,.hero-art,.logo-stage,.motion-manifesto){backface-visibility:hidden}
+/* Editorial entrance rhythm — only when existing scroll observers flag elements.
+   They have short, nonblocking animations and never change scroll position. */
+html[data-motion="full"] body.motion-edition .page-intro.in-view :is(.eyebrow,h1,p),
+html[data-motion="full"] body.motion-edition .section-head.in-view :is(.eyebrow,h2){
+ animation:vz-flow-arrive var(--vz-flow-long) var(--vz-flow-ease) both;
+}
+html[data-motion="full"] body.motion-edition .page-intro.in-view h1,
+html[data-motion="full"] body.motion-edition .section-head.in-view h2{animation-delay:65ms}
+html[data-motion="full"] body.motion-edition .page-intro.in-view p{animation-delay:130ms}
+@keyframes vz-flow-arrive{
+ from{opacity:.6;translate:0 12px}
+ to{opacity:1;translate:0 0}
+}
+/* Clean, gradual service/card interactions: favor compositor translate/scale. */
+@media(hover:hover) and (pointer:fine){
+ html[data-motion="full"] body.motion-edition :is(.project-card,.work-grid .project-card,.design-card,.feature-card,.process-card,.platform-teaser){
+  transition:translate var(--vz-flow-medium) var(--vz-flow-ease),border-color 260ms ease,box-shadow 360ms ease;
+ }
+ html[data-motion="full"] body.motion-edition :is(.project-card,.design-card,.feature-card,.process-card,.platform-teaser):hover{
+  translate:0 -4px;
+ }
+ html[data-motion="full"] body.motion-edition :is(.project-card,.design-card,.feature-card) :is(img,video){
+  transition:scale var(--vz-flow-long) var(--vz-flow-ease);
+ }
+ html[data-motion="full"] body.motion-edition :is(.project-card,.design-card,.feature-card):hover :is(img,video){scale:1.025}
+ html[data-motion="full"] body.motion-edition :is(.button,.text-link,.site-header a,.filter,.tab-button):focus-visible{
+  outline:3px solid #fa7348;outline-offset:4px;
+ }
+ html[data-motion="full"] body.motion-edition .button{
+  transition:translate var(--vz-flow-fast) var(--vz-flow-ease),background 240ms ease,color 240ms ease,border-color 240ms ease;
+ }
+ html[data-motion="full"] body.motion-edition .button:hover{translate:0 -2px}
+ html[data-motion="full"] body.motion-edition .button:active{translate:0 1px}
+}
+/* Hide duplicated background orbits on constrained devices instead of allowing
+   large fixed canvas-like effects to contend with scrolling and media decoding. */
+@media(max-width:900px), (pointer:coarse){
+ html[data-motion="full"] body.motion-edition :is(.vz-atmosphere-ray,.vz-atmosphere-grid,.vz-kinetic-ambient,.vz-kinetic-glow,.vz-kinetic-halo){
+  display:none!important;
+ }
+ html[data-motion="full"] body.motion-edition .vz-enter:not(.vz-entered){opacity:1!important;translate:none!important}
+ html[data-motion="full"] body.motion-edition .page-intro.in-view :is(.eyebrow,h1,p),
+ html[data-motion="full"] body.motion-edition .section-head.in-view :is(.eyebrow,h2){animation-duration:420ms}
+}
+@media(prefers-reduced-motion:reduce){
+ :root{--vz-flow-fast:0ms;--vz-flow-medium:0ms;--vz-flow-long:0ms}
+ html body.motion-edition .page-intro.in-view :is(.eyebrow,h1,p),
+ html body.motion-edition .section-head.in-view :is(.eyebrow,h2){animation:none!important}
+ html body.motion-edition :is(.project-card,.design-card,.feature-card) :is(img,video){transition:none!important;scale:1!important}
+ html body.motion-edition :is(.project-card,.design-card,.feature-card):hover{translate:none!important}
+}
+html[data-motion="paused"] body.motion-edition *,html[data-motion="reduced"] body.motion-edition *{
+ scroll-behavior:auto!important;
+}
