@@ -16,7 +16,7 @@
  const coarse=matchMedia('(pointer: coarse)');
  const narrow=matchMedia('(max-width: 900px)');
  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- const lowPower=()=>Boolean(network?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
+ const lowPower=()=>Boolean(network?.saveData);
  let engine=null,routeFrame=0,awaitingMotion=false;
  const selector=[
   'dialog','[role="dialog"]','[aria-modal="true"]',
@@ -39,7 +39,7 @@
   if(motion&&motion.level!=='full')return false;
   return true;
  };
- const canSmooth=()=>typeof window.Lenis==='function'&&!reduced.matches&&!lowPower()&&motionPermits();
+ const canSmooth=()=>typeof window.Lenis==='function'&&(!reduced.matches||window.StudioMotion?.level==='full')&&!lowPower()&&motionPermits();
  function clearEngine(){
   if(!engine)return;
   window.VeloryzMotionClock?.detachLenis(engine);

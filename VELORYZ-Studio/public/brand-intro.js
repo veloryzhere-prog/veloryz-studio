@@ -11,11 +11,11 @@
  const reduced=typeof matchMedia==='function'?matchMedia('(prefers-reduced-motion: reduce)'):null;
  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  const home=location.pathname==='/'||location.pathname==='/index.html';
- const saveData=()=>Boolean(network?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
+ const saveData=()=>Boolean(network?.saveData);
  function motionOff(){
   let selected='';
   try{selected=localStorage.getItem('veloryz.motion.v2')||'';}catch{}
-  return Boolean(reduced?.matches||saveData()||['reduced','paused'].includes(selected));
+  return Boolean((reduced?.matches&&selected!=='full')||saveData()||['reduced','paused'].includes(selected));
  }
  let seen=false;
  try{seen=sessionStorage.getItem(sessionKey)==='1';}catch{}

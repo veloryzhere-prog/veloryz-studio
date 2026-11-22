@@ -18,7 +18,7 @@ test('hero word cycles four motion-safe styles while retaining accessible text',
   assert.ok(css.includes('data-type-phase="'+phase+'"'),phase);
  }
  assert.ok(js.includes("readable.textContent=original"));
- assert.ok(js.includes("reduced.matches"));
+ assert.ok(js.includes("dataset.motion==='full'"),'The hero must follow the effective Full motion preference');
 });
 test('reviews use identical cloned groups and keep honest empty state',()=>{
  const js=asset('review-experience.js'),css=asset('review-experience.css');
@@ -26,7 +26,7 @@ test('reviews use identical cloned groups and keep honest empty state',()=>{
  assert.ok(js.includes("track.replaceChildren(first,second)"));
  assert.ok(js.includes("ResizeObserver"));
  assert.ok(js.includes("track.dataset.manualPause"));
- assert.ok(js.includes("No invented testimonials"));
+ assert.ok(js.includes("No published reviews yet.")&&js.includes("not customer testimonials"),'Empty data must display clearly labeled invitations instead of fake reviews');
  assert.ok(css.includes('translate3d(-50%,0,0)'));
 });
 test('all conversation surfaces load a shared theme',()=>{
@@ -34,5 +34,16 @@ test('all conversation surfaces load a shared theme',()=>{
  for(const agent of ['support','client','creator'])assert.ok(css.includes('data-vz-chat="'+agent+'"'));
  assert.ok(css.includes('.expert-modal'));
  assert.ok(shell.includes('conversation-redesign-2026.css'));
- assert.ok(shell.includes('scarf-autoplay-v5'));
+ assert.ok(shell.includes('frame-cut.js?v=20261122-auto-v6'),'Production shell must cache-bust the repaired scarf animation');
+ assert.ok(shell.includes('motion-recovery-v3.css'));
+ assert.ok(shell.includes('ai-universe-v3.css'));
+ assert.ok(asset('review-experience.js').includes('vz-reviews-spotlight-invites'));
+ assert.ok(asset('platform.js').includes("id:'madherchod'"));
+});
+
+test('first-time visitors can access motion without a blocking introduction gate',()=>{
+ const js=asset('motion.js');
+ assert.ok(js.includes('const needsIntro=false'),'Motion must not be gated behind a compulsory onboarding modal');
+ assert.ok(js.includes("preference==='auto'"),'An automatic preference must remain available');
+ assert.ok(js.includes("media?.matches"),'System reduced-motion preferences must remain respected unless Full is selected');
 });

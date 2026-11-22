@@ -6,10 +6,13 @@
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
 const PHASES=['editorial','sculptural','outline','signature'];
 let previous=null,observer=null,timer=0,phase=0,visible=false;
-const allowed=()=>document.documentElement.dataset.motion==='full'&&!reduce.matches&&!document.hidden&&!window.StudioMotion?.onboardingActive;
+const allowed=()=>document.documentElement.dataset.motion==='full'&&!document.hidden&&!window.StudioMotion?.onboardingActive;
 const stop=()=>{if(timer){clearInterval(timer);timer=0;}};
 function paint(){
  if(!previous?.isConnected)return;
+ previous.classList.remove('is-changing');
+ void previous.offsetWidth;
+ previous.classList.add('is-changing');
  previous.dataset.typePhase=PHASES[phase%PHASES.length];
  previous.classList.add('is-activated');
 }

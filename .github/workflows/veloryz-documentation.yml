@@ -42,6 +42,8 @@ jobs:
         run: node tools/test-knowledge-ai.mjs
       - name: Verify official-logo cinematic intro and existing motion onboarding
         run: node tools/test-brand-intro.mjs
+      - name: Verify all six AI personalities and visible motion recovery
+        run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration
         run: node tools/test-brand-film.mjs
       - name: Verify project creation and client portal quick action routes

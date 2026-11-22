@@ -16,7 +16,7 @@ assert(shell.indexOf('/smooth-scroll.js')<shell.indexOf('/animation-providers.js
 assert(source.includes('motion@14.11.1/mini/+esm'),'Motion JavaScript runtime must be pinned');
 assert(source.includes('lottie-web@5.13.0/build/player/lottie_light.min.js'),'Lottie light runtime must be pinned');
 assert(source.includes('veloryz:creator-state')&&source.includes("state==='success'"));
-assert(source.includes("reduce.matches")&&source.includes('network?.saveData'));
+assert(source.includes("root.dataset.motion==='full'")&&source.includes('network?.saveData'),'Provider effects must honor explicit Full setting and Save Data');
 assert(source.includes('IntersectionObserver'),'Motion should only animate visible elements');
 assert(!source.includes("addEventListener('scroll'"),'Provider integrations must not poll scroll');
 assert(!source.includes('new Lenis'),'Only the existing Lenis engine owns scrolling');

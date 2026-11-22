@@ -24,13 +24,14 @@ assert.match(css,/prefers-reduced-motion:reduce/);
 assert.match(css,/\.vz-kinetic-ambient::before/,'Avoid expensive always-blurred animated ambience');
 assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length,'Style rules must be balanced');
 assert.match(js,/aria-hidden/,'Decorative letter spans must be hidden from assistive technology');
-assert.doesNotMatch(js,/addEventListener\(['"]scroll['"]|setInterval|requestAnimationFrame/,'Typography must not require scroll polling');
+assert(!js.includes("addEventListener('scroll'")&&!js.includes('requestAnimationFrame'),'Hero typography must not poll scrolling or use an extra animation frame loop');
+assert.match(js,/setInterval/,'Actual typography style cycling must be scheduled while visible');
 assert.match(shell,/\/kinetic-type-2026\.css/);
 assert.match(shell,/\/kinetic-type-2026\.js/);
 assert.ok(shell.indexOf('/kinetic-type-2026.css')>shell.indexOf('/lenis-motion-2026.css'),'New heading accents must win legacy stylesheet priority');
 assert.doesNotMatch(scarf,/\.frame-toggle|class="frame-overlay"/);
 const handlers={},media=Object.assign(new EventTarget(),{matches:false});
-const word={dataset:{kineticWord:'remembered.'},textContent:'remembered.',isConnected:true,classes:new Set(),style:{setProperty(){}},classList:{add(...xs){for(const x of xs)word.classes.add(x)}},replaceChildren(...nodes){this.children=nodes}};
+const word={dataset:{kineticWord:'remembered.'},textContent:'remembered.',isConnected:true,classes:new Set(),style:{setProperty(){}},classList:{add(...xs){for(const x of xs)word.classes.add(x)},remove(...xs){for(const x of xs)word.classes.delete(x)}},replaceChildren(...nodes){this.children=nodes}};
 class Node{
  constructor(tag){this.tag=tag;this.children=[];this.attributes={};this.style={setProperty(k,v){this[k]=v}};}
  appendChild(v){this.children.push(v)}
@@ -43,8 +44,8 @@ const document={
  createElement:tag=>new Node(tag),
  addEventListener:(type,fn)=>{handlers[type]=fn}
 };
-const window={StudioMotion:Object.assign(new EventTarget(),{level:'full'})};
-vm.runInNewContext(js,{document,window,matchMedia:()=>media,IntersectionObserver:class{constructor(fn){observerCallback=fn}observe(n){observed=n}disconnect(){}},console});
+const window={StudioMotion:Object.assign(new EventTarget(),{level:'full'}),addEventListener(){}};
+vm.runInNewContext(js,{document,window,matchMedia:()=>media,setInterval:()=>1,clearInterval:()=>{},IntersectionObserver:class{constructor(fn){observerCallback=fn}observe(n){observed=n}disconnect(){}},console});
 assert(word.classes.has('is-ready'),'Hero enhancement must be initialized');
 assert.equal(word.children.length,2,'Accessibility source text plus decorative letters');
 assert.equal(word.children[0].textContent,'remembered.','Accessible word must remain intact');

@@ -52,11 +52,29 @@
    const total=Math.max(0,Number(data?.summary?.count)||0);
    count.textContent=total?total+' PUBLISHED '+(total===1?'REVIEW':'REVIEWS'):'OPEN TO FIRST REVIEWS';
    if(!items.length){
-    track.replaceChildren();
-    node.classList.add('vz-reviews-spotlight-empty');
-    state.textContent='Our public review collection is just beginning. No invented testimonials—only real experiences will appear here.';
-    const cta=mk('a','vz-reviews-empty-cta','Be the first to share ↗');
-    cta.href='/reviews.html#share-review';track.append(cta);
+    // Keep the section moving honestly: these are editorial invitations, NOT reviews.
+    node.classList.remove('vz-reviews-spotlight-empty');
+    node.classList.add('vz-reviews-spotlight-invites');
+    state.textContent='No published reviews yet. This moving display contains studio invitations, not customer testimonials.';
+    const invitations=[
+     ['YOUR EXPERIENCE MATTERS','Tell us what you think','An invitation to share your own feedback.'],
+     ['REAL VOICES, REAL STORIES','Be part of the conversation','Only authentic, moderated contributions appear as reviews.'],
+     ['A BETTER STUDIO TOGETHER','Help shape what comes next','Your feedback can help us make the experience better.'],
+     ['STUDIO COMMUNITY','Every perspective counts','Honest criticism and thoughtful praise are welcome.']
+    ];
+    const first=mk('div','vz-review-set');
+    for(const [tag,title,body] of invitations){
+      const card=mk('article','vz-reviews-marquee-card vz-review-invite-card');
+      card.append(mk('span','vz-review-slide-highlight',tag),mk('h3','',title),mk('p','vz-review-slide-body',body));
+      const link=mk('a','vz-review-invite-primary','Write a review ↗');
+      link.href='/reviews.html#share-review';card.append(link);first.append(card);
+    }
+    const second=first.cloneNode(true);
+    second.setAttribute('aria-hidden','true');second.inert=true;
+    track.replaceChildren(first,second);
+    track.style.setProperty('--vz-review-run','42s');
+    const pause=$('vz-review-pause');
+    if(pause){pause.hidden=false;pause.disabled=reduce.matches&&document.documentElement.dataset.motion!=='full';pause.textContent='Pause motion ‖';}
     return;
    }
    node.classList.remove('vz-reviews-spotlight-empty');
@@ -90,7 +108,7 @@
      const pixels=first.getBoundingClientRect().width;
      track.style.setProperty('--vz-review-run',Math.max(24,pixels/55).toFixed(2)+'s');
     });
-    if(reduce.matches||track.dataset.manualPause==='true')track.classList.add('vz-review-paused');
+    if((reduce.matches&&document.documentElement.dataset.motion!=='full')||track.dataset.manualPause==='true')track.classList.add('vz-review-paused');
     else track.classList.remove('vz-review-paused');
    };
    buildTrack();
@@ -99,12 +117,29 @@
     resizeObserver.observe(track.closest('.vz-reviews-ribbon')||track);
    }
    const btn=$('vz-review-pause');
-   if(btn){btn.disabled=reduce.matches;btn.hidden=false;btn.setAttribute('aria-pressed',String(track.dataset.manualPause==='true'));btn.textContent=reduce.matches?'Motion reduced':track.dataset.manualPause==='true'?'Resume motion ▶':'Pause motion ‖';}
+   if(btn){btn.disabled=reduce.matches&&document.documentElement.dataset.motion!=='full';btn.hidden=false;btn.setAttribute('aria-pressed',String(track.dataset.manualPause==='true'));btn.textContent=reduce.matches?'Motion reduced':track.dataset.manualPause==='true'?'Resume motion ▶':'Pause motion ‖';}
   }).catch(()=>{
-   if(current!==carouselToken)return;
-   track.replaceChildren();
-   state.textContent='Community reviews are temporarily unavailable.';
-   count.textContent='REVIEW SERVICE';
+   if(current!==carouselToken||!track.isConnected)return;
+   // Keep the studio ribbon animated on API downtime without fabricating reviews.
+   node.classList.remove('vz-reviews-spotlight-empty');
+   node.classList.add('vz-reviews-spotlight-invites');
+   count.textContent='COMMUNITY CONVERSATIONS';
+   state.textContent='Reviews cannot be loaded right now. These are studio invitations, not customer reviews.';
+   const first=mk('div','vz-review-set');
+   for(const [heading,description] of [
+    ['Your experience matters','Real visitor reviews will return when the service is available.'],
+    ['A studio that listens','Share an honest suggestion, critique or experience.'],
+    ['Be part of our community','Your voice helps us build better work.'],
+    ['Keep the conversation going','Explore the studio and tell us what you think.']
+   ]){
+    const card=mk('article','vz-reviews-marquee-card vz-review-invite-card');
+    card.append(mk('span','vz-review-slide-highlight','VELORYZ / COMMUNITY'),mk('h3','',heading),mk('p','vz-review-slide-body',description));
+    const action=mk('a','vz-review-invite-primary','Share feedback ↗');
+    action.href='/reviews.html#share-review';card.append(action);first.append(card);
+   }
+   const second=first.cloneNode(true);second.setAttribute('aria-hidden','true');second.inert=true;
+   track.replaceChildren(first,second);track.style.setProperty('--vz-review-run','42s');
+   const pause=$('vz-review-pause');if(pause){pause.hidden=false;pause.disabled=reduce.matches&&document.documentElement.dataset.motion!=='full';pause.textContent='Pause motion ‖';}
   });
  }
  function mount(){
@@ -115,7 +150,7 @@
   const pause=$('vz-review-pause');
   pause?.addEventListener('click',()=>{
    const track=$('vz-review-track');if(!track)return;
-   if(reduce.matches)return;
+   if(reduce.matches&&document.documentElement.dataset.motion!=='full')return;
    const paused=track.dataset.manualPause!=='true';
    track.dataset.manualPause=String(paused);
    track.classList.toggle('vz-review-paused',paused);
@@ -123,6 +158,7 @@
    pause.textContent=paused?'Resume motion ▶':'Pause motion ‖';
   });
   reviewReady(section);
+  window.StudioMotion?.addEventListener?.('change',()=>{const track=$('vz-review-track');if(track){track.classList.toggle('vz-review-paused',document.documentElement.dataset.motion!=='full'||track.dataset.manualPause==='true');}});
  }
  function stopClock(){
   clearTimeout(interval);interval=null;
@@ -198,7 +234,7 @@
  addEventListener('pagehide',stopClock);
  reduce.addEventListener?.('change',()=>{
   const track=$('vz-review-track'),pause=$('vz-review-pause');
-  if(track&&reduce.matches){track.classList.add('vz-review-paused');if(pause){pause.disabled=true;pause.textContent='Motion reduced';}}
+  if(track&&reduce.matches&&document.documentElement.dataset.motion!=='full'){track.classList.add('vz-review-paused');if(pause){pause.disabled=true;pause.textContent='Motion reduced';}}
   else if(track){if(pause)pause.disabled=false;if(track.dataset.manualPause!=='true'){track.classList.remove('vz-review-paused');if(pause)pause.textContent='Pause motion ‖';}}
  });
  window.VeloryzReviewExperience={mount,showInviteForPreview:()=>{if(location.hostname==='localhost')showInvite();}};

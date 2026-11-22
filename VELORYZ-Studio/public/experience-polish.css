@@ -42,7 +42,7 @@
 @media(max-width:1100px){.desktop-nav{gap:9px}.desktop-nav>a{font-size:10px}.header-end{gap:10px}}
 @media(max-width:850px){.planner-starters-heading{grid-template-columns:1fr;gap:10px}}
 @media(max-width:600px){.planner-starters{padding:19px;border-radius:15px}.planner-starter-grid{grid-template-columns:1fr}.planner-starter{padding:15px}.planner-starters-heading h2{font-size:29px}}
-@media(prefers-reduced-motion:reduce){.planner-starter,.planner-starter-action b,.campaign-design,.campaign-design .campaign-art{animation:none!important;transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){html:not([data-motion='full']) :is(.planner-starter,.planner-starter-action b,.campaign-design,.campaign-design .campaign-art){animation:none!important;transition:none!important;transform:none!important}}
 
 /* Performance layer: keep input, scrolling and touch responsive. */
 @media(max-width:850px){
@@ -57,7 +57,7 @@ html[data-motion-suspended] .vz-atmosphere,
 html[data-motion-suspended] .vz-atmosphere *,
 html[data-motion-suspended] .campaign-design,
 html[data-motion-suspended] .campaign-design *{animation-play-state:paused!important}
-@media(prefers-reduced-motion:reduce){.vz-atmosphere{display:none!important}}
+@media(prefers-reduced-motion:reduce){html:not([data-motion='full']) .vz-atmosphere{display:none!important}}
 
 /* Contact details in the project-planner review, before the final request form. */
 .planner-contact-block{border:1px solid #d8c6b2;background:#fffaf2;padding:clamp(20px,3vw,36px);margin:28px 0;display:grid;gap:14px;max-width:750px}

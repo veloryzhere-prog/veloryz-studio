@@ -10,8 +10,8 @@
  const coarse=window.matchMedia?.('(pointer: coarse)');
  const narrow=window.matchMedia?.('(max-width: 750px)');
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- const lowPower=()=>Boolean(connection?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
- const eligible=()=>!motion?.matches&&!lowPower()&&window.StudioMotion?.level!=='paused'&&window.StudioMotion?.level!=='reduced'&&!document.hidden;
+ const lowPower=()=>Boolean(connection?.saveData);
+ const eligible=()=>(!motion?.matches||window.StudioMotion?.level==='full')&&!lowPower()&&window.StudioMotion?.level!=='paused'&&window.StudioMotion?.level!=='reduced'&&!document.hidden;
  const selector=[
   '.vz-footer-help',
   '.footer-directory .footer-dir-group',
