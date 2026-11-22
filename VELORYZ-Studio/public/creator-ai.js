@@ -46,7 +46,16 @@
     const line=document.createElement('div');line.className='v4-ai-message '+(message.role==='user'?'is-user':message.mode==='guide'?'is-guide':'is-assistant');
     const label=document.createElement('span');label.textContent=message.role==='user'?'YOU':message.mode==='guide'?'STUDIO GUIDE · PREWRITTEN':'PROJECT AI · LIVE MODEL';
     const p=document.createElement('p');p.textContent=message.content;
-    line.append(label,p);history.append(line);
+    line.append(label,p);
+    if(Array.isArray(message.sources)&&message.sources.length){
+     const nav=document.createElement('div');nav.className='v4-ai-source-links';
+     for(const source of message.sources.slice(0,3)){
+      if(typeof source?.path!=='string'||!/^\/(?:docs|help|create|client|services|pricing|design|work|studio|process|contact|payments|book|developers|motion|velori|veloryz|teamjob|journey)(?:\/[a-z0-9_-]+)*\/$/.test(source.path))continue;
+      const a=document.createElement('a');a.href=source.path;a.textContent=String(source.title||'Read source').slice(0,90)+' ↗';nav.append(a);
+     }
+     if(nav.childElementCount)line.append(nav);
+    }
+    history.append(line);
    });
    history.scrollTop=history.scrollHeight;
   }
@@ -67,8 +76,9 @@
   try{
    const reply=await fetch('/api/knowledge-ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({agent:'creator',messages:store.messages.slice(-11).map(({role,content})=>({role,content}))}),signal:ctrl.signal});
    const data=await reply.json().catch(()=>({error:'The AI service could not respond.'}));
-   if(!reply.ok||!data.answer||data.mode!=='ai')throw Error(data.error||'The configured Project AI is unavailable.');
-   store.messages.push({role:'assistant',content:String(data.answer).slice(0,1400)});
+   if(!reply.ok||!data.answer||!['ai','guide'].includes(data.mode))throw Error(data.error||'The configured Project AI is unavailable.');
+   if(data.mode==='guide'){store.fallback=true;store.error='Using matching published site references. A live model reply is not available for this request.';}
+   store.messages.push({role:'assistant',mode:data.mode,content:String(data.answer).slice(0,1400),sources:Array.isArray(data.sources)?data.sources.slice(0,4):[]});
   }catch(err){
    store.fallback=true;
    store.error='Live AI is unavailable. Below is predefined studio guidance, not a generated answer. You can still try again or contact the team.';
