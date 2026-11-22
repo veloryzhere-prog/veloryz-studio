@@ -27,7 +27,7 @@ export async function GET(request: Request) {
  if(path==='/reviews.html'||path==='/reviews'||path==='/reviews/')return secureHtml(renderReviewsPage(),200);
  if(path==='/roadmap.html'||path==='/roadmap'||path==='/roadmap/')return secureHtml(renderRoadmapPage(),200);
  if(path==='/.well-known/security.txt')return new Response('Contact: mailto:veloryz.here@gmail.com\nExpires: 2027-11-22T00:00:00Z\nPreferred-Languages: en\nCanonical: https://veloryz.online/.well-known/security.txt\n',{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'}});
- if(path==='/admin/reviews.html')return secureHtml(renderReviewsPage(true),200,true);
+ if(path==='/admin/reviews.html')return new Response(null,{status:302,headers:{Location:new URL('/admin/#/reviews',request.url).toString(),'Cache-Control':'no-store','X-Robots-Tag':'noindex,nofollow'}});
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
