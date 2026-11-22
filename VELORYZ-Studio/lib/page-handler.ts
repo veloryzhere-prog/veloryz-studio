@@ -141,7 +141,7 @@ export async function GET(request: Request) {
  // The initial HTML must already contain readable page content. Once JS loads
  // the SPA replaces this same <main>, preserving the existing motion experience.
  const actualDocument=isDocumentPath(normal)?renderHtmlDocument(normal,docEdits):'';
-  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"></head>');
+  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"><link rel="stylesheet" href="/reference-global-theme.css?v=20261122-docs-v2"></head>');
   if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
    '<main id="main" tabindex="-1">'+(actualDocument||renderIndexableBody(normal,pages[normal],description))+'</main>');
  // Use the actual official brand name; misspellings are explained in visible
