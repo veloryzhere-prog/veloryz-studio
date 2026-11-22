@@ -22,7 +22,7 @@ assert.match(core,/site\.'\+id\+'Brief'/,'AI Mindset must edit existing publishe
 assert.match(core,/window\.VeloryzAdminDetail\?\.operations/,'Command center must include real operating counters.');
 assert.match(core,/window\.VeloryzAdminDetail\?\.overview/,'Dashboard must include a source-backed publication checklist.');
 assert.match(core,/window\.VeloryzAdminDetail\?\.mediaHeader/,'Media Library must show actual data and filters.');
-assert.match(core,/data-action='reload-media'/,'Refresh action must reload stored media.');
+assert.match(core,/if\(action==='reload-media'\)/,'Refresh action must reload stored media.');
 assert.match(core,/preload="none" muted aria-label="Preview/,'Video assets need on-demand browser playback previews.');
 assert.match(core,/event\.ctrlKey\|\|event\.metaKey/,'Admin console finder must support keyboard shortcuts.');
 assert.match(core,/saveDraft\(\)/,'Existing protected draft update remains.');
