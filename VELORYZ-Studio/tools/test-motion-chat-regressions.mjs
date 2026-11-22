@@ -40,3 +40,10 @@ test('all conversation surfaces load a shared theme',()=>{
  assert.ok(asset('review-experience.js').includes('vz-reviews-spotlight-invites'));
  assert.ok(asset('platform.js').includes("id:'madherchod'"));
 });
+
+test('first-time visitors can access motion without a blocking introduction gate',()=>{
+ const js=asset('motion.js');
+ assert.ok(js.includes('const needsIntro=false'),'Motion must not be gated behind a compulsory onboarding modal');
+ assert.ok(js.includes("preference==='auto'"),'An automatic preference must remain available');
+ assert.ok(js.includes("media?.matches"),'System reduced-motion preferences must remain respected unless Full is selected');
+});
