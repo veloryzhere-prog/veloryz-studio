@@ -119,10 +119,27 @@
    const btn=$('vz-review-pause');
    if(btn){btn.disabled=reduce.matches&&document.documentElement.dataset.motion!=='full';btn.hidden=false;btn.setAttribute('aria-pressed',String(track.dataset.manualPause==='true'));btn.textContent=reduce.matches?'Motion reduced':track.dataset.manualPause==='true'?'Resume motion ▶':'Pause motion ‖';}
   }).catch(()=>{
-   if(current!==carouselToken)return;
-   track.replaceChildren();
-   state.textContent='Community reviews are temporarily unavailable.';
-   count.textContent='REVIEW SERVICE';
+   if(current!==carouselToken||!track.isConnected)return;
+   // Keep the studio ribbon animated on API downtime without fabricating reviews.
+   node.classList.remove('vz-reviews-spotlight-empty');
+   node.classList.add('vz-reviews-spotlight-invites');
+   count.textContent='COMMUNITY CONVERSATIONS';
+   state.textContent='Reviews cannot be loaded right now. These are studio invitations, not customer reviews.';
+   const first=mk('div','vz-review-set');
+   for(const [heading,description] of [
+    ['Your experience matters','Real visitor reviews will return when the service is available.'],
+    ['A studio that listens','Share an honest suggestion, critique or experience.'],
+    ['Be part of our community','Your voice helps us build better work.'],
+    ['Keep the conversation going','Explore the studio and tell us what you think.']
+   ]){
+    const card=mk('article','vz-reviews-marquee-card vz-review-invite-card');
+    card.append(mk('span','vz-review-slide-highlight','VELORYZ / COMMUNITY'),mk('h3','',heading),mk('p','vz-review-slide-body',description));
+    const action=mk('a','vz-review-invite-primary','Share feedback ↗');
+    action.href='/reviews.html#share-review';card.append(action);first.append(card);
+   }
+   const second=first.cloneNode(true);second.setAttribute('aria-hidden','true');second.inert=true;
+   track.replaceChildren(first,second);track.style.setProperty('--vz-review-run','42s');
+   const pause=$('vz-review-pause');if(pause){pause.hidden=false;pause.disabled=reduce.matches&&document.documentElement.dataset.motion!=='full';pause.textContent='Pause motion ‖';}
   });
  }
  function mount(){
