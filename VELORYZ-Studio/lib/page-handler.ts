@@ -8,6 +8,7 @@ import adminShell from './admin-shell';
 import {findDesignPreview,renderDesignPreview} from './design-detail-page';
 import {renderDesignNoticesPage} from './design-notices-page';
 import {serveDesignAsset} from './design-asset-proxy';
+import {serveDesignImage} from './design-image-proxy';
 import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json' };
 import { renderReviewsPage } from './reviews-page';
 import { renderRoadmapPage } from './roadmap-page';
@@ -26,6 +27,8 @@ export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
  const assetResponse=await serveDesignAsset(request);
  if(assetResponse)return assetResponse;
+ const designImage=await serveDesignImage(request);
+ if(designImage)return designImage;
  if(path==='/legal/design-notices'||path==='/legal/design-notices/')return secureHtml(renderDesignNoticesPage(),200,true);
  // Owner-supplied editorial reference experience becomes the public homepage.
  // Keep the existing SPA available with ?classic=1 for account/project workflows.
@@ -53,7 +56,7 @@ export async function GET(request: Request) {
     'os-template-libraries-start-bootstrap-freelancer'
    ].map(id=>openDesigns.items.find(item=>item.id===id)).filter((item):item is (typeof openDesigns.items)[number]=>Boolean(item))
     .map(item=>({id:item.id,name:item.name,description:item.description,category:item.category,
-      image:item.previewImage||'',price:0,enabled:true,author:item.author})),
+      image:item.previewImage?'/studio-preview-images/'+item.id:'',fallbackImage:item.previewImage||'',price:0,enabled:true,author:item.author})),
    documentation:Object.entries(studioDocsRoutes).map(([url,title])=>({url:htmlDocumentPath(url),title}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
