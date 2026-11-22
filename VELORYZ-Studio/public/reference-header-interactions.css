@@ -241,3 +241,12 @@ body.vz-reference-site .vz-header-actions .vz-home-motion-waves {
   transition:none;
  }
 }
+
+/* The design-library view already includes project-specific actions.
+   Do not duplicate them with the global Quick Create header button.
+   The reference site is a hash-routed SPA; its active .pg section, not the
+   pathname, identifies the visible page. */
+body.vz-reference-site:has(.pg[data-p="design"].act) .vz-header-actions .vz-header-create,
+body.vz-reference-site:has(.pg[data-p="design"].act) a[aria-label="Quick create a project"]{
+  display:none!important;
+}
