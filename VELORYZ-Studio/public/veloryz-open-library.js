@@ -36,10 +36,10 @@ const screenshotKind=p=>p.sourceType==='original-veloryz'?'Original first-party 
  p.previewImageKind==='published-reference-image'?'Published reference image':
  p.previewImageKind==='github-repository-cover'?'GitHub repository cover': 'Source image unavailable';
 function art(p){
- const screenshot=p.previewImage||p.image||(p.originalTemplateId?'/template-covers/'+p.originalTemplateId+'.svg':'');
+ const screenshot=p.previewImage&&p.sourceType!=='original-veloryz'?'/studio-preview-images/'+encodeURIComponent(p.id):(p.previewImage||p.image||(p.originalTemplateId?'/template-covers/'+p.originalTemplateId+'.svg':''));
  const isTrueScreenshot=['upstream-screenshot','published-reference-image'].includes(p.previewImageKind);
  return '<a class="vz-source-shot" href="'+path(p)+'" aria-label="Explore '+escape(p.name)+' in the VELORYZ source viewer">'+
- (screenshot?'<img class="vz-source-image" src="'+escape(screenshot)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="'+escape(p.name)+' — '+escape(screenshotKind(p))+'">':
+ (screenshot?'<img class="vz-source-image" src="'+escape(screenshot)+'" data-fallback-src="'+escape(p.previewImage||'')+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="'+escape(p.name)+' — '+escape(screenshotKind(p))+'">':
  '<span class="vz-source-noimage"><span>PREVIEW COMING SOON</span><strong>'+escape(p.name)+'</strong></span>')+
  '<span class="vz-source-image-top"><span>VELORYZ / DESIGN STUDIO</span><span>↗</span></span>'+
  '<span class="vz-source-image-label">EXPLORE WITH VELORYZ</span></a>';
@@ -85,7 +85,7 @@ function featured(items){
  const preferred=items.filter(p=>p.importStatus==='real-upstream-html'&&p.previewImage).slice(0,3);
  return '<div class="vz-source-feature-images" aria-label="Real source design screenshots">'+
  preferred.map((p,i)=>'<a class="vz-source-feature-card vz-feature-'+i+'" href="'+path(p)+'">'+
- '<img src="'+escape(p.previewImage)+'" alt="Actual upstream screenshot of '+escape(p.name)+'" decoding="async">'+
+ '<img class="vz-source-image" src="/studio-preview-images/'+encodeURIComponent(p.id)+'" data-fallback-src="'+escape(p.previewImage)+'" alt="Original preview of '+escape(p.name)+'" decoding="async">'+
  '<span>'+escape(p.name)+'</span></a>').join('')+'</div>';
 }
 function render(){
@@ -162,7 +162,10 @@ document.addEventListener('change',e=>{
 document.addEventListener('error',e=>{
  const el=e.target;
  if(!(el instanceof HTMLImageElement)||!el.classList.contains('vz-source-image'))return;
- const art=el.closest('.vz-source-shot');if(!art)return;
+ if(!el.dataset.fallbackTried&&el.dataset.fallbackSrc&&el.src!==el.dataset.fallbackSrc){
+  el.dataset.fallbackTried='true';el.src=el.dataset.fallbackSrc;return;
+ }
+ const art=el.closest('.vz-source-shot');if(!art){el.hidden=true;return}
  el.remove();
  const div=document.createElement('span');div.className='vz-source-noimage';div.textContent='Source image unavailable — open details for the original repository';
  art.prepend(div);
