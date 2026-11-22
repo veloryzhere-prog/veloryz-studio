@@ -295,7 +295,7 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
   await command("MAIL FROM:<"+MAILBOX+">",250);
   await command("RCPT TO:<"+m.to+">",250);
   await command("DATA",354);
-  const boundary="vz-"+crypto.randomUUID(),alternative="vzalt-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
+  const boundary="vz-"+crypto.randomUUID(),related="vzrel-"+crypto.randomUUID(),alternative="vzalt-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
   const subject=safe(m.subject).normalize("NFKD").replace(/[^\x20-\x7E]/g,"-");
   const headers=[
    "From: VELORYZ <"+MAILBOX+">","To: <"+m.to+">","Reply-To: "+MAILBOX,
@@ -310,9 +310,15 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
   // Real email clients should choose either plain text or HTML, not display both.
   const mime=[
    headers.join("\r\n"),"",
-   "--"+boundary,'Content-Type: multipart/alternative; boundary="'+alternative+'"',"",
+   "--"+boundary,'Content-Type: multipart/related; boundary="'+related+'"',"",
+   "--"+related,'Content-Type: multipart/alternative; boundary="'+alternative+'"',"",
    altPart("text/plain",m.text),altPart("text/html",m.html),
-   "--"+alternative+"--",""
+   "--"+alternative+"--","",
+   "--"+related,'Content-Type: image/jpeg; name="veloryz-brand-emblem.jpg"',
+   'Content-ID: <veloryz-brand-emblem>',
+   'Content-Disposition: inline; filename="veloryz-brand-emblem.jpg"',
+   "Content-Transfer-Encoding: base64","",wrapped(b64(logoBytes())),"",
+   "--"+related+"--",""
   ];
   for(const attachment of (m.attachments||[])){
    mime.push([
