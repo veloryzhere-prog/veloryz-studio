@@ -148,6 +148,25 @@ async function main(req){
    const projects=await db("listProjectsFull"),pid=u.searchParams.get("id");
    return send(pid?{projects,workspace:await view(id(pid))}:{projects});
   }
+  if(action==="/admin/accept"&&req.method==="POST"){
+   const v=await payload(req);
+   return send(await acceptClientProject(id(v.enquiry_id),now,db,dbBatch,issueInvite,logDelivery));
+  }
+  if(action==="/admin/mail-events"&&req.method==="GET"){
+   return send({events:await db("listEmailEvents",id(u.searchParams.get("project_id")))});
+  }
+  if(action.startsWith("/admin/projects/")&&action.endsWith("/summary")&&req.method==="GET"){
+   const pid=id(action.split("/").at(-2)),project=(await db("getProjectFull",pid))[0];
+   if(!project)fail("Project not found.",404);
+   const items=(await db("listItems",pid)).filter(i=>i.type==="milestone");
+   const pdf=await makeProjectSummaryPdf(project,items);
+   return new Response(pdf,{headers:{...common,"Content-Type":"application/pdf","Content-Disposition":'attachment; filename="VELORYZ-Project-Summary.pdf"'}});
+  }
+  if(action==="/admin/messages/read"&&req.method==="POST"){
+   const v=await payload(req),pid=id(v.project_id);
+   if(!(await db("getProject",pid)).length)fail("Project not found.",404);
+   return send({ok:true,read:(await db("markRead",now,pid,"client")).length});
+  }
   if(action==="/admin/projects"&&req.method==="POST"){
    const v=await payload(req),pid=crypto.randomUUID();
    await db("addProject",pid,...fields(v),now,now);
@@ -190,29 +209,34 @@ async function main(req){
    const v=await payload(req),pid=id(v.project_id),message=trim(v.body,2000,true);
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
    await db("addMessage",crypto.randomUUID(),pid,"studio",message,now);
-   return send({ok:true},201);
+   const project=(await db("getProjectFull",pid))[0];
+   const notification=await sendGmailMail({to:project.client_email,...messageMail(project,"studio")});
+   await logDelivery(project,"studio-message",project.client_email,notification);
+   return send({ok:true,notification},201);
   }
   if(action==="/admin/invite"&&req.method==="POST"){
    const v=await payload(req),pid=id(v.project_id);
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
-   const project=(await db("getProject",pid))[0];
-   const invite=inviteCode(),exp=new Date(Date.now()+14*86400000).toISOString(),url="https://veloryz.online/client/#invite="+encodeURIComponent(invite);
-   await db("revokeInvites",now,pid);
-   await db("revokeSessionsByProject",now,pid);
-   await db("addInvite",crypto.randomUUID(),pid,await sha(normalizedInvite(invite)),exp,"",now);
-   const delivery=await sendInvitation(project,invite,url,exp);
-   return send({ok:true,code:invite,url,email:project.client_email,expires_at:exp,one_time:true,delivery});
+   const project=(await db("getProjectFull",pid))[0];
+   return send({ok:true,...await issueInvite(project,now,true)});
   }
   return send({error:"Not found."},404);
  }
  const pid=await client(req);
  if(!pid)return send({error:"Use your private invitation to open this workspace.",signedOut:true},401);
  if(action==="/session"&&req.method==="GET")return send(await view(pid));
+ if(action==="/messages/read"&&req.method==="POST"){
+  return send({ok:true,read:(await db("markRead",now,pid,"studio")).length});
+ }
  if(action==="/messages"&&req.method==="POST"){
   const v=await payload(req),message=trim(v.body,2000,true);
   if(message.length<2)fail("Write at least two characters.");
   await db("addMessage",crypto.randomUUID(),pid,"client",message,now);
-  return send({ok:true},201);
+  const project=(await db("getProjectFull",pid))[0];
+  const recipient="veloryz.here@gmail.com";
+  const notification=await sendGmailMail({to:recipient,...messageMail(project,"client")});
+  await logDelivery(project,"client-message",recipient,notification);
+  return send({ok:true,notification},201);
  }
  if(action==="/decisions"&&req.method==="POST"){
   const v=await payload(req),item=id(v.id),status=choice(v.state,["approved","changes"],"");
