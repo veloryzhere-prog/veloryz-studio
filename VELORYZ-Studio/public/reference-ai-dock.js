@@ -19,8 +19,11 @@ const drawer=document.createElement('section');drawer.id='vz-ai-drawer';drawer.c
 const header=document.createElement('div');header.className='vz-ai-header';
 const heading=document.createElement('div');const kicker=document.createElement('span');kicker.className='tag';kicker.textContent='VELORYZ / STUDIO CONVERSATIONS';
 const title=document.createElement('h2');title.id='vz-ai-dock-heading';title.textContent='Happy AI';heading.append(kicker,title);
+const headerPortrait=document.createElement('img');
+headerPortrait.className='vz-ai-current-avatar';headerPortrait.src=agents[0].avatar;
+headerPortrait.alt='';headerPortrait.width=52;headerPortrait.height=52;headerPortrait.decoding='async';
 const close=document.createElement('button');close.type='button';close.className='vz-ai-close';close.setAttribute('aria-label','Close AI conversation');close.textContent='×';
-header.append(heading,close);
+header.append(headerPortrait,heading,close);
 const tabs=document.createElement('div');tabs.className='vz-ai-personas';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Choose studio AI personality');
 const log=document.createElement('div');log.className='vz-ai-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-relevant','additions');
 const disclaimer=document.createElement('p');disclaimer.className='vz-ai-disclaimer';
@@ -64,7 +67,12 @@ function askVisitorName(){
  field.focus({preventScroll:true});
 }
 function renderHistory(){
- const agent=findAgent();title.textContent=agent.name+' AI';input.placeholder='Ask '+agent.name+' a question…';
+ const agent=findAgent();
+ title.textContent=agent.name+' AI';input.placeholder='Ask '+agent.name+' a question…';
+ headerPortrait.src=agent.avatar;img.src=agent.avatar;
+ launchLabel.textContent='Need a hand? Ask '+agent.name;
+ launch.setAttribute('aria-label','Open '+agent.name+' AI studio conversation');
+ root.dataset.agent=agent.id;
  log.replaceChildren();const messages=histories.get(active)||[];
  if(!messages.length)addMessage('assistant','You’re chatting with '+agent.name+' AI. '+agent.hint+'. What would you like to work on?');
  else for(const m of messages)addMessage(m.role,m.content);
@@ -79,7 +87,11 @@ function renderHistory(){
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.agent===active)));
 }
 for(const a of agents){
- const b=document.createElement('button');b.type='button';b.textContent=a.name;b.dataset.agent=a.id;b.setAttribute('aria-pressed',String(a.id===active));
+ const b=document.createElement('button');b.type='button';b.dataset.agent=a.id;b.setAttribute('aria-pressed',String(a.id===active));
+ const portrait=document.createElement('img');portrait.src=a.avatar;portrait.alt='';portrait.loading='lazy';portrait.decoding='async';portrait.width=35;portrait.height=35;
+ const name=document.createElement('span');name.textContent=a.name;
+ b.append(portrait,name);
+ b.setAttribute('aria-label','Chat with '+a.name+' AI');
  b.addEventListener('click',()=>{if(busy)return;active=a.id;renderHistory();input.focus();});
  tabs.append(b);
 }

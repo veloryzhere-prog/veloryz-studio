@@ -7,6 +7,8 @@ on:
       - "VELORYZ-Studio/lib/**"
       - "VELORYZ-Studio/tools/**"
       - "VELORYZ-Studio/src/vendor/lenis/**"
+      - "VELORYZ-Studio/src/motion/**"
+      - "VELORYZ-Studio/scripts/build-motion.mjs"
       - "VELORYZ-Studio/scripts/build-scroll.mjs"
       - "VELORYZ-Studio/scripts/build-template-gallery.mjs"
       - "VELORYZ-Studio/scripts/template-*.mjs"
@@ -44,6 +46,8 @@ jobs:
         run: node tools/test-brand-intro.mjs
       - name: Validate supplied full-site reference motion, menu and CMS integration
         run: node tools/test-claude-reference.mjs && node tools/test-reference-site-upgrade.mjs && node tools/test-reference-heritage.mjs
+      - name: Verify immersive cursor-responsive homepage, official WebGL model, and five real AI portraits
+        run: node tools/test-reference-immersive.mjs && node tools/test-logo-model.mjs
       - name: Verify all six AI personalities and visible motion recovery
         run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration

@@ -1,0 +1,75 @@
+/* VELORYZ final surface and interaction polish.
+   Scope to public studio and client experience; leave docs, admin and features intact. */
+.vz-reference-site :is(.btn,.mag,.vz-doc-guide,.vz-home-design-card,.vz-live-review-card,.vz-studio-full-grid a),
+body.vz-ref-public-route :is(.button,.primary-button,.design-card,.service-item,.project-card),
+.cp-body :is(.cp-button,.cp-auth-card){
+ -webkit-tap-highlight-color:transparent;
+ transition-timing-function:cubic-bezier(.16,1,.3,1);
+}
+.vz-reference-site :is(.btn,.mag):focus-visible,
+body.vz-ref-public-route :is(a,button,textarea,input,select):focus-visible,
+.cp-body :is(a,button,textarea,input,select):focus-visible{
+ outline:3px solid #dc5d80;outline-offset:3px;
+}
+.vz-reference-site .ph h1,.vz-reference-site #heroTxt h1{
+ text-wrap:balance;
+}
+.vz-reference-site .pg .lead,.vz-reference-site .vz-home-library-intro p{
+ text-wrap:pretty;
+}
+.vz-reference-site .vz-aurora-hero #heroTxt .lead{
+ max-width:570px;
+ line-height:1.7;
+ color:rgba(37,28,35,.82);
+}
+.vz-reference-site .vz-aurora-hero .btns .btn{
+ backdrop-filter:blur(8px);
+ -webkit-backdrop-filter:blur(8px);
+}
+.vz-reference-site .pg .dc,
+.vz-reference-site .vz-doc-guide{
+ border-color:rgba(62,40,55,.16);
+}
+.vz-reference-site .pg .dc:hover,
+.vz-reference-site .vz-doc-guide:hover{
+ box-shadow:0 21px 51px -33px rgba(49,28,43,.22);
+}
+.vz-reference-site .vz-home-design-card .vz-home-design-art img{
+ transform-origin:center center;
+ backface-visibility:hidden;
+}
+body.vz-ref-public-route #main :is(.page-intro,.platform-intro){
+ border-bottom:1px solid rgba(44,25,38,.1);
+}
+body.vz-ref-public-route #main :is(.design-card,.feature-card,.process-card,.service-item){
+ box-shadow:0 12px 40px -33px rgba(45,26,40,.14);
+}
+body.vz-ref-public-route #main :is(.design-card,.feature-card,.process-card,.service-item):hover{
+ box-shadow:0 26px 56px -31px rgba(45,26,40,.19);
+}
+body.vz-ref-public-route #header.site-header{
+ border-bottom-color:rgba(54,34,51,.15)!important;
+}
+body.vz-ref-public-route #header.site-header .brand-official-wordmark{
+ display:block!important;
+ opacity:1!important;
+ visibility:visible!important;
+ object-fit:contain!important;
+ filter:contrast(1.18) saturate(1.08);
+}
+.cp-body .cp-auth-card{
+ border-color:rgba(43,26,39,.16);
+}
+.cp-body .cp-auth-card:focus-within{
+ box-shadow:0 27px 75px -38px rgba(59,31,48,.22);
+}
+@media(hover:none),(pointer:coarse){
+ .vz-reference-site .vz-home-design-card:hover,
+ body.vz-ref-public-route #main :is(.design-card,.feature-card,.process-card,.service-item):hover{
+  transform:none;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion=full]) .vz-reference-site :is(.btn,.mag,.vz-doc-guide,.vz-home-design-card),
+ html:not([data-motion=full]) .cp-body :is(.cp-button,.cp-auth-card){transition:none}
+}

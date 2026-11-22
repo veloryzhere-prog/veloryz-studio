@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {createLogo,setLogoMaterial} from './logo-model.mjs';
 import {createStudyModel,disposeModel} from './study-models.mjs';
 import {attachInspection} from './inspection.mjs';
@@ -32,6 +33,34 @@ function mount(container,softwareOnly=false,previousPose=null) {
   }
   let model=createLogo();
   const pivot=new THREE.Group();pivot.add(model);scene.add(pivot);
+  // Homepage only: replace the procedural preview with the actual archived VELORYZ GLB,
+  // a genuinely volumetric faceted V. The procedural mesh remains a live fallback.
+  const useOriginalGlb=!software && !story && container.dataset.logoSource==='official-glb';
+  if(useOriginalGlb){
+    new GLTFLoader().load('/assets/brand/veloryz-logo.glb',gltf=>{
+      if(disposed){disposeModel(gltf.scene);return;}
+      const native=gltf.scene;
+      const bounds=new THREE.Box3().setFromObject(native);
+      const size=bounds.getSize(new THREE.Vector3());
+      const centre=bounds.getCenter(new THREE.Vector3());
+      const major=Math.max(size.x,size.y,size.z);
+      if(!Number.isFinite(major)||major<0.0001){disposeModel(native);return;}
+      // Match the camera and silhouette of the original sculpted V; preserve real z depth.
+      const geometry=new THREE.Group();
+      geometry.name='VELORYZ / original official GLB / interactive 3D';
+      native.position.sub(centre);
+      native.scale.setScalar(2.55/major);
+      geometry.add(native);
+      geometry.userData.parts=[]; // The imported model animates as a rigid V, not split ribs.
+      pivot.remove(model);disposeModel(model);model=geometry;pivot.add(model);
+      setLogoMaterial(model,mode);
+      container.dataset.logoModel='official-glb';
+      elapsed=Math.max(elapsed,1.6);
+      wake();
+    },undefined,()=>{
+      if(!disposed){container.dataset.logoModel='procedural-fallback';wake();}
+    });
+  }
   const entryEuler=new THREE.Euler(0,0,0,'YXZ');
   let visible=false, frame=0, last=0, elapsed=0, speed=1, view='front', mode='solid', explosion=0;
   let manual=false, disposed=false, inspection;
@@ -74,11 +103,21 @@ function mount(container,softwareOnly=false,previousPose=null) {
     const auto=active&&!manual;
     let yaw=manual?0:-.4, pitch=manual?0:.085;
     if (story) {yaw=-.23+p*3.18;pitch=.08-lift*.28;}
-    else if(auto) {yaw+=view==='orbit'?elapsed*.44:Math.sin(elapsed*.38)*.15+scroll*.95;pitch+=Math.sin(elapsed*.43)*.048+scroll*.12;}
+    else if(auto) {
+      // Only the homepage official GLB makes a complete, visibly 3D orbit.
+      // Orbit the actual mesh, never the canvas DOM box.
+      if(useOriginalGlb){
+        yaw+=elapsed*.24+Math.sin(elapsed*.31)*.065+scroll*.62;
+        pitch+=Math.sin(elapsed*.39)*.085+scroll*.1;
+      }else{
+        yaw+=view==='orbit'?elapsed*.44:Math.sin(elapsed*.38)*.15+scroll*.95;
+        pitch+=Math.sin(elapsed*.43)*.048+scroll*.12;
+      }
+    }
     pivot.quaternion.setFromEuler(entryEuler.set(pitch,yaw,manual?0:-.025,'YXZ'));
     if(inspection)pivot.quaternion.premultiply(inspection.orientation);
     model.position.y=auto&&!story?Math.sin(elapsed*.75)*.038:0;
-    model.userData.parts.forEach((part,i)=>{
+    (model.userData.parts||[]).forEach((part,i)=>{
       const pos=part.userData.basePosition||[0,0,0],rot=part.userData.baseRotation||[0,0,0];
       const split=explosion+lift*.64;
       part.position.set(pos[0]+(1-entry)*(i?1.3:-1.1)+split*(i%2?.23:-.23),pos[1]+(1-entry)*(i?.8:-.5)+split*(i%2?.23:-.1),pos[2]+(1-entry)*(i?-1.5:1)+split*(i%2?-.16:.16));

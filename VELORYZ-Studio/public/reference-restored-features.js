@@ -20,7 +20,14 @@ function chrome(){
  const talk=el('a','whatsapp-float vz-original-whatsapp');
  talk.href='https://wa.me/919955326740?text='+encodeURIComponent('Hi VELORYZ Studio! I would like to discuss a project.');
  talk.target='_blank';talk.rel='noopener noreferrer';talk.setAttribute('aria-label',"Let's Talk with VELORYZ on WhatsApp");
- const icon=el('span','vz-wa-symbol','◉'),text=el('span','',"Let's Talk ↗");
+ // Use the recognizable WhatsApp speech-bubble/handset mark, not a generic dot.
+ const icon=el('span','vz-wa-symbol'),text=el('span','',"Let's Talk ↗");
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','21');svg.setAttribute('height','21');
+ svg.setAttribute('fill','currentColor');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+ path.setAttribute('d','M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.472-.148-.67.15-.198.297-.767.966-.94 1.164-.174.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.76-1.653-2.057-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.15-.174.198-.298.298-.496.099-.198.05-.372-.025-.52-.075-.15-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.875 1.213 3.073c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.379h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.647-.235-.374a9.86 9.86 0 0 1-1.512-5.26C2.168 6.427 6.62 1.975 12.055 1.975c2.64 0 5.12 1.03 6.985 2.895a9.82 9.82 0 0 1 2.894 6.995c-.002 5.436-4.454 9.896-9.883 9.896M20.46 3.45A11.82 11.82 0 0 0 12.055 0C5.495 0 .161 5.334.158 11.893a11.84 11.84 0 0 0 1.583 5.937L0 24l6.335-1.663a11.9 11.9 0 0 0 5.715 1.455h.005c6.559 0 11.895-5.335 11.899-11.894A11.82 11.82 0 0 0 20.46 3.45');
+ svg.append(path);icon.append(svg);
  talk.append(icon,text);document.body.append(talk);
  const root=$('.pg[data-p="home"]');
  if(root){
