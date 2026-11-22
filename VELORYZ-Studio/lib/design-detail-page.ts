@@ -11,9 +11,8 @@ export type DesignPreviewRecord={
  sourceType?:string;importStatus?:string;previewType?:string;originalTemplateId?:string;price?:number;
 };
 
-const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-}[c]||c));
+const escapeMap:Record<string,string>={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>escapeMap[c]||c);
 
 export function findDesignPreview(id:string,cms:any[]=[]):DesignPreviewRecord|null{
  if(!/^[a-z0-9-]{2,100}$/.test(id))return null;
