@@ -18,7 +18,7 @@ test('hero word cycles four motion-safe styles while retaining accessible text',
   assert.ok(css.includes('data-type-phase="'+phase+'"'),phase);
  }
  assert.ok(js.includes("readable.textContent=original"));
- assert.ok(js.includes("data-motion==='full'"));
+ assert.ok(js.includes("dataset.motion==='full'"),'The hero must follow the effective Full motion preference');
 });
 test('reviews use identical cloned groups and keep honest empty state',()=>{
  const js=asset('review-experience.js'),css=asset('review-experience.css');
@@ -26,7 +26,7 @@ test('reviews use identical cloned groups and keep honest empty state',()=>{
  assert.ok(js.includes("track.replaceChildren(first,second)"));
  assert.ok(js.includes("ResizeObserver"));
  assert.ok(js.includes("track.dataset.manualPause"));
- assert.ok(js.includes("No invented testimonials"));
+ assert.ok(js.includes("No published reviews yet.")&&js.includes("not customer testimonials"),'Empty data must display clearly labeled invitations instead of fake reviews');
  assert.ok(css.includes('translate3d(-50%,0,0)'));
 });
 test('all conversation surfaces load a shared theme',()=>{
