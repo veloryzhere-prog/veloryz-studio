@@ -129,7 +129,8 @@ has(quickActions,"document.querySelector('#vz-quick-actions-inline')?.remove?.()
 has(quickActions,"document.querySelector('#vz-quick-actions-footer')?.remove?.()", 'Remove footer shortcuts when SPA enters an excluded page');
 has(headerCss,'.pg[data-p="design"].act','Show no Quick Create header button on active hash-routed design page');
 has(headerCss,'.vz-header-create','Scope rule to the redundant header control, not normal per-design CTAs');
-has(referenceShell,'reference-header-interactions.css?v=20261123-quick-cta-visibility-v2','Bust previous header CSS cache');
+has(referenceShell,'reference-header-interactions.css?v=20261123-router-quick-create-v3','Bust previous header CSS cache');
+has(referenceShell,'reference-restored-features.js?v=20261123-router-quick-create-v3','Bust previous footer quick-create script cache');
 has(appShell,'project-quick-actions.js?v=20261123-quick-cta-visibility-v2','Bust previous Quick Actions JS cache');
 has(quickActionsCss,'.vz-quick-actions--footer','Keep the Quick Actions presentation available for unaffected routes');
 
