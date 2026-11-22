@@ -37,12 +37,13 @@ export function findDesignPreview(id:string,cms:any[]=[]):DesignPreviewRecord|nu
 }
 export function renderDesignPreview(design:DesignPreviewRecord):string{
  const title=escape(design.name),category=escape(design.category),description=escape(design.description);
- const local=localPath(design),image=httpsURL(design.previewImage||design.image);
+ const local=localPath(design),originalImage=httpsURL(design.previewImage||design.image);
+ const image=design.sourceType==='repository'&&originalImage?'/studio-preview-images/'+design.id:originalImage;
  const original=design.sourceType==='original-veloryz';
  const create=design.originalTemplateId?'/create/?template='+encodeURIComponent(design.originalTemplateId):'/create/?reference='+encodeURIComponent(design.id);
  const running=Boolean(local);
  const frame={
-  id:design.id,name:design.name,localSource:local,image,
+  id:design.id,name:design.name,localSource:local,image,fallbackImage:originalImage,
   imageKind:design.previewImageKind||'',isOriginal:original,isRunnable:running
  };
  const payload=JSON.stringify(frame).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
