@@ -186,7 +186,7 @@ function mount(container,softwareOnly=false,previousPose=null) {
     container.dataset.webgl=software?'software':'ready';
     if(transitionPose||(active&&!story&&(!manual||Math.abs(wanted-explosion)>.002)))wake();
   }
-  function changed(){last=0;wake();}
+  function changed(){last=0;controls();wake();}
   window.StudioMotion?.addEventListener('change',changed);
   on(document,'visibilitychange',changed);
   if(story)on(story,'studio:assembly',wake);
