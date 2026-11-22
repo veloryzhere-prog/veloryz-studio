@@ -23,15 +23,17 @@
   {path:'/concepts/aurel/',label:'AUREL Atelier concept',group:'Concept showcases',description:'Clearly labelled design concept'},
   {path:'/concepts/orbit/',label:'ORBIT concept',group:'Concept showcases',description:'Clearly labelled design concept'},
   {path:'/concepts/forme/',label:'FORME Objects concept',group:'Concept showcases',description:'Clearly labelled design concept'},
-  {path:'/docs/',label:'All documentation',group:'Documentation destinations',description:'Search every public reference'},
-  {path:'/docs/studio/',label:'Studio documentation',group:'Documentation destinations',description:'121 product and operations articles'},
-  {path:'/help/studio/',label:'Help Centre',group:'Documentation destinations',description:'20 help topics'},
+  {path:'/docs/index.html',label:'All documentation',group:'Documentation destinations',description:'Search every public reference'},
+  {path:'/docs/studio/index.html',label:'Studio documentation',group:'Documentation destinations',description:'121 product and operations articles'},
+  {path:'/help/studio/index.html',label:'Help Centre',group:'Documentation destinations',description:'20 help topics'},
   {path:'/sitemap/',label:'HTML site map',group:'Documentation destinations',description:'Human-readable public page index'},
+  {path:'/reviews.html',label:'Community reviews',group:'Explore VELORYZ',description:'Moderated genuine feedback'},
   {path:'/sitemap.xml',label:'XML sitemap',group:'Documentation destinations',description:'Machine-readable index for search crawlers'}
  ];
  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const key=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
- const normalize=p=>String(p).replace(/\/+$/,'')||'/';
+ const normalize=p=>String(p).replace(/\/index\.html$/,'').replace(/\.html$/,'').replace(/\/+$/,'')||'/';
+ const docHtmlPath=p=>{const v=normalize(p);return v==='/docs'||v==='/docs/studio'||v==='/help/studio'?v+'/index.html':v.startsWith('/docs/')||v.startsWith('/help/studio/')?v+'.html':p;};
  let catalog=null,service=null,loading=null,error='',search='';
  function edits(){try{return typeof studioCMS!=='undefined'?studioCMS?.site?.documentation?.edits||{}:{}}catch{return {}}}
  function load(){
@@ -49,11 +51,11 @@
   const changes=edits();
   const products=(catalog?.articles||[]).map(a=>{
     const e=changes[normalize(a.path)]||{};
-    return {path:a.path,label:e.title||a.title,group:a.id.startsWith('H-')?'Help Centre · '+a.category:'Studio docs · '+a.category,description:e.summary||a.summary,visible:e.visible!==false};
+    return {path:docHtmlPath(a.path),label:e.title||a.title,group:a.id.startsWith('H-')?'Help Centre · '+a.category:'Studio docs · '+a.category,description:e.summary||a.summary,visible:e.visible!==false};
   }).filter(x=>x.visible);
   const guides=(service?.documents||[]).map(a=>{
    const e=changes['/docs/'+a.id]||{};
-   return {path:'/docs/'+a.id+'/',label:e.title||a.label,group:'Service guides · '+a.category,description:e.summary||a.description,visible:e.visible!==false};
+   return {path:'/docs/'+a.id+'.html',label:e.title||a.label,group:'Service guides · '+a.category,description:e.summary||a.description,visible:e.visible!==false};
   }).filter(x=>x.visible);
   return [...sitePages,...products,...guides];
  }
