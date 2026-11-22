@@ -137,3 +137,24 @@
  .cp-body :is(.cp-download-summary,.cp-phase-bar,.cp-quick-replies button,.cpm-reply-templates button){transition:none!important;transform:none!important}
  .cp-body .cp-conversation{scroll-behavior:auto}
 }
+
+
+/* Owner-controlled two-step email handoff. */
+.cpm-project-buttons{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.cpm-project-buttons .cpm-send-summary{background:#232a40;color:#fff;border-color:#232a40}
+.cpm-project-buttons .cpm-send-summary:hover{background:#394257}
+.cpm-project-buttons .cpm-send-invitation{background:#f5f1f5;border-color:#b99eb3;color:#47435a}
+.cpm-project-buttons :is(button,a){min-height:42px}
+.cpm-delivery-result{padding:21px 22px;border:1px solid #d6dbe1;background:#f9fafb;border-radius:10px;
+ display:grid;gap:11px;color:#3c4558;font:500 12px/1.7 Arial,sans-serif}
+.cpm-delivery-result.is-sent{border-left:5px solid #448b75}
+.cpm-delivery-result.is-manual{border-left:5px solid #bf8754}
+.cpm-delivery-result>span{font:800 9px/1.5 Arial,sans-serif;letter-spacing:.15em;color:#777487}
+.cpm-delivery-result h3{font:700 19px/1.25 Arial,sans-serif;margin:0;color:#2b3345}
+.cpm-delivery-result p{margin:0;color:#657085}
+.cpm-delivery-result>div{overflow-wrap:anywhere}
+@media(max-width:690px){
+ .cpm-project-buttons{display:grid;grid-template-columns:1fr;width:100%}
+ .cpm-project-buttons button{width:100%;justify-content:center}
+ .cpm-delivery-result{padding:17px}
+}

@@ -68,6 +68,8 @@ jobs:
         run: node tools/test-privacy-compliance.mjs
       - name: Verify client portal Edge boots and Gmail status is truthful
         run: node tools/test-client-portal-boot.mjs
+      - name: Verify one-page industrial order PDF and manual Gmail delivery actions
+        run: node tools/test-premium-mail-handoff.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application

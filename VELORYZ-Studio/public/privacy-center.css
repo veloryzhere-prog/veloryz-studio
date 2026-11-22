@@ -25,8 +25,7 @@
 .vz-consent-foot{font:500 11px/1.7 Arial,sans-serif;color:#636c7d;margin:15px 0 0}
 .vz-consent-foot a{color:#685483;text-decoration:underline;text-underline-offset:3px}
 .vz-consent-foot button{border:0;background:none;text-decoration:underline;color:#574b7d;cursor:pointer}
-#vz-privacy-fab{position:fixed;bottom:10px;left:10px;z-index:600;background:#f7f5fa;color:#313249;border:1px solid #d9d5e5;border-radius:999px;box-shadow:0 4px 18px #18122b25;padding:9px 13px;font:750 11px/1.2 Arial,sans-serif;cursor:pointer}
-.vz-consent-present #vz-privacy-fab{display:none}
+#vz-privacy-fab{display:none!important} /* Do not expose the former floating privacy control. */
 .vz-legal-page{max-width:1050px;margin:auto;padding:clamp(25px,4vw,60px) 20px 80px;color:#323750}
 .vz-legal-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}
 .vz-legal-nav a{padding:9px 13px;border:1px solid #dddde8;border-radius:999px;background:#fff;text-decoration:none;color:#44435d;font:700 12px/1.4 Arial,sans-serif}
@@ -49,6 +48,14 @@
 .vz-legal-settings-button,.vz-legal-rights button{padding:13px 18px;background:#35344f;color:#fff;border:0;border-radius:9px;font:750 12px/1.5 Arial,sans-serif;cursor:pointer;margin:8px 9px 18px 0}
 .vz-legal-rights{display:flex;flex-wrap:wrap;gap:7px}
 .vz-legal-footer{margin-top:30px;border-top:1px solid #dedde7;padding:20px 0;color:#767f90;font:550 12px/1.7 Arial,sans-serif}
-.vz-privacy-layer button:focus-visible,.vz-legal-page :is(a,button):focus-visible,#vz-privacy-fab:focus-visible{outline:3px solid #739cd4;outline-offset:3px}
+.vz-privacy-layer button:focus-visible,.vz-legal-page :is(a,button):focus-visible{outline:3px solid #739cd4;outline-offset:3px}
 @media(max-width:680px){.vz-privacy-layer{padding:7px;align-items:end}.vz-privacy-panel{border-radius:14px;padding:18px;max-height:93dvh}.vz-consent-choices{grid-template-columns:1fr}.vz-privacy-actions{grid-template-columns:1fr 1fr}.vz-choice-save{grid-column:1/-1}.vz-privacy-panel h2{font-size:27px}.vz-legal-page{padding:20px 14px 65px}}
-@media(prefers-reduced-motion:reduce){.vz-privacy-layer{backdrop-filter:none}.vz-privacy-panel *,#vz-privacy-fab{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.vz-privacy-layer{backdrop-filter:none}.vz-privacy-panel *{animation:none!important;transition:none!important}}
+
+
+/* Footer-only persistent privacy control; the first-visit consent modal is separate. */
+.vz-footer-privacy-control{display:block;border:0;background:transparent;padding:0;margin:0;
+ font:inherit;letter-spacing:inherit;text-align:left;color:inherit;text-decoration:none;cursor:pointer}
+.vz-footer-privacy-control:hover{text-decoration:underline;text-underline-offset:4px}
+.vz-footer-privacy-control:focus-visible{outline:3px solid #739cd4;outline-offset:4px}
+#vz-privacy-fab{display:none!important}

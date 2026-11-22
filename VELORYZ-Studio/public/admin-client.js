@@ -135,9 +135,9 @@ function cpDetail(){
  if(cpEditMode==='item')return cpItemEditor(cpEditingItem?(cpWorkspace?.items||[]).find(i=>i.id===cpEditingItem)||{}:{});
  const p=cpWorkspace?.project;
  if(!p)return '<section class="cpm-card cpm-tab-empty"><span>⌁</span><h3>Select a client</h3><p>Choose a workspace on the left to manage its progress, files and invitations.</p></section>';
- return '<div class="cpm-project-hero"><div class="cpm-project-top"><div>'+cpAvatar(p.client_name)+'<div class="cpm-project-id"><span class="cpm-eyebrow">CLIENT WORKSPACE</span><h2>'+cpE(p.title)+'</h2><p>'+cpE(p.client_name)+' <span aria-hidden="true">·</span> <a href="mailto:'+cpE(p.client_email)+'">'+cpE(p.client_email)+'</a></p></div></div><div class="cpm-project-buttons"><button type="button" class="admin-button secondary" data-cpm="edit-project">Edit details</button><button type="button" class="admin-button" data-cpm="invite">✉ Issue invitation ↗</button></div></div>'+
+ return '<div class="cpm-project-hero"><div class="cpm-project-top"><div>'+cpAvatar(p.client_name)+'<div class="cpm-project-id"><span class="cpm-eyebrow">CLIENT WORKSPACE</span><h2>'+cpE(p.title)+'</h2><p>'+cpE(p.client_name)+' <span aria-hidden="true">·</span> <a href="mailto:'+cpE(p.client_email)+'">'+cpE(p.client_email)+'</a></p></div></div><div class="cpm-project-buttons"><button type="button" class="admin-button cpm-send-summary" data-cpm="send-summary">✉ Send Project Summary + PDF</button><button type="button" class="admin-button secondary cpm-send-invitation" data-cpm="invite">Send Client Invitation ↗</button><button type="button" class="admin-button secondary" data-cpm="edit-project">Edit details</button></div></div>'+
  '<div class="cpm-project-stats"><div>'+cpBadge(p.status)+'</div><span><b>'+cpE(p.phase)+'</b> Current phase</span><span><b>'+Number(p.progress||0)+'%</b> Progress</span><span><b>'+cpDate(p.due_date)+'</b> Target handover</span></div><div class="cpm-project-track" aria-label="Project completion"><i style="width:'+Math.max(0,Math.min(100,Number(p.progress)||0))+'%"></i></div></div>'+
- '<div class="cpm-invite-help">✉ <strong>Accepted requests create invitations automatically.</strong> You can reissue a code when needed; this revokes any previous invitation and signs out old sessions. '+(cpDelivery.configured?'Gmail credentials are configured.':'Gmail is not configured. The secure manual invitation handoff is still available.')+'</div>'+(p.request_reference?'<section class="cpm-reference-panel"><span>LINKED PROJECT REQUEST</span><strong>'+cpE(p.request_reference)+'</strong><p>Accepted '+cpE(cpDate(p.accepted_at))+' · Your original submitted brief remains preserved on this project.</p><a class="admin-button secondary" href="/api/client-portal/admin/projects/'+encodeURIComponent(p.id)+'/summary" target="_blank" rel="noopener">Download full project PDF ↓</a></section>':'')+'<div data-cpm-email-audit>'+cpEmailAudit()+'</div>'+
+ '<div class="cpm-invite-help">✉ <strong>Owner-controlled delivery:</strong> Accepting a request prepares the project and PDF, but sends nothing. Click <strong>Send Project Summary + PDF</strong> to email the full order, then separately <strong>Send Client Invitation</strong> to create and email the access code. Reissuing a code signs out previous portal sessions. '+(cpDelivery.configured?'Gmail credentials are configured.':'Gmail is not configured. The secure manual invitation handoff is still available.')+'</div>'+(p.request_reference?'<section class="cpm-reference-panel"><span>LINKED PROJECT REQUEST</span><strong>'+cpE(p.request_reference)+'</strong><p>Accepted '+cpE(cpDate(p.accepted_at))+' · Your original submitted brief remains preserved on this project.</p><a class="admin-button secondary" href="/api/client-portal/admin/projects/'+encodeURIComponent(p.id)+'/summary" target="_blank" rel="noopener">Download full project PDF ↓</a></section>':'')+'<div data-cpm-email-audit>'+cpEmailAudit()+'</div>'+
  cpClientTabs()+
  '<div class="cpm-tab-content">'+(cpTab==='overview'?cpOverview(p):cpTab==='messages'?cpMessages():cpItems(cpTab))+'</div>';
 }
@@ -199,19 +199,47 @@ function cpRefreshDirectory(){
  const count=document.getElementById('cpm-directory-count');
  if(count)count.textContent=cpMatches().length+' projects';
 }
+async function cpRefreshMailEvents(){
+ if(!cpSelected)return;
+ try{
+  const response=await cpReq('/mail-events?project_id='+encodeURIComponent(cpSelected));
+  cpEmailEvents=response.events||[];
+  const box=document.querySelector('[data-cpm-email-audit]');
+  if(box)box.innerHTML=cpEmailAudit();
+ }catch(error){console.error('Could not refresh owner mail audit',error)}
+}
+function cpSummaryDelivery(data){
+ const delivery=data.delivery||{},sent=delivery.status==='sent',status=delivery.status||'failed';
+ const pdf='/api/client-portal/admin/projects/'+encodeURIComponent(cpSelected)+'/summary';
+ const result='<div class="cpm-delivery-result '+(sent?'is-sent':'is-manual')+'"><span>VELORYZ / PROJECT ORDER DELIVERY</span>'+
+  '<h3>'+(sent?'Gmail SMTP accepted the order summary.':'The project summary email was not sent.')+'</h3>'+
+  '<p>'+cpE(delivery.message||'No delivery response was received from Gmail.')+'</p>'+
+  '<div><strong>Recipient:</strong> '+cpE(data.recipient||cpWorkspace?.project?.client_email||'')+'</div>'+
+  '<div><strong>Reference:</strong> '+cpE(data.reference||cpWorkspace?.project?.request_reference||'')+'</div>'+
+  '<div><strong>Attached document:</strong> Industrial one-page VELORYZ order summary PDF</div>'+
+  '<p>'+(sent?'Gmail accepted this message for delivery; inbox arrival is not guaranteed. Check the recipient address and delivery activity.':'The private project and PDF remain available. Verify Gmail setup and click the separate Send Project Summary button again once resolved.')+'</p></div>';
+ showModal('Project summary / delivery result',sent?'SMTP accepted the email.':'The email attempt needs attention.',result,
+  '<a href="'+cpE(pdf)+'" target="_blank" rel="noopener" class="admin-button secondary">Open one-page project PDF ↓</a>'+
+  '<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>','medium');
+}
 function cpInvitation(data){
- const sent=data.delivery?.status==='sent',manual=data.delivery?.status==='not-configured';
- const status=sent?'Accepted by email provider':manual?'Manual email needed':'Email delivery failed';
- const note=data.delivery?.message||'Use the secure code or link to invite the client.';
- const body='Hi '+(cpWorkspace?.project?.client_name||'')+',\n\nYour private VELORYZ Studio project workspace is ready.\n\nYour unique one-time code: '+data.code+'\n\nOpen your portal: '+data.url+'\n\nThis code expires in 14 days. Please do not share it.\n\nVELORYZ Studio';
- const email='mailto:'+encodeURIComponent(data.email)+'?subject='+encodeURIComponent('Your VELORYZ Studio project invitation')+'&body='+encodeURIComponent(body);
- showModal('Client invitation created','One-time access code · 14-day expiry',
- '<div class="cpm-invite-modal"><div class="cpm-invite-result '+(sent?'is-sent':'is-manual')+'"><strong>'+cpE(status)+'</strong><p>'+cpE(note)+'</p></div>'+
- '<label>Send to</label><input type="text" readonly value="'+cpE(data.email)+'">'+
- '<label>One-time access code</label><div class="cpm-copy-row"><input id="cpm-invite-code" readonly value="'+cpE(data.code)+'"><button type="button" class="admin-button secondary" data-cpm-copy="cpm-invite-code">Copy code</button></div>'+
- '<label>Private access link</label><div class="cpm-copy-row"><input id="cpm-invite-link" readonly value="'+cpE(data.url)+'"><button type="button" class="admin-button secondary" data-cpm-copy="cpm-invite-link">Copy link</button></div>'+
- '<a class="admin-button" href="'+cpE(email)+'">Open prepared email ↗</a><p class="cpm-modal-note">An email draft is not sent until you click Send in your email app. An accepted provider request does not guarantee inbox delivery. Save the code now; only its hash is retained.</p></div>',
- '<button class="admin-button secondary" data-action="close-modal">Close</button>','medium');
+ const delivery=data.delivery||{},sent=delivery.status==='sent';
+ const status=sent?'Invitation accepted by Gmail SMTP':'Invitation created, but email delivery needs attention';
+ const note=delivery.message||'The invitation code is securely available to the owner here.';
+ const greeting='Hello '+(cpWorkspace?.project?.client_name||'')+',\n\nYour private VELORYZ Studio workspace is ready.\n\nProject reference: '+(cpWorkspace?.project?.request_reference||'')+
+  '\nOne-time access code: '+data.code+'\nActivate at: '+data.url+'\nCode expires in 14 days.\n\n1. Open the portal.\n2. Paste your private code.\n3. Activate and review your milestones.\n\nDo not share your code.\nVELORYZ Studio';
+ const draft='mailto:'+encodeURIComponent(data.email)+'?subject='+encodeURIComponent('VELORYZ / Your private client invitation')+'&body='+encodeURIComponent(greeting);
+ const html='<div class="cpm-invite-modal"><div class="cpm-invite-result '+(sent?'is-sent':'is-manual')+'"><strong>'+cpE(status)+'</strong><p>'+cpE(note)+'</p></div>'+
+  '<p class="cpm-modal-note">This private invitation was sent only because you clicked <strong>Send Client Invitation</strong> in Client Management. An invitation is never sent automatically by accepting a project.</p>'+
+  '<label>Invitation recipient</label><input readonly value="'+cpE(data.email)+'">'+
+  '<label>Official project reference</label><input readonly value="'+cpE(cpWorkspace?.project?.request_reference||'VELORYZ project')+'">'+
+  '<label>One-time access code</label><div class="cpm-copy-row"><input readonly id="cpm-invite-code" value="'+cpE(data.code)+'"><button class="admin-button secondary" type="button" data-cpm-copy="cpm-invite-code">Copy securely</button></div>'+
+  '<label>Private activation link</label><div class="cpm-copy-row"><input readonly id="cpm-invite-link" value="'+cpE(data.url)+'"><button class="admin-button secondary" type="button" data-cpm-copy="cpm-invite-link">Copy link</button></div>'+
+  (sent?'<p class="cpm-modal-note">Gmail accepted the invitation for delivery. Inbox receipt is not guaranteed. The code is single-use and valid for 14 days.</p>':
+   '<a class="admin-button" href="'+cpE(draft)+'">Open manual email draft ↗</a><p class="cpm-modal-note">The prepared draft is NOT sent automatically. Send it from your mail app only if Gmail SMTP failed. The server stores only the hashed code, so copy it now if manual delivery is necessary.</p>')+
+  '</div>';
+ showModal('Separate client invitation','One-time private project access / 14-day expiration',html,
+  '<button class="admin-button secondary" data-action="close-modal">Close</button>','medium');
 }
 function cpImportedEnquiry(id){
  const item=typeof enquiryItems!=='undefined'?enquiryItems.find(i=>i.id===id):null;
@@ -295,11 +323,19 @@ document.addEventListener('click',async e=>{
  if(cpBusy)return;
  try{
   cpBusy=true;b.disabled=true;
+  if(action==='send-summary'){
+   if(!cpWorkspace?.project)return;
+   if(!window.confirm('Send the complete VELORYZ project/order summary, with its one-page branded PDF, to '+cpWorkspace.project.client_email+' now?\n\nThis sends one real email through Gmail. The private access code is NOT included.'))return;
+   const result=await cpReq('/send-summary',{method:'POST',body:JSON.stringify({project_id:cpSelected})});
+   cpSummaryDelivery(result);
+   await cpRefreshMailEvents();
+  }
   if(action==='invite'){
    if(!cpWorkspace?.project)return;
-   if(!window.confirm('Issue a new one-time invitation to '+cpWorkspace.project.client_email+'?\n\nThis revokes the previous invitation and signs out any existing client sessions.'))return;
+   if(!window.confirm('Send a separate VELORYZ invitation email to '+cpWorkspace.project.client_email+'?\n\nThis generates a new one-time client access code, sends it using Gmail SMTP, and revokes any previously issued invitation and active client sessions.'))return;
    const result=await cpReq('/invite',{method:'POST',body:JSON.stringify({project_id:cpSelected})});
    cpInvitation(result);
+   await cpRefreshMailEvents();
   }
   if(action==='remove-item'){
    const item=(cpWorkspace?.items||[]).find(x=>x.id===b.dataset.id);
@@ -321,7 +357,7 @@ document.addEventListener('submit',async e=>{
    const edit=!cpNewProject&&!!cpWorkspace?.project;
    const result=await cpReq(edit?'/projects/'+encodeURIComponent(cpSelected):'/projects',{method:edit?'PUT':'POST',body:JSON.stringify(v)});
    cpNewProject=false;cpEditMode='';cpNewDraft=null;cpSelected=result.id;cpTab='overview';
-   toast(edit?'Project details saved.':'Client workspace created. Add milestones and issue an invitation when ready.');
+   toast(edit?'Project details saved.':'Client workspace created. Use the separate Summary and Invitation send buttons when ready.');
    await cpLoad(result.id);
   }
   if(form.dataset.cpmForm==='quick'){

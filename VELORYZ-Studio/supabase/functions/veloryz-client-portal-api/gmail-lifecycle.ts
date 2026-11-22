@@ -6,6 +6,8 @@
 import { PDFDocument, StandardFonts, rgb } from "npm:pdf-lib@1.17.1";
 
 const MAILBOX="veloryz.here@gmail.com";
+const VELORYZ_OFFICIAL_LOGO_JPEG="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";
+const logoBytes=()=>Uint8Array.from(atob(VELORYZ_OFFICIAL_LOGO_JPEG),ch=>ch.charCodeAt(0));
 const BASE="https://veloryz.online";
 const BRAND={navy:"#23243b",rose:"#b66e9b",muted:"#687088",lavender:"#ede6f2"};
 const htmlEsc=(v:unknown)=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"} as Record<string,string>)[c]);
@@ -23,44 +25,103 @@ type DocumentMilestone={title:string;details:string;phase?:string;due_date?:stri
 export function mailIsConfigured(){return !!(Deno.env.get("VELORYZ_GMAIL_APP_PASSWORD")||"").trim()}
 export function mailStatus(){return {provider:"Gmail SMTP · TLS 465",from:MAILBOX,senderName:"VELORYZ",configured:mailIsConfigured(),requires:"Gmail 2-Step Verification and a Google App Password stored as VELORYZ_GMAIL_APP_PASSWORD in Supabase function secrets. No Resend service is used."}}
 export function brandEmail(kicker:string,title:string,inner:string,cta?:{text:string;url:string}){
- const button=cta?'<div style="padding:16px 0 23px"><a href="'+htmlEsc(cta.url)+'" style="background:#29253d;color:#fff;display:inline-block;border-radius:11px;text-decoration:none;font-weight:700;font-size:14px;padding:16px 24px">'+htmlEsc(cta.text)+' &rarr;</a></div>':"";
+ const action=cta?'<table cellpadding="0" cellspacing="0" role="presentation" style="margin:27px 0 8px"><tr><td bgcolor="#25283b" style="border-radius:5px"><a href="'+htmlEsc(cta.url)+'" style="display:inline-block;padding:16px 25px;font:700 12px Arial,Helvetica,sans-serif;letter-spacing:.8px;color:#ffffff;text-decoration:none">'+htmlEsc(cta.text)+' &rarr;</a></td></tr></table>':"";
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'+
- '<body style="margin:0;background:#f3f0f4;font-family:Arial,Helvetica,sans-serif;color:#25253c"><table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="background:#f3f0f4"><tr><td align="center" style="padding:32px 14px">'+
- '<table width="100%" role="presentation" style="max-width:620px;border-collapse:collapse;background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 10px 40px #11102411">'+
- '<tr><td style="background:#1e1d35;padding:29px 35px;color:#fff"><div style="font-size:24px;font-weight:900;letter-spacing:3px">VELORYZ<span style="color:#ed98c5">.</span></div><div style="font-size:10px;letter-spacing:2px;color:#cbbad2;margin-top:7px">PRIVATE PROJECT CORRESPONDENCE &bull; STUDIO TEAM</div></td></tr>'+
- '<tr><td style="padding:35px 36px"><div style="font-size:10px;letter-spacing:2.3px;font-weight:800;color:#99618d">'+htmlEsc(kicker)+'</div><h1 style="font-size:30px;line-height:1.18;letter-spacing:-1px;margin:14px 0 20px">'+htmlEsc(title)+'</h1>'+inner+button+
- '<p style="margin:25px 0 0;border-top:1px solid #ece8ed;padding-top:22px;color:#6f7484;font-size:12px;line-height:1.8">This message is about a VELORYZ project you requested. For questions, reply to this email or visit <a style="color:#97609d" href="'+BASE+'/contact/">'+BASE+'/contact/</a>.</p></td></tr>'+
- '<tr><td style="padding:20px 36px;background:#f9f7fa;border-top:1px solid #ece8f0;color:#767486;font-size:10px;line-height:1.7">VELORYZ STUDIO &bull; A THOUGHTFUL WAY TO BUILD<br>Sent by VELORYZ &lt;'+MAILBOX+'&gt; &bull; '+BASE+'</td></tr></table></td></tr></table></body></html>';
+ '<body style="margin:0;padding:0;background:#eeeff1;color:#262b3c;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%">'+
+ '<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background:#eeeff1;border-collapse:collapse"><tr><td align="center" style="padding:28px 12px">'+
+ '<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:650px;background:#ffffff;border-collapse:collapse;border:1px solid #e2e3e6">'+
+ '<tr><td bgcolor="#25283b" style="padding:28px 34px 24px;border-bottom:5px solid #be879f">'+
+ '<table role="presentation" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="padding-right:15px"><img src="cid:veloryz-brand-emblem" alt="V" width="49" height="49" style="display:block;width:49px;height:49px;border:0;outline:none" /></td>'+
+ '<td valign="middle"><div style="font:bold 26px Arial,Helvetica,sans-serif;letter-spacing:3px;color:#ffffff">VELORYZ</div><div style="font:700 9px Arial,Helvetica,sans-serif;letter-spacing:2.5px;color:#c5c7d4;margin-top:7px">INDEPENDENT CREATIVE &amp; TECHNOLOGY STUDIO</div></td></tr></table>'+
+ '<div style="font:700 10px Arial,Helvetica,sans-serif;letter-spacing:1.7px;color:#edd8e0;margin-top:29px">'+htmlEsc(kicker.toUpperCase())+'</div></td></tr>'+
+ '<tr><td style="padding:35px 35px 22px"><h1 style="font:700 30px/1.2 Arial,Helvetica,sans-serif;letter-spacing:-1px;color:#22263b;margin:0 0 24px">'+htmlEsc(title)+'</h1>'+
+ '<div style="font:400 13px/1.9 Arial,Helvetica,sans-serif;color:#4f576b">'+inner+'</div>'+action+
+ '<div style="margin-top:36px;border-top:1px solid #dfe1e5;padding-top:20px;font:11px/1.9 Arial,Helvetica,sans-serif;color:#687082">'+
+ 'This is a private project-related notification from the VELORYZ Studio team. Verify project decisions in your private workspace. Please never share passwords, payment credentials or one-time access codes.'+
+ '<div style="margin-top:12px"><a href="'+BASE+'/contact/" style="color:#555578;text-decoration:underline">Contact the studio</a> &nbsp;&nbsp; <a href="'+BASE+'/privacy/" style="color:#555578;text-decoration:underline">Privacy</a> &nbsp;&nbsp; <a href="'+BASE+'/terms/" style="color:#555578;text-decoration:underline">Terms</a></div></div>'+
+ '</td></tr><tr><td style="padding:19px 35px;background:#f4f4f5;border-top:1px solid #dfe1e5">'+
+ '<div style="font:700 11px Arial,Helvetica,sans-serif;letter-spacing:1.2px;color:#272b42">VELORYZ STUDIO</div>'+
+ '<div style="font:11px/1.7 Arial,Helvetica,sans-serif;color:#717787;margin-top:8px">VELORYZ &lt;'+MAILBOX+'&gt;<br>'+BASE+' &nbsp; | &nbsp; Bokaro, Jharkhand, India</div>'+
+ '</td></tr></table></td></tr></table></body></html>';
 }
 const p=(content:string)=>'<p style="color:#52546b;font-size:14px;line-height:1.85;margin:10px 0 18px">'+content+'</p>';
 const box=(label:string,value:string)=>'<div style="border:1px solid #e8e3ed;border-radius:10px;background:#fbf9fd;padding:13px 16px;margin:9px 0"><div style="color:#8b7195;font-size:9px;font-weight:750;letter-spacing:1.3px">'+htmlEsc(label)+'</div><div style="color:#2b2b40;font-size:13px;font-weight:650;margin-top:7px;overflow-wrap:anywhere">'+htmlEsc(value)+'</div></div>';
+const emailSection=(name:string,inner:string)=>'<div style="border-top:2px solid #303349;margin:31px 0 12px;padding-top:13px;font-size:10px;font-weight:800;letter-spacing:1.7px;color:#3b435a">'+htmlEsc(name)+'</div>'+inner;
+const link=(url:string,label:string)=>'<a href="'+htmlEsc(url)+'" style="color:#4b567c;text-decoration:underline;overflow-wrap:anywhere">'+htmlEsc(label)+'</a>';
+const briefLinks=(text:string)=>[...new Set((text.match(/https?:\/\/[^\s<>"']+/gi)||[]).map(x=>x.replace(/[),.;!?]+$/,"")))].slice(0,35);
 export function acceptanceMail(project:ProjectEmail,items:DocumentMilestone[]){
- const reference=project.request_reference||"Project confirmed";
- const html=brandEmail("YOUR PROJECT / ACCEPTED","Let's bring your idea to life.",
-  p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>,")+
-  p("The VELORYZ Studio team has accepted your project request. We have opened a private project workspace for <strong>"+htmlEsc(project.title)+"</strong> and prepared your detailed project summary as an attached PDF.")+
-  box("PROJECT REFERENCE",reference)+box("PROJECT NAME",project.title)+box("STARTING PHASE",project.phase||"Discover")+
-  box("NEXT STEP",project.next_step||"Our team will review the brief and agree the scope and next milestones.")+
-  p("<strong>Your attached project summary includes:</strong> original request details, planning notes, timeline, initial milestone roadmap, important project links, communication rules and client access instructions. An indicative budget is not a binding quote.")+
-  p("Your separate private invitation email includes the one-time access code. Never share that code. Once you activate the portal you can follow updates, review deliverables, request changes and message the team."),
-  {text:"Visit your Client Portal",url:BASE+"/client/"});
- return {subject:"VELORYZ Studio | Your project has been accepted | "+reference,html,
-  text:"Hello "+project.client_name+",\n\nVELORYZ Studio has accepted your project: "+project.title+".\nReference: "+reference+
-  "\nStarting phase: "+(project.phase||"Discover")+"\nNext step: "+(project.next_step||"Our team will confirm scope and milestones.")+
-  "\n\nYour complete project summary PDF is attached. A separate one-time portal invitation follows.\nClient Portal: "+BASE+"/client/\n\nReply to this email for questions.\nVELORYZ Studio"};
+ const reference=project.request_reference||"VELORYZ Project";
+ const original=plain(project.brief_details||project.summary||"Full scope to be confirmed.",50000);
+ const links=briefLinks(original);
+ const roadmap=items.map((m,i)=>'<tr><td style="padding:12px 9px 12px 2px;border-bottom:1px solid #e7e7ea;font:bold 12px Arial;color:#a26f89;vertical-align:top">'+String(i+1).padStart(2,"0")+'</td>'+
+  '<td style="padding:12px 2px;border-bottom:1px solid #e7e7ea;vertical-align:top"><div style="font:bold 13px Arial;color:#2e3144">'+htmlEsc(m.title)+'</div><div style="font:11px/1.7 Arial;color:#697182;margin-top:5px">'+htmlEsc(m.details||"")+'</div></td></tr>').join("");
+ const studioLinks=[
+  ["Private Client Portal",BASE+"/client/"],
+  ["Studio website",BASE+"/"],
+  ["Portfolio & work",BASE+"/work/"],
+  ["Services",BASE+"/services/"],
+  ["Designs & templates",BASE+"/design/"],
+  ["Documentation",BASE+"/docs/"],
+  ["Contact team",BASE+"/contact/"]
+ ];
+ const html=brandEmail("ORDER / ACCEPTED • PRIVATE CLIENT COPY","Project accepted. Here is your complete order.",
+  p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>, the VELORYZ team has accepted your project request. Your client workspace has been created. Below is the full order overview; a separately attached <strong>one-page VELORYZ PDF</strong> records the key details and links.")+
+  '<div style="background:#f3f1f3;border-left:4px solid #b7839d;padding:19px 22px;margin:23px 0"><div style="font:bold 9px Arial;color:#777080;letter-spacing:1.6px">OFFICIAL ORDER REFERENCE</div><div style="font:bold 20px/1.4 Arial;color:#2b2d43;margin-top:7px;overflow-wrap:anywhere">'+htmlEsc(reference)+'</div></div>'+
+  box("PROJECT TITLE",project.title)+box("CLIENT",project.client_name+" / "+project.client_email)+
+  box("ACCEPTED",date(project.accepted_at||new Date().toISOString()))+
+  box("PHASE / STATUS",(project.phase||"Discover")+" / "+(project.status||"planning"))+
+  box("NEXT ACTION",project.next_step||"Confirm the final scope and milestones with the studio.")+
+  emailSection("01 / ALL INFORMATION FROM YOUR ORIGINAL REQUEST",
+   '<p style="color:#697182;font-size:11px">The complete submitted request is preserved below, including the original preferences, budget, contact information, project description, reference URLs and comments.</p>'+
+   '<div style="padding:17px;background:#fafafa;border:1px solid #e4e4e7;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.85 Arial;color:#353c50">'+htmlEsc(original)+'</div>')+
+  emailSection("02 / DELIVERY ROADMAP",'<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse">'+roadmap+'</table>')+
+  emailSection("03 / REFERENCE LINKS PROVIDED",links.length?links.map((url,i)=>'<p style="margin:8px 0;font-size:12px">'+(i+1)+'. '+link(url,url)+'</p>').join(""):p("No reference URLs were included in your initial request."))+
+  emailSection("04 / STUDIO & PROJECT LINKS",studioLinks.map(([name,url])=>'<div style="padding:5px 0;font-size:12px">'+link(url,name)+" — "+htmlEsc(url)+'</div>').join(""))+
+  emailSection("05 / CLIENT PORTAL ACCESS",p("Your private invitation has <strong>not</strong> been sent by this message. The studio owner will separately click <strong>Send Client Invitation</strong> in Client Management. That independent email will contain the one-time access code, official project reference, portal link and activation instructions."))+
+  p("This is an acceptance and project-order summary, not a payment receipt or final fixed-price contract. Final deliverables, commercial terms and dates depend on your separate written agreement."),
+  {text:"View client portal information",url:BASE+"/client/"});
+ return {subject:"VELORYZ | ACCEPTED · Complete project order · "+reference,html,
+  text:"VELORYZ STUDIO / PROJECT ACCEPTED\n\nHello "+project.client_name+
+   "\nProject: "+project.title+"\nOfficial reference: "+reference+"\nClient: "+project.client_name+" / "+project.client_email+
+   "\nAccepted: "+date(project.accepted_at||new Date().toISOString())+
+   "\nPhase: "+(project.phase||"Discover")+"\nNext step: "+(project.next_step||"Studio team will confirm scope.")+
+   "\n\nFULL ORIGINAL ORDER / REQUEST:\n"+original+
+   "\n\nROADMAP:\n"+items.map((m,i)=>(i+1)+". "+m.title+" / "+(m.details||"")).join("\n")+
+   "\n\nSUBMITTED LINKS:\n"+links.join("\n")+
+   "\n\nSTUDIO LINKS:\n"+studioLinks.map(([label,url])=>label+": "+url).join("\n")+
+   "\n\nYour private invitation will be emailed separately when the studio owner issues access in Client Management. This email does not contain an access code.\n\nAn official one-page PDF is attached.\n\nVELORYZ STUDIO"};
 }
 export function invitationMail(project:ProjectEmail,code:string,url:string,expires:string){
- const html=brandEmail("PRIVATE CLIENT ACCESS / ONE-TIME","Your private workspace awaits.",
+ const reference=project.request_reference||"VELORYZ project";
+ const instructions=[
+  "01 — Open "+BASE+"/client/",
+  "02 — Choose the invitation / activation option.",
+  "03 — Paste the private single-use code from this message.",
+  "04 — Verify the project reference "+reference+" and activate your workspace.",
+  "05 — Review milestones, files and approvals, and message the VELORYZ team."
+ ];
+ const html=brandEmail("CLIENT MANAGEMENT / SECURE INVITATION","Your private project access.",
   p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>,")+
-  p("Your project <strong>"+htmlEsc(project.title)+"</strong> is ready in the private VELORYZ Client Portal. Use the secure, single-use invitation below to activate your project workspace.")+
-  box("PROJECT REFERENCE",project.request_reference||"VELORYZ project")+
-  '<div style="background:#27223d;border-radius:13px;padding:22px 16px;margin:24px 0;color:#fff;text-align:center"><div style="font-size:10px;letter-spacing:2px;color:#d5c3db">YOUR ONE-TIME INVITATION CODE</div><div style="font-size:18px;font-weight:900;letter-spacing:1.7px;margin-top:12px;overflow-wrap:anywhere">'+htmlEsc(code)+'</div></div>'+
-  p("This code expires <strong>"+htmlEsc(date(expires))+"</strong> and can only be used once. After activation, you can return with the secure browser session. A project reference number is not an invitation code.")+
-  p("<strong>Inside your workspace:</strong> verified project progress, milestones, deadlines, shared files, approvals, and your private conversation with our team. Please do not forward your invitation to anyone else."),
-  {text:"Activate project access",url});
- return {subject:"VELORYZ | Activate your private project workspace",html,
-  text:"Hello "+project.client_name+",\n\nYour private VELORYZ Studio workspace for "+project.title+" is ready.\n\nOne-time invitation code:\n"+code+
-  "\n\nOpen: "+url+"\nExpires: "+date(expires)+". The code is single-use. Do not forward it.\n\nVELORYZ Studio"};
+  p("The VELORYZ team has now issued an invitation to the protected workspace for <strong>"+htmlEsc(project.title)+"</strong>. This email is separate from your project acceptance and order summary.")+
+  box("PROJECT REFERENCE",reference)+box("REGISTERED EMAIL",project.client_email)+
+  '<div style="background:#24283c;padding:26px 21px;margin:24px 0;border-left:5px solid #c58da6;text-align:center">'+
+   '<div style="font:bold 10px Arial;letter-spacing:2.2px;color:#d7d7e2">PRIVATE SINGLE-USE ACTIVATION CODE</div>'+
+   '<div style="font:bold 22px/1.5 Arial;letter-spacing:2px;color:#ffffff;margin:12px 0 5px;overflow-wrap:anywhere">'+htmlEsc(code)+'</div>'+
+   '<div style="font:11px/1.6 Arial;color:#d2cdd7">Valid until '+htmlEsc(date(expires))+' · One use only</div></div>'+
+  emailSection("01 / HOW TO ACTIVATE",instructions.map(x=>'<p style="font-size:12px;padding:9px 0;margin:0;border-bottom:1px solid #e7e8eb">'+htmlEsc(x)+'</p>').join(""))+
+  emailSection("02 / YOUR PRIVATE DESTINATIONS",
+   box("DIRECT ACTIVATION LINK",url)+
+   '<div style="font-size:12px;margin:9px 0">'+link(BASE+"/client/","Client Portal")+'</div>'+
+   '<div style="font-size:12px;margin:9px 0">'+link(BASE+"/contact/","Contact the VELORYZ team")+'</div>')+
+  p("<strong>Security:</strong> This code expires after 14 days and may be used only once. Do not forward this message. A project reference alone is not enough to access your files. If access fails, contact the studio instead of sending your code to anyone else."),
+  {text:"Activate your client workspace",url});
+ return {subject:"VELORYZ | Private client invitation · "+reference,html,
+  text:"VELORYZ STUDIO / PRIVATE CLIENT INVITATION\n\nHello "+project.client_name+
+   "\nProject: "+project.title+"\nProject reference: "+reference+"\nRegistered email: "+project.client_email+
+   "\n\nONE-TIME ACCESS CODE: "+code+
+   "\nActivation link: "+url+"\nExpires: "+date(expires)+
+   "\n\nHOW TO ACTIVATE:\n"+instructions.join("\n")+
+   "\n\nNever forward this email or share your one-time code. Your acceptance order summary was issued separately.\nVELORYZ Studio"};
 }
 export function messageMail(project:ProjectEmail,who:"client"|"studio"){
  const subject=who==="client"?"New client message | "+(project.request_reference||project.title):"New VELORYZ project update | "+(project.request_reference||project.title);
@@ -69,110 +130,152 @@ export function messageMail(project:ProjectEmail,who:"client"|"studio"){
  return {subject,html:brandEmail("PROJECT COMMUNICATION",title,p(htmlEsc(intro))+box("PROJECT",project.title)+box("REFERENCE",project.request_reference||"VELORYZ project"),{text:"Open your project workspace",url:who==="client"?BASE+"/admin/#/client-portal":BASE+"/client/"}),
  text:intro+"\nProject: "+project.title+"\nReference: "+(project.request_reference||"VELORYZ project")+"\n\nVELORYZ Studio"};
 }
+/* Industrial one-sheet order document. The complete submission is also attached
+   as text INSIDE the PDF for requests too long to fit visibly on one A4 page. */
 async function createPdf(project:ProjectEmail,items:DocumentMilestone[]){
- const doc=await PDFDocument.create(),roman=await doc.embedFont(StandardFonts.Helvetica),bold=await doc.embedFont(StandardFonts.HelveticaBold);
- doc.setTitle("VELORYZ Project Summary | "+(project.request_reference||project.title));
- doc.setAuthor("VELORYZ Studio");doc.setSubject("Private client project brief, scope and onboarding roadmap");
- const W=595,H=842,L=48,maxX=548;
- let page:any,y=0,count=0;
- const newPage=(heading?:string)=>{
-  page=doc.addPage([W,H]);count++;
-  page.drawRectangle({x:0,y:H-13,width:W,height:13,color:color(BRAND.rose)});
-  page.drawRectangle({x:0,y:H-88,width:W,height:75,color:color(BRAND.navy)});
-  page.drawText("VELORYZ / PRIVATE PROJECT DOCUMENT",{x:L,y:H-54,size:16,font:bold,color:rgb(1,1,1)});
-  page.drawText("PROJECT SUMMARY  /  "+(project.request_reference||"STUDIO WORKSPACE").slice(0,50),{x:L,y:H-75,size:8,font:roman,color:rgb(.85,.81,.9)});
-  y=H-124;if(heading)title(heading);
- };
- const paragraph=(s:string,size=10,indent=0)=>{
-  const lines=normalPdf(s).split("\n");
-  for(const para of lines){
-   const words=para.split(/\s+/),maxWidth=W-2*L-indent;
-   let current="";
-   const draw=()=>{
-    if(y<76)newPage();
-    page.drawText(current,{x:L+indent,y,size,font:roman,color:color(BRAND.navy)});
-    y-=size+7;current="";
-   };
-   for(const word of words){
+ const doc=await PDFDocument.create(),regular=await doc.embedFont(StandardFonts.Helvetica),bold=await doc.embedFont(StandardFonts.HelveticaBold);
+ doc.setTitle("VELORYZ / Order "+(project.request_reference||project.title));
+ doc.setAuthor("VELORYZ Studio");
+ doc.setSubject("Official acceptance / one-page project and order summary");
+ doc.setCreator("VELORYZ Studio / Private Project Operations");
+ const W=595.28,H=841.89,px=doc.addPage([W,H]),M=43;
+ const C={paper:color("#f7f6f3"),ink:color("#25293d"),muted:color("#687183"),
+         accent:color("#c57e9d"),line:color("#d7d5da"),light:color("#ebe8ec"),white:rgb(1,1,1)};
+ px.drawRectangle({x:0,y:0,width:W,height:H,color:C.paper});
+ px.drawRectangle({x:0,y:H-131,width:W,height:131,color:C.ink});
+ px.drawRectangle({x:0,y:0,width:8,height:H,color:C.accent});
+ const emblem=await doc.embedJpg(logoBytes());
+ px.drawImage(emblem,{x:43,y:762,width:47,height:47});
+ px.drawText("VELORYZ",{x:99,y:781,size:26,font:bold,color:C.white,characterSpacing:1.7});
+ px.drawText("STUDIO / PRIVATE CLIENT OPERATIONS",{x:100,y:762,size:8,font:regular,color:color("#c9c3cd"),characterSpacing:1.3});
+ px.drawText("PROJECT ACCEPTANCE / ORDER RECORD",{x:M,y:735,size:9.2,font:bold,color:C.white,characterSpacing:1.2});
+ px.drawText("ISSUED "+normalPdf(date(project.accepted_at||new Date().toISOString())).toUpperCase(),{x:388,y:735,size:7.6,font:bold,color:C.white});
+ px.drawText("ONE-SHEET  /  A4",{x:455,y:812,size:7.2,font:regular,color:color("#d2cad4")});
+ function fitted(value:unknown,x:number,y:number,max:number,size=10,weight=false,ink=C.ink){
+  let t=normalPdf(value).replace(/\s+/g," ").trim()||"-";
+  const ft=weight?bold:regular;
+  while(t.length>1&&ft.widthOfTextAtSize(t,size)>max)t=t.slice(0,-2);
+  if(t!==normalPdf(value).replace(/\s+/g," ").trim())t=t.replace(/[ .,;:-]+$/,"")+"...";
+  px.drawText(t.slice(0,250),{x,y,size,font:ft,color:ink});
+ }
+ function rule(y:number,x=M,w=W-M*2){px.drawLine({start:{x,y},end:{x:x+w,y},thickness:.65,color:C.line});}
+ function meta(label:string,value:unknown,x:number,y:number,w:number){
+  fitted(label.toUpperCase(),x,y,w,7.2,true,C.muted);
+  fitted(value,x,y-17,w,12.2,true,C.ink);
+ }
+ function heading(text:string,x:number,y:number,w:number){
+  px.drawRectangle({x,y:y-3,width:3.5,height:15,color:C.accent});
+  fitted(text.toUpperCase(),x+11,y,w-11,9.6,true,C.ink);
+ }
+ function wrap(text:string,width:number,size:number,ft=regular){
+  const lines:string[]=[];
+  for(const paragraph of normalPdf(text).split("\n")){
+   if(!paragraph.trim()){lines.push("");continue}
+   let line="";
+   for(const word of paragraph.split(/\s+/)){
     if(!word)continue;
-    const proposed=current?current+" "+word:word;
-    if(roman.widthOfTextAtSize(proposed,size)>maxWidth&&current)draw();
-    current=word;
+    const want=line?line+" "+word:word;
+    if(ft.widthOfTextAtSize(want,size)<=width){line=want;continue}
+    if(line){lines.push(line);line=""}
+    let rest=word;
+    while(ft.widthOfTextAtSize(rest,size)>width&&rest.length>1){
+     let chunk="";
+     for(const ch of rest){if(ft.widthOfTextAtSize(chunk+ch,size)>width)break;chunk+=ch}
+     if(!chunk)break;
+     lines.push(chunk);rest=rest.slice(chunk.length);
+    }
+    line=rest;
    }
-   if(current)draw();else y-=7;
+   if(line)lines.push(line);
   }
-  y-=5;
- };
- const title=(s:string)=>{
-  if(y<115)newPage();
-  page.drawText(normalPdf(s).slice(0,68),{x:L,y,size:16,font:bold,color:color(BRAND.navy)});y-=27;
-  page.drawLine({start:{x:L,y:y+8},end:{x:maxX,y:y+8},thickness:.6,color:color(BRAND.lavender)});
- };
- const entry=(k:string,v:unknown)=>{
-  if(v===undefined||v===null||String(v).trim()==="")return;
-  if(y<120)newPage();
-  page.drawText(normalPdf(k).toUpperCase().slice(0,60),{x:L,y,size:8,font:bold,color:color(BRAND.rose)});y-=17;
-  paragraph(String(v),10,0);y-=5;
- };
- newPage();
- title("A project with direction.");
- paragraph("PRIVATE CLIENT DOCUMENT - CREATED AFTER STUDIO ACCEPTANCE");
- entry("Project name",project.title);
- entry("Official request reference",project.request_reference||"Pending assignment");
- entry("Client",project.client_name+" | "+project.client_email);
- entry("Accepted",date(project.accepted_at||new Date().toISOString()));
- entry("Current status",project.status||"Planning");
- entry("Current phase",project.phase||"Discover");
- entry("Progress",String(project.progress||0)+"% (owner-updated)");
- entry("Expected finish",date(project.due_date||""));
- entry("Next agreed action",project.next_step||"The team will review scope and propose milestones.");
- newPage("01 / Your original project request");
- paragraph("This is the original information submitted by the client and captured for studio planning; it is not an automatically accepted fixed price.");
- paragraph(project.brief_details||project.summary||"The complete original request will be confirmed with the team.");
- newPage("02 / Scope and preparation");
- entry("Project summary",project.summary||"Discuss scope with the studio.");
- paragraph("Review the requested features, pages, design direction, content and assets with the team. Unless separately agreed in writing, planning figures and timeline preferences are indicative only.");
- title("03 / Initial delivery roadmap");
- for(let i=0;i<items.length;i++){
-  entry(String(i+1).padStart(2,"0")+" / "+items[i].title,items[i].details);
-  if(items[i].due_date)entry("Target date",items[i].due_date);
+  return lines;
  }
- newPage("04 / Client access and collaboration");
- entry("Private Client Portal",BASE+"/client/");
- entry("Studio website",BASE+"/");
- entry("Contact the team",BASE+"/contact/");
- entry("Project reference",project.request_reference||"Provided in acceptance email");
- paragraph("A separate one-time private invitation code arrives in a dedicated email, or the team can provide it through an authenticated channel. The public project reference is NOT a password or invitation code. Do not forward access details.");
- paragraph("The portal provides owner-entered project stages, progress, review decisions, secure project messages and links to deliverables. External file links retain the permissions of their original file hosts.");
- title("05 / Communication and approval rules");
- paragraph("Project questions should be sent in the portal Messages tab. The studio can update phases and milestones; client approvals are only recorded for items explicitly marked for review. An accepted request does not mean a payment was collected, a fixed quotation was agreed or a deadline was guaranteed.");
- title("06 / Secure handling");
- paragraph("Do not send passwords, OTPs, payment card details or private login secrets in chat or email. Verify any invoices directly with the Studio team. Only the active private portal session exposes client project information.");
- const pages=doc.getPages();for(let i=0;i<pages.length;i++){
-  const pg=pages[i];pg.drawLine({start:{x:L,y:59},end:{x:maxX,y:59},thickness:.6,color:color(BRAND.lavender)});
-  pg.drawText("VELORYZ STUDIO  /  PRIVATE CLIENT COPY",{x:L,y:40,size:8,font:bold,color:color(BRAND.muted)});
-  pg.drawText((i+1)+" / "+pages.length,{x:522,y:40,size:8,font:roman,color:color(BRAND.muted)});
+ // Identity / project details
+ meta("ORDER / REQUEST REF",project.request_reference||"VELORYZ",M,681,246);
+ meta("PROJECT / TITLE",project.title,304,681,245);
+ meta("CLIENT",project.client_name+" / "+project.client_email,M,631,243);
+ meta("PHASE / STATUS",(project.phase||"Discover")+"  /  "+(project.status||"planning"),304,631,245);
+ rule(586);
+ heading("01   Complete original request",M,564,305);
+ heading("02   Production milestones",376,564,175);
+ px.drawLine({start:{x:359,y:282},end:{x:359,y:572},thickness:.65,color:C.line});
+ const entire=normalPdf(project.brief_details||project.summary||"Project scope will be confirmed with the team.");
+ const briefFont=8.25,briefLine=11.25,width=300,maxLines=21;
+ const brief=wrap(entire,width,briefFont);
+ brief.slice(0,maxLines).forEach((line,i)=>{if(line)fitted(line,M,537-i*briefLine,width,briefFont,false,C.ink)});
+ if(brief.length>maxLines)fitted("CONTINUED IN ORIGINAL BRIEF ATTACHMENT + ACCEPTANCE EMAIL",M,292,width,7.1,true,C.accent);
+ else fitted("ORIGINAL SUBMISSION / STORED WITH YOUR ORDER",M,287,width,7.05,true,C.muted);
+ const roadmap=items.slice(0,6);
+ let y=537;
+ roadmap.forEach((item,i)=>{
+  fitted(String(i+1).padStart(2,"0"),376,y,24,9.2,true,C.accent);
+  const titleLines=wrap(item.title||"Milestone",144,8.8,bold).slice(0,2);
+  titleLines.forEach((line,j)=>fitted(line,398,y-j*12,144,8.8,true,C.ink));
+  const info=(item.state&&item.state!=="upcoming"?item.state+" · ":"")+(item.due_date||"");
+  if(info.trim())fitted(info,398,y-26,145,7.3,false,C.muted);
+  y-=43;
+ });
+ rule(269);
+ heading("03   Project, reference & studio links",M,246,W-2*M);
+ const briefLinks=[...new Set((project.brief_details||project.summary||"").match(/https?:\/\/[^\s<>"']+/gi)||[])].map(v=>v.replace(/[),.;!?]+$/,"")).filter(v=>/^https?:\/\/[\w.-]+(?:[/:?#]|$)/.test(v)).slice(0,4);
+ const urls=[
+ ["CLIENT PORTAL","veloryz.online/client/"],
+ ["CONTACT","veloryz.online/contact/"],
+ ["DOCUMENTATION","veloryz.online/docs/"],
+ ["STUDIO","veloryz.online/"],
+ ...briefLinks.map((url,i)=>["CLIENT LINK "+(i+1),url.replace(/^https?:\/\//,"")])
+ ];
+ const left=urls.slice(0,4),right=urls.slice(4,8);
+ for(const [entries,x] of [[left,M],[right,302]] as [string[][],number][]){
+  let pos=222;
+  for(const [label,url] of entries){
+   fitted(label,x,pos,230,7.1,true,C.muted);
+   fitted(url,x,pos-13,230,8.3,false,C.ink);
+   pos-=31;
+  }
  }
+ rule(92);
+ fitted("ONE-TIME CLIENT ACCESS IS SENT SEPARATELY BY THE STUDIO OWNER",M,74,480,8.35,true,C.ink);
+ fitted("Reference is not a login code  /  Terms, scope and payments require a separate agreement.",M,55,505,7.8,false,C.muted);
+ fitted("VELORYZ   /   PRIVATE CLIENT COPY",M,30,330,7.6,true,C.muted);
+ fitted("01 / 01",503,30,45,8.2,true,C.ink);
+ // Full original order details remain inside this same PDF, regardless of page
+ // capacity. Many PDF viewers expose the text attachment via Attachments.
+ try{
+  const attachments="VELORYZ / COMPLETE ORIGINAL ORDER DETAILS\n"+(project.request_reference||"")+"\n\n"+
+   "PROJECT: "+project.title+"\nCLIENT: "+project.client_name+" <"+project.client_email+">\n\n"+
+   (project.brief_details||project.summary||"")+"\n\nPROJECT LINKS\n"+briefLinks.join("\n")+"\n\n"+
+   "MILESTONES\n"+items.map((x,i)=>(i+1)+". "+x.title+" / "+x.details+" / "+(x.due_date||"")).join("\n");
+  await doc.attach(new TextEncoder().encode(attachments),"VELORYZ-Full-Order-Details.txt",{mimeType:"text/plain",description:"Complete submitted scope, references, links and project milestone data"});
+ }catch{ /* Email and protected original project record still hold the full brief. */ }
  return await doc.save();
 }
 export const makeProjectSummaryPdf=createPdf;
 type Attachment={filename:string;bytes:Uint8Array;contentType:string};
 type Outgoing={to:string;subject:string;html:string;text:string;attachments?:Attachment[]};
 export type MailOutcome={status:"sent"|"failed"|"not-configured";message:string;provider_message_id?:string};
+async function smtpTimed<T>(value:Promise<T>,ms=16000):Promise<T>{
+ let timer:number|undefined;
+ try{
+  return await Promise.race([value,new Promise<never>((_,reject)=>{
+   timer=setTimeout(()=>reject(new Error("SMTP connection timed out")),ms);
+  })]);
+ }finally{if(timer!==undefined)clearTimeout(timer);}
+}
 export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
  const pass=(Deno.env.get("VELORYZ_GMAIL_APP_PASSWORD")||"").replace(/\s/g,"");
  if(!pass)return {status:"not-configured",message:"Gmail is not connected. Set VELORYZ_GMAIL_APP_PASSWORD in Supabase Edge Function secrets. No message was sent."};
  if(!emailOk(m.to))return {status:"failed",message:"The recipient email address is invalid."};
  let socket:Deno.TlsConn|undefined;
  try{
-  socket=await Deno.connectTls({hostname:"smtp.gmail.com",port:465});
+  socket=await smtpTimed(Deno.connectTls({hostname:"smtp.gmail.com",port:465}),16000);
   const writer=socket.writable.getWriter(),reader=socket.readable.getReader(),encoder=new TextEncoder(),decoder=new TextDecoder();
   let buffer="";
   const readLine=async():Promise<string>=>{
    while(true){
     const at=buffer.indexOf("\n");
     if(at>=0){const text=buffer.slice(0,at).replace(/\r$/,"");buffer=buffer.slice(at+1);return text;}
-    const {value,done}=await reader.read();if(done)throw Error("SMTP connection closed");buffer+=decoder.decode(value,{stream:true});
+    const {value,done}=await smtpTimed(reader.read(),16000);if(done)throw Error("SMTP connection closed");buffer+=decoder.decode(value,{stream:true});
     if(buffer.length>12000)throw Error("SMTP response length exceeded");
    }
   };
@@ -182,7 +285,7 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
    if(code!==expected)throw Error("SMTP command rejected ("+code+")");
    return line;
   };
-  const write=async(v:string)=>writer.write(encoder.encode(v+"\r\n"));
+  const write=async(v:string)=>smtpTimed(writer.write(encoder.encode(v+"\r\n")),16000);
   const command=async(v:string,expect:number)=>{await write(v);return response(expect)};
   await response(220);
   await command("EHLO veloryz.online",250);
@@ -192,32 +295,48 @@ export async function sendGmailMail(m:Outgoing):Promise<MailOutcome>{
   await command("MAIL FROM:<"+MAILBOX+">",250);
   await command("RCPT TO:<"+m.to+">",250);
   await command("DATA",354);
-  const boundary="vz-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
+  const boundary="vz-"+crypto.randomUUID(),related="vzrel-"+crypto.randomUUID(),alternative="vzalt-"+crypto.randomUUID(),id=crypto.randomUUID()+"@veloryz.online";
+  const subject=safe(m.subject).normalize("NFKD").replace(/[^\x20-\x7E]/g,"-");
   const headers=[
    "From: VELORYZ <"+MAILBOX+">","To: <"+m.to+">","Reply-To: "+MAILBOX,
-   "Subject: "+safe(m.subject),"Date: "+new Date().toUTCString(),
+   "Subject: "+subject,"Date: "+new Date().toUTCString(),
    "Message-ID: <"+id+">","MIME-Version: 1.0",
    'Content-Type: multipart/mixed; boundary="'+boundary+'"'
   ];
-  const part=(type:string,value:string)=>["--"+boundary,"Content-Type: "+type+'; charset="UTF-8"',
-   "Content-Transfer-Encoding: base64","",wrapped(utf64(value)),""].join("\r\n");
-  const mime=[headers.join("\r\n"),"",
-   part("text/plain",m.text),part("text/html",m.html)];
+  const altPart=(type:string,value:string)=>[
+   "--"+alternative,'Content-Type: '+type+'; charset="UTF-8"',
+   "Content-Transfer-Encoding: base64","",wrapped(utf64(value)),""
+  ].join("\r\n");
+  // Real email clients should choose either plain text or HTML, not display both.
+  const mime=[
+   headers.join("\r\n"),"",
+   "--"+boundary,'Content-Type: multipart/related; boundary="'+related+'"',"",
+   "--"+related,'Content-Type: multipart/alternative; boundary="'+alternative+'"',"",
+   altPart("text/plain",m.text),altPart("text/html",m.html),
+   "--"+alternative+"--","",
+   "--"+related,'Content-Type: image/jpeg; name="veloryz-brand-emblem.jpg"',
+   'Content-ID: <veloryz-brand-emblem>',
+   'Content-Disposition: inline; filename="veloryz-brand-emblem.jpg"',
+   "Content-Transfer-Encoding: base64","",wrapped(b64(logoBytes())),"",
+   "--"+related+"--",""
+  ];
   for(const attachment of (m.attachments||[])){
-   mime.push(["--"+boundary,'Content-Type: '+attachment.contentType+'; name="'+safe(attachment.filename)+'"',
-    "Content-Disposition: attachment; filename=\""+safe(attachment.filename)+"\"",
-    "Content-Transfer-Encoding: base64","",wrapped(b64(attachment.bytes)),""].join("\r\n"));
+   mime.push([
+    "--"+boundary,'Content-Type: '+attachment.contentType+'; name="'+safe(attachment.filename)+'"',
+    'Content-Disposition: attachment; filename="'+safe(attachment.filename)+'"',
+    "Content-Transfer-Encoding: base64","",wrapped(b64(attachment.bytes)),""
+   ].join("\r\n"));
   }
   mime.push("--"+boundary+"--","");
-  const full=mime.join("\r\n").replace(/^\./gm,"..");
-  // SMTP DATA terminator is sent only once. Base64 encoded body prevents dot injection.
-  await writer.write(encoder.encode(full+"\r\n.\r\n"));
-  await response(250);
-  await command("QUIT",221);
+  const raw=mime.join("\r\n").replace(/^\./gm,"..");
+  await smtpTimed(writer.write(encoder.encode(raw+"\r\n.\r\n")),25000);
+  await response(250); // Gmail accepted responsibility for this one message.
+  try{await command("QUIT",221)}catch{} // Never report failure after successful 250 DATA.
   return {status:"sent",message:"Gmail SMTP accepted the message for "+m.to+". Delivery to Inbox is not guaranteed.",provider_message_id:id};
  }catch(e){
   // Suppress credentials and raw provider error messages.
-  const label=String((e as Error)?.message||"").includes("rejected")?"Gmail SMTP rejected the request. Check app password and mailbox permissions.":"Gmail SMTP delivery failed or timed out. Check server outbound port 465 and app password.";
+  const code=String((e as Error)?.message||"").match(/SMTP command rejected \((\d{3})\)/)?.[1];
+  const label=code==="535"||code==="534"?"Gmail SMTP authentication rejected (code "+code+"). Verify the App Password and sender account.":code?"Gmail SMTP returned "+code+". Check mailbox restrictions, recipient address and Gmail sending limits.":"Gmail SMTP connection or response timed out. Verify Supabase outbound port 465 and retry the owner-only test.";
   return {status:"failed",message:label};
  }finally{try{socket?.close()}catch{}}
 }
