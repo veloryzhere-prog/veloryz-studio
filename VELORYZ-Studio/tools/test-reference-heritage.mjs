@@ -28,7 +28,8 @@ for(const part of ['Sketch','Structure','Design','Build','Review'])assert(ref.in
 assert(ref.includes('id="vz-home-reviews-track"'),'Real reviews must be visible and auto-animated on homepage');
 assert(features.includes("fetch('/api/reviews'"),'Real approved reviews must come from the canonical API');
 assert(features.includes('An invitation, not a customer review'),'Empty reviews must never be fabricated');
-assert(ref.includes('id="vz-restore-quick"')&&ref.includes('Quick create a project'),'Project quick actions must be restored to homepage');
+assert(!ref.includes('id="vz-restore-quick"'),'Oversized four-card quick action section must be removed from the homepage top');
+assert(ref.includes('href="/create/"')&&ref.includes('href="/book/"')&&ref.includes('href="/support/"')&&ref.includes('href="/client/"'),'Keep quick actions accessible through actual destinations and footer');
 assert(ref.includes('Request a consultation')&&ref.includes('href="/book/"'),'Booking and consultation must be restored');
 assert(features.includes('vz-original-whatsapp')&&features.includes('whatsapp-float'),'Restore original bottom-right Let’s Talk button');
 assert(styles.includes('bottom:calc(83px')&&styles.includes('.vz-ai-dock'),'Keep original AI launcher stacked above WhatsApp on right');
@@ -36,7 +37,8 @@ assert(ai.includes("fetch('/api/adviser'"),'Keep all five real AI services worki
 assert(ai.includes('firstName:visitorFirstName')&&ai.includes('firstNamed:Boolean(visitorFirstName)'),'Original name-sensitive AI flow must survive');
 for(const name of ['happy','nikhil','milky','ritik','aryan'])assert(ai.includes("id:'"+name+"'"),'Missing existing AI '+name);
 assert(!ai.includes('madherchod'),'Removed AI must not be recreated');
-assert(ref.includes('var LIB=(function()')&&ref.includes('LIB.length*104'),'Every published catalogue design must participate in scroll-driven deck');
+assert(ref.includes('var LIB=(function()')&&ref.includes('LIB.length*104'),'Published catalogue must participate in scroll-driven design deck');
+assert(ref.includes('VeloryzReferenceGallery.update()'),'All homepage cards follow the original horizontally pinned services scroll engine');
 assert(page.includes('documentation:Object.entries(studioDocsRoutes)'),'Expose full published docs index rather than only 10-16 links');
 assert(features.includes('vz-complete-doc-groups')&&features.includes('live.documentation'),'Full documentation index must render from server routes');
 assert(ref.includes('id="vz-complete-doc-index"'),'Place all documentation links at bottom of reference design');
