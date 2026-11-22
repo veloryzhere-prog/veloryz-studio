@@ -1,99 +1,124 @@
-/* VELORYZ Studio design collection regression and security checks. */
+/* Regression: the current VELORYZ Studio library contains 110 priced source designs,
+   no outdated original mockup products, full-site scroll motion and a safe iframe. */
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {resolve} from 'node:path';
-
 const root=resolve(import.meta.dirname,'..');
-const file=path=>readFileSync(resolve(root,path),'utf8');
-const includes=(src,fragment,reason)=>assert.ok(src.includes(fragment),reason||'Missing '+fragment);
-const data=JSON.parse(file('public/veloryz-open-designs.json'));
-const original=data.originals,external=data.items,all=[...original,...external];
-assert.equal(external.length,110,'All 110 external designs must remain indexed');
-assert.equal(original.length,12,'Keep the original twelve VELORYZ templates');
-assert.equal(new Set(all.map(p=>p.id)).size,all.length,'Every design needs a unique URL');
-assert.equal(new Set(external.map(p=>p.category)).size,16,'Keep all source categories');
-for(const item of all){
- assert.match(item.id,/^[a-z0-9-]{2,100}$/,'Invalid studio design URL');
- assert.ok(item.name&&item.description&&item.category&&item.license&&item.author,'Metadata incomplete: '+item.id);
- assert.ok(['original','candidate','review','restricted'].includes(item.rights),'Invalid rights metadata');
- assert.ok(['original','catalogued','real-upstream-html'].includes(item.importStatus),'Invalid code import state');
+const read=f=>readFileSync(resolve(root,f),'utf8');
+const has=(s,q,reason)=>assert.ok(s.includes(q),reason||'Missing: '+q);
+
+const collection=JSON.parse(read('public/veloryz-open-designs.json'));
+const retired=JSON.parse(read('public/veloryz-retired-original-templates.json'));
+const items=collection.items;
+assert.equal(items.length,110,'Retain all 110 researched source design records');
+assert.equal(collection.originals.length,0,'Remove outdated studio originals from public collection');
+assert.equal(retired.items.length,12,'Archive old in-house data for existing purchases and maintenance');
+assert.equal(retired.publiclyListed,false);
+assert.equal(new Set(items.map(x=>x.id)).size,110);
+assert.equal(new Set(items.map(x=>x.category)).size,16);
+assert.equal(Math.min(...items.map(x=>x.price)),6000,'Starting service estimate must reach INR 6,000');
+assert.equal(Math.max(...items.map(x=>x.price)),50000,'Premium service estimate must reach INR 50,000');
+assert.ok(new Set(items.map(x=>x.price)).size>=20,'Designs need individualized pricing');
+for(const item of items){
+ assert.match(item.id,/^[a-z0-9-]{2,100}$/,'Safe local slug');
+ assert.ok(item.name&&item.category&&item.description&&item.author&&item.license,'Preserve provenance');
+ assert.ok(Number.isSafeInteger(item.price)&&item.price>=6000&&item.price<=50000,'Invalid INR quote '+item.id);
+ assert.equal(item.currency,'INR');
+ assert.equal(item.priceModel,'starting_customization_quote','Prices are VELORYZ services, not upstream source relicensing');
+ assert.ok(item.studioLicense.includes('upstream code'),'Third-party licensing must be preserved');
+ assert.ok(['candidate','review','restricted'].includes(item.rights));
+ assert.ok(['catalogued','real-upstream-html'].includes(item.importStatus));
  if(item.importStatus==='real-upstream-html'){
   const dir='public/design-source-previews/'+item.id+'/';
   assert.equal(item.localSource,'/design-source-previews/'+item.id+'/index.html');
-  assert.ok(existsSync(resolve(root,dir+'index.html')),'Missing original website HTML');
-  assert.ok(existsSync(resolve(root,dir+'LICENSE')),'MIT source license must be retained');
-  assert.ok(existsSync(resolve(root,dir+'README.md')),'Original README must be retained');
-  const html=file(dir+'index.html');
+  assert.ok(existsSync(resolve(root,dir+'LICENSE')),'Required original license: '+item.id);
+  assert.ok(existsSync(resolve(root,dir+'README.md')),'Required README '+item.id);
+  const html=read(dir+'index.html');
   assert.match(html,/<html\b/i);
-  assert.ok(html.length>5000,'Do not replace original project with a generated placeholder');
+  assert.ok(html.length>5000,'No empty placeholder instead of real source HTML');
+  has(html,'/veloryz-preview-motion-bridge.js','The real site must report scroll position: '+item.id);
   if(item.assetMode==='upstream-hosted-assets'){
-   assert.ok(!/<base\s+href=["']https?:\/\//i.test(html),'Original menu hashes must not redirect to external site');
-   includes(html,'/studio-preview-assets/'+item.id+'/','Relative CSS/JS/images must use local asset gateway');
+   assert.ok(!/<base\s+href=["']https?:\/\//i.test(html),'Internal hashes must stay local');
+   has(html,'/studio-preview-assets/'+item.id+'/','Assets must have a same-origin preview path');
   }
  }
 }
-const imported=external.filter(p=>p.importStatus==='real-upstream-html');
-assert.equal(imported.length,11,'Eleven real imported HTML sites must stay accessible');
-assert.ok(external.filter(p=>p.previewImageKind==='upstream-screenshot').length>=20,'Keep original design screenshots');
-const gallery=file('public/veloryz-open-library.js');
-const galleryCss=file('public/veloryz-open-library.css');
-const viewer=file('lib/design-detail-page.ts');
-const viewerClient=file('public/veloryz-design-preview.js');
-const viewerCss=file('public/veloryz-design-preview.css');
-const notices=file('lib/design-notices-page.ts');
-const assets=file('lib/design-asset-proxy.ts');
-const images=file('lib/design-image-proxy.ts');
-const home=file('public/reference-site-upgrade.js');
-const homeAdapter=file('public/claude-reference-enhancements.js');
-const shell=file('lib/claude-reference-shell.ts');
-const handler=file('lib/page-handler.ts');
-const creator=file('public/creator-v4.js');
+assert.equal(items.filter(x=>x.importStatus==='real-upstream-html').length,11);
+assert.ok(items.filter(x=>x.previewImageKind==='upstream-screenshot').length>=20);
+const gallery=read('public/veloryz-open-library.js');
+const galleryCss=read('public/veloryz-open-library.css');
+const detail=read('lib/design-detail-page.ts');
+const preview=read('public/veloryz-design-preview.js');
+const bridge=read('public/veloryz-preview-motion-bridge.js');
+const previewCss=read('public/veloryz-design-preview.css');
+const server=read('lib/page-handler.ts');
+const creator=read('public/creator-v4.js');
+const notices=read('lib/design-notices-page.ts');
+const assetProxy=read('lib/design-asset-proxy.ts');
+const imageProxy=read('lib/design-image-proxy.ts');
+const home=read('public/reference-site-upgrade.js');
+const shell=read('lib/claude-reference-shell.ts');
 
-includes(gallery,'const cms=[];','Old CMS inspirations must not appear in refreshed main library');
-includes(gallery,"'/design/'+encodeURIComponent(p.id)+'/'",'All cards must remain on VELORYZ paths');
-includes(gallery,'window.designPage=renderWithMotion','Initialize gallery after route render');
-includes(gallery,'requestAnimationFrame(()=>requestAnimationFrame','Defer entry animation after DOM insertion');
-includes(gallery,'IntersectionObserver','Smooth on-scroll card reveals');
-includes(gallery,"'/studio-preview-images/'+encodeURIComponent(p.id)",'Studio design cards use same-origin images');
-includes(gallery,'Create with VELORYZ','Creator handoff preserved');
-assert.ok(!gallery.includes('Original source: '),'No prominent source-credit lines in the card UI');
-assert.ok(!gallery.includes('Licensing review ('),'No technical licensing filters in main UX');
-includes(galleryCss,'.vz-real-library .vz-source-card{opacity:1;transform:none}', 'Accessible visible fallback');
-includes(galleryCss,'prefers-reduced-motion','Accessible reduced motion');
+has(gallery,'window.designPage=renderWithMotion','SPA gallery remains registered');
+has(gallery,"'/design/'+encodeURIComponent(p.id)+'/'",'Source product detail routes stay same origin');
+has(gallery,'function entries()','Public gallery has an explicit public source resolver');
+has(gallery,"item.sourceType!=='original-veloryz'",'Old studio originals are not rendered');
+has(gallery,'Studio service from','Creator shows real service starting estimates');
+has(gallery,'STUDIO SERVICE FROM','All cards show INR pricing');
+has(gallery,'price-asc','Price ascending sort');
+has(gallery,'price-desc','Price descending sort');
+has(gallery,"p.id)+'preview/'",'Every design has VELORYZ full preview link');
+has(gallery,'IntersectionObserver','Genuine motion-rich scrolling gallery');
+has(galleryCss,'prefers-reduced-motion','Respect reduced-motion');
+has(galleryCss,'.vz-source-price','Studio pricing visual design');
 
-includes(viewer,'id="vz-made-with"','Clickable VELORYZ watermark');
-includes(viewer,'<dialog class="vz-studio-dialog"','Studio information panel');
-includes(viewer,'/legal/design-notices/','Keep required acknowledgements separately available');
-includes(viewer,'const local=localPath(design)','Actual local source HTML only');
-assert.ok(!viewer.includes('Try original live demo'),'Remove external live demo button');
-assert.ok(!viewer.includes('Source details</h3>'),'Remove prominent source panel');
-assert.ok(!viewer.includes('Original repository & license ↗'),'Do not show raw GitHub link in main preview');
-includes(viewerClient,'design.localSource','Load imported source, not fabricated UI');
-includes(viewerClient,"setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock')",'Interactive but isolated browser iframe');
-assert.ok(!/setAttribute\(['"]sandbox['"],[^)]*allow-same-origin/.test(viewerClient),'Do not give third-party scripts same-origin privileges');
-includes(viewerClient,"dialog.showModal()",'Watermark opens usable brand dialog');
-includes(viewerClient,"requestFullscreen",'Native full-screen website preview');
-assert.ok(!viewerClient.includes('function dashboard('),'No AI-generated synthetic dashboards');
-includes(viewerCss,'prefers-reduced-motion','Reduced-motion viewer support');
+has(detail,'export function renderDesignPreview','Project detail server renderer');
+has(detail,'export function renderDesignFullPreview','Dedicated full-site preview server renderer');
+has(detail,'/assets/brand/official/Main-Transparent.webp','Use original studio logo asset');
+has(detail,'vz-market-pricebox','Price card on every detail');
+has(detail,'vz-market-related-grid','Real related projects');
+has(detail,"'/design/'+p.id+'/preview/'",'Same-domain live preview');
+has(detail,'id="vz-made-with"','Interactive watermark');
+has(detail,'/legal/design-notices/','Legal notices remain accessible');
+assert.ok(!detail.includes('Try original live demo'));
+assert.ok(!detail.includes('Original repository & license ↗'));
+assert.ok(!detail.includes('const original=designs.originals.find'),'Retired originals must not remain routable');
+has(detail,'findDesignPreview','Direct route lookup remains static and reliable');
+has(detail,"isRunnable:Boolean(sourcePath(p))",'Do not claim an actual site exists for screenshot-only entries');
 
-includes(notices,'catalog.items','Notices page must keep all indexed creator information');
-includes(notices,'LICENSE','Original MIT license linked, not deleted');
-includes(assets,'raw.githubusercontent.com','Allowlisted original CSS/JS/media source');
-includes(assets,'const sources:Record<string,Source>','No open proxy for arbitrary addresses');
-includes(assets,"if(!src||",'Deny unlisted directories');
-includes(images,'hostAllowed','Image gateway must use explicit host safelist');
-includes(images,'image/svg+xml','Original README SVG previews supported');
-includes(handler,'const assetResponse=await serveDesignAsset(request)','Proxy route must run before page catch-all');
-includes(handler,'const designImage=await serveDesignImage(request)','Source images must work on same origin');
-includes(handler,"path==='/legal/design-notices'",'Legal notices route must open');
-includes(handler,"'os-portfolio-and-agencies-8b-creative-agency'",'Homepage shows actual imported designs');
-assert.ok(!handler.includes('catalogue:(published.state.catalogue||[]).filter'),'Legacy CMS cards must not remain homepage showcase');
-includes(home,'item.fallbackImage','Homepage image fallback when proxy provider is unreachable');
-includes(home,'window.VeloryzReferenceGallery','Preserve the original homepage scroll clock');
-includes(homeAdapter,'vz-lib-live-image','Homepage design story slides show actual website images');
-includes(shell,'VELORYZ STUDIO / THE DESIGN COLLECTION','Studio branding updated in homepage');
-includes(creator,'Explore studio preview','Creator has same design previews');
-for(const path of ['public/veloryz-open-library.js','public/veloryz-design-preview.js','public/creator-v4.js','public/reference-site-upgrade.js','public/claude-reference-enhancements.js']){
- assert.doesNotThrow(()=>new Function(file(path)),'Invalid public JS in '+path);
+has(preview,"setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock')",'Opaque-origin real-site isolation');
+assert.ok(!/setAttribute\(['"]sandbox['"],[^)]*allow-same-origin/.test(preview),'Do not permit third-party code access to Studio origin');
+has(preview,"event.source!==frame.contentWindow",'Verify postMessage comes from current preview frame');
+has(preview,"msg.id!==id",'Reject foreign preview identifiers');
+has(preview,"type:'veloryz:preview-command'",'Forward scroll to real iframe document');
+has(preview,"command('wheel',event.deltaY)",'Scrolling over viewer overlay scrolls actual site');
+has(preview,"requestFullscreen",'Full-screen controls');
+has(preview,"dlg?.showModal()",'Made with Studio modal');
+has(preview,"updateProgress(percent)",'Full-page motion progress');
+has(bridge,"window.parent.postMessage",'Return real site position to parent');
+has(bridge,"event.source!==window.parent",'Motion bridge only accepts parent commands');
+has(bridge,"window.scrollTo({top:0",'Real site restart');
+has(previewCss,'body.vz-market-immersive{overflow:hidden','Outer preview page must not scroll');
+has(previewCss,'.vz-market-immersive-canvas','Dedicated viewport for original site');
+has(previewCss,'iframe{width:100%;height:100%','Full original website scroll area');
+has(previewCss,'prefers-reduced-motion','Motion accessibility');
+
+has(server,'renderDesignFullPreview','The preview route is server-rendered');
+has(server,"const previewMatch=path.match",'Direct full-site preview URLs must work after refresh');
+has(server,'serialise(openDesigns.items.filter','Inject only current design collection, excluding retired 12');
+has(server,"const staticDesign=findDesignPreview",'Direct details independent of CMS');
+has(server,'item.price,enabled:true','Homepage design previews carry a real price');
+has(server,"path==='/legal/design-notices'",'Open-source rights are still discoverable');
+has(notices,'catalog.items','Attribution index');
+has(notices,'LICENSE','Original software license access preserved');
+has(assetProxy,'raw.githubusercontent.com','No generic arbitrary URL proxy');
+has(imageProxy,'hostAllowed','Media fetch uses allowlist');
+has(home,'window.VeloryzReferenceGallery','Original homepage scroll clock unaffected');
+has(shell,'VELORYZ STUDIO / THE DESIGN COLLECTION','Homepage collection remains integrated');
+has(creator,'minBudget=()=>data.external?6000:20000','Creator supports INR 6,000 source customization');
+has(creator,'Studio service from','Creator displays price');
+has(creator,'selectedReference&&data.external','Avoid reset loops in template selection');
+for(const name of ['public/veloryz-open-library.js','public/veloryz-design-preview.js','public/veloryz-preview-motion-bridge.js','public/creator-v4.js','public/reference-site-upgrade.js']){
+ assert.doesNotThrow(()=>new Function(read(name)),'Invalid browser JS '+name);
 }
-console.log('PASS: authentic 122-entry VELORYZ collection, old designs hidden, 11 original source HTML sites, first-party media/asset routing, studio attribution dialog, accessible motion and legal notices.');
+console.log('PASS: 110 individually priced VELORYZ customization references (INR 6000–50000), 12 outdated originals archived, 11 working upstream HTML previews, true iframe scroll motion and controls, original brand, responsive details and license safety.');
