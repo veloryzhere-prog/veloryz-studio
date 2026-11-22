@@ -1,83 +1,68 @@
-/* VELORYZ / Scarf Film — isolated from scrolling.
- * The previous 340svh scroll-linked logo/rings transition is deliberately removed.
- * IntersectionObserver controls one native video; there is no scroll handler, rAF
- * ticker, 3D asset, canvas, frame-sheet decoding, or sticky pinning in this scene.
- */
-class VeloryzFrameCut extends HTMLElement {
+/* VELORYZ scarf: one original video, no controls, labels or scroll-progress transforms.
+   Autoplays muted whenever visible; pauses while offscreen/hidden. Reduced motion,
+   explicit site Motion Off, and Save Data still take priority over autoplay.
+*/
+class VeloryzFrameCut extends HTMLElement{
  connectedCallback(){
   queueMicrotask(()=>{if(this.isConnected&&!this.disposeScene)this.mount();});
  }
  disconnectedCallback(){this.disposeScene?.();this.disposeScene=null;}
  mount(){
   const video=this.querySelector('.frame-scarf');
-  const button=this.querySelector('.frame-toggle');
-  if(!video||!button)return;
+  if(!video)return;
   const controller=new AbortController();
-  const listen=(target,event,callback)=>target?.addEventListener?.(event,callback,{signal:controller.signal});
+  const listen=(node,type,callback)=>node?.addEventListener?.(type,callback,{signal:controller.signal});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  let near=false,visible=false,manual=false,held=false,loading=false,observer=null;
-  const canAuto=()=>!document.hidden&&!reduced.matches&&!network?.saveData&&window.StudioMotion?.level!=='paused'&&window.StudioMotion?.level!=='reduced'&&!window.StudioMotion?.onboardingActive;
-  const label=()=>{
-   const playing=!video.paused;
-   button.textContent=playing?'Pause scarf motion':'Play scarf motion';
-   button.setAttribute('aria-label',button.textContent);
-   button.setAttribute('aria-pressed',String(playing));
-  };
-  const load=()=>{
-   if(loading)return;
-   loading=true;
-   video.preload='metadata';
-   video.src='/assets/frame-cut/scarf.mp4';
-   video.load?.();
-  };
-  const pause=()=>{if(!video.paused)video.pause();label();};
+  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  let observer=null,visible=false,loaded=false,attempting=false;
+  video.muted=true;
+  video.loop=true;
+  video.playsInline=true;
+  video.autoplay=true;
+  const motionAllowed=()=>!document.hidden&&!reduced.matches&&!connection?.saveData&&
+   window.StudioMotion?.level!=='reduced'&&window.StudioMotion?.level!=='paused'&&
+   !window.StudioMotion?.onboardingActive;
+  const pause=()=>{if(!video.paused)video.pause();};
   const sync=()=>{
    if(!this.isConnected)return;
-   const active=near&&visible&&!document.hidden;
-   this.toggleAttribute('data-visible',active);
-   if(!active){pause();return;}
-   if(canAuto()&&!held){load();video.play()?.catch(()=>{held=true;pause();});}
-   else if(manual&&!held){load();video.play()?.catch(()=>pause());}
-   else pause();
-   label();
-  };
-  const toggle=()=>{
-   if(!loading)load();
-   if(!video.paused){held=true;manual=false;pause();}
-   else{held=false;manual=true;sync();}
+   if(!visible||!motionAllowed()){pause();return;}
+   if(!loaded){
+    loaded=true;
+    video.preload='metadata';
+    video.src='/assets/frame-cut/scarf.mp4';
+    video.load?.();
+   }
+   if(!video.paused||attempting)return;
+   attempting=true;
+   const attempt=video.play();
+   if(attempt&&typeof attempt.then==='function'){
+    attempt.catch(()=>{ /* Muted autoplay may still be blocked; keep the static poster. */ }).finally(()=>{attempting=false;});
+   }else attempting=false;
   };
   if(typeof IntersectionObserver==='function'){
    observer=new IntersectionObserver(entries=>{
     for(const entry of entries){
      if(entry.target!==this)continue;
-     near=entry.isIntersecting;
      visible=entry.isIntersecting&&entry.intersectionRatio>=.08;
      sync();
     }
-   },{rootMargin:'120px 0px',threshold:[0,.08,.25]});
+   },{rootMargin:'180px 0px',threshold:[0,.08,.3]});
    observer.observe(this);
-  }else {near=true;visible=true;}
-  listen(button,'click',toggle);
-  listen(video,'play',label);
-  listen(video,'pause',label);
-  listen(video,'error',()=>{held=true;button.textContent='Scarf film unavailable';button.disabled=true;});
+  }else visible=true;
   listen(document,'visibilitychange',sync);
   listen(document,'studio:route',sync);
   listen(document,'studio:motion-intro-complete',sync);
   listen(document,'studio:brand-intro-complete',sync);
   listen(window,'pageshow',sync);
   listen(window.StudioMotion,'change',sync);
-  const onReducedChange=()=>{if(reduced.matches){manual=false;held=true;}sync();};
-  reduced.addEventListener?.('change',onReducedChange);
-  network?.addEventListener?.('change',sync);
-  label();
+  reduced.addEventListener?.('change',sync);
+  connection?.addEventListener?.('change',sync);
   sync();
   this.disposeScene=()=>{
    controller.abort();
    observer?.disconnect();
-   reduced.removeEventListener?.('change',onReducedChange);
-   network?.removeEventListener?.('change',sync);
+   reduced.removeEventListener?.('change',sync);
+   connection?.removeEventListener?.('change',sync);
    pause();
    video.removeAttribute('src');
    video.load?.();
