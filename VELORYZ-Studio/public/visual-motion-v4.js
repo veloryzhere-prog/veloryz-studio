@@ -13,10 +13,10 @@
     '.journey-chapter', '.section-head', '.assembly-sequence', '.reel-strip', '.ticker',
     '.service-item', '.lab-swatch-card', '.studio-band', '.ui-study-grid'
   ].join(',');
+  // The site-wide kinetic layer owns cards, services, headings and contact reveals.
+  // Keep this observer only for scene elements that are not already animated.
   const entranceSelector = [
-    '.section-head', '.process-card', '.project-caption', '.service-item', '.people-card',
-    '.profile-highlight', '.design-card', '.studio-ai-help', '.platform-teaser',
-    '.price-card', '.feature-card', '.guided-step-heading', '.call-card'
+    '.profile-highlight', '.guided-step-heading', '.folio-shot', '.type-study'
   ].join(',');
   const visible = new Set();
   let tracked = [];
