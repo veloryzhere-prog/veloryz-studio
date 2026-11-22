@@ -56,7 +56,7 @@ export async function GET(request: Request) {
     'os-template-libraries-start-bootstrap-freelancer'
    ].map(id=>openDesigns.items.find(item=>item.id===id)).filter((item):item is (typeof openDesigns.items)[number]=>Boolean(item))
     .map(item=>({id:item.id,name:item.name,description:item.description,category:item.category,
-      image:item.previewImage?'/studio-preview-images/'+item.id:'',fallbackImage:item.previewImage||'',price:0,enabled:true,author:item.author})),
+      image:item.previewImage?'/studio-preview-images/'+item.id:'',fallbackImage:item.previewImage||'',price:item.price,enabled:true,author:item.author})),
    documentation:Object.entries(studioDocsRoutes).map(([url,title])=>({url:htmlDocumentPath(url),title}))
   };
   const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
