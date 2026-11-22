@@ -4,7 +4,7 @@
 (()=>{
  const KEY='veloryz.measurement.optin.v1',DATA='veloryz.measurement.local.v1';
  const blocked=()=>navigator.globalPrivacyControl===true||navigator.doNotTrack==='1'||window.doNotTrack==='1';
- const getConsent=()=>{try{return localStorage.getItem(KEY)==='yes'&&!blocked();}catch{return false;}};
+ const getConsent=()=>{try{return localStorage.getItem(KEY)==='yes'&&!blocked()&&Boolean(window.VeloryzPrivacy?.allowed('analytics'));}catch{return false;}};
  const read=()=>{try{const d=JSON.parse(localStorage.getItem(DATA)||'{}');return d&&typeof d==='object'&&!Array.isArray(d)?d:{};}catch{return {};}};
  const write=d=>{try{localStorage.setItem(DATA,JSON.stringify(d));}catch{}};
  function record(type,value){
@@ -29,7 +29,7 @@
   dialog.innerHTML='<form method="dialog"><button aria-label="Close measurement settings" class="studio-measure-close">×</button></form><h2>Privacy & site quality</h2><p>Help this browser measure navigation and performance. Off by default, and disabled automatically when your browser requests no tracking. All counters stay on this device: nothing is sent to the studio or a third party.</p><label class="studio-measure-toggle"><input type="checkbox" '+(isOn?'checked':'')+(blocked()?' disabled':'')+' data-measure-consent> Allow local, anonymous measurement</label><p class="studio-measure-stats">Local events saved: '+Object.entries(data).filter(([k])=>k!=='lastRecorded').reduce((n,[,v])=>n+(Number(v)||0),0)+'. This is not a studio-wide report.</p><div class="studio-measure-actions"><button type="button" data-measure-clear>Clear my measurements</button><button type="button" data-measure-export>Export local summary</button></div>';
   document.body.append(dialog);dialog.addEventListener('close',()=>dialog.remove());dialog.showModal?.();
   if(!dialog.open)dialog.setAttribute('open','');
-  dialog.querySelector('[data-measure-consent]').addEventListener('change',e=>{try{localStorage.setItem(KEY,e.target.checked?'yes':'no');if(!e.target.checked)localStorage.removeItem(DATA);}catch{}dialog.close();});
+  dialog.querySelector('[data-measure-consent]').addEventListener('change',e=>{if(e.target.checked&&!window.VeloryzPrivacy?.allowed('analytics')){window.VeloryzPrivacy?.open();dialog.close();return;}try{localStorage.setItem(KEY,e.target.checked?'yes':'no');if(!e.target.checked)localStorage.removeItem(DATA);}catch{}dialog.close();});
   dialog.querySelector('[data-measure-clear]').addEventListener('click',()=>{try{localStorage.removeItem(DATA);}catch{}dialog.close();});
   dialog.querySelector('[data-measure-export]').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(read(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='veloryz-local-measurement.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);});
  }
