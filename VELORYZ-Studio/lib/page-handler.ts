@@ -81,12 +81,18 @@ export async function GET(request: Request) {
  if(path==='/admin/reviews.html')return new Response(null,{status:302,headers:{Location:new URL('/admin/#/reviews',request.url).toString(),'Cache-Control':'no-store','X-Robots-Tag':'noindex,nofollow'}});
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  // A same-origin VELORYZ studio concept; upstream websites are never embedded.
- const designMatch=path.match(/^\/design\/([a-z0-9-]+)\/?$/);
+ const designMatch=path.match(/^\/design\/([a-z0-9-]+)(?:\/|\/index\.html)?$/);
  if(designMatch){
-  const published=await getPublished(env,request.url);
-  const design=findDesignPreview(designMatch[1],published.state.catalogue||[]);
-  if(!design)return new Response('Design not found',{status:404,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
-  return secureHtml(renderDesignPreview(design),200,true);
+  // The 110 indexed sites and 12 Studio originals must never depend on CMS availability.
+  const staticDesign=findDesignPreview(designMatch[1]);
+  if(staticDesign)return secureHtml(renderDesignPreview(staticDesign),200,true);
+  // Retain historic CMS links without publishing the old inspirations in the new catalogue.
+  try{
+   const published=await getPublished(env,request.url);
+   const design=findDesignPreview(designMatch[1],published.state.catalogue||[]);
+   if(design)return secureHtml(renderDesignPreview(design),200,true);
+  }catch{/* A temporary CMS outage must not affect static design routes. */}
+  return new Response('Design not found',{status:404,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
  }
 
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
