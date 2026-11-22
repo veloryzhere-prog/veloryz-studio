@@ -22,18 +22,26 @@ function chrome(){
  const actions=document.querySelector('.vz-header-actions');
  if(actions)actions.insertBefore(motionButton,actions.querySelector('#mb'));
  else document.body.append(motionButton);
- const talk=el('a','whatsapp-float vz-original-whatsapp');
+ // From Uiverse.io by alshahwan - https://uiverse.io/alshahwan/good-dolphin-78
+ // MIT License, Copyright (c) alshahwan (Mohammad Alshahwan)
+ // Scoped adaption of the original button to an accessible WhatsApp link:
+ // retain the existing real WhatsApp destination and the Text/WhatsApp-icon hover transition.
+ const talk=el('a','whatsapp-float vz-original-whatsapp vz-wa-uiverse');
  talk.href='https://wa.me/919955326740?text='+encodeURIComponent('Hi VELORYZ Studio! I would like to discuss a project.');
- talk.target='_blank';talk.rel='noopener noreferrer';talk.setAttribute('aria-label',"Let's Talk with VELORYZ on WhatsApp");
- // Use the recognizable WhatsApp speech-bubble/handset mark, not a generic dot.
- const icon=el('span','vz-wa-symbol'),text=el('span','',"Let's Talk ↗");
+ talk.target='_blank';talk.rel='noopener noreferrer';
+ talk.setAttribute('aria-label',"Let's Talk with VELORYZ Studio on WhatsApp (opens a new tab)");
+ talk.setAttribute('data-vz-fx-off','');
+ const text=el('p','vz-wa-uiverse-label',"Let's Talk");
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','21');svg.setAttribute('height','21');
- svg.setAttribute('fill','currentColor');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ svg.setAttribute('xmlns','http://www.w3.org/2000/svg');
+ svg.setAttribute('width','16');svg.setAttribute('height','16');
+ svg.setAttribute('viewBox','0 0 16 16');svg.setAttribute('fill','currentColor');
+ svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ svg.setAttribute('class','vz-wa-uiverse-icon');
  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
- path.setAttribute('d','M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.472-.148-.67.15-.198.297-.767.966-.94 1.164-.174.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.76-1.653-2.057-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.15-.174.198-.298.298-.496.099-.198.05-.372-.025-.52-.075-.15-.67-1.612-.916-2.207-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.875 1.213 3.073c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.379h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.999-3.647-.235-.374a9.86 9.86 0 0 1-1.512-5.26C2.168 6.427 6.62 1.975 12.055 1.975c2.64 0 5.12 1.03 6.985 2.895a9.82 9.82 0 0 1 2.894 6.995c-.002 5.436-4.454 9.896-9.883 9.896M20.46 3.45A11.82 11.82 0 0 0 12.055 0C5.495 0 .161 5.334.158 11.893a11.84 11.84 0 0 0 1.583 5.937L0 24l6.335-1.663a11.9 11.9 0 0 0 5.715 1.455h.005c6.559 0 11.895-5.335 11.899-11.894A11.82 11.82 0 0 0 20.46 3.45');
- svg.append(path);icon.append(svg);
- talk.append(icon,text);document.body.append(talk);
+ path.setAttribute('d','M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z');
+ svg.append(path);
+ talk.append(text,svg);document.body.append(talk);
  const root=$('.pg[data-p="home"]');
  if(root){
   const stage=$('#vz-reference-journey');stage?.setAttribute('aria-label','Scroll through Sketch, Structure, Design, Build and Review');

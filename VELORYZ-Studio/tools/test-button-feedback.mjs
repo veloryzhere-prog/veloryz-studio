@@ -63,7 +63,7 @@ const context={window,document,Element:MockElement,HTMLElement:MockElement,
  getComputedStyle:styles,console};
 vm.runInNewContext(script,context);
 while(frames.length)frames.shift()();
-assert(regular.classes.has('vz-fx-button')&&regular.classes.has('vz-fx-fill'),'Native button should get sliding fill');
+assert(regular.classes.has('vz-fx-button')&&!!regular.dataset.vzFxVariant,'Native button must get contextual visual feedback');
 assert(link.classes.has('vz-fx-button'),'CTA-style links should have feedback');
 assert(disabled.classes.has('vz-fx-button'),'Temporarily disabled buttons should be ready when enabled');
 events.pointerdown({button:0,target:regular});

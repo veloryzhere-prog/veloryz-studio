@@ -28,25 +28,80 @@ const hasPseudo=el=>{
  return !['none','normal',''].includes(content('::before'))||
         !['none','normal',''].includes(content('::after'));
 };
+/* Context-sensitive variants. Audited against the VELORYZ reference
+   homepage, native creator/help pages, Studio AI, 3D controls, private portal,
+   and admin controls. No two button roles are forced into one visual style. */
+function family(el){
+ const href=(el.getAttribute('href')||'').toLowerCase();
+ const cls=el.className&&typeof el.className==='string'?el.className.toLowerCase():'';
+ const role=(el.getAttribute('role')||'').toLowerCase();
+ const label=(el.getAttribute('aria-label')||el.textContent||'').trim().slice(0,110).toLowerCase();
+ const danger=/\b(delete|remove|revoke|discard|destructive)\b/.test(label+' '+cls)||
+  /\bdanger\b|\bdelete\b/.test(cls);
+ if(el.closest('#admin-root,.admin-shell,.admin-layout,[data-admin-page]')){
+  if(danger)return 'danger';
+  if(/icon-button|icon-btn/.test(cls)||label==='close')return 'icon';
+  return 'admin';
+ }
+ if(el.closest('.cp-body,#cp-app,.cp-app,.cp-portal,.cp-auth,.cp-dashboard')){
+  if(danger)return 'danger';
+  return /approve|submit|primary|dark-button/.test(cls+' '+label)?'portal-primary':'portal';
+ }
+ if(el.matches('[data-logo-action]'))return 'sculpture';
+ if(el.closest('.vz-ai-dock,.vz-ai-drawer,.vz-chat-shell,.chat-panel,[data-ai-chat]')||
+   /vz-ai-|chat-send|chat-prompt|chat-action|ai-launch|ai-send|support-chat/.test(cls)){
+  return /submit|send|primary/.test(cls+' '+label)||el.getAttribute('type')==='submit'?'ai-send':'ai';
+ }
+ if(el.matches('[data-motion-control],#mb,[data-vz-menu],.mbtn,.vz-shared-menu-trigger,.vz-home-motion-button')||
+    el.closest('.vz-header-actions,.vz-shared-chrome,.site-header,.header-nav,nav[aria-label="Main navigation"]')){
+  return /header-create|quick-create/.test(cls)?'primary':'navigation';
+ }
+ if(el.matches('[data-bug-example],[data-filter],[data-sort],[role="tab"],[aria-pressed],.chip,.filter-chip')||
+    el.closest('.vz-3d-control-buttons,.vz-bug-template-list,.vz-ai-personas,.filter-bar,.tabs,[role="tablist"]')){
+  return 'toggle';
+ }
+ if(el.getAttribute('type')==='submit'||el.matches('input[type="submit"],.vz-bug-submit,.v4-submit,.submit-button,.form-submit')){
+  return 'submit';
+ }
+ if(danger)return 'danger';
+ if(el.matches('.vz-header-create,.vz-shared-quick-create,.btn.fill,.v4-primary,.button.primary,.button-primary,.primary-button,.vz-bug-submit')||
+   /(^|\/)create\/?$|(^|\/)book\/?$/.test(href)||/\b(start project|quick create|create project|request consultation|get started)\b/.test(label)){
+  return 'primary';
+ }
+ if(el.matches('.cp-button,.cp-dark-button,.cp-approve-button,.cp-refresh-button,.cp-secondary-button')){
+  return /approve|dark-button/.test(cls)?'portal-primary':'portal';
+ }
+ if(el.matches('.admin-button,.icon-button'))return /icon-button/.test(cls)?'icon':'admin';
+ if(el.matches('button[aria-label],button[title],.icon-button,[data-close],.vz-ai-close')){
+  if(!label||/^(close|back|next|previous|search|refresh|open|collapse|expand)/.test(label)||cls.includes('icon'))return 'icon';
+ }
+ if(el.matches('a.btn,a.button,button.btn,button.button,.v4-secondary,.btn.mag,.button.secondary,.vz-bug-head-actions a')){
+  return 'secondary';
+ }
+ if(el.matches('a')&&(/footer|link/.test(cls)||el.closest('footer,.vz-reference-policies,.vz-bug-head-actions'))){
+  return 'text-link';
+ }
+ return 'neutral';
+}
 function add(el){
  if(!(el instanceof HTMLElement)||el.dataset.vzFx==='1'||nonVisual(el))return;
- if(el.matches('input')) {
-  el.dataset.vzFx='1';el.classList.add('vz-fx-button');return;
- }
- // Measure the original state before adding any class; existing animated icons,
- // spinners or decorative pseudo-elements must never be replaced.
- const before=hasPseudo(el);
- const computed=getComputedStyle(el);
- const stylePosition=computed.position;
- const shadow=computed.boxShadow;
- const hasMenu=!!el.querySelector('[role="menu"],dialog,[popover],input,textarea,select,button');
- el.classList.add('vz-fx-button');
- if(!before&&!hasMenu){
-  el.classList.add('vz-fx-fill');
-  if(stylePosition==='static')el.classList.add('vz-fx-position');
- }
- if(shadow==='none')el.classList.add('vz-fx-new-shadow');
+ const variant=family(el);
  el.dataset.vzFx='1';
+ el.dataset.vzFxVariant=variant;
+ el.classList.add('vz-fx-button','vz-fx-'+variant);
+ if(el.matches('input'))return;
+ // Existing native pseudo-element icons/spinners are sacrosan. A family may use
+ // a pseudo-element only when none exists and the control has no nested inputs.
+ const canOverlay=!hasPseudo(el)&&!el.querySelector('[role="menu"],dialog,[popover],input,textarea,select,button');
+ const computed=getComputedStyle(el);
+ if(canOverlay){
+  el.classList.add('vz-fx-layer');
+  if(['primary','submit'].includes(variant))el.classList.add('vz-fx-fill');
+  if(computed.position==='static')el.classList.add('vz-fx-position');
+ }
+ if(computed.boxShadow==='none'&&!['danger','text-link'].includes(variant)){
+  el.classList.add('vz-fx-new-shadow');
+ }
 }
 const pending=new Set();
 let frame=0;
