@@ -94,14 +94,14 @@ function updateStudioAgents(){
   card.tabIndex=0;card.setAttribute('role','link');
   card.setAttribute('aria-label','Open studio to chat with '+info[0]);
   card.style.cursor='pointer';
-  card.addEventListener('click',()=>{location.href='/?classic=1';});
-  card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();location.href='/?classic=1';}});
+  card.addEventListener('click',()=>{if(window.VeloryzReferenceAI?.open)window.VeloryzReferenceAI.open(personalities[i]===undefined?'happy':['happy','nikhil','milky','ritik','aryan'][i]);else location.href='/?classic=1';});
+  card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(window.VeloryzReferenceAI?.open)window.VeloryzReferenceAI.open(['happy','nikhil','milky','ritik','aryan'][i]);else location.href='/?classic=1';}});
  });
  const intro=$('.pg[data-p="studio"] .ag')?.parentElement;
  if(intro&&!intro.querySelector('.vz-reference-ai-access')){
   const p=document.createElement('p');p.className='vz-fallback-note vz-reference-ai-access';
   p.textContent='These five AI advisers are available through the Studio conversation interface.';
-  const a=document.createElement('a');a.className='btn mag';a.href='/?classic=1';a.textContent='Open AI conversations ↗';
+  const a=document.createElement('button');a.type='button';a.className='btn mag';a.textContent='Open AI conversations ↗';a.addEventListener('click',()=>window.VeloryzReferenceAI?.open?.('happy'));
   intro.append(p,a);
  }
 }
