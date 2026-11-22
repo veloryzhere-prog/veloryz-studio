@@ -10,8 +10,8 @@
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const coarse=matchMedia('(pointer: coarse)');
  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- const lite=()=>Boolean(network?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=2));
- const allowed=()=>!reduced.matches&&root.dataset.motion!=='paused'&&root.dataset.motion!=='reduced'&&!doc.hidden;
+ const lite=()=>Boolean(network?.saveData);
+ const allowed=()=>(!reduced.matches||root.dataset.motion==='full')&&root.dataset.motion!=='paused'&&root.dataset.motion!=='reduced'&&!doc.hidden;
  const desktop=()=>allowed()&&!coarse.matches&&!lite();
  const buttonSelector='button,[role="button"],input[type="submit"],input[type="button"],.btn,.button,.v4-primary,.v4-secondary,.vz-chat-send,.cta-button,.submit-button,[data-v4-action],[data-v4-pick]';
  const cardSelector='.project-card,.project-art,.folio-shot,.process-card,.service-item,.design-card,.feature-card,.price-card,.people-card,.ui-study-card,.lab-swatch-card,.v4-choice,.v4-category-card,.v4-template-card,.vz-ext-card,.vz-chat-suggestion,.kb-article-card,.studio-ai-help,.platform-teaser';
