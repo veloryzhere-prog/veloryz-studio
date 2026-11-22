@@ -14,8 +14,8 @@
  const touch=matchMedia('(pointer: coarse)');
  const narrow=matchMedia('(max-width: 800px)');
  const network=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- const lowPower=()=>Boolean(network?.saveData||(navigator.deviceMemory&&navigator.deviceMemory<=3));
- const allow=()=>root.dataset.motion==='full'&&!reduce.matches&&!document.hidden&&!lowPower();
+ const lowPower=()=>Boolean(network?.saveData);
+ const allow=()=>root.dataset.motion==='full'&&!document.hidden&&!lowPower();
  const targets='.v4-question-heading,.v4-reference,.v4-handoff-step,.v4-success-handoff,.vz-chat-side-head,.chat-name-card,.kb-reader-tools';
  let motionLoader=null,lottieLoader=null,observer=null,routeTimer=0;
  const observed=new WeakSet(),finished=new WeakSet();
