@@ -50,8 +50,22 @@
 }
 .vz-shared-chrome.is-routing .vz-shared-curtain{transform:translateY(0)}
 body.vz-shared-menu-open{overflow:hidden}
-body.motion-edition:not(:has(.v4-root)) #header.site-header{display:none!important}
-body.motion-edition:not(:has(.v4-root)) #main{padding-top:clamp(60px,9vh,104px)}
+/* Preserve native header: it owns original motion settings, shortcuts and official brand. */
+body.motion-edition:not(:has(.v4-root)) #header.site-header{display:flex!important;visibility:visible!important}
+body.motion-edition:not(:has(.v4-root)) .vz-shared-brand{display:none}
+body.motion-edition:not(:has(.v4-root)) #header.site-header .desktop-nav{display:none!important}
+body.motion-edition:not(:has(.v4-root)) #header.site-header .menu-toggle{display:none!important}
+body.motion-edition:not(:has(.v4-root)) #header.site-header .header-end{padding-right:clamp(72px,10vw,125px)}
+body.motion-edition:not(:has(.v4-root)) #main{padding-top:clamp(70px,9vh,108px)}
+body.motion-edition:not(:has(.v4-root)) #header .brand{min-width:0;max-width:min(260px,42vw)}
+body.motion-edition:not(:has(.v4-root)) #header .brand img{max-width:100%;height:auto;object-fit:contain}
+body.motion-edition:not(:has(.v4-root)) #header .header-motion{z-index:10;visibility:visible;pointer-events:auto}
+@media(max-width:740px){
+ body.motion-edition:not(:has(.v4-root)) #header.site-header .header-end{padding-right:65px}
+ body.motion-edition:not(:has(.v4-root)) #header.site-header .header-status{display:none}
+ body.motion-edition:not(:has(.v4-root)) #header .brand{max-width:45vw}
+}
+
 body.motion-edition:has(.v4-root) .vz-shared-menu-toggle,
 .cp-body .vz-shared-menu-toggle{top:calc(87px + env(safe-area-inset-top,0px))}
 body.motion-edition:has(.v4-root) .vz-shared-brand,

@@ -1,6 +1,7 @@
 /* Actual VELORYZ character AI. Uses the existing five-agent /api/adviser endpoint. */
 (()=>{
 'use strict';
+const el=(tag,klass,text)=>{const e=document.createElement(tag);if(klass)e.className=klass;if(text!==undefined)e.textContent=String(text);return e;};
 const agents=[
  {id:'happy',name:'Happy',avatar:'/assets/ai-avatars/happy.webp',hint:'Creative ideas, first contact, project inspiration'},
  {id:'nikhil',name:'Nikhil',avatar:'/assets/ai-avatars/nikhil.webp',hint:'Strategy, scope and careful comparisons'},
@@ -12,7 +13,7 @@ const root=document.createElement('aside');root.className='vz-ai-dock';root.id='
 const launch=document.createElement('button');launch.type='button';launch.className='vz-ai-launch';
 launch.setAttribute('aria-expanded','false');launch.setAttribute('aria-controls','vz-ai-drawer');
 const img=document.createElement('img');img.src=agents[0].avatar;img.alt='';
-const launchLabel=document.createElement('span');launchLabel.textContent='Happy AI · Ask the studio';
+const launchLabel=document.createElement('span');launchLabel.textContent='Need a hand? Ask Happy';
 launch.append(img,launchLabel);
 const drawer=document.createElement('section');drawer.id='vz-ai-drawer';drawer.className='vz-ai-drawer';drawer.setAttribute('aria-label','AI conversation');
 const header=document.createElement('div');header.className='vz-ai-header';
@@ -32,6 +33,8 @@ const status=document.createElement('p');status.className='vz-ai-status';status.
 drawer.append(header,tabs,log,disclaimer,form,status);root.append(drawer,launch);
 document.body.append(root);
 let active='happy',busy=false,controller=null;
+let visitorFirstName='',nameRequested=false;
+const introducedTo=new Set();
 const histories=new Map(agents.map(a=>[a.id,[]]));let previousFocus=null;
 const findAgent=()=>agents.find(x=>x.id===active)||agents[0];
 const addMessage=(role,text,err=false)=>{
@@ -39,11 +42,40 @@ const addMessage=(role,text,err=false)=>{
  if(err)item.dataset.error='true';item.textContent=String(text);log.append(item);log.scrollTop=log.scrollHeight;
  return item;
 };
+function askVisitorName(){
+ if(visitorFirstName||nameRequested)return;
+ nameRequested=true;
+ const wrap=el('div','vz-ai-name-capture');
+ const label=el('label','vz-ai-name-label','Before we continue, what should we call you?');
+ label.htmlFor='vz-ai-first-name';
+ const field=el('input','vz-ai-name-input');field.id='vz-ai-first-name';field.type='text';field.required=true;
+ field.maxLength=40;field.placeholder='Your first name';field.autocomplete='given-name';
+ const save=el('button','vz-ai-name-save','Continue ↗');save.type='submit';
+ const form=el('form','vz-ai-name-form');form.append(label,field,save);
+ form.addEventListener('submit',e=>{
+  e.preventDefault();const name=field.value.trim().replace(/[<>]/g,'');
+  if(!name)return;
+  visitorFirstName=name;wrap.remove();
+  status.textContent='Thank you, '+name+'. Your first name stays in this browser tab.';
+  addMessage('assistant','Nice to meet you, '+name+'. What can I help you with next?');
+  input.focus({preventScroll:true});
+ });
+ wrap.append(form);drawer.insertBefore(wrap,disclaimer);
+ field.focus({preventScroll:true});
+}
 function renderHistory(){
  const agent=findAgent();title.textContent=agent.name+' AI';input.placeholder='Ask '+agent.name+' a question…';
  log.replaceChildren();const messages=histories.get(active)||[];
  if(!messages.length)addMessage('assistant','You’re chatting with '+agent.name+' AI. '+agent.hint+'. What would you like to work on?');
  else for(const m of messages)addMessage(m.role,m.content);
+ if(!messages.length){
+  const prompts=el('div','vz-ai-suggestions');
+  for(const example of ['Help me choose a design','How do I request a project?','Hinglish mein baat karein']){
+   const b=el('button','',example);b.type='button';
+   b.addEventListener('click',()=>{input.value=example;form.requestSubmit();});prompts.append(b);
+  }
+  log.append(prompts);
+ }
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.agent===active)));
 }
 for(const a of agents){
@@ -80,11 +112,13 @@ form.addEventListener('submit',async e=>{
  controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),36000);
  try{
   const response=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},
-   credentials:'same-origin',signal:controller.signal,body:JSON.stringify({agent:thisAgent,allowGuide:true,firstName:'',firstNamed:false,
+   credentials:'same-origin',signal:controller.signal,body:JSON.stringify({agent:thisAgent,allowGuide:true,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(thisAgent),
     messages:messages.slice(-14),page:location.pathname})});
   const result=await response.json().catch(()=>({error:'Unable to read assistant response'}));
   if(!response.ok||!result.answer||!['ai','guide'].includes(result.mode))throw Error(result.error||'Live AI is temporarily unavailable.');
   messages.push({role:'assistant',content:String(result.answer)});thinking.textContent=result.answer;
+  if(visitorFirstName)introducedTo.add(thisAgent);
+  if(!visitorFirstName)askVisitorName();
   status.textContent=result.mode==='guide'?'Using the studio guidance system':'Connected · Live AI reply';
  }catch(error){
   // A failed request must not be mistaken for an AI-generated answer.

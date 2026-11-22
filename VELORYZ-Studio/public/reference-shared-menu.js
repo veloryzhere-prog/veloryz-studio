@@ -50,7 +50,7 @@ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 menu.addEventListener('click',e=>{
  const link=e.target.closest('a');if(!link||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
  if(link.origin!==location.origin)return;
- e.preventDefault();root.classList.add('is-routing');
+ e.preventDefault();e.stopPropagation();root.classList.add('is-routing');
  const path=link.href;
  setTimeout(()=>location.assign(path),reduced.matches?0:390);
 });
@@ -72,6 +72,8 @@ for(const [name,path] of docsLinks){
 wrap.append(cards);
 const end=document.createElement('p');end.className='vz-shared-guides-end';end.textContent='VELORYZ / CREATIVE × TECHNOLOGY × EXPERIENCE';wrap.append(end);
 const attachDocs=()=>{
+ // Documentation UI was already approved. Never inject an extra layout into it.
+ if(/^\/(?:docs|help\/studio|help\/assistant|support)(?:\/|$)/.test(location.pathname)){wrap.remove();return;}
  if(wrap.isConnected)return;
  if(document.querySelector('#v4-question-body')&&!document.querySelector('#v4-question-body .v4-success'))return;
  const footer=document.querySelector('#footer')||document.querySelector('.cp-footer');
@@ -88,4 +90,25 @@ attachDocs();document.addEventListener('studio:route',attachDocs);
 document.addEventListener('veloryz:creator-render',attachDocs);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attachDocs,{once:true});
 observeDocLinks();
+/* Maintain reference cursor and editorial art direction on the real public routes.
+   The original site header, AI launcher, privacy footer and motion engine remain the source. */
+const refreshRoute=()=>{
+ const active=/^\/(?:work|design|designs|services|studio|pricing|process|contact|book|journey|motion|veloryz|velori|teamjob|payments|developers)(?:\/|$)/.test(location.pathname);
+ document.body.classList.toggle('vz-ref-public-route',active);
+};
+refreshRoute();document.addEventListener('studio:route',refreshRoute);
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+ const dot=document.createElement('div');dot.className='vz-ref-cross-cursor';dot.setAttribute('aria-hidden','true');document.body.append(dot);
+ let frame=0,x=0,y=0,grow=false;
+ const render=()=>{
+  frame=0;dot.style.transform='translate3d('+x+'px,'+y+'px,0) translate(-50%,-50%) scale('+(grow?3.9:1)+')';
+  dot.style.opacity=document.body.classList.contains('vz-ref-public-route')&&window.StudioMotion?.level!=='reduced'&&window.StudioMotion?.level!=='paused'?'1':'0';
+ };
+ document.addEventListener('pointermove',e=>{
+  if(e.pointerType!=='mouse')return;
+  x=e.clientX;y=e.clientY;grow=Boolean(e.target.closest('a,button,[role="button"]'));
+  if(!frame)frame=requestAnimationFrame(render);
+ },{passive:true});
+ document.addEventListener('pointerleave',()=>dot.style.opacity='0');
+}
 })();
