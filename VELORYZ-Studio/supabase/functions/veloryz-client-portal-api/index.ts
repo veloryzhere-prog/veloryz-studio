@@ -225,6 +225,14 @@ async function main(req){
  const pid=await client(req);
  if(!pid)return send({error:"Use your private invitation to open this workspace.",signedOut:true},401);
  if(action==="/session"&&req.method==="GET")return send(await view(pid));
+ if(action==="/summary"&&req.method==="GET"){
+  const project=(await db("getProjectFull",pid))[0];
+  if(!project)fail("Client project not found.",404);
+  const items=(await db("listItems",pid)).filter(i=>i.type==="milestone");
+  const bytes=await makeProjectSummaryPdf(project,items);
+  return new Response(bytes,{headers:{...common,"Content-Type":"application/pdf",
+   "Content-Disposition":'attachment; filename="VELORYZ-Project-Summary.pdf"'}});
+ }
  if(action==="/messages/read"&&req.method==="POST"){
   return send({ok:true,read:(await db("markRead",now,pid,"studio")).length});
  }
