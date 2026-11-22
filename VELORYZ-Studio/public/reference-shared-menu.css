@@ -1,0 +1,106 @@
+/* Reference full-screen circular menu shared by real routes and secure portal. */
+.vz-shared-chrome{--vz-ink:#15120e;--vz-paper:#f7f0e4;--vz-copper:#e2482b;--vz-serif:'Fraunces',Georgia,serif;--vz-sans:'Inter Tight',system-ui,sans-serif;position:relative;z-index:100}
+.vz-shared-brand{
+ position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:clamp(18px,4vw,60px);
+ display:flex;align-items:center;gap:12px;text-decoration:none;
+ font:600 .8rem/1 var(--vz-sans);letter-spacing:.23em;
+ color:var(--vz-paper);mix-blend-mode:difference;z-index:109;
+}
+.vz-shared-brand img{width:26px;height:26px;object-fit:contain}
+.vz-shared-menu-toggle{
+ position:fixed;top:calc(15px + env(safe-area-inset-top,0px));right:clamp(18px,4vw,60px);
+ z-index:112;border:1px solid currentColor;border-radius:99px;padding:10px 18px;
+ color:var(--vz-paper);mix-blend-mode:difference;
+ font:500 .74rem var(--vz-sans);letter-spacing:.16em;text-transform:uppercase;
+ background:transparent;cursor:pointer;
+}
+.vz-shared-menu{
+ position:fixed;inset:0;z-index:108;background:var(--vz-ink);color:var(--vz-paper);
+ padding:clamp(80px,13vh,130px) clamp(22px,6vw,86px) clamp(30px,6vh,64px);
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ align-content:center;gap:clamp(6px,1.2vh,20px) clamp(25px,4vw,85px);
+ overflow-y:auto;overscroll-behavior:contain;
+ clip-path:circle(0 at calc(100% - 76px) 40px);
+ visibility:hidden;pointer-events:none;
+ transition:clip-path .9s cubic-bezier(.76,0,.24,1),visibility .9s;
+}
+.vz-shared-chrome.is-open .vz-shared-menu{
+ clip-path:circle(165% at calc(100% - 76px) 40px);
+ visibility:visible;pointer-events:auto;
+}
+.vz-shared-menu a{
+ display:block;max-width:100%;width:max-content;overflow-wrap:break-word;
+ font:300 clamp(1.7rem,4.7vh,3.8rem)/1.12 var(--vz-serif);
+ letter-spacing:-.035em;text-decoration:none;color:inherit;
+ opacity:0;transform:translateY(32px);
+ transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .6s,color .3s;
+}
+.vz-shared-chrome.is-open .vz-shared-menu a{opacity:1;transform:none}
+.vz-shared-menu a:nth-child(1){transition-delay:.07s}.vz-shared-menu a:nth-child(2){transition-delay:.12s}
+.vz-shared-menu a:nth-child(3){transition-delay:.17s}.vz-shared-menu a:nth-child(4){transition-delay:.22s}
+.vz-shared-menu a:nth-child(5){transition-delay:.27s}.vz-shared-menu a:nth-child(6){transition-delay:.32s}
+.vz-shared-menu a:nth-child(7){transition-delay:.37s}.vz-shared-menu a:nth-child(8){transition-delay:.42s}
+.vz-shared-menu a:nth-child(9){transition-delay:.47s}.vz-shared-menu a:nth-child(10){transition-delay:.52s}
+.vz-shared-menu a:nth-child(11){transition-delay:.57s}.vz-shared-menu a:nth-child(12){transition-delay:.62s}
+.vz-shared-menu a:nth-child(13){transition-delay:.67s}
+.vz-shared-menu a:hover,.vz-shared-menu a[aria-current="page"]{color:var(--vz-copper)}
+.vz-shared-curtain{
+ position:fixed;inset:0;background:var(--vz-copper);z-index:107;pointer-events:none;
+ transform:translateY(110%);transition:transform .6s cubic-bezier(.76,0,.24,1);
+}
+.vz-shared-chrome.is-routing .vz-shared-curtain{transform:translateY(0)}
+body.vz-shared-menu-open{overflow:hidden}
+body.motion-edition:not(:has(.v4-root)) #header.site-header{display:none!important}
+body.motion-edition:not(:has(.v4-root)) #main{padding-top:clamp(60px,9vh,104px)}
+body.motion-edition:has(.v4-root) .vz-shared-menu-toggle,
+.cp-body .vz-shared-menu-toggle{top:calc(87px + env(safe-area-inset-top,0px))}
+body.motion-edition:has(.v4-root) .vz-shared-brand,
+.cp-body .vz-shared-brand{display:none}
+/* Docs footer matching the reference's editorial cards on every real page. */
+.vz-shared-guides{
+ --vz-paper:#f7f0e4;--vz-ink:#15120e;--vz-copper:#e2482b;
+ --vz-line:rgba(21,18,14,.17);
+ width:100%;max-width:none;background:var(--vz-paper);color:var(--vz-ink);
+ padding:clamp(70px,10vh,130px) clamp(20px,5vw,74px) clamp(45px,7vh,90px);
+ font-family:'Inter Tight',system-ui,sans-serif;position:relative;
+}
+.vz-shared-guides-head{max-width:1460px;margin:0 auto clamp(35px,6vh,70px)}
+.vz-shared-kicker{font-size:.7rem;letter-spacing:.18em;color:#6f6658;text-transform:uppercase}
+.vz-shared-guides h2{font:300 clamp(2.6rem,6.6vw,6rem)/1.03 'Fraunces',Georgia,serif;letter-spacing:-.04em;margin:14px 0}
+.vz-shared-guides-head p:last-child{font-size:.98rem;color:#6f6658;max-width:500px;line-height:1.6}
+.vz-shared-guides-grid{
+ max-width:1460px;margin:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:clamp(10px,1.2vw,17px);
+}
+.vz-shared-guide-card{
+ position:relative;min-height:155px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;
+ border:1px solid var(--vz-line);border-radius:20px;background:transparent;color:var(--vz-ink);
+ font:300 clamp(1.1rem,1.7vw,1.55rem)/1.15 'Fraunces',Georgia,serif;
+ text-decoration:none;overflow:hidden;isolation:isolate;
+ opacity:0;transform:translateY(34px);
+ transition:transform .9s cubic-bezier(.16,1,.3,1),opacity 1s,color .4s;
+}
+.vz-shared-guide-card.is-visible{opacity:1;transform:none}
+.vz-shared-guide-card:before{content:'';position:absolute;inset:0;background:var(--vz-copper);z-index:-1;transform:translateY(101%);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.vz-shared-guide-card:hover:before,.vz-shared-guide-card:focus-visible:before{transform:none}
+.vz-shared-guide-card:hover,.vz-shared-guide-card:focus-visible{color:#fff}
+.vz-shared-guide-card span{align-self:flex-end;font:400 1.3rem 'Inter Tight',sans-serif}
+.vz-shared-guides-end{max-width:1460px;margin:30px auto 0;border-top:1px solid var(--vz-line);padding-top:20px;font-size:.67rem;letter-spacing:.18em;color:#6f6658}
+@media(max-width:1150px){.vz-shared-guides-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){
+ .vz-shared-menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .vz-shared-menu a{font-size:clamp(1.5rem,4.1vh,2.65rem)}
+ .vz-shared-guides-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .vz-shared-menu{grid-template-columns:1fr;align-content:start;gap:4px;padding-top:82px}
+ .vz-shared-menu a{font-size:clamp(1.42rem,3.7vh,2.15rem);padding:2px 0}
+ .vz-shared-brand{font-size:.72rem}
+ .vz-shared-guides-grid{gap:10px}
+ .vz-shared-guide-card{padding:17px;min-height:128px;font-size:1.13rem;border-radius:15px}
+ .vz-shared-guides{padding-inline:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-shared-menu,.vz-shared-menu a,.vz-shared-curtain,.vz-shared-guide-card{transition:none}
+ .vz-shared-guide-card{opacity:1;transform:none}
+}
