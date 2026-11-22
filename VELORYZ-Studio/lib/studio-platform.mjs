@@ -183,7 +183,7 @@ export async function adviserChat(request,env,state){
  const voice=relationshipPrompt(profile,data.agent,turnIndex)+tonePrompt(messages.at(-1).content,data.agent,profile?.role);
  const guide=()=>{
   const result=studioGuide({...agent,id:data.agent},messages,state);
-  const banter=roast&&['aryan','nikhil','happy','madherchod'].includes(data.agent)&&!['father','uncle','elder-uncle'].includes(profile?.role)?'Bhai, gaali apni jagah — ab actual point pe aate hain. ':'';
+  const banter=roast&&['aryan','nikhil','happy'].includes(data.agent)&&!['father','uncle','elder-uncle'].includes(profile?.role)?'Bhai, gaali apni jagah — ab actual point pe aate hain. ':'';
   return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},sources,canUseStudioModel:config.provider!=='guide'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));

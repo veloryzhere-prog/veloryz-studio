@@ -38,7 +38,10 @@ test('all conversation surfaces load a shared theme',()=>{
  assert.ok(shell.includes('motion-recovery-v3.css'));
  assert.ok(shell.includes('ai-universe-v3.css'));
  assert.ok(asset('review-experience.js').includes('vz-reviews-spotlight-invites'));
- assert.ok(asset('platform.js').includes("id:'madherchod'"));
+ assert.ok(!asset('platform.js').includes("id:'madherchod'"));
+ assert.ok(!asset('ai-universe-v3.css').includes('data-persona="madherchod"'));
+ assert.ok(!asset('chat-tone.mjs').includes("'happy','madherchod'"));
+ assert.ok(!asset('platform.js').includes('Madherchod AI'),'The removed assistant must be absent from the public selector');
 });
 
 test('first-time visitors can access motion without a blocking introduction gate',()=>{
