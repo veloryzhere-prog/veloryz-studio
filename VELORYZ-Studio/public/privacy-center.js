@@ -90,9 +90,23 @@ document.addEventListener('click',e=>{
  }
 });
 document.addEventListener('keydown',e=>{
- if(!open||e.key!=='Escape')return;
- if(!current){e.preventDefault();return;} // first-visit consent remains optional, not required to use site
- remove();
+ if(!open)return;
+ if(e.key==='Tab'){
+  const nodes=[...document.querySelectorAll('#vz-privacy-layer a,#vz-privacy-layer button,#vz-privacy-layer input:not([disabled])')]
+   .filter(x=>x.getClientRects().length);
+  if(nodes.length){const first=nodes[0],last=nodes[nodes.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+ }
+ if(e.key==='Escape'){if(!current){e.preventDefault();return;}remove();}
+});
+document.addEventListener('click',e=>{
+ const policy=e.target.closest('#vz-privacy-layer .vz-consent-foot a[href^="/"]');
+ if(policy)remove(); // visitors must be able to read policies before deciding
+});
+document.addEventListener('studio:route',()=>{
+ if(!current&&!open&&!/^\/(?:privacy|cookies|terms)(?:\/|$)/.test(location.pathname))mount();
 });
 document.addEventListener('click',e=>{
  const trigger=e.target.closest('[data-privacy-settings]');
@@ -187,8 +201,13 @@ document.addEventListener('click',e=>{
   a.href=url;a.download='veloryz-privacy-choice.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
  }
  if(e.target.closest('[data-vz-privacy-remove-local]')){
-  cleanStorage();try{localStorage.removeItem(DATA);localStorage.removeItem(MEASURE)}catch{}
-  alert('Optional local measurements and disallowed preferences were cleared. You can change consent settings above.');
+  try{
+   for(const key of ['veloryz.consultation.no-auto','veloryz.workInvitation.v1',DATA,MEASURE])localStorage.removeItem(key);
+   for(const area of [localStorage,sessionStorage]){
+    for(const key of Object.keys(area))if(key.startsWith('vz-campaign:'))area.removeItem(key);
+   }
+  }catch{}
+  alert('Optional local data has been cleared on this device. Your saved consent selection remains available to change.');
  }
 });
 window.VeloryzPrivacy.render=policyPage;
