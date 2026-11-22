@@ -68,7 +68,7 @@ const quickHelper=home.match(/function syncQuickCreate\(n\)\{[\s\S]*?\n\}\nfunct
 assert.ok(quickHelper,'Reference router must control real Quick Create header visibility');
 const quickState={view:'',important:'',display:'',tabindex:null,ariaHidden:null,hidden:false};
 const quickLink={
- style:{setProperty(name,value,priority){assert.equal(name,'display');quickState.display=value;quickState.important=priority;}},
+ style:{setProperty(name,value,priority){assert.equal(name,'display');quickState.display=value;quickState.important=priority;},removeProperty(name){assert.equal(name,'display');quickState.display='';quickState.important='';}},
  setAttribute(name,value){if(name==='tabindex')quickState.tabindex=value;if(name==='aria-hidden')quickState.ariaHidden=value;},
  removeAttribute(name){if(name==='tabindex')quickState.tabindex=null;},
  set hidden(value){quickState.hidden=value;},
@@ -90,7 +90,7 @@ for(const pageName of ['design','create','library','designs']){
 }
 for(const pageName of ['home','work','studio']){
  quickEnv.quickRouter(pageName);
- assert.equal(quickState.display,'inline-flex','Quick Create should remain available on '+pageName);
+ assert.equal(quickState.display,'','Other pages restore the original header styles on '+pageName);
  assert.equal(quickState.hidden,false);
  assert.equal(quickState.ariaHidden,'false');
  assert.equal(quickState.tabindex,null);
