@@ -90,17 +90,36 @@ export function acceptanceMail(project:ProjectEmail,items:DocumentMilestone[]){
    "\n\nYour private invitation will be emailed separately when the studio owner issues access in Client Management. This email does not contain an access code.\n\nAn official one-page PDF is attached.\n\nVELORYZ STUDIO"};
 }
 export function invitationMail(project:ProjectEmail,code:string,url:string,expires:string){
- const html=brandEmail("PRIVATE CLIENT ACCESS / ONE-TIME","Your private workspace awaits.",
+ const reference=project.request_reference||"VELORYZ project";
+ const instructions=[
+  "01 — Open "+BASE+"/client/",
+  "02 — Choose the invitation / activation option.",
+  "03 — Paste the private single-use code from this message.",
+  "04 — Verify the project reference "+reference+" and activate your workspace.",
+  "05 — Review milestones, files and approvals, and message the VELORYZ team."
+ ];
+ const html=brandEmail("CLIENT MANAGEMENT / SECURE INVITATION","Your private project access.",
   p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>,")+
-  p("Your project <strong>"+htmlEsc(project.title)+"</strong> is ready in the private VELORYZ Client Portal. Use the secure, single-use invitation below to activate your project workspace.")+
-  box("PROJECT REFERENCE",project.request_reference||"VELORYZ project")+
-  '<div style="background:#27223d;border-radius:13px;padding:22px 16px;margin:24px 0;color:#fff;text-align:center"><div style="font-size:10px;letter-spacing:2px;color:#d5c3db">YOUR ONE-TIME INVITATION CODE</div><div style="font-size:18px;font-weight:900;letter-spacing:1.7px;margin-top:12px;overflow-wrap:anywhere">'+htmlEsc(code)+'</div></div>'+
-  p("This code expires <strong>"+htmlEsc(date(expires))+"</strong> and can only be used once. After activation, you can return with the secure browser session. A project reference number is not an invitation code.")+
-  p("<strong>Inside your workspace:</strong> verified project progress, milestones, deadlines, shared files, approvals, and your private conversation with our team. Please do not forward your invitation to anyone else."),
-  {text:"Activate project access",url});
- return {subject:"VELORYZ | Activate your private project workspace",html,
-  text:"Hello "+project.client_name+",\n\nYour private VELORYZ Studio workspace for "+project.title+" is ready.\n\nOne-time invitation code:\n"+code+
-  "\n\nOpen: "+url+"\nExpires: "+date(expires)+". The code is single-use. Do not forward it.\n\nVELORYZ Studio"};
+  p("The VELORYZ team has now issued an invitation to the protected workspace for <strong>"+htmlEsc(project.title)+"</strong>. This email is separate from your project acceptance and order summary.")+
+  box("PROJECT REFERENCE",reference)+box("REGISTERED EMAIL",project.client_email)+
+  '<div style="background:#24283c;padding:26px 21px;margin:24px 0;border-left:5px solid #c58da6;text-align:center">'+
+   '<div style="font:bold 10px Arial;letter-spacing:2.2px;color:#d7d7e2">PRIVATE SINGLE-USE ACTIVATION CODE</div>'+
+   '<div style="font:bold 22px/1.5 Arial;letter-spacing:2px;color:#ffffff;margin:12px 0 5px;overflow-wrap:anywhere">'+htmlEsc(code)+'</div>'+
+   '<div style="font:11px/1.6 Arial;color:#d2cdd7">Valid until '+htmlEsc(date(expires))+' · One use only</div></div>'+
+  emailSection("01 / HOW TO ACTIVATE",instructions.map(x=>'<p style="font-size:12px;padding:9px 0;margin:0;border-bottom:1px solid #e7e8eb">'+htmlEsc(x)+'</p>').join(""))+
+  emailSection("02 / YOUR PRIVATE DESTINATIONS",
+   box("DIRECT ACTIVATION LINK",url)+
+   '<div style="font-size:12px;margin:9px 0">'+link(BASE+"/client/","Client Portal")+'</div>'+
+   '<div style="font-size:12px;margin:9px 0">'+link(BASE+"/contact/","Contact the VELORYZ team")+'</div>')+
+  p("<strong>Security:</strong> This code expires after 14 days and may be used only once. Do not forward this message. A project reference alone is not enough to access your files. If access fails, contact the studio instead of sending your code to anyone else."),
+  {text:"Activate your client workspace",url});
+ return {subject:"VELORYZ | Private client invitation · "+reference,html,
+  text:"VELORYZ STUDIO / PRIVATE CLIENT INVITATION\n\nHello "+project.client_name+
+   "\nProject: "+project.title+"\nProject reference: "+reference+"\nRegistered email: "+project.client_email+
+   "\n\nONE-TIME ACCESS CODE: "+code+
+   "\nActivation link: "+url+"\nExpires: "+date(expires)+
+   "\n\nHOW TO ACTIVATE:\n"+instructions.join("\n")+
+   "\n\nNever forward this email or share your one-time code. Your acceptance order summary was issued separately.\nVELORYZ Studio"};
 }
 export function messageMail(project:ProjectEmail,who:"client"|"studio"){
  const subject=who==="client"?"New client message | "+(project.request_reference||project.title):"New VELORYZ project update | "+(project.request_reference||project.title);
