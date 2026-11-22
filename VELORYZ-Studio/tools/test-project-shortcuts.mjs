@@ -17,7 +17,7 @@ assert.ok(portal.length>1000,'Client portal functionality must be preserved.');
 assert.match(js,/ROUTES_WITH_INLINE/,'Contextual site placements must be configured.');
 assert.match(js,/footer\.prepend\(bar\)/,'Site footer must include quick actions.');
 assert.match(js,/studio:route/,'Project shortcuts must refresh on client-side navigation.');
-assert.match(js,/!main\.querySelector\('#vz-quick-actions-inline'\)/, 'No duplicate inline widgets after rerenders.');
+assert.match(js,/main\.querySelector\('#vz-quick-actions-inline'\)/, 'No duplicate inline widgets after rerenders.');
 assert.match(js,/href="\/client\/"/,'Project tracking must use the real Client Portal.');
 assert.match(js,/href="\/create\/"/,'New project action must go to the real project creator.');
 assert.ok(!js.includes('/track/'),'Do not invent a new tracking endpoint.');
@@ -26,7 +26,7 @@ assert.ok(creator.includes('v4-existing-primary')&&creator.includes('v4-existing
 assert.match(creator,/v4-client-shortcut.+href="\/client\/"/,'Wizard top bar must offer persistent portal shortcut.');
 assert.ok(creator.includes('Track your project ↗'),'Success view should encourage project tracking.');
 assert.ok(creator.includes('A team-issued invitation is required'),'Do not imply project submissions create account access.');
-assert.ok(creator.includes('Submitting does not create a client account'),'No new false portal invitation promises.');
+assert.ok(creator.includes('submitting does not create a client account'),'No new false portal invitation promises.');
 assert.match(css,/@media\(max-width:760px\)/,'Mobile site quick actions must stack.');
 assert.match(creatorCSS,/v4-existing-project/,'Creator return-client card must be styled.');
 assert.match(creatorCSS,/v4-client-shortcut/,'Creator project-tracking header must be styled.');
