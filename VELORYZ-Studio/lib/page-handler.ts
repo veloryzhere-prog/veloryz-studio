@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import siteShell from './site-shell';
+import {renderIndexableBody} from './search-index-content';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import { secureHtml,pageMetadata } from './response-security';
@@ -65,7 +66,7 @@ export async function GET(request: Request) {
   if((edit as {visible?:boolean}).visible===false)delete pages[p];
   else if((edit as {title?:string}).title)pages[p]=(edit as {title:string}).title;
  }
- if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /client/\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
+ if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /client\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  if(normal==='/sitemap.xml'){
   const escapeXml=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const urls=Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)).map(p=>{
@@ -98,7 +99,20 @@ export async function GET(request: Request) {
  let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
- html=pageMetadata(html,{title:(pages[normal]||'Page not found')+' — '+data.state.site.name+' Studio',description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ const pageTitle=normal==='/'?'VELORYZ Studio | Website Design, Development & Creative Technology':(pages[normal]||'Page not found')+' — VELORYZ Studio';
+ html=pageMetadata(html,{title:pageTitle,description,url:base+canonicalPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
+ // The initial HTML must already contain readable page content. Once JS loads
+ // the SPA replaces this same <main>, preserving the existing motion experience.
+ if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
+   '<main id="main" tabindex="-1">'+renderIndexableBody(normal,pages[normal],description)+'</main>');
+ // Use the actual official brand name; misspellings are explained in visible
+ // Studio content, never masquerading as registered alternate organisation names.
+ if(known){
+  const brand={'@context':'https://schema.org','@type':'WebSite','@id':base+'/#website',
+   name:'VELORYZ Studio',alternateName:['VELORYZ','Veloryz Studio'],url:base+'/',
+   publisher:{'@id':base+'/#organization'}};
+  html=html.replace('</head>','<script type="application/ld+json">'+serialise(brand)+'</script></head>');
+ }
  if(known&&(normal==='/sitemap'||normal.startsWith('/docs/')||normal.startsWith('/help/studio/')||normal==='/docs')){
   const crumbs=[{name:'VELORYZ Studio',item:base+'/'}];
   if(normal==='/sitemap')crumbs.push({name:'Site map',item:base+'/sitemap/'});
