@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" data-vz-intro-preview="true"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0a0c1f">
+<title>VELORYZ — Cinematic Intro Concepts</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/brand-intro.css?v=20261122-prism-v1">
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#090a1a;color:#f4edf9;font:14px/1.5 ui-sans-serif,system-ui,sans-serif}
+a{color:inherit;text-decoration:none}button{cursor:pointer;font:inherit}
+.demo-wrap{width:min(1220px,calc(100% - 46px));margin:auto}
+.demo-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:27px 0;border-bottom:1px solid #ffffff24}
+.demo-brand{display:flex;align-items:center;gap:12px;letter-spacing:.14em;font-size:12px;font-weight:800}.demo-brand img{width:33px;height:33px}
+.demo-header a{border:1px solid #ffffff44;border-radius:100px;padding:10px 14px;font-size:10px;color:#d5c3e0}
+.demo-header a:hover{background:#ffffff15}
+.demo-kicker{color:#ec85c4;font:750 10px/1.4 ui-sans-serif,system-ui,sans-serif;letter-spacing:.21em}
+.demo-hero{padding:65px 0 47px}
+.demo-hero h1{margin:16px 0;max-width:850px;font-weight:670;letter-spacing:-.075em;line-height:1.02;font-size:clamp(44px,6vw,88px)}
+.demo-hero h1 span{color:#fa86c8}
+.demo-hero p{color:#bcb5c7;line-height:1.8;max-width:690px;font-size:14px}
+.demo-rule{display:flex;gap:15px;align-items:center;color:#8f899c;font-size:10px;letter-spacing:.12em;padding:18px 0;border-top:1px solid #ffffff17}
+.demo-rule i{height:1px;flex:1;background:#ffffff20}
+.demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;padding:19px 0 54px}
+.demo-card{border:1px solid #ffffff27;border-radius:22px;overflow:hidden;background:#131529;transition:transform .25s,border-color .25s}
+.demo-card:hover{transform:translateY(-3px);border-color:#ad75d6}
+.demo-art{height:245px;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 48% 53%,#593060,#1a183b 43%,#0e1125 78%)}
+.demo-card.orbit .demo-art{background:radial-gradient(circle at 50% 45%,#245179,#121e47 48%,#090d21)}
+.demo-card.editorial .demo-art{background:linear-gradient(125deg,#f6f0e9,#e5e7f0)}
+.demo-art:before,.demo-art:after{content:"";width:190px;height:190px;border:1px solid #dca1ee6e;border-radius:50%;position:absolute;transform:rotate(-35deg) scaleX(.55)}
+.demo-art:after{transform:rotate(42deg) scaleX(.72);border-color:#75c9fa82}
+.demo-card.orbit .demo-art:before{width:250px;height:250px;border-color:#6cd3f0bb}
+.demo-card.editorial .demo-art:before,.demo-card.editorial .demo-art:after{border-color:#51639f65}
+.demo-art img{width:80%;max-height:160px;object-fit:contain;position:relative;z-index:1}
+.demo-art .demo-mark{position:absolute;left:16px;top:15px;width:53px;height:53px;object-fit:contain}
+.demo-card-copy{padding:22px}
+.demo-index{font-size:9px;letter-spacing:.13em;font-weight:800;color:#e48dc5}
+.demo-card.editorial .demo-index{color:#9c9ec5}
+.demo-card h2{font-size:24px;letter-spacing:-.05em;font-weight:650;margin:9px 0}
+.demo-card p{font-size:12px;line-height:1.7;color:#aaa3b5;min-height:62px}
+.demo-card button{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid #ffffff3d;border-radius:11px;background:#ffffff14;color:#fff;min-height:47px;padding:12px 15px;margin-top:20px;font-weight:650;font-size:11px}
+.demo-card button:hover{background:#efcaed;color:#241432}
+.demo-card.selected{border-color:#dc85c9}
+.demo-card.selected button{background:#f8bfec;color:#25122e;border-color:#f8bfec}
+.demo-card.editorial{background:#15192d}
+.demo-foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;border-top:1px solid #ffffff20;padding:24px 0 45px;color:#8e8da3;font-size:11px}
+.demo-foot strong{color:#d6cbdc}
+@media(max-width:850px){.demo-grid{grid-template-columns:1fr}.demo-card p{min-height:0}.demo-art{height:240px}}
+@media(max-width:550px){.demo-wrap{width:calc(100% - 30px)}.demo-header{padding:17px 0}.demo-hero{padding:43px 0 33px}.demo-hero p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.demo-card{transition:none}.demo-card:hover{transform:none}}
+</style>
+<script src="/brand-intro.js?v=20261122-prism-v1" defer></script>
+</head><body>
+<div class="demo-wrap">
+ <header class="demo-header"><a class="demo-brand" href="/" aria-label="VELORYZ homepage"><img src="/assets/brand/veloryz-mark.svg" alt=""><span>VELORYZ <span style="color:#b993d4"> / MOTION LAB</span></span></a><a href="/" rel="noopener">Visit studio ↗</a></header>
+ <main class="demo-hero" id="demo-main"><span class="demo-kicker">CINEMATIC IDENTITY / CONCEPT EXPLORATIONS</span><h1>A first impression<br>to <span>remember.</span></h1><p>Three fully animated fullscreen intros, all using the official VELORYZ identity. Each is a real-time CSS/JavaScript sequence, not a video. Choose any concept to preview the actual entrance, logo assembly and homepage reveal.</p></main>
+ <div class="demo-rule"><span>01 — 03 &nbsp; / &nbsp; SELECT A DIRECTION</span><i></i><span>ESC TO SKIP</span></div>
+ <div class="demo-grid">
+  <article class="demo-card selected prism"><div class="demo-art"><img src="/assets/brand/official/Main-Transparent.webp" alt="Official VELORYZ logo"><img class="demo-mark" src="/assets/brand/veloryz-mark.svg" alt=""></div><div class="demo-card-copy"><span class="demo-index">01 / PRIMARY DIRECTION</span><h2>Prismatic Portal</h2><p>Pink and cyan refracted light. A sculpted V assembles in orbit before the official logo reveals and the curtains split into the homepage.</p><button type="button" data-vz-demo="prism">PLAY FULLSCREEN <span>↗</span></button></div></article>
+  <article class="demo-card orbit"><div class="demo-art"><img src="/assets/brand/official/Main-Transparent.webp" alt="Official VELORYZ logo"><img class="demo-mark" src="/assets/brand/veloryz-mark.svg" alt=""></div><div class="demo-card-copy"><span class="demo-index">02 / ALTERNATE</span><h2>Orbit Signature</h2><p>Cool electric-blue atmosphere, expanded dimensional rings and a weightless logo reveal that celebrates VELORYZ's digital creativity.</p><button type="button" data-vz-demo="orbit">PLAY FULLSCREEN <span>↗</span></button></div></article>
+  <article class="demo-card editorial"><div class="demo-art"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="Official dark-ink VELORYZ logo"><img class="demo-mark" src="/assets/brand/veloryz-mark.svg" alt=""></div><div class="demo-card-copy"><span class="demo-index">03 / ALTERNATE</span><h2>Editorial Monogram</h2><p>Warm ivory, architectural framing and dark-ink typography. A restrained luxury opening driven by the original identity.</p><button type="button" data-vz-demo="editorial">PLAY FULLSCREEN <span>↗</span></button></div></article>
+ </div>
+ <footer class="demo-foot"><span>Original brand assets preserved. Public 3D V, scarf film and existing motion settings remain untouched.</span><strong>VELORYZ STUDIO / DESIGN PREVIEW</strong></footer>
+</div>
+<section id="vz-intro" class="vz-intro-overlay" role="dialog" aria-label="VELORYZ Studio cinematic introduction" aria-modal="true" aria-hidden="true" data-concept="prism">
+  <div class="vz-intro-shutters" aria-hidden="true"><div class="vz-intro-shutter"></div><div class="vz-intro-shutter"></div></div>
+  <div class="vz-intro-grid" aria-hidden="true"></div>
+  <div class="vz-intro-glow" aria-hidden="true"></div>
+  <div class="vz-intro-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <span class="vz-intro-rail top-left"><i class="vz-intro-rail-dot" aria-hidden="true"></i> VELORYZ / STUDIO</span>
+  <span class="vz-intro-rail top-right">INDEPENDENT CREATIVE EXPERIENCE &nbsp; / &nbsp; 01</span>
+  <div class="vz-intro-center">
+    <div class="vz-intro-emblem-stage" aria-hidden="true">
+      <span class="vz-intro-ring r1"></span><span class="vz-intro-ring r2"></span><span class="vz-intro-ring r3"></span>
+      <span class="vz-intro-streak s1"></span><span class="vz-intro-streak s2"></span>
+      <img class="vz-intro-symbol" src="/assets/brand/veloryz-mark.svg" alt="" width="160" height="148" fetchpriority="high">
+    </div>
+    <div class="vz-intro-wordmark-wrap"><img class="vz-intro-wordmark" data-vz-intro-wordmark src="/assets/brand/official/Main-Transparent.webp" width="880" height="263" alt="VELORYZ Studio" fetchpriority="high"></div>
+    <p class="vz-intro-tagline"><i aria-hidden="true"></i> DREAM. BUILD. GROW. TOGETHER. <i aria-hidden="true"></i></p>
+  </div>
+  <span class="vz-intro-rail bottom-left">CREATIVE &nbsp; / &nbsp; TECHNOLOGY &nbsp; / &nbsp; EXPERIENCE</span>
+  <span class="vz-intro-progress" aria-hidden="true"></span>
+  <button class="vz-intro-skip" type="button" data-vz-intro-skip>SKIP INTRO <span aria-hidden="true">↗</span></button>
+</section>
+</body></html>
