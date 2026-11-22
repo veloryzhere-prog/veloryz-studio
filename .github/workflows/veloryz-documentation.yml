@@ -66,6 +66,8 @@ jobs:
         run: node tools/test-client-lifecycle.mjs
       - name: Verify cookie consent, policies and crash-safe admin runtime
         run: node tools/test-privacy-compliance.mjs
+      - name: Verify client portal Edge boots and Gmail status is truthful
+        run: node tools/test-client-portal-boot.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
