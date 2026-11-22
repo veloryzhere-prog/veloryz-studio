@@ -66,8 +66,8 @@
   // On SPA navigation, remove shortcuts mounted for the previous page.
   // Keep normal product-specific CTAs; only the generic quick-actions panel is removed.
   if(excluded()){
-   document.getElementById('vz-quick-actions-inline')?.remove();
-   document.getElementById('vz-quick-actions-footer')?.remove();
+   document.querySelector('#vz-quick-actions-inline')?.remove?.();
+   document.querySelector('#vz-quick-actions-footer')?.remove?.();
    return;
   }
   const route=clean();
