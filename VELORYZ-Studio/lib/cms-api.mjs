@@ -170,6 +170,21 @@ async function forwardKnowledgeAi(request,env){
  const type=response.headers.get('content-type');if(type)outgoing.set('Content-Type',type);
  return new Response(response.body,{status:response.status,headers:outgoing});
 }
+const privacyReceiptOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-privacy-api';
+async function forwardPrivacyReceipt(request){
+ mutationOrigin(request);
+ if(request.method!=='POST')return json({error:'Method not allowed.'},405);
+ const contentType=request.headers.get('content-type')||'';
+ if(!contentType.includes('application/json'))return json({error:'Expected JSON.'},415);
+ const headers=new Headers({'Content-Type':'application/json'});
+ for(const name of ['origin','sec-fetch-site']){const value=request.headers.get(name);if(value)headers.set(name,value)}
+ try{
+  const response=await fetch(privacyReceiptOrigin+'/api/privacy/consent',{
+   method:'POST',headers,body:request.body,redirect:'manual',signal:AbortSignal.timeout(9500)
+  });
+  return new Response(response.body,{status:response.status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+ }catch{return json({saved:false,message:'Optional consent audit unavailable; local preference still applies.'},503)}
+}
 const clientPortalOrigin='https://vgxdfjlqstpbtezxmxtq.supabase.co/functions/v1/veloryz-client-portal-api';
 async function forwardClientPortal(request){
  const url=new URL(request.url),headers=new Headers();
@@ -232,6 +247,7 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  if(new URL(request.url).pathname==='/api/privacy/consent')return await forwardPrivacyReceipt(request);
   // Dedicated four-role Knowledge AI API: server-only credentials and owner-guarded settings.
   if(new URL(request.url).pathname.startsWith('/api/knowledge-ai/')||new URL(request.url).pathname.startsWith('/api/admin/knowledge-ai/')){
    return await forwardKnowledgeAi(request,env);
