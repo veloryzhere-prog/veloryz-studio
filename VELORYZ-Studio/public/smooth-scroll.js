@@ -22,7 +22,7 @@
   'dialog','[role="dialog"]','[aria-modal="true"]',
   '.modal','.modal-backdrop','.motion-dialog','.campaign-modal',
   '.vz-review-invite-shade','.vz-review-invite','.vz-ext-dialog','.vz-ext-cart-dialog','.vz-ext-frame-wrap',
-  '.mobile-nav','.admin-sidebar','.admin-content','.admin-panel-scroll',
+  '.mobile-nav','.admin-sidebar','.admin-panel-scroll',
   '.kb-service-toc','.kb-search-results','.kb-command-results',
   '.docs-sidebar','.studio-docs-sidebar','.studio-docs-toc',
   '.vz-chat-log','.vz-chat-side','.v4-ai-messages','.chat-scroll-area',
