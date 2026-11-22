@@ -4,6 +4,7 @@ import {renderIndexableBody} from './search-index-content';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import { renderReviewsPage } from './reviews-page';
+import { renderRoadmapPage } from './roadmap-page';
 import { secureHtml,pageMetadata } from './response-security';
 import { publicOrigin,canonicalPath } from './site-origin.mjs';
 import { getPublished, handleApi } from './cms-api.mjs';
@@ -23,6 +24,8 @@ export async function GET(request: Request) {
   status:200,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=300','X-Content-Type-Options':'nosniff'}
  });
  if(path==='/reviews.html'||path==='/reviews'||path==='/reviews/')return secureHtml(renderReviewsPage(),200);
+ if(path==='/roadmap.html'||path==='/roadmap'||path==='/roadmap/')return secureHtml(renderRoadmapPage(),200);
+ if(path==='/.well-known/security.txt')return new Response('Contact: mailto:veloryz.here@gmail.com\nExpires: 2027-11-22T00:00:00Z\nPreferred-Languages: en\nCanonical: https://veloryz.online/.well-known/security.txt\n',{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'}});
  if(path==='/admin/reviews.html')return secureHtml(renderReviewsPage(true),200,true);
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
@@ -77,7 +80,7 @@ export async function GET(request: Request) {
  if(normal==='/robots.txt')return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /client\nDisallow: /api/\nDisallow: /_studio_preview/\nSitemap: ${base}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  if(normal==='/sitemap.xml'){
   const escapeXml=(v:string)=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const urls=[...new Set([...Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)),'/reviews.html'])].sort().map(p=>{
+  const urls=[...new Set([...Object.keys(pages).filter(p=>!['/designs','/client'].includes(p)),'/reviews.html','/roadmap.html'])].sort().map(p=>{
    const href=base+canonicalPath(p);
     const finalHref=isDocumentPath(p)?base+htmlDocumentPath(p):href;
    return `<url><loc>${escapeXml(finalHref)}</loc></url>`;
