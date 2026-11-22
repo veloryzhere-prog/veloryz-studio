@@ -1,7 +1,7 @@
 import {Quaternion,Vector3} from 'three';
 
 // Compose drag increments in camera space so crossing the poles never locks an axis.
-export function attachInspection(surface, wake, start) {
+export function attachInspection(surface, wake, start, release=()=>{}) {
   const orientation = new Quaternion();
   const axis = new Vector3(), increment = new Quaternion();
   let pointer = null, x=0, y=0;
@@ -14,11 +14,17 @@ export function attachInspection(surface, wake, start) {
     orientation.premultiply(increment.setFromAxisAngle(axis,distance)).normalize();
     wake();
   }
+  function rotateYaw(radians){
+    axis.set(0,1,0);
+    orientation.premultiply(increment.setFromAxisAngle(axis,radians)).normalize();
+    wake();
+  }
   function reset() {orientation.identity();wake();}
   function end(event) {
     if (event.pointerId !== pointer) return;
     pointer = null;
     surface.removeAttribute('data-dragging');
+    release();
   }
   on('pointerdown',event=>{
     if (pointer!==null || event.button!==0 || !event.isPrimary) return;
@@ -41,5 +47,5 @@ export function attachInspection(surface, wake, start) {
     if (event.key==='Home') {event.preventDefault();start();reset();}
     else if (angles[event.key]) {event.preventDefault();start();turn(...angles[event.key]);}
   });
-  return {orientation,reset,dispose:()=>controller.abort()};
+  return {orientation,rotateYaw,reset,dispose:()=>controller.abort()};
 }
