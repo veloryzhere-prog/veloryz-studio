@@ -16,7 +16,7 @@ function loadOwnerReviews(force=false){
    ownerReviews=data.reviews;
    ownerReviewFetched=Date.now();
   }catch(error){ownerReviewError=error.message||'Could not load reviews.';}
-  finally{ownerReviewLoading=false;if(section==='reviews')render();}
+  finally{ownerReviewLoading=false;if(['reviews','overview','command'].includes(section))render();}
  })();
 }
 function ownerReviewCounts(){
