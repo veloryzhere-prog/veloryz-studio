@@ -6,10 +6,11 @@
   let catalog=null,loading=null,error='',search='',category='All',visibleCount=24,lastIndexKind='';
   const chapterCache=new Map(),chapterLoading=new Map(),chapterErrors=new Map();
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const normalized=p=>String(p||'/').replace(/\/+$/,'')||'/';
+  const normalized=p=>String(p||'/').replace(/\/index\.html$/,'').replace(/\.html$/,'').replace(/\/+$/,'')||'/';
+  const docHtmlPath=p=>{const base=normalized(p);return base==='/docs'||base==='/docs/studio'||base==='/help/studio'?base+'/index.html':base+'.html'};
   const isStudio=()=>/^\/(?:docs|help)\/studio(?:\/.*)?$/.test(normalized(location.pathname));
   const isHelp=()=>normalized(location.pathname).startsWith('/help/studio');
-  const root=()=>isHelp()?'/help/studio/':'/docs/studio/';
+  const root=()=>isHelp()?'/help/studio/index.html':'/docs/studio/index.html';
   const overrides=()=>{
     const s=typeof studioCMS!=='undefined'?studioCMS?.site?.documentation:null;
     return s&&typeof s.edits==='object'&&!Array.isArray(s.edits)?s.edits:{};
@@ -19,7 +20,7 @@
     return (catalog?.articles||[]).map(a=>{
       const edit=changes[normalized(a.path)]||{};
       const source=chapterCache.get(a.categorySlug)?.[a.id]||a.markdown||'';
-      return {...a,...edit,path:a.path,
+      return {...a,...edit,path:docHtmlPath(a.path),
         title:edit.title||a.title,summary:edit.summary||a.summary,
         markdown:edit.markdown||source,
         status:edit.status||a.status,
@@ -87,7 +88,7 @@
     const help=isHelp(),kind=help?'help':'studio';if(kind!==lastIndexKind){search='';category='All';visibleCount=24;lastIndexKind=kind;}const items=entries().filter(a=>help?a.id.startsWith('H-'):a.id.startsWith('D-'));
     const groups=['All',...new Set(items.map(x=>x.category))];
     const filtered=items.filter(a=>(category==='All'||a.category===category)&&(!search||[a.title,a.summary,a.category].join(' ').toLowerCase().includes(search.toLowerCase())));
-    return '<div id="docs-app" class="studio-docs-shell"><div class="studio-docs-hero"><div class="studio-docs-kicker">VELORYZ STUDIO / '+(help?'HELP CENTRE':'PRODUCT DOCUMENTATION')+'</div><h1>'+(help?'How can we help?':'Studio documentation.')+'</h1><p>'+(help?'Quick answers, onboarding and troubleshooting for VELORYZ Studio.':'Browse the complete Studio documentation map, from first project to publishing, governance and developer reference.')+'</p><div class="studio-docs-switch"><a class="'+(!help?'active':'')+'" href="/docs/studio/">Product docs</a><a class="'+(help?'active':'')+'" href="/help/studio/">Help Centre</a><a href="/docs/">All documentation</a></div></div>'+
+    return '<div id="docs-app" class="studio-docs-shell"><div class="studio-docs-hero"><div class="studio-docs-kicker">VELORYZ STUDIO / '+(help?'HELP CENTRE':'PRODUCT DOCUMENTATION')+'</div><h1>'+(help?'How can we help?':'Studio documentation.')+'</h1><p>'+(help?'Quick answers, onboarding and troubleshooting for VELORYZ Studio.':'Browse the complete Studio documentation map, from first project to publishing, governance and developer reference.')+'</p><div class="studio-docs-switch"><a class="'+(!help?'active':'')+'" href="/docs/studio/index.html">Product docs</a><a class="'+(help?'active':'')+'" href="/help/studio/index.html">Help Centre</a><a href="/docs/">All documentation</a></div></div>'+
       '<section class="studio-docs-content"><div class="studio-docs-tools"><label for="studio-doc-search">Search documentation</label><input id="studio-doc-search" type="search" placeholder="Search '+(help?'help topics':'articles and categories')+'..." value="'+esc(search)+'" autocomplete="off"><p>'+filtered.length+' of '+items.length+' guides</p></div>'+
       '<div class="studio-docs-cats" role="group" aria-label="Filter by topic">'+groups.map(c=>'<button type="button" data-studio-doc-category="'+esc(c)+'" aria-pressed="'+(c===category?'true':'false')+'" class="'+(c===category?'active':'')+'">'+esc(c)+'</button>').join('')+'</div><div id="studio-doc-results">'+cards(filtered)+'</div></section>'+
       '<div class="studio-docs-footlinks"><a href="/docs/">Explore all documentation ↗</a><a href="/sitemap/">Browse the site map ↗</a><a href="/contact/">Ask the Studio team ↗</a></div></div>';
@@ -116,7 +117,7 @@
       '<details class="docs-mobile-toc"><summary>On this page ('+headings.length+')</summary>'+toc+'</details><div class="studio-docs-prose">'+md(item.markdown)+'</div>'+
       '<div class="studio-docs-finish"><h2>Keep building with confidence.</h2><p>Information is written for actual Studio workflows; capabilities that require Studio staff or provider configuration are identified inside the relevant guide. Need a project-specific answer?</p><a href="/contact/">Talk to the Studio team ↗</a><a href="/docs/">Browse all documentation ↗</a></div>'+
       '<nav class="studio-docs-prevnext" aria-label="Adjacent documentation">'+(prev?'<a href="'+esc(prev.path)+'"><small>PREVIOUS GUIDE</small>← '+esc(prev.title)+'</a>':'<span></span>')+(next?'<a href="'+esc(next.path)+'"><small>NEXT GUIDE</small>'+esc(next.title)+' →</a>':'<span></span>')+'</nav></article>'+
-      '<aside class="studio-docs-right"><div class="studio-docs-right-title">ON THIS PAGE</div>'+toc+'<div class="studio-docs-right-support"><a href="/sitemap/">Full site map ↗</a><a href="/help/studio/">Help Centre ↗</a></div></aside></div></div>';
+      '<aside class="studio-docs-right"><div class="studio-docs-right-title">ON THIS PAGE</div>'+toc+'<div class="studio-docs-right-support"><a href="/sitemap/">Full site map ↗</a><a href="/help/studio/index.html">Help Centre ↗</a></div></aside></div></div>';
   }
   function render(){
     if(!isStudio())return prior.render();
