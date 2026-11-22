@@ -113,10 +113,8 @@ document.addEventListener('click',e=>{
  if(trigger){e.preventDefault();ui('settings');}
 });
 function mount(){
- if(!document.querySelector('#vz-privacy-fab')){
-  const btn=document.createElement('button');btn.type='button';btn.id='vz-privacy-fab';btn.textContent='Privacy choices';btn.title='Reopen privacy and cookie preferences';btn.dataset.privacySettings='';
-  btn.setAttribute('aria-label','Change privacy and cookie choices');document.body.append(btn);
- }
+ // Preference controls live in the site footer / policy page, not a floating pill.
+ document.querySelector('#vz-privacy-fab')?.remove();
  if(!current&&!open)ui('banner');
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
