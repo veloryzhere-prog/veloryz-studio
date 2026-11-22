@@ -63,11 +63,11 @@ has(gallery,'window.designPage=renderWithMotion','SPA gallery remains registered
 has(gallery,"'/design/'+encodeURIComponent(p.id)+'/'",'Source product detail routes stay same origin');
 has(gallery,'function entries()','Public gallery has an explicit public source resolver');
 has(gallery,"item.sourceType!=='original-veloryz'",'Old studio originals are not rendered');
-has(gallery,'Studio service from','Creator shows real service starting estimates');
+has(gallery,'STUDIO SERVICE FROM','Gallery shows real service starting estimates');
 has(gallery,'STUDIO SERVICE FROM','All cards show INR pricing');
 has(gallery,'price-asc','Price ascending sort');
 has(gallery,'price-desc','Price descending sort');
-has(gallery,"p.id)+'preview/'",'Every design has VELORYZ full preview link');
+has(gallery,"path(p)+'preview/'",'Every design has VELORYZ full preview link');
 has(gallery,'IntersectionObserver','Genuine motion-rich scrolling gallery');
 has(galleryCss,'prefers-reduced-motion','Respect reduced-motion');
 has(galleryCss,'.vz-source-price','Studio pricing visual design');
