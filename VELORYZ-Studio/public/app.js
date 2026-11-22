@@ -368,6 +368,9 @@ document.addEventListener('click',event=>{
  }
  if(el.tagName==='A'&&!el.target&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey){
   const url=new URL(el.href,location.origin);
+  // The public homepage uses the supplied motion shell, not this legacy SPA's home render.
+  // A full navigation prevents the brand link from showing the obsolete theme in place.
+  if(url.origin===location.origin&&url.pathname==='/'&&!url.hash){event.preventDefault();location.assign(url.pathname+url.search);return;}
   if(url.origin===location.origin&&!url.hash&&(routes[normalise(url.pathname)]||/^\/teamjob\/[a-z0-9-]+\/?$/.test(url.pathname)||/^\/docs\/[a-z0-9-]+\/?$/.test(url.pathname))){event.preventDefault();while(modalOpen)closeModal();if(url.search)location.assign(url.href);else navigate(url.pathname);}
  }
 });
