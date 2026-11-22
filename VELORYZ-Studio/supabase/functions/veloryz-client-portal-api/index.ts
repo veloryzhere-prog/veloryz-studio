@@ -52,6 +52,22 @@ async function logDelivery(project,kind,recipient,result){
    result.status==="sent"?"":String(result.message||"").slice(0,180),now,now);
  }catch{console.error("Client email delivery audit could not be saved");}
 }
+/* Save messages immediately. Mail is a best-effort notification and cannot
+   cause a successful private chat message to fail or wait for SMTP. */
+function queueNotification(project,kind,to,template){
+ const task=(async()=>{
+  const outcome=await sendGmailMail({to,...template});
+  await logDelivery(project,kind,to,outcome);
+ })().catch(()=>{console.error("Project notification task failed");});
+ if(typeof EdgeRuntime!=="undefined"&&typeof EdgeRuntime.waitUntil==="function"){
+  EdgeRuntime.waitUntil(task);
+  return {status:"queued",message:"Message saved. Gmail notification queued; delivery status is tracked separately."};
+ }
+ // The runtime may not support background tasks; still avoid false "sent" statuses.
+ void task;
+ return {status:"queued",message:"Message saved. Gmail notification attempted; check the project mail log."};
+}
+
 async function issueInvite(project,now,revokeOld=true){
  const code=inviteCode(),expires=new Date(Date.now()+14*86400000).toISOString();
  const url="https://veloryz.online/client/#invite="+encodeURIComponent(code);
@@ -213,8 +229,7 @@ async function main(req){
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
    await db("addMessage",crypto.randomUUID(),pid,"studio",message,now);
    const project=(await db("getProjectFull",pid))[0];
-   const notification=await sendGmailMail({to:project.client_email,...messageMail(project,"studio")});
-   await logDelivery(project,"studio-message",project.client_email,notification);
+   const notification=queueNotification(project,"studio-message",project.client_email,messageMail(project,"studio"));
    return send({ok:true,notification},201);
   }
   if(action==="/admin/invite"&&req.method==="POST"){
@@ -245,8 +260,7 @@ async function main(req){
   await db("addMessage",crypto.randomUUID(),pid,"client",message,now);
   const project=(await db("getProjectFull",pid))[0];
   const recipient="veloryz.here@gmail.com";
-  const notification=await sendGmailMail({to:recipient,...messageMail(project,"client")});
-  await logDelivery(project,"client-message",recipient,notification);
+  const notification=queueNotification(project,"client-message",recipient,messageMail(project,"client"));
   return send({ok:true,notification},201);
  }
  if(action==="/decisions"&&req.method==="POST"){
