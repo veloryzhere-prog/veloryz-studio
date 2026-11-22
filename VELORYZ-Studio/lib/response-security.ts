@@ -7,7 +7,17 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  if(privatePage||status===404)headers['X-Robots-Tag']='noindex, nofollow';
  // The old floating create CTA was disabled in CSS but still injected on every page.
  // Remove it at the HTML source. Keep the stylesheet for its other chat/form UI.
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css"></head>');
+ // Merge the supplied Silk/UI bundles into the current hardened response layer.
+ // The uploaded response-security.ts was older and would have reinstated the
+ // removed floating Create button; only the assets are imported here.
+ // Private pages, admin, client portal, immersive design previews and 404 pages
+ // deliberately retain their isolated, original presentation and motion.
+ const silkUiAssets=!privatePage&&status===200
+  ? '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-silk-ui-v1">'
+   +'<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-silk-ui-v1">'
+   +'<script src="/veloryz-silk-2026.js?v=20261123-silk-ui-v1" defer></script>'
+  : '';
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
