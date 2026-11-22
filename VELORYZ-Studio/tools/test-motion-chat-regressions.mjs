@@ -34,7 +34,7 @@ test('all conversation surfaces load a shared theme',()=>{
  for(const agent of ['support','client','creator'])assert.ok(css.includes('data-vz-chat="'+agent+'"'));
  assert.ok(css.includes('.expert-modal'));
  assert.ok(shell.includes('conversation-redesign-2026.css'));
- assert.ok(shell.includes('scarf-auto-v6')||shell.includes('scarf-autoplay-v5'));
+ assert.ok(shell.includes('frame-cut.js?v=20261122-auto-v6'),'Production shell must cache-bust the repaired scarf animation');
  assert.ok(shell.includes('motion-recovery-v3.css'));
  assert.ok(shell.includes('ai-universe-v3.css'));
  assert.ok(asset('review-experience.js').includes('vz-reviews-spotlight-invites'));
