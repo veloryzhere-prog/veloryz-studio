@@ -23,7 +23,7 @@ assert.match(css,/\.page-intro h1/);
 assert.match(css,/prefers-reduced-motion:reduce/);
 assert.match(css,/\.vz-kinetic-ambient::before/,'Avoid expensive always-blurred animated ambience');
 assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length,'Style rules must be balanced');
-assert.match(js,/aria-hidden','Decorative letter spans must be hidden from assistive technology');
+assert.match(js,/aria-hidden/,'Decorative letter spans must be hidden from assistive technology');
 assert.doesNotMatch(js,/addEventListener\(['"]scroll['"]|setInterval|requestAnimationFrame/,'Typography must not require scroll polling');
 assert.match(shell,/\/kinetic-type-2026\.css/);
 assert.match(shell,/\/kinetic-type-2026\.js/);
