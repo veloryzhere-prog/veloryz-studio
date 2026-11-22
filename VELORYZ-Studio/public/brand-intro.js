@@ -15,7 +15,7 @@
  function motionOff(){
   let selected='';
   try{selected=localStorage.getItem('veloryz.motion.v2')||'';}catch{}
-  return Boolean(reduced?.matches||saveData()||['reduced','paused'].includes(selected));
+  return Boolean((reduced?.matches&&selected!=='full')||saveData()||['reduced','paused'].includes(selected));
  }
  let seen=false;
  try{seen=sessionStorage.getItem(sessionKey)==='1';}catch{}
