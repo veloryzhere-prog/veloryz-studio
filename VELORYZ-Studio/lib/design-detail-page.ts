@@ -1,66 +1,99 @@
 /**
- * Branded VELORYZ preview shell for catalogue records.
- * These previews are original studio concept demonstrations; upstream repository
- * code/assets are NOT mounted or represented as VELORYZ-authored work.
+ * VELORYZ source-based design preview:
+ * - real upstream source HTML when locally staged and license-checked;
+ * - otherwise an authentic upstream screenshot/repository cover;
+ * - optional original public live demo inside a sandboxed iframe.
+ *
+ * Never reconstructs external designs with generated mockups.
+ * "Made with VELORYZ" describes the explorer/customization service only.
  */
-import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json' };
-
+import designs from '../public/veloryz-open-designs.json' with { type:'json' };
 export type DesignPreviewRecord={
- id:string;name:string;category:string;description:string;source:string;
- author:string;license:string;rights:string;motion?:string;caution?:string;
- sourceType?:string;importStatus?:string;previewType?:string;originalTemplateId?:string;price?:number;
+ id:string; name:string; category:string; description:string; source:string;
+ author:string; license:string; rights:string; motion?:string; caution?:string;
+ sourceType?:string; importStatus?:string; previewType?:string;
+ originalTemplateId?:string; previewImage?:string; previewImageKind?:string;
+ localSource?:string; liveDemo?:string; assetMode?:string; price?:number;
+ image?:string;
 };
-
-const escapeMap:Record<string,string>={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
-const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>escapeMap[c]||c);
-
+const escape=(v:unknown)=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[ch]||ch);
+const legalURL=(v:unknown)=>{
+ try{const u=new URL(String(v));return u.protocol==='https:'&&!u.username&&!u.password?u.href:''}
+ catch{return ''}
+};
+const localSourcePath=(design:DesignPreviewRecord)=>{
+ if(design.sourceType==='original-veloryz'&&design.originalTemplateId&&/^[a-z0-9-]+$/.test(design.originalTemplateId))
+  return '/template-previews/'+design.originalTemplateId+'.html';
+ if(design.importStatus==='real-upstream-html'&&/^[a-z0-9-]+$/.test(design.id)&&design.localSource==='/design-source-previews/'+design.id+'/index.html')
+  return design.localSource;
+ return '';
+};
 export function findDesignPreview(id:string,cms:any[]=[]):DesignPreviewRecord|null{
  if(!/^[a-z0-9-]{2,100}$/.test(id))return null;
- const firstParty=openDesigns.originals.find(p=>p.id===id);
- if(firstParty)return firstParty;
- const open=openDesigns.items.find(p=>p.id===id);
- if(open)return open;
- const curated=cms.find(p=>p?.id===id&&p.enabled!==false);
- if(!curated)return null;
+ const original=designs.originals.find(p=>p.id===id);
+ if(original)return original;
+ const upstream=designs.items.find(p=>p.id===id);
+ if(upstream)return upstream;
+ const item=cms.find(p=>p?.id===id&&p.enabled!==false);
+ if(!item)return null;
  return {
-  id:curated.id,name:curated.name,category:curated.category,
-  description:curated.description||'Explore a VELORYZ project concept.',
-  source:curated.source||'',author:curated.author||'External designer',
-  license:curated.license||'Independent work; rights verification required',
+  id:item.id,name:item.name,category:item.category,description:item.description||'Published VELORYZ design reference',
+  source:item.source||'',author:item.author||'Original independent creator',license:item.license||'Source terms require verification',
   rights:'restricted',sourceType:'curated-inspiration',importStatus:'reference-only',
-  previewType:'veloryz-original-concept'
+  previewImage:legalURL(item.image)||'',previewImageKind:'published-reference-image',
+  previewType:'reference-image'
  };
 }
 export function renderDesignPreview(design:DesignPreviewRecord):string{
- const record=JSON.stringify(design).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
- const title=escape(design.name),category=escape(design.category);
- const createUrl=design.originalTemplateId?'/create/?template='+encodeURIComponent(design.originalTemplateId):'/create/?reference='+encodeURIComponent(design.id);
- const desc=escape(design.description).slice(0,320);
- return '<!doctype html><html lang="en"><head><meta charset="utf-8">'+
- '<meta name="viewport" content="width=device-width, initial-scale=1">'+
- '<meta name="theme-color" content="#101419">'+
- '<meta name="robots" content="noindex, nofollow">'+
- '<title>'+title+' — Create with VELORYZ Studio</title>'+
- '<meta name="description" content="Preview '+title+' as an original VELORYZ studio concept. Create a tailored project with rights-conscious source attribution.">'+
- '<link rel="icon" href="/assets/favicon.svg">'+
- '<link rel="stylesheet" href="/veloryz-design-preview.css?v=20261123-1">'+
- '<script id="vz-design-data" type="application/json">'+record+'</script>'+
- '<script src="/veloryz-design-preview.js?v=20261123-1" defer></script></head>'+
- '<body><a class="vz-skip" href="#vz-preview-main">Skip to the design</a>'+
- '<div class="vz-shell" id="vz-preview-main">'+
- '<header class="vz-head"><a class="vz-logo" href="/" aria-label="VELORYZ Studio home"><span class="vz-mark">V</span><span>VELORYZ<span class="vz-logo-sub">STUDIO / CREATE</span></span></a>'+
- '<nav aria-label="Preview navigation"><a href="/design/">All designs</a><a href="'+createUrl+'" class="vz-nav-create">Create with VELORYZ ↗</a></nav></header>'+
- '<div class="vz-summary"><div><span class="vz-eyebrow">VELORYZ / DESIGN EXPLORER / '+category+'</span>'+
- '<h1>'+title+'</h1><p>'+desc+'</p><div class="vz-pills"><span>Original VELORYZ concept preview</span><span>Responsive study</span><span>Source credit retained</span></div></div>'+
- '<div class="vz-summary-action"><a class="vz-btn" href="'+createUrl+'">Create with VELORYZ <span aria-hidden="true">↗</span></a><a class="vz-text-link" href="#vz-provenance">Licensing & source details ↓</a></div></div>'+
- '<section class="vz-workspace" aria-label="Interactive website concept preview"><div class="vz-tools"><div class="vz-tools-title"><span class="vz-live-dot"></span> LOCAL STUDIO PREVIEW <small>/ conceptual interface, not the upstream website</small></div>'+
- '<div class="vz-device-switch" role="group" aria-label="Preview width"><button type="button" data-vz-device="desktop" aria-pressed="true">Desktop</button><button type="button" data-vz-device="tablet" aria-pressed="false">Tablet</button><button type="button" data-vz-device="mobile" aria-pressed="false">Mobile</button></div></div>'+
- '<div class="vz-stage-shell"><div class="vz-stage" id="vz-stage" data-vz-device="desktop"><div class="vz-stage-mast"><div class="vz-stage-dots"><i></i><i></i><i></i></div><span>veloryz.online / design / '+escape(design.id)+'</span><span>STUDIO CONCEPT</span></div>'+
- '<div id="vz-concept" aria-live="polite"><div class="vz-loading">Preparing your VELORYZ concept preview...</div></div><div class="vz-watermark"><span class="vz-watermark-v">V</span><span>Made with <b>VELORYZ</b></span></div></div></div></section>'+
- '<section class="vz-bottom"><div class="vz-bottom-main"><span class="vz-eyebrow">FROM REFERENCE TO YOUR OWN PRODUCT</span><h2>Make a concept<br><em>entirely yours.</em></h2><p>Browse the studio’s original interactive direction, choose the pages and features that matter, and share a detailed project brief. Code, integrations and commercial licensing are reviewed before delivery.</p><a class="vz-btn" href="'+createUrl+'">Start your project ↗</a></div>'+
- '<aside class="vz-rights" id="vz-provenance"><h3>Source & rights</h3>'+
- '<dl><dt>Design idea</dt><dd>'+title+'</dd><dt>Original source author</dt><dd>'+escape(design.author)+'</dd><dt>Upstream license / terms</dt><dd>'+escape(design.license)+'</dd><dt>Catalogue status</dt><dd>'+escape(design.rights==='original'?'Original VELORYZ source template; one end-product license':design.rights==='candidate'?'Candidate for licensed adaptation; assets not cleared':design.rights==='restricted'?'Reference only / separate permission required':'Independent review required')+'</dd></dl>'+
- '<p>The interactive preview above is VELORYZ-created demonstration UI. It is not a white-labelled copy of the linked repository or its original assets. VELORYZ branding identifies this showcase and customization service, not ownership of third-party work.</p>'+
- (String(design.source).startsWith('https://')?'<a href="'+escape(design.source)+'" target="_blank" rel="noopener noreferrer">View original credited source ↗</a>':'')+
- '</aside></section></div><div class="vz-toast" id="vz-toast" role="status" aria-live="polite"></div></body></html>';
+ const name=escape(design.name),cat=escape(design.category);
+ const source=legalURL(design.source),image=legalURL(design.previewImage||design.image),demo=legalURL(design.liveDemo);
+ const local=localSourcePath(design);
+ const create=design.originalTemplateId?'/create/?template='+encodeURIComponent(design.originalTemplateId):'/create/?reference='+encodeURIComponent(design.id);
+ const hasSource=Boolean(local),hasDemo=Boolean(demo),hasImage=Boolean(image);
+ const isOriginal=design.sourceType==='original-veloryz',isUpstream=design.importStatus==='real-upstream-html';
+ const mode=isOriginal?'Original VELORYZ working source':isUpstream?'Actual upstream HTML, locally staged':hasDemo?'Original live demo available':'Upstream media / source reference';
+ const imageLabel=design.previewImageKind==='github-repository-cover'?'GitHub repository cover — not a website screenshot':(hasImage?'Screenshot or media from the original source':'No website screenshot provided by this repository');
+ const previewData={
+  name:design.name,id:design.id,localSource:local,liveDemo:demo,
+  image:image,imageLabel,mode,
+  hasDemo,hasSource,isOriginal,isUpstream,assetMode:design.assetMode||''
+ };
+ const payload=JSON.stringify(previewData).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+ return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+ '<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#141719">'+
+ '<title>'+name+' | VELORYZ Original Source Explorer</title>'+
+ '<meta name="description" content="Explore authentic upstream design media and real open-source website previews in the VELORYZ design explorer.">'+
+ '<link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/veloryz-design-preview.css?v=20261123-real-v2">'+
+ '<script id="vz-design-data" type="application/json">'+payload+'</script>'+
+ '<script src="/veloryz-design-preview.js?v=20261123-real-v2" defer></script></head>'+
+ '<body><a class="vz-skip" href="#design-main">Skip to the design</a><div class="vz-real-explorer" id="design-main">'+
+ '<header class="vz-real-header"><a class="vz-real-wordmark" href="/design/"><span class="vz-real-monogram">V.</span><span>VELORYZ<small>STUDIO / OPEN SOURCE</small></span></a>'+
+ '<nav aria-label="Design explorer"><a href="/design/">All designs</a><a class="vz-real-cta" href="'+create+'">Create with VELORYZ <span>↗</span></a></nav></header>'+
+ '<section class="vz-real-intro"><div><span class="vz-real-kicker">VELORYZ / VERIFIED SOURCE EXPLORER / '+cat+'</span>'+
+ '<h1>'+name+'</h1><p>'+escape(design.description)+'</p><div class="vz-real-tags"><span>'+escape(mode)+'</span>'+
+ (isUpstream?'<span>Real source HTML — not a recreation</span>':'')+
+ (hasImage?'<span>'+escape(imageLabel)+'</span>':'')+'</div></div>'+
+ '<div class="vz-real-intro-actions"><a class="vz-real-cta" href="'+create+'">Use this design — Create with VELORYZ ↗</a>'+
+ '<a href="#source-rights">Source & license information ↓</a></div></section>'+
+ '<section class="vz-real-viewer" aria-label="Original website preview"><div class="vz-real-tools">'+
+ '<div class="vz-real-tools-left"><i aria-hidden="true"></i><b>'+escape(mode)+'</b></div>'+
+ '<div class="vz-real-tools-right" role="group" aria-label="Preview device size"><button data-vz-device="desktop" aria-pressed="true">Desktop</button><button data-vz-device="tablet" aria-pressed="false">Tablet</button><button data-vz-device="mobile" aria-pressed="false">Mobile</button></div></div>'+
+ '<div class="vz-real-stage" id="vz-stage" data-vz-device="desktop"><div class="vz-real-browser"><span class="vz-real-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>veloryz.online/design/'+escape(design.id)+'</span><span>AUTHENTIC SOURCE</span></div>'+
+ '<div class="vz-real-frame-content" id="vz-concept"><div class="vz-real-preview-loading">Loading original source preview…</div></div>'+
+ '<div class="vz-real-watermark"><span>V.</span><strong>Made with VELORYZ</strong><small>Explorer · Source: '+escape(design.author)+'</small></div></div>'+
+ '<div class="vz-real-bottom-tools"><p id="vz-preview-caption" aria-live="polite">'+escape(imageLabel)+'</p><div><button type="button" data-vz-show-image>Show source image</button>'+
+ (hasDemo?'<button type="button" data-vz-launch-demo>Try original live demo</button>':'')+
+ (hasSource?'<button type="button" data-vz-reload>Reload local source</button>':'')+'</div></div></section>'+
+ '<section class="vz-real-info" id="source-rights"><div><span class="vz-real-kicker">THE ORIGINAL SOURCE / RIGHTS / PROVENANCE</span>'+
+ '<h2>The real work.<br><em>Properly credited.</em></h2><p>VELORYZ provides the gallery, hosted preview wrapper and project-building service. The original designer retains all original authorship, code licensing rights and media credits. The mark is not a claim that VELORYZ created the underlying upstream website.</p>'+
+ '<a class="vz-real-cta" href="'+create+'">Build a customized version with VELORYZ ↗</a></div>'+
+ '<aside class="vz-real-provenance"><h3>Source details</h3><dl>'+
+ '<dt>Design</dt><dd>'+name+'</dd><dt>Author</dt><dd>'+escape(design.author)+'</dd>'+
+ '<dt>License statement</dt><dd>'+escape(design.license)+'</dd>'+
+ '<dt>Repository status</dt><dd>'+escape(design.importStatus||'catalogued')+'</dd>'+
+ '<dt>Asset handling</dt><dd>'+escape(design.assetMode||'Original assets remain with the source; verify separately')+'</dd>'+
+ '<dt>Review classification</dt><dd>'+escape(design.rights)+'</dd></dl>'+
+ '<p>Applications requiring accounts, databases, paid APIs or proprietary services are not presented as working static templates. These need a separately deployed and configured source build.</p>'+
+ (source?'<a href="'+escape(source)+'" rel="noopener noreferrer" target="_blank">Original repository & license ↗</a>':'')+
+ '</aside></section></div></body></html>';
 }
