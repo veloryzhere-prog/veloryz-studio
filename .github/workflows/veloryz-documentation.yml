@@ -53,7 +53,7 @@ jobs:
       - name: Verify clickable Motion/Menu/Quick Create and stored bug reports
         run: node tools/test-header-bug-report.mjs && node tools/test-bug-report-api.mjs
       - name: Verify universal accessible hover, border, sliding fill and click feedback
-        run: node tools/test-button-feedback.mjs
+        run: node tools/test-button-feedback.mjs && node tools/test-contextual-button-effects.mjs
       - name: Verify all six AI personalities and visible motion recovery
         run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
       - name: Verify smooth closing brand film and 60 FPS opening integration
