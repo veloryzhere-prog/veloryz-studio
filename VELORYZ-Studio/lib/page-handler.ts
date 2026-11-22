@@ -5,6 +5,8 @@ import {renderIndexableBody} from './search-index-content';
 import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
+import {findDesignPreview,renderDesignPreview} from './design-detail-page';
+import openDesigns from '../public/veloryz-open-designs.json' with { type: 'json' };
 import { renderReviewsPage } from './reviews-page';
 import { renderRoadmapPage } from './roadmap-page';
 import { secureHtml,pageMetadata } from './response-security';
@@ -56,6 +58,15 @@ export async function GET(request: Request) {
  if(path==='/.well-known/security.txt')return new Response('Contact: mailto:veloryz.here@gmail.com\nExpires: 2027-11-22T00:00:00Z\nPreferred-Languages: en\nCanonical: https://veloryz.online/.well-known/security.txt\n',{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'}});
  if(path==='/admin/reviews.html')return new Response(null,{status:302,headers:{Location:new URL('/admin/#/reviews',request.url).toString(),'Cache-Control':'no-store','X-Robots-Tag':'noindex,nofollow'}});
  if(path==='/client'||path==='/client/')return secureHtml(clientPortalShell,200,true);
+ // A same-origin VELORYZ studio concept; upstream websites are never embedded.
+ const designMatch=path.match(/^\/design\/([a-z0-9-]+)\/?$/);
+ if(designMatch){
+  const published=await getPublished(env,request.url);
+  const design=findDesignPreview(designMatch[1],published.state.catalogue||[]);
+  if(!design)return new Response('Design not found',{status:404,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+  return secureHtml(renderDesignPreview(design),200,true);
+ }
+
  if(import.meta.env.DEV&&path==='/_studio_preview/production'){
   const data=await getPublished(env),view=new URL(request.url).searchParams.get('view')||'home';
   const views:Record<string,string>={home:'/',work:'/work/',design:'/design/',studio:'/studio/',book:'/book/',create:'/create/',pricing:'/pricing/',developers:'/developers/'};
@@ -138,6 +149,7 @@ export async function GET(request: Request) {
  };
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
+ if(['/design','/designs','/create'].includes(normal))html=html.replace('</head>',`<script>window.VELORYZ_OPEN_DESIGNS=${serialise(openDesigns.items)};</script></head>`);
  const override=docEdits[normal] as {title?:string;summary?:string;visible?:boolean}|undefined;
  const description=(override?.summary||(studioDocsSummaries as Record<string,string>)[normal]||routeDescriptions[normal]||data.state.site.description).slice(0,300);
  const pageTitle=normal==='/'?'VELORYZ Studio | Website Design, Development & Creative Technology':(pages[normal]||'Page not found')+' — VELORYZ Studio';
