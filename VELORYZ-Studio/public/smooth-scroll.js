@@ -118,6 +118,7 @@
  };
  window.StudioMotion?.addEventListener('change',sync);
  document.addEventListener('studio:motion-intro-complete',sync);
+ document.addEventListener('studio:brand-intro-complete',sync);
  document.addEventListener('studio:route',onRoute);
  document.addEventListener('visibilitychange',sync);
  window.addEventListener('pageshow',sync);
