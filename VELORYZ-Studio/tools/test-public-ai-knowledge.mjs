@@ -9,7 +9,7 @@ const defaults=JSON.parse(read('lib/defaults.json'));
 const all=publicKnowledgeIndex(defaults);
 assert.ok(all.length>=150,'Public site index should cover the canonical help + project docs.');
 assert.ok(all.some(x=>x.path==='/client/'),'Site index needs genuine Client Portal route.');
-assert.ok(all.every(x=>!x.path||x.path.startsWith('/')&&!x.path.includes('/admin/')),'Only safe public paths in index.');
+assert.ok(all.every(x=>!x.path||x.path.startsWith('/')&&!x.path.startsWith('/admin/')&&!x.path.startsWith('/api/')),'Only safe public paths in index.');
 const privateState={...defaults,clientProjects:[{privateEmail:'private@example.test',secret:'PRIVATE_DO_NOT_SHARE'}],cmsAdmin:{password:'PRIVATE_DO_NOT_SHARE'}};
 const indexed=JSON.stringify(publicKnowledgeIndex(privateState));
 assert.ok(!indexed.includes('PRIVATE_DO_NOT_SHARE'),'Never use private client/admin fields.');
