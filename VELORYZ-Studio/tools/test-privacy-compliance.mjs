@@ -14,12 +14,12 @@ for(const [file,s] of [['privacy-center.js',privacy],['app.js',site],['admin.js'
 assert.deepEqual(ts.transpileModule(edge,{fileName:'index.ts',reportDiagnostics:true,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).diagnostics?.filter(x=>x.category===ts.DiagnosticCategory.Error).map(x=>ts.flattenDiagnosticMessageText(x.messageText,'\n')),[]);
 assert.ok(shell.indexOf('/privacy-center.js')<shell.indexOf('/brand-intro.js'),'Privacy bootstrap must load before the nondeferred cinematic intro.');
 assert.ok(shell.includes('/privacy-center.css'),'Public shell includes consent styling.');
-assert.match(privacy,/version:'2026-11-22.1'/i);
+assert.match(privacy,/VERSION='2026-11-22\.1'/);
 assert.match(privacy,/data-vz-privacy="reject" class="vz-choice-equal"/,'Reject action is equal prominence to accept.');
 assert.match(privacy,/data-vz-privacy="accept" class="vz-choice-equal"/,'Accept action is equal prominence to reject.');
 assert.match(privacy,/data-vz-privacy="save"/,'Granular preferences can be saved.');
 assert.match(privacy,/data-privacy-settings/,'Visitor can reopen preferences from persistent UI.');
-assert.match(privacy,/aria-label','Banner must have assistive-technology labeling.');
+assert.match(privacy,/aria-label/,'Banner must have assistive-technology labeling.');
 assert.match(privacy,/globalPrivacyControl/,'Respect Global Privacy Control.');
 assert.match(privacy,/if\(!allowed\('analytics'\)\)/,'Clear local measurement when declined.');
 assert.match(privacy,/if\(!allowed\('preferences'\)\)/,'Remove optional preferences when declined.');
