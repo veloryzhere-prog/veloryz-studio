@@ -4,7 +4,7 @@ MIT License, Copyright (c) alshahwan (Mohammad Alshahwan) */
 /* Original Text me -> WhatsApp hover behaviour:
    white/green outlined button, text slides left, WhatsApp symbol fades in,
    and the background turns #25D366. Names and sizing scoped to VELORYZ. */
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse {
+body a.whatsapp-float.vz-wa-uiverse {
   position:fixed;
   right:clamp(15px,2vw,28px);
   bottom:calc(18px + env(safe-area-inset-bottom,0px));
@@ -31,7 +31,7 @@ body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse {
   transition:background-color .5s,color .5s,border-color .5s,box-shadow .5s;
   -webkit-tap-highlight-color:transparent;
 }
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-label{
+body a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-label{
   position:absolute;
   top:50%;
   left:1.15em;
@@ -43,7 +43,7 @@ body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-label
   transition:left .5s,color .5s;
   pointer-events:none;
 }
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-icon{
+body a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-icon{
   position:absolute;
   top:50%;
   right:.5em;
@@ -58,49 +58,49 @@ body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-icon{
   display:block;
 }
 @media(hover:hover) and (pointer:fine){
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:hover{
+  body a.whatsapp-float.vz-wa-uiverse:hover{
     background-color:#25D366;
     border-color:#25D366;
     box-shadow:0 9px 25px rgba(37,211,102,.20);
     transform:none;
   }
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:hover .vz-wa-uiverse-label{
+  body a.whatsapp-float.vz-wa-uiverse:hover .vz-wa-uiverse-label{
     left:.5em;color:#fff;
   }
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:hover .vz-wa-uiverse-icon{opacity:1}
+  body a.whatsapp-float.vz-wa-uiverse:hover .vz-wa-uiverse-icon{opacity:1}
 }
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:focus-visible{
+body a.whatsapp-float.vz-wa-uiverse:focus-visible{
   background-color:#25D366;
   border-color:#25D366;
   outline:3px solid #167a3f;
   outline-offset:3px;
 }
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:focus-visible .vz-wa-uiverse-label{
+body a.whatsapp-float.vz-wa-uiverse:focus-visible .vz-wa-uiverse-label{
   left:.5em;color:#fff;
 }
-body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse:focus-visible .vz-wa-uiverse-icon{opacity:1}
+body a.whatsapp-float.vz-wa-uiverse:focus-visible .vz-wa-uiverse-icon{opacity:1}
 @media(hover:none),(pointer:coarse){
   /* Touch surfaces have no hover. Keep the WhatsApp mark visible at rest. */
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse{
+  body a.whatsapp-float.vz-wa-uiverse{
     background-color:#25D366;color:#fff;
   }
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-label{
+  body a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-label{
     left:.5em;color:#fff;
   }
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse .vz-wa-uiverse-icon{opacity:1}
+  body a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-icon{opacity:1}
 }
 @media(max-width:540px){
-  body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse{
+  body a.whatsapp-float.vz-wa-uiverse{
     width:8.3em;height:2.75em;font-size:15px;
   }
 }
 @media(prefers-reduced-motion:reduce){
-  html:not([data-motion=full]) body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse,
-  html:not([data-motion=full]) body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon){transition:none}
+  html:not([data-motion=full]) body a.whatsapp-float.vz-wa-uiverse,
+  html:not([data-motion=full]) body a.whatsapp-float.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon){transition:none}
 }
-html[data-motion=paused] body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse,
-html[data-motion=reduced] body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse,
-html[data-motion=paused] body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon),
-html[data-motion=reduced] body.vz-reference-site a.vz-original-whatsapp.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon){
+html[data-motion=paused] body a.whatsapp-float.vz-wa-uiverse,
+html[data-motion=reduced] body a.whatsapp-float.vz-wa-uiverse,
+html[data-motion=paused] body a.whatsapp-float.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon),
+html[data-motion=reduced] body a.whatsapp-float.vz-wa-uiverse :is(.vz-wa-uiverse-label,.vz-wa-uiverse-icon){
   transition:none!important;
 }
