@@ -7,7 +7,7 @@
   let activeWordmark = null;
   let activeTagline = null;
   function enabled() {
-    return !prefersReduced.matches && root.dataset.motion !== 'reduced' && root.dataset.motion !== 'paused';
+    return (!prefersReduced.matches||root.dataset.motion==='full') && root.dataset.motion !== 'reduced' && root.dataset.motion !== 'paused';
   }
   function clearWordmark() {
     if (!activeWordmark) return;
