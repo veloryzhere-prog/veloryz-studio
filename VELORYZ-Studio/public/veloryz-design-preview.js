@@ -97,6 +97,10 @@ return '<div class="c-component-site">'+nav()+'<header><span class="c-kicker"><i
  '<div class="c-component-bottom"><span>ORIGINAL DEMO / '+category+'</span><a href="/create/?reference='+encodeURIComponent(p.id)+'">Create a motion-rich site ↗</a></div></div>';
 }
 function render(){
+if(p.sourceType==='original-veloryz'&&/^[a-z0-9-]+$/.test(p.originalTemplateId||'')){
+ concept.innerHTML='<iframe class="vz-original-live" title="Original VELORYZ '+esc(p.name)+' live template" src="/template-previews/'+encodeURIComponent(p.originalTemplateId)+'.html" loading="lazy" referrerpolicy="same-origin"></iframe>';
+ return;
+}
 concept.innerHTML=type==='dashboard'||type==='board'?dashboard():type==='components'?components():marketing();
 }
 render();
