@@ -22,7 +22,7 @@ assert(html.includes('id="load"')&&html.includes('id="skip"'),'Skippable fullscr
 assert(html.includes('id="hzs"')&&html.includes('id="trk"'),'Scroll-controlled service panels remain');
 assert(html.includes('id="libs"')&&html.includes('id="decks"'),'Scroll-controlled showcase decks remain');
 assert(html.includes('id="vz-live-reviews-track"'),'Continuous review ribbon exists');
-assert(html.includes('id="vz-home-library-track"'),'Original homepage has automatic design library');
+assert(html.includes('id="vz-home-library-track"')&&html.includes('id="vz-library-progress-fill"'),'Original homepage has a scroll-driven full design library');
 assert(html.includes('id="vz-reference-guides"'),'Reference includes complete animated documentation footer');
 assert(html.includes('/reference-ai-dock.js'),'All five adviser personalities must be available from a visible side dock');
 assert(html.includes('href="/create/"')&&html.includes('href="/client/"'),'Real project creator and private client portal remain linked');

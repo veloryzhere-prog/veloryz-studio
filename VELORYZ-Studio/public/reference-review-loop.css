@@ -1,0 +1,53 @@
+/* The WAAPI driver measures exact seam distance. CSS is a safe no-JS fallback. */
+.vz-reference-site :is(#vz-home-reviews-track,#vz-live-reviews-track){
+ display:flex;align-items:stretch;gap:18px;width:max-content;
+ will-change:transform;backface-visibility:hidden;
+}
+.vz-reference-site :is(#vz-home-reviews-track,#vz-live-reviews-track) .vz-live-review-group{
+ display:flex;gap:18px;flex:none;align-items:stretch;
+}
+.vz-reference-site :is(#vz-home-reviews-track,#vz-live-reviews-track) .vz-live-review-card{
+ flex:0 0 clamp(278px,30.8vw,414px);
+ width:clamp(278px,30.8vw,414px);
+ min-height:clamp(242px,27vw,320px);
+ display:flex;flex-direction:column;gap:12px;
+ border-radius:25px;padding:clamp(20px,2.3vw,32px);
+}
+.vz-reference-site .vz-live-review-card .vz-review-quote{
+ font-size:clamp(1.18rem,1.9vw,1.82rem);line-height:1.2;
+ text-wrap:pretty;overflow-wrap:anywhere;
+}
+.vz-reference-site .vz-live-review-card .vz-review-byline{
+ margin-top:auto;padding-top:15px;border-top:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ flex-wrap:wrap;font-size:.75rem;
+}
+.vz-reference-site .vz-live-review-card .vz-review-details{
+ display:flex;gap:8px;flex-wrap:wrap;
+ align-items:center;font-size:.68rem;color:var(--mut);
+}
+.vz-reference-site .vz-live-review-card .vz-review-details span{
+ padding:5px 9px;border-radius:99px;border:1px solid var(--line);
+}
+.vz-reference-site .vz-live-review-card .vz-review-stars{
+ font-size:1.18rem;letter-spacing:.08em;color:var(--acc);line-height:1;
+}
+.vz-reference-site .vz-live-review-viewport.is-manual,
+.vz-reference-site .vz-live-reviews-viewport.is-manual{
+ overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;
+ mask-image:none;-webkit-mask-image:none;
+ scroll-snap-type:x proximity;
+}
+.vz-reference-site .vz-live-reviews-viewport.is-manual .vz-live-review-card{scroll-snap-align:start}
+.vz-reference-site .vz-live-reviews-viewport.is-manual .vz-live-reviews-track{
+ animation:none!important;transform:none!important;will-change:auto;
+}
+@media(max-width:600px){
+ .vz-reference-site :is(#vz-home-reviews-track,#vz-live-reviews-track) .vz-live-review-card{min-height:248px}
+ .vz-reference-site .vz-live-review-card .vz-review-byline{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-motion=full]) .vz-reference-site :is(#vz-home-reviews-track,#vz-live-reviews-track){
+  animation:none!important;transform:none!important;will-change:auto;
+ }
+}

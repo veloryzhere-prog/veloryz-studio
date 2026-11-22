@@ -62,46 +62,83 @@ function kineticHeading(){
 function createHomeReviews(){
  const track=$('#vz-home-reviews-track'),label=$('#vz-home-reviews-status'),button=$('#vz-home-reviews-pause');
  if(!track)return;
- const makeCard=(r,k)=>{
-  const card=el('article','vz-live-review-card');
-  const kicker=el('span','vz-review-kicker',k);
-  const title=el('p','vz-review-quote',r.quote);
-  const foot=el('div','vz-review-byline');
-  foot.append(el('span','',r.name));
-  if(r.link){const a=el('a','','See reviews ↗');a.href=r.link;foot.append(a);}
-  card.append(kicker,title,foot);return card;
+ label?.setAttribute('role','status');
+ const publishedDate=raw=>{
+  const d=raw?new Date(raw):null;
+  if(!d||Number.isNaN(d.getTime()))return '';
+  return d.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
  };
- function render(rows){
+ const makeCard=(review)=>{
+  const card=el('article','vz-live-review-card');
+  const kicker=el('span','vz-review-kicker',review.kicker);
+  card.append(kicker);
+  if(review.rating){
+   const stars=el('span','vz-review-stars','★'.repeat(review.rating)+'☆'.repeat(5-review.rating));
+   stars.setAttribute('aria-label',review.rating+' out of 5 stars');
+   card.append(stars);
+  }
+  const quote=el('p','vz-review-quote',review.quote);
+  const details=el('div','vz-review-details');
+  if(review.service)details.append(el('span','',short(review.service,44)));
+  if(review.date)details.append(el('span','',review.date));
+  const footer=el('div','vz-review-byline');
+  footer.append(el('span','',review.name));
+  const link=el('a','',review.rating?'Read full review ↗':'Share your thoughts ↗');
+  link.href=review.link;footer.append(link);
+  card.append(quote);
+  if(details.childElementCount)card.append(details);
+  card.append(footer);return card;
+ };
+ let manuallyPaused=false;
+ const sync=()=>{
+  const full=!reduce();
+  track.classList.toggle('is-paused',manuallyPaused||!full);
+  if(button){
+   button.disabled=!full;
+   button.setAttribute('aria-pressed',String(manuallyPaused||!full));
+   button.textContent=!full?'Reduced motion':manuallyPaused?'Resume motion ▶':'Pause motion ‖';
+  }
+ };
+ function render(rows,summary={}){
   const authentic=rows.filter(x=>x&&typeof x.body==='string'&&x.body.trim());
-  const list=authentic.length?authentic.map(r=>({
-   quote:short((r.headline?String(r.headline)+' — ':'')+r.body,270),
-   name:short(r.display_name||'Community member',60),
-   kicker:'REAL CUSTOMER REVIEW · '+Math.max(1,Math.min(5,Number(r.rating)||5))+'/5',
-   link:'/reviews.html'
-  })):[
-   {quote:'Add your experience to the conversation.',name:'An invitation, not a customer review',kicker:'COMMUNITY / YOUR VOICE',link:'/reviews.html#share-review'},
-   {quote:'What worked well? What could we do better?',name:'Honest feedback helps the studio improve',kicker:'COMMUNITY / FEEDBACK',link:'/reviews.html#share-review'},
-   {quote:'Real people. Real stories. No invented testimonials.',name:'Reviews appear after owner approval',kicker:'COMMUNITY / TRUST',link:'/reviews.html#share-review'}
+  const records=authentic.length?authentic.map(r=>{
+   const rating=Math.max(1,Math.min(5,Number(r.rating)||1));
+   return {
+    quote:short((r.headline?String(r.headline)+' — ':'')+r.body,220),
+    name:short(r.display_name||'Community member',60),
+    kicker:'PUBLISHED VISITOR REVIEW',
+    rating,service:r.service||'',date:publishedDate(r.created_at),link:'/reviews.html'
+   };
+  }):[
+   {quote:'Your perspective can help shape what we make next.',name:'An invitation, not a customer review',kicker:'COMMUNITY / JOIN THE CONVERSATION',link:'/reviews.html#share-review'},
+   {quote:'Tell us what worked well—and what could be clearer.',name:'Share your experience',kicker:'COMMUNITY / THOUGHTFUL FEEDBACK',link:'/reviews.html#share-review'},
+   {quote:'Every published review is submitted by a visitor and approved before appearing here.',name:'VELORYZ review policy',kicker:'COMMUNITY / TRANSPARENCY',link:'/reviews.html#share-review'}
   ];
-  const count=authentic.length;label.textContent=count?count+' approved visitor '+(count===1?'review':'reviews'):'Community / No approved reviews yet';
-  const group=el('div','vz-live-review-group');const cardWidth=410;
-  const minimum=Math.max(3,Math.ceil((innerWidth+cardWidth)/(list.length*cardWidth)));
-  for(let repetition=0;repetition<minimum;repetition++)for(const card of list)group.append(makeCard(card,card.kicker));
+  const total=Math.max(authentic.length,Number(summary.count)||0);
+  const avg=Number(summary.average);
+  if(label)label.textContent=authentic.length?
+   total+' published visitor '+(total===1?'review':'reviews')+(avg>0&&avg<=5?' · '+avg.toFixed(1)+' / 5 average rating':''):
+   'Community / No approved reviews yet';
+  const group=el('div','vz-live-review-group');
+  const estimatedWidth=Math.max(285,Math.min(430,innerWidth*.31))+18;
+  const repetitions=Math.max(2,Math.ceil((innerWidth+estimatedWidth)/(records.length*estimatedWidth)));
+  for(let pass=0;pass<repetitions;pass++)for(const r of records){
+   const card=makeCard(r);
+   if(pass>0){card.setAttribute('aria-hidden','true');card.inert=true;}
+   group.append(card);
+  }
   const twin=group.cloneNode(true);twin.setAttribute('aria-hidden','true');twin.inert=true;
   track.replaceChildren(group,twin);
-  track.style.setProperty('--vz-review-speed',Math.max(26,group.children.length*6.8)+'s');
-  refresh();
- }
- let userPaused=false;
- function refresh(){
-  const paused=userPaused||reduce();
-  track.classList.toggle('is-paused',paused);
-  if(button){button.setAttribute('aria-pressed',String(paused));button.textContent=reduce()?'Reduced motion':userPaused?'Resume motion ▶':'Pause motion ‖';button.disabled=reduce();}
+  track.style.setProperty('--vz-review-speed',Math.max(22,Math.round(group.childElementCount*7))+'s');
+  sync();
  }
  render([]);
- fetch('/api/reviews',{credentials:'same-origin',cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Review API unavailable');return r.json();}).then(data=>render(Array.isArray(data.reviews)?data.reviews:[])).catch(()=>{label.textContent='Community / Review service temporarily unavailable';});
- button?.addEventListener('click',()=>{userPaused=!userPaused;refresh();});
- window.StudioMotion?.addEventListener?.('change',refresh);
+ fetch('/api/reviews',{credentials:'same-origin',cache:'no-store'})
+  .then(r=>{if(!r.ok)throw Error('Review API unavailable');return r.json();})
+  .then(data=>render(Array.isArray(data.reviews)?data.reviews:[],data.summary||{}))
+  .catch(()=>{if(label)label.textContent='Community / Review service temporarily unavailable';});
+ button?.addEventListener('click',()=>{manuallyPaused=!manuallyPaused;sync();});
+ window.StudioMotion?.addEventListener?.('change',sync);
 }
 function allDocumentation(){
  const holder=$('#vz-complete-doc-groups'),summary=$('#vz-total-docs');
