@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import siteShell from './site-shell';
 import {renderIndexableBody} from './search-index-content';
+import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import { renderReviewsPage } from './reviews-page';
@@ -115,8 +116,10 @@ export async function GET(request: Request) {
  html=pageMetadata(html,{title:pageTitle,description,url:base+htmlDocumentPath(normal),image:base+'/assets/brand/official/VELORYZ-Social-1200x630.jpg',site:data.state.site});
  // The initial HTML must already contain readable page content. Once JS loads
  // the SPA replaces this same <main>, preserving the existing motion experience.
- if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
-   '<main id="main" tabindex="-1">'+renderIndexableBody(normal,pages[normal],description)+'</main>');
+ const actualDocument=isDocumentPath(normal)?renderHtmlDocument(normal,docEdits):'';
+  if(actualDocument)html=html.replace('</head>','<link rel="stylesheet" href="/docs-server.css"></head>');
+  if(known)html=html.replace('<main id="main" tabindex="-1"></main>',
+   '<main id="main" tabindex="-1">'+(actualDocument||renderIndexableBody(normal,pages[normal],description))+'</main>');
  // Use the actual official brand name; misspellings are explained in visible
  // Studio content, never masquerading as registered alternate organisation names.
  if(known){
