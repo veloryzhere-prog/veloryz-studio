@@ -136,7 +136,7 @@ function policyPage(type){
  if(type==='privacy'){
   body=header('01 / DATA & TRUST','Privacy policy.','How personal information is handled when you visit VELORYZ Studio, make an enquiry, use a client workspace or contact the team.')+
   section('Who operates this website',[
-  'VELORYZ Studio, Bokaro, Jharkhand, India, operates this website and its project enquiry process. For enquiries about the identity of the legal controller or its authorised representative, contact '+contact+'. A statutory data protection officer is not asserted unless actually appointed.',
+  'VELORYZ Studio, India, operates this website and its project enquiry process. For enquiries about the identity of the legal controller or its authorised representative, contact '+contact+'. A statutory data protection officer is not asserted unless actually appointed.',
   'For privacy requests, email '+contact+' with “Privacy Request” as the subject. Please do not include passwords, invitation codes or payment card data.'])+
   section('What we collect and why',[
   'On a normal visit, the hosting provider may process technical request information necessary to deliver and protect the site. We also use strictly necessary browser storage for security, consent preferences, the private session and user-requested forms.',
@@ -186,7 +186,7 @@ function policyPage(type){
   'Public AI replies may be incorrect and should be verified for consequential design, technical, financial or legal decisions.'])+
   section('External services and contact',[
   'External services, payment providers, messaging apps and third-party links are subject to their own terms. The studio cannot guarantee availability or conduct on external websites.',
-  'Questions about these website terms or service agreements: '+contact+'. Operating location: Bokaro, Jharkhand, India.']);
+  'Questions about these website terms or service agreements: '+contact+'. Operating location: India.']);
  }else{
   const state=choice();
   body=header('04 / CONTROLS & REQUESTS','Your privacy choices.','Change optional storage, export your local decision, or contact the studio about personal-data rights.')+
@@ -196,7 +196,7 @@ function policyPage(type){
   'This website implementation does not currently enable third-party behavioural advertising or selling of project records. If VELORYZ introduces sale or cross-context sharing covered by applicable law, it must offer an effective opt-out and honour eligible Global Privacy Control signals.',
   'If you believe your information is being sold or shared, or you want access, correction or deletion, contact '+legalLink('mailto:veloryz.here@gmail.com?subject=VELORYZ%20Privacy%20Request%20-%20Do%20Not%20Sell%20or%20Share','Do not sell or share my personal information')+'. Include the request type, but do not send login codes or sensitive identity evidence in the initial email.']);
  }
- return '<div class="vz-legal-page container">'+nav()+body+'<footer class="vz-legal-footer">VELORYZ Studio · Bokaro, Jharkhand, India · '+legalLink('mailto:veloryz.here@gmail.com','Contact privacy team')+'</footer></div>';
+ return '<div class="vz-legal-page container">'+nav()+body+'<footer class="vz-legal-footer">VELORYZ Studio · India · '+legalLink('mailto:veloryz.here@gmail.com','Contact privacy team')+'</footer></div>';
 }
 document.addEventListener('click',e=>{
  if(e.target.closest('[data-vz-export-choice]')){
