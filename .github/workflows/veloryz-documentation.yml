@@ -64,6 +64,8 @@ jobs:
         run: node tools/test-admin-detail.mjs
       - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle
         run: node tools/test-client-lifecycle.mjs
+      - name: Verify cookie consent, policies and crash-safe admin runtime
+        run: node tools/test-privacy-compliance.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
