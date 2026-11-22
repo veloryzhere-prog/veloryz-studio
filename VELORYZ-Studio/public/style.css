@@ -10,3 +10,17 @@
 .motion-paused .sculpture,.motion-paused .ticker-track,.motion-paused .orbit-lines ellipse,.motion-paused .founder-ring,.motion-paused .founder-dot{animation-play-state:paused!important}
 
 @media(max-width:600px){.header-status{display:none}.brand-name small{white-space:nowrap;font-size:7px;letter-spacing:2.1px}}
+
+/* Indexable first-response content. Once the SPA hydrates it replaces this main
+   markup, so these rules never alter the interactive home/other page designs. */
+.seo-first-details{max-width:1180px;padding-block:clamp(44px,6vw,100px)}
+.seo-first-details h2{font-size:clamp(26px,3vw,44px);line-height:1.2;letter-spacing:-.035em;margin:24px 0 18px}
+.seo-first-details p{max-width:890px;color:var(--muted);font-size:clamp(14px,1.3vw,17px);line-height:1.75;margin-bottom:15px}
+.seo-first-links{display:flex;flex-wrap:wrap;align-items:center;gap:11px;margin:24px 0}
+.seo-first-links a{border:1px solid var(--line);border-radius:999px;padding:12px 16px;background:var(--paper);font-size:13px}
+.seo-first-links a:hover,.seo-first-links a:focus-visible{border-color:var(--ink);background:var(--soft)}
+.seo-first-route{padding-block:clamp(60px,10vw,130px);min-height:280px}
+.seo-first-route h1{font-size:clamp(37px,7vw,80px);line-height:1.06;letter-spacing:-.065em;margin:18px 0}
+.seo-first-route .page-intro-bottom{max-width:880px}
+.seo-first-hero .hero-art img{object-fit:contain;max-width:100%;height:auto;margin:auto}
+@media(max-width:720px){.seo-first-details{padding-block:45px}.seo-first-links{gap:8px}.seo-first-links a{width:100%;text-align:center}}

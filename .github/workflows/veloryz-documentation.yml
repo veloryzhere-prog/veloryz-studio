@@ -72,6 +72,8 @@ jobs:
         run: node tools/test-premium-mail-handoff.mjs
       - name: Verify exact Google Search Console HTML ownership token
         run: node tools/test-google-verification.mjs
+      - name: Verify indexable HTML, brand schema and canonical sitemap URLs
+        run: node tools/test-search-indexability.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application

@@ -15,6 +15,6 @@ export function pageMetadata(html:string,{title,description,url,image,site}:{tit
  html=html.replace(/<title>[\s\S]*?<\/title>/,()=>`<title>${escape(title)}</title>`).replace(/<meta name="description" content="[^"]*">/,()=>`<meta name="description" content="${escape(description)}">`).replace(/<link rel="canonical" href="[^"]*">/,()=>`<link rel="canonical" href="${escape(url)}">`);
  for(const [key,value]of Object.entries(attrs))html=html.replace(new RegExp(`<meta property="${key}" content="[^"]*">`),()=>`<meta property="${key}" content="${escape(value)}">`);
  html=html.replace('</head>',`<meta property="og:image" content="${escape(image)}"><meta name="twitter:card" content="summary_large_image"></head>`);
- const schema={"@context":"https://schema.org","@type":"Organization",name:site.name,url:new URL(url).origin,email:site.email,telephone:'+'+site.phone,founder:{'@type':'Person',name:site.founderName}};
+ const schema={"@context":"https://schema.org","@type":"Organization","@id":new URL(url).origin+"/#organization",name:"VELORYZ Studio",alternateName:"VELORYZ",url:new URL(url).origin+"/",logo:new URL("/assets/brand/official/Main-Transparent.webp",url).href,email:site.email,telephone:"+"+site.phone};
  return html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/,()=>`<script type="application/ld+json">${JSON.stringify(schema).replace(/</g,'\\u003c')}</script>`);
 }

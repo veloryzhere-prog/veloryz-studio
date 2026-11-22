@@ -6,4 +6,4 @@ export function publicOrigin(configured,requestOrigin,development=false){
  if(!['https:','http:'].includes(url.protocol)||url.username||url.password||url.search||url.hash||url.pathname!=='/'||(!development&&url.protocol!=='https:'))throw new Error('PUBLIC_SITE_URL must be an HTTPS origin without a path, query, or credentials.');
  return url.origin;
 }
-export function canonicalPath(path){const clean=String(path||'/').split(/[?#]/)[0].replace(/\/+$/,'');return clean&&clean!=='/'?clean+'/':'/';}
+export function canonicalPath(path){const clean=String(path||'/').split(/[?#]/)[0].replace(/\/+$/,'');return clean&&clean!=='/'?clean:'/';}
