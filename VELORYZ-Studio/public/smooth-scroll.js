@@ -25,7 +25,7 @@
   '.mobile-nav','.admin-sidebar','.admin-panel-scroll',
   '.kb-service-toc','.kb-search-results','.kb-command-results',
   '.docs-sidebar','.studio-docs-sidebar','.studio-docs-toc',
-  '.vz-chat-log','.vz-chat-side','.v4-ai-messages','.chat-scroll-area',
+  '.vz-chat-log','.vz-chat-side','.v4-ai-messages','.chat-scroll-area','.cp-conversation','.cp-chat-card',
   '.chat-log','.expert-chat','.chat-personas','.v4-steps','.v4-step-nav',
   '.booking-main','.campaign-design','[role="log"]',
   '[data-lenis-prevent]','[data-lenis-prevent-wheel]',
