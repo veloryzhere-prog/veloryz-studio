@@ -3,8 +3,8 @@
 let cpProjects=[],cpWorkspace=null,cpSelected='',cpLoaded=false,cpLoading=false,cpError='';
 let cpSearch='',cpFilter='all',cpTab='overview',cpEditMode='',cpEditingItem='',cpItemType='milestone';
 let cpNewDraft=null,cpNewProject=false,cpBusy=false,cpSequence=0;
-let cpDelivery={configured:false,provider:'Gmail SMTP · TLS 465'},cpDeliveryLoaded=false,cpEmailEvents=[];
-const cpReq=(path,options={})=>api('/api/client-portal/admin'+path,options);
+let cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'},cpDeliveryLoaded=false,cpDeliveryError='',cpEmailEvents=[];
+const cpReq=async(path,options={})=>{try{return await api('/api/client-portal/admin'+path,options);}catch(error){if(error.status===503)throw Object.assign(new Error('The Client Portal service is unavailable (HTTP 503). The project records have not been deleted. Please retry after backend recovery.'),{status:503});if(error.status===401||error.status===403)throw Object.assign(new Error('Your Studio owner session is not authorized for Client Management. Sign in again or check the owner connection.'),{status:error.status});throw error;}};
 const cpE=v=>E(v??'');
 const cpStatuses=[['planning','Planning'],['in-progress','In progress'],['in-review','In review'],['on-hold','On hold'],['launched','Launched']];
 const cpPhases=['Discover','Define','Design','Develop','Review','Launch'];
@@ -38,9 +38,17 @@ function cpSummaryNumbers(){
  '<div class="cpm-metric"><span>On hold</span><strong>'+onHold+'</strong><small>Awaiting a restart</small></div></div>';
 }
 function cpDeliveryPill(){
- return '<div class="cpm-email-status '+(cpDelivery.configured?'is-ready':'is-manual')+'"><span class="cpm-email-dot"></span><div><strong>'+(cpDelivery.configured?'VELORYZ Gmail connection configured':'Gmail delivery not configured yet')+'</strong>'+
- '<small>'+(cpDelivery.configured?'Sender: VELORYZ &lt;veloryz.here@gmail.com&gt;. Provider acceptance is recorded but inbox receipt is not guaranteed.':'Private invitation codes and project PDFs still work. Automatic email needs the Gmail App Password on the server.')+'</small></div>'+
- '<details><summary>Gmail setup</summary><p>Use <strong>veloryz.here@gmail.com</strong>. Enable 2-Step Verification, generate a Google App Password, then save <code>VELORYZ_GMAIL_APP_PASSWORD</code> in your Supabase Edge Function secrets. This integration uses encrypted SMTP port 465 and does not use Resend. Do not enter Gmail passwords in published CMS content.</p><button type="button" class="admin-button secondary" data-cpm="test-email">Send test email to studio mailbox ↗</button><p>A test is only sent after you click. It does not issue or renew client access.</p></details></div>';
+ const verified=cpDelivery.configured===true,missing=cpDelivery.configured===false,unknown=!verified&&!missing;
+ const heading=verified?'Gmail App Password detected by the running backend':
+  missing?'Active Client Portal reports no Gmail credential':'Could not verify Gmail configuration';
+ const detail=verified?'The deployed Supabase function sees the private Gmail secret. This does not verify SMTP connectivity or inbox delivery; use the owner-only test below.':
+  missing?'The active function does not see VELORYZ_GMAIL_APP_PASSWORD. Verify the exact secret name and project in Supabase, then refresh this page.':
+  'The status request failed, so we cannot tell whether Gmail is configured. '+(cpDeliveryError?'Reason: '+cpDeliveryError:'Retry after the client backend is available.');
+ return '<section class="cpm-email-status '+(verified?'is-ready':unknown?'is-warning':'is-manual')+'" aria-live="polite">'+
+ '<span class="cpm-email-dot"></span><div><strong>'+cpE(heading)+'</strong><small>'+cpE(detail)+'</small>'+
+ '<div class="cpm-mail-setup-actions"><button type="button" class="admin-button secondary" data-cpm="refresh-mail">Recheck Gmail status ↻</button>'+
+ '<button type="button" class="admin-button secondary" data-cpm="test-email" '+(missing?'disabled title="Gmail credential must be available to the running backend"':'')+'>Send test email to studio mailbox ↗</button></div>'+
+ '<details><summary>How sender verification works</summary><p>VELORYZ sends from veloryz.here@gmail.com through encrypted Gmail SMTP. Supabase must expose <code>VELORYZ_GMAIL_APP_PASSWORD</code> to the deployed <code>veloryz-client-portal-api</code> function. The setup is checked by the backend, not inferred from failed network requests. The test email is sent only after you choose the button and does not alter any client project.</p></details></div></section>';
 }
 function cpEditor(p={}){
  const edit=!!p.id&&!cpNewProject;
@@ -135,8 +143,7 @@ function cpDetail(){
 }
 function clientPortalAdmin(){
  return '<div class="cpm-shell">'+heading('Private workspace / Client management','Manage your clients','Find a client, make an update and send an invitation—everything in one organized place. Changes here save directly to the private portal.','<div class="cpm-heading-actions"><a href="#/enquiries" class="admin-button secondary">Project requests ↗</a><button type="button" class="admin-button" data-cpm="new">+ New client</button></div>')+
- (cpError?'<div class="cpm-error" role="alert"><strong>Could not load the client workspace.</strong><p>'+cpE(cpError)+'</p><button class="admin-button secondary" data-cpm="reload">Try again</button></div>':'')+
- (!cpLoaded?'<div class="cpm-loading" role="status">Opening your client directory…</div>':
+ (cpError?'<section class="cpm-error" role="alert"><strong>Client directory connection failed — project count not verified.</strong><p>'+cpE(cpError)+'</p><p>Your existing client workspaces are not deleted. Reload after the backend has recovered.</p><button class="admin-button secondary" data-cpm="reload">Retry loading clients ↻</button><a class="admin-button secondary" href="#/enquiries">Open project requests ↗</a></section>':!cpLoaded?'<div class="cpm-loading" role="status">Opening your client directory…</div>':
  cpSummaryNumbers()+cpDeliveryPill()+
  '<details class="cpm-how-it-works"><summary>How client invitations work <span>3 easy steps</span></summary><div><p><strong>1.</strong> Create a project or import a project request from the enquiry inbox.</p><p><strong>2.</strong> Add milestones and deliverables, then select <em>Issue invitation</em>.</p><p><strong>3.</strong> The unique code is valid once, expires in 14 days and opens only that client workspace.</p></div></details>'+
  '<div class="cpm-layout"><aside class="cpm-directory"><div class="cpm-directory-head"><div><strong>Client directory</strong><small id="cpm-directory-count">'+cpMatches().length+' projects</small></div><button data-cpm="reload" class="cpm-refresh" title="Refresh clients" aria-label="Refresh clients">↻</button></div>'+
@@ -151,10 +158,11 @@ async function cpLoad(selected=null){
  const desired=selected===null?cpSelected:selected;
  try{
   const work=cpReq('/projects'+(desired?'?id='+encodeURIComponent(desired):''));
-  const delivery=!cpDeliveryLoaded?cpReq('/delivery').catch(()=>({configured:false,provider:'Gmail SMTP · TLS 465'})):Promise.resolve(cpDelivery);
-  const [result,emailInfo]=await Promise.all([work,delivery]);
+  const delivery=!cpDeliveryLoaded?cpReq('/delivery').then(data=>({ok:true,data}),error=>({ok:false,error})):Promise.resolve({ok:true,data:cpDelivery});
+  const [result,emailResult]=await Promise.all([work,delivery]);
   if(seq!==cpSequence)return;
-  cpDelivery=emailInfo;cpDeliveryLoaded=true;cpProjects=result.projects||[];
+  if(emailResult.ok){cpDelivery=emailResult.data;cpDeliveryLoaded=true;cpDeliveryError='';}else{cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'};cpDeliveryError=String(emailResult.error?.message||'Connection unavailable');cpDeliveryLoaded=false;}
+  cpProjects=result.projects||[];
    if(desired){cpReq('/mail-events?project_id='+encodeURIComponent(desired)).then(data=>{if(cpSelected===desired&&seq===cpSequence){cpEmailEvents=data.events||[];const box=document.querySelector('[data-cpm-email-audit]');if(box)box.innerHTML=cpEmailAudit();}}).catch(()=>{});}
   const available=cpProjects.some(p=>p.id===desired);
   cpSelected=available?desired:(cpProjects[0]?.id||'');
@@ -168,7 +176,7 @@ async function cpLoad(selected=null){
   if(section==='client-portal')render();
  }catch(e){
   if(seq!==cpSequence)return;
-  cpLoaded=true;cpError=e.message;cpWorkspace=null;
+  cpLoaded=true;cpError=String(e.message||'The client directory request failed.');cpDeliveryLoaded=false;cpDeliveryError=cpError;cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'};cpWorkspace=null;
   if(section==='client-portal')render();
  }finally{if(seq===cpSequence)cpLoading=false;}
 }
@@ -234,7 +242,8 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-cpm]');if(!b)return;
  const action=b.dataset.cpm;
  if(action==='from-enquiry'){cpImportedEnquiry(b.dataset.id);return;}
- if(action==='test-email'){if(!cpDelivery.configured){toast('Gmail SMTP is not configured. Add the app password as a Supabase Edge secret first.');return;}b.disabled=true;try{const result=await cpReq('/test-email',{method:'POST',body:'{}'});toast(result.message||'Gmail connection test accepted by SMTP.');}catch(error){toast('Gmail test failed: '+error.message);}finally{b.disabled=false;}return;}
+ if(action==='refresh-mail'){cpDeliveryLoaded=false;cpDeliveryError='';await cpLoad(cpSelected);return;}
+ if(action==='test-email'){if(cpDelivery.configured===false){toast('The active function does not detect the Gmail credential. Recheck after configuring the secret.');return;}b.disabled=true;try{const result=await cpReq('/test-email',{method:'POST',body:'{}'});toast(result.message||'Gmail connection test accepted by SMTP.');}catch(error){toast('Gmail test failed: '+error.message);}finally{b.disabled=false;}return;}
  if(section!=='client-portal')return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
@@ -244,7 +253,7 @@ document.addEventListener('click',async e=>{
  if(action==='add-item'){cpEditItem(b.dataset.type||'milestone');return;}
  if(action==='edit-item'){const item=(cpWorkspace?.items||[]).find(i=>i.id===b.dataset.id);if(item)cpEditItem(item.type,item.id);return;}
  if(action==='select'){if(cpBusy)return;cpSelected=b.dataset.id;cpNewProject=false;cpEditMode='';cpTab='overview';cpWorkspace=null;const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML='<div class="cpm-loading">Opening selected client…</div>';cpRefreshDirectory();await cpLoad(cpSelected);return;}
- if(action==='reload'){if(cpBusy)return;cpLoaded=false;await cpLoad();return;}
+ if(action==='reload'){if(cpBusy)return;cpLoaded=false;cpDeliveryLoaded=false;await cpLoad();return;}
  if(action==='starter-plan'){
   if(cpBusy||!cpWorkspace?.project)return;
   const starter=[
