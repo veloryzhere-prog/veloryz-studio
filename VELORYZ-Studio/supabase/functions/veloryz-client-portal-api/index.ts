@@ -1,5 +1,5 @@
 import {mailStatus,sendGmailMail,invitationMail,messageMail,brandEmail,makeProjectSummaryPdf} from './gmail-lifecycle.ts';
-import {acceptClientProject} from './client-lifecycle.ts';
+import {acceptClientProject,sendAcceptanceSummary} from './client-lifecycle.ts';
 // Isolated VELORYZ client portal API. Never import a service key into the browser.
 const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
@@ -160,7 +160,18 @@ async function main(req){
   }
   if(action==="/admin/accept"&&req.method==="POST"){
    const v=await payload(req);
-   return send(await acceptClientProject(id(v.enquiry_id),now,db,dbBatch,issueInvite,logDelivery));
+   return send(await acceptClientProject(id(v.enquiry_id),now,db,dbBatch,logDelivery));
+  }
+  if(action==="/admin/send-summary"&&req.method==="POST"){
+   const v=await payload(req),pid=id(v.project_id);
+   const project=(await db("getProjectFull",pid))[0];
+   if(!project)fail("Client project not found.",404);
+   if(!project.client_email)fail("The project has no valid client email.",422);
+   const items=(await db("listItems",pid)).filter(i=>i.type==="milestone");
+   const delivery=await sendAcceptanceSummary(project,items,logDelivery);
+   return send({ok:delivery.status==="sent",recipient:project.client_email,
+    reference:project.request_reference||"",delivery,
+    summary_pdf:"/api/client-portal/admin/projects/"+pid+"/summary"});
   }
   if(action==="/admin/mail-events"&&req.method==="GET"){
    return send({events:await db("listEmailEvents",id(u.searchParams.get("project_id")))});
