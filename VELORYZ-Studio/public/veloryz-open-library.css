@@ -73,3 +73,11 @@
 @media(max-width:1100px){.vz-open-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vz-open-hero{grid-template-columns:1fr}.vz-open-feature-art{max-height:380px;min-height:350px}.vz-open-feature-watermark{right:20px}}
 @media(max-width:720px){.vz-open-library{padding-bottom:70px}.vz-open-hero{padding-top:45px}.vz-open-hero h1{font-size:clamp(3.7rem,14vw,6rem)}.vz-open-hero-foot{margin-top:24px}.vz-open-feature-art{min-height:350px}.vz-open-section-head{display:block}.vz-open-section-head h2{font-size:clamp(2.8rem,9vw,4.5rem)}.vz-open-toolbar{grid-template-columns:1fr}.vz-open-status{gap:6px}.vz-open-status button{padding:9px;font-size:10px}.vz-open-grid{grid-template-columns:1fr}.vz-open-art{min-height:255px;aspect-ratio:1.5}.vz-open-result-bar>span:last-child,.vz-open-bar>span:last-child{display:none}.vz-open-info p{min-height:0}}
 @media(prefers-reduced-motion:reduce){.vz-open-library *, .vz-open-library *::before, .vz-open-library *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Source badges, creator handoff art and homepage first-party showcase */
+.vz-open-kind.original{border-color:#8f79a5;color:#533b73;background:#f0e8f6}
+.v4-veloryz-concept-art{display:flex;align-items:flex-end;justify-content:flex-start;min-height:190px;width:100%;padding:22px;color:#251e2c;background:radial-gradient(circle at 77% 28%,#ccafdb,#f6e9dd 65%);font-size:27px;line-height:1.12;font-weight:850;letter-spacing:-.075em}
+.vz-os-feature-cover{display:flex;flex-direction:column;min-height:220px;justify-content:space-between;padding:20px;background:linear-gradient(135deg,hsl(var(--os-hue),45%,86%),#f3f0e7);border-radius:12px}
+.vz-os-feature-cover>span,.vz-os-feature-cover>small{font-size:9px;letter-spacing:.17em}
+.vz-os-feature-cover strong{font-size:clamp(23px,3vw,40px);line-height:1.05;letter-spacing:-.08em;max-width:290px}
+.vz-home-featured .vz-home-create-link{display:inline-flex;margin-top:10px;padding:10px 12px;border:1px solid currentColor;border-radius:100px;font-size:12px}
