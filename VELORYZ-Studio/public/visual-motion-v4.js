@@ -25,12 +25,12 @@
   const frameKey='visual-motion-v4';
   const requestFrame=callback=>clock?clock.request(frameKey,callback):requestAnimationFrame(callback);
   const cancelFrame=()=>clock?clock.cancel(frameKey):cancelAnimationFrame(frame);
-  let previousTime = 0;
-  let cameraY = window.scrollY;
+  // Lenis owns scroll interpolation. Visuals read the final scroll position;
+  // do not apply a second bespoke camera easing to the same wheel input.
   const economical=matchMedia('(max-width:850px), (pointer:coarse)').matches||(navigator.deviceMemory||8)<=4;
-  // Aim for 30fps on touch/low-memory devices and up to 50fps on desktops.
-  // Reduced motion and background tabs are handled by full().
-  const frameBudget=economical?32:19;
+  // Presentation throttles to 30fps on low-end devices and 60fps on capable desktops.
+  // Never schedule frames when no real scroll changes are happening.
+  const frameBudget=economical?32:16;
   let lastPaint=0;
 
   let backdrop;
@@ -70,17 +70,13 @@
     if(lastPaint&&time-lastPaint<frameBudget){schedule();return;}
     lastPaint=time;
     const actualY = window.scrollY;
-    const elapsed = previousTime ? Math.min(64, time - previousTime) : 16;
-    previousTime = time;
-    cameraY += (actualY - cameraY) * (1 - Math.exp(-elapsed / 75));
-    if (Math.abs(actualY - cameraY) < 0.15) cameraY = actualY;
     const height = Math.max(1, window.innerHeight);
     // Measure stationary scene boxes first. Only descendants use the resulting transforms.
     const values = [];
     for (const el of visible) {
       const bounds = el.getBoundingClientRect();
       if (bounds.height === 0) continue;
-      const top = bounds.top + actualY - cameraY;
+      const top = bounds.top;
       const progress = Math.max(0, Math.min(1, (height - top) / (height + bounds.height)));
       const story=el.classList.contains('assembly-sequence');
       const assembly=story?Math.max(0,Math.min(1,(height*.32-top)/Math.max(1,bounds.height-height*.53))):null;
@@ -88,8 +84,8 @@
     }
 
     if (backdrop) {
-      backdrop.style.setProperty('--vz-flow-y', (Math.sin(cameraY / 490) * 19).toFixed(2) + 'px');
-      backdrop.style.setProperty('--vz-flow-reverse', (Math.cos(cameraY / 620) * -23).toFixed(2) + 'px');
+      backdrop.style.setProperty('--vz-flow-y', (Math.sin(actualY / 490) * 9).toFixed(2) + 'px');
+      backdrop.style.setProperty('--vz-flow-reverse', (Math.cos(actualY / 620) * -11).toFixed(2) + 'px');
     }
     for (const [el, progress, assembly] of values) {
       if(assembly!==null && (el.assemblyProgress===undefined||Math.abs(assembly-el.assemblyProgress)>.006)){
@@ -106,8 +102,7 @@
         el.style.setProperty('--vz-in-view',((progress * 2 - 1) * 14).toFixed(2) + 'px');
       }
     }
-    if (cameraY !== actualY) schedule();
-    else previousTime = 0;
+    // All scroll-linked layers are driven by the shared Lenis/scroll event.
   }
 
   const hasObserver = typeof IntersectionObserver === 'function';
@@ -152,16 +147,13 @@
         entrances.observe(el);
       }
     }
-    cameraY = window.scrollY;
     schedule();
   }
 
   function sync() {
     cancelFrame();
     frame = 0;
-    previousTime = 0;
     lastPaint = 0;
-    cameraY = window.scrollY;
     if (full()) { schedule(); return; }
     if (document.hidden) return;
     backdrop?.style.removeProperty('--vz-flow-y');
