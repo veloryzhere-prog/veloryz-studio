@@ -23,31 +23,71 @@ type DocumentMilestone={title:string;details:string;phase?:string;due_date?:stri
 export function mailIsConfigured(){return !!(Deno.env.get("VELORYZ_GMAIL_APP_PASSWORD")||"").trim()}
 export function mailStatus(){return {provider:"Gmail SMTP · TLS 465",from:MAILBOX,senderName:"VELORYZ",configured:mailIsConfigured(),requires:"Gmail 2-Step Verification and a Google App Password stored as VELORYZ_GMAIL_APP_PASSWORD in Supabase function secrets. No Resend service is used."}}
 export function brandEmail(kicker:string,title:string,inner:string,cta?:{text:string;url:string}){
- const button=cta?'<div style="padding:16px 0 23px"><a href="'+htmlEsc(cta.url)+'" style="background:#29253d;color:#fff;display:inline-block;border-radius:11px;text-decoration:none;font-weight:700;font-size:14px;padding:16px 24px">'+htmlEsc(cta.text)+' &rarr;</a></div>':"";
+ const action=cta?'<table cellpadding="0" cellspacing="0" role="presentation" style="margin:27px 0 8px"><tr><td bgcolor="#25283b" style="border-radius:5px"><a href="'+htmlEsc(cta.url)+'" style="display:inline-block;padding:16px 25px;font:700 12px Arial,Helvetica,sans-serif;letter-spacing:.8px;color:#ffffff;text-decoration:none">'+htmlEsc(cta.text)+' &rarr;</a></td></tr></table>':"";
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'+
- '<body style="margin:0;background:#f3f0f4;font-family:Arial,Helvetica,sans-serif;color:#25253c"><table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="background:#f3f0f4"><tr><td align="center" style="padding:32px 14px">'+
- '<table width="100%" role="presentation" style="max-width:620px;border-collapse:collapse;background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 10px 40px #11102411">'+
- '<tr><td style="background:#1e1d35;padding:29px 35px;color:#fff"><div style="font-size:24px;font-weight:900;letter-spacing:3px">VELORYZ<span style="color:#ed98c5">.</span></div><div style="font-size:10px;letter-spacing:2px;color:#cbbad2;margin-top:7px">PRIVATE PROJECT CORRESPONDENCE &bull; STUDIO TEAM</div></td></tr>'+
- '<tr><td style="padding:35px 36px"><div style="font-size:10px;letter-spacing:2.3px;font-weight:800;color:#99618d">'+htmlEsc(kicker)+'</div><h1 style="font-size:30px;line-height:1.18;letter-spacing:-1px;margin:14px 0 20px">'+htmlEsc(title)+'</h1>'+inner+button+
- '<p style="margin:25px 0 0;border-top:1px solid #ece8ed;padding-top:22px;color:#6f7484;font-size:12px;line-height:1.8">This message is about a VELORYZ project you requested. For questions, reply to this email or visit <a style="color:#97609d" href="'+BASE+'/contact/">'+BASE+'/contact/</a>.</p></td></tr>'+
- '<tr><td style="padding:20px 36px;background:#f9f7fa;border-top:1px solid #ece8f0;color:#767486;font-size:10px;line-height:1.7">VELORYZ STUDIO &bull; A THOUGHTFUL WAY TO BUILD<br>Sent by VELORYZ &lt;'+MAILBOX+'&gt; &bull; '+BASE+'</td></tr></table></td></tr></table></body></html>';
+ '<body style="margin:0;padding:0;background:#eeeff1;color:#262b3c;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%">'+
+ '<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="background:#eeeff1;border-collapse:collapse"><tr><td align="center" style="padding:28px 12px">'+
+ '<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="width:100%;max-width:650px;background:#ffffff;border-collapse:collapse;border:1px solid #e2e3e6">'+
+ '<tr><td bgcolor="#25283b" style="padding:28px 34px 24px;border-bottom:5px solid #be879f">'+
+ '<table role="presentation" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="padding-right:15px;font-size:39px;line-height:1;font-weight:900;color:#ca8fa9;font-family:Arial,Helvetica,sans-serif">V</td>'+
+ '<td valign="middle"><div style="font:bold 26px Arial,Helvetica,sans-serif;letter-spacing:3px;color:#ffffff">VELORYZ</div><div style="font:700 9px Arial,Helvetica,sans-serif;letter-spacing:2.5px;color:#c5c7d4;margin-top:7px">INDEPENDENT CREATIVE &amp; TECHNOLOGY STUDIO</div></td></tr></table>'+
+ '<div style="font:700 10px Arial,Helvetica,sans-serif;letter-spacing:1.7px;color:#edd8e0;margin-top:29px">'+htmlEsc(kicker.toUpperCase())+'</div></td></tr>'+
+ '<tr><td style="padding:35px 35px 22px"><h1 style="font:700 30px/1.2 Arial,Helvetica,sans-serif;letter-spacing:-1px;color:#22263b;margin:0 0 24px">'+htmlEsc(title)+'</h1>'+
+ '<div style="font:400 13px/1.9 Arial,Helvetica,sans-serif;color:#4f576b">'+inner+'</div>'+action+
+ '<div style="margin-top:36px;border-top:1px solid #dfe1e5;padding-top:20px;font:11px/1.9 Arial,Helvetica,sans-serif;color:#687082">'+
+ 'This is a private project-related notification from the VELORYZ Studio team. Verify project decisions in your private workspace. Please never share passwords, payment credentials or one-time access codes.'+
+ '<div style="margin-top:12px"><a href="'+BASE+'/contact/" style="color:#555578;text-decoration:underline">Contact the studio</a> &nbsp;&nbsp; <a href="'+BASE+'/privacy/" style="color:#555578;text-decoration:underline">Privacy</a> &nbsp;&nbsp; <a href="'+BASE+'/terms/" style="color:#555578;text-decoration:underline">Terms</a></div></div>'+
+ '</td></tr><tr><td style="padding:19px 35px;background:#f4f4f5;border-top:1px solid #dfe1e5">'+
+ '<div style="font:700 11px Arial,Helvetica,sans-serif;letter-spacing:1.2px;color:#272b42">VELORYZ STUDIO</div>'+
+ '<div style="font:11px/1.7 Arial,Helvetica,sans-serif;color:#717787;margin-top:8px">VELORYZ &lt;'+MAILBOX+'&gt;<br>'+BASE+' &nbsp; | &nbsp; Bokaro, Jharkhand, India</div>'+
+ '</td></tr></table></td></tr></table></body></html>';
 }
 const p=(content:string)=>'<p style="color:#52546b;font-size:14px;line-height:1.85;margin:10px 0 18px">'+content+'</p>';
 const box=(label:string,value:string)=>'<div style="border:1px solid #e8e3ed;border-radius:10px;background:#fbf9fd;padding:13px 16px;margin:9px 0"><div style="color:#8b7195;font-size:9px;font-weight:750;letter-spacing:1.3px">'+htmlEsc(label)+'</div><div style="color:#2b2b40;font-size:13px;font-weight:650;margin-top:7px;overflow-wrap:anywhere">'+htmlEsc(value)+'</div></div>';
+const emailSection=(name:string,inner:string)=>'<div style="border-top:2px solid #303349;margin:31px 0 12px;padding-top:13px;font-size:10px;font-weight:800;letter-spacing:1.7px;color:#3b435a">'+htmlEsc(name)+'</div>'+inner;
+const link=(url:string,label:string)=>'<a href="'+htmlEsc(url)+'" style="color:#4b567c;text-decoration:underline;overflow-wrap:anywhere">'+htmlEsc(label)+'</a>';
+const briefLinks=(text:string)=>[...new Set((text.match(/https?:\/\/[^\s<>"']+/gi)||[]).map(x=>x.replace(/[),.;!?]+$/,"")))].slice(0,35);
 export function acceptanceMail(project:ProjectEmail,items:DocumentMilestone[]){
- const reference=project.request_reference||"Project confirmed";
- const html=brandEmail("YOUR PROJECT / ACCEPTED","Let's bring your idea to life.",
-  p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>,")+
-  p("The VELORYZ Studio team has accepted your project request. We have opened a private project workspace for <strong>"+htmlEsc(project.title)+"</strong> and prepared your detailed project summary as an attached PDF.")+
-  box("PROJECT REFERENCE",reference)+box("PROJECT NAME",project.title)+box("STARTING PHASE",project.phase||"Discover")+
-  box("NEXT STEP",project.next_step||"Our team will review the brief and agree the scope and next milestones.")+
-  p("<strong>Your attached project summary includes:</strong> original request details, planning notes, timeline, initial milestone roadmap, important project links, communication rules and client access instructions. An indicative budget is not a binding quote.")+
-  p("Your separate private invitation email includes the one-time access code. Never share that code. Once you activate the portal you can follow updates, review deliverables, request changes and message the team."),
-  {text:"Visit your Client Portal",url:BASE+"/client/"});
- return {subject:"VELORYZ Studio | Your project has been accepted | "+reference,html,
-  text:"Hello "+project.client_name+",\n\nVELORYZ Studio has accepted your project: "+project.title+".\nReference: "+reference+
-  "\nStarting phase: "+(project.phase||"Discover")+"\nNext step: "+(project.next_step||"Our team will confirm scope and milestones.")+
-  "\n\nYour complete project summary PDF is attached. A separate one-time portal invitation follows.\nClient Portal: "+BASE+"/client/\n\nReply to this email for questions.\nVELORYZ Studio"};
+ const reference=project.request_reference||"VELORYZ Project";
+ const original=plain(project.brief_details||project.summary||"Full scope to be confirmed.",50000);
+ const links=briefLinks(original);
+ const roadmap=items.map((m,i)=>'<tr><td style="padding:12px 9px 12px 2px;border-bottom:1px solid #e7e7ea;font:bold 12px Arial;color:#a26f89;vertical-align:top">'+String(i+1).padStart(2,"0")+'</td>'+
+  '<td style="padding:12px 2px;border-bottom:1px solid #e7e7ea;vertical-align:top"><div style="font:bold 13px Arial;color:#2e3144">'+htmlEsc(m.title)+'</div><div style="font:11px/1.7 Arial;color:#697182;margin-top:5px">'+htmlEsc(m.details||"")+'</div></td></tr>').join("");
+ const studioLinks=[
+  ["Private Client Portal",BASE+"/client/"],
+  ["Studio website",BASE+"/"],
+  ["Portfolio & work",BASE+"/work/"],
+  ["Services",BASE+"/services/"],
+  ["Designs & templates",BASE+"/design/"],
+  ["Documentation",BASE+"/docs/"],
+  ["Contact team",BASE+"/contact/"]
+ ];
+ const html=brandEmail("ORDER / ACCEPTED • PRIVATE CLIENT COPY","Project accepted. Here is your complete order.",
+  p("Hello <strong>"+htmlEsc(project.client_name)+"</strong>, the VELORYZ team has accepted your project request. Your client workspace has been created. Below is the full order overview; a separately attached <strong>one-page VELORYZ PDF</strong> records the key details and links.")+
+  '<div style="background:#f3f1f3;border-left:4px solid #b7839d;padding:19px 22px;margin:23px 0"><div style="font:bold 9px Arial;color:#777080;letter-spacing:1.6px">OFFICIAL ORDER REFERENCE</div><div style="font:bold 20px/1.4 Arial;color:#2b2d43;margin-top:7px;overflow-wrap:anywhere">'+htmlEsc(reference)+'</div></div>'+
+  box("PROJECT TITLE",project.title)+box("CLIENT",project.client_name+" / "+project.client_email)+
+  box("ACCEPTED",date(project.accepted_at||new Date().toISOString()))+
+  box("PHASE / STATUS",(project.phase||"Discover")+" / "+(project.status||"planning"))+
+  box("NEXT ACTION",project.next_step||"Confirm the final scope and milestones with the studio.")+
+  emailSection("01 / ALL INFORMATION FROM YOUR ORIGINAL REQUEST",
+   '<p style="color:#697182;font-size:11px">The complete submitted request is preserved below, including the original preferences, budget, contact information, project description, reference URLs and comments.</p>'+
+   '<div style="padding:17px;background:#fafafa;border:1px solid #e4e4e7;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.85 Arial;color:#353c50">'+htmlEsc(original)+'</div>')+
+  emailSection("02 / DELIVERY ROADMAP",'<table width="100%" role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse">'+roadmap+'</table>')+
+  emailSection("03 / REFERENCE LINKS PROVIDED",links.length?links.map((url,i)=>'<p style="margin:8px 0;font-size:12px">'+(i+1)+'. '+link(url,url)+'</p>').join(""):p("No reference URLs were included in your initial request."))+
+  emailSection("04 / STUDIO & PROJECT LINKS",studioLinks.map(([name,url])=>'<div style="padding:5px 0;font-size:12px">'+link(url,name)+" — "+htmlEsc(url)+'</div>').join(""))+
+  emailSection("05 / CLIENT PORTAL ACCESS",p("Your private invitation has <strong>not</strong> been sent by this message. The studio owner will separately click <strong>Send Client Invitation</strong> in Client Management. That independent email will contain the one-time access code, official project reference, portal link and activation instructions."))+
+  p("This is an acceptance and project-order summary, not a payment receipt or final fixed-price contract. Final deliverables, commercial terms and dates depend on your separate written agreement."),
+  {text:"View client portal information",url:BASE+"/client/"});
+ return {subject:"VELORYZ | ACCEPTED · Complete project order · "+reference,html,
+  text:"VELORYZ STUDIO / PROJECT ACCEPTED\n\nHello "+project.client_name+
+   "\nProject: "+project.title+"\nOfficial reference: "+reference+"\nClient: "+project.client_name+" / "+project.client_email+
+   "\nAccepted: "+date(project.accepted_at||new Date().toISOString())+
+   "\nPhase: "+(project.phase||"Discover")+"\nNext step: "+(project.next_step||"Studio team will confirm scope.")+
+   "\n\nFULL ORIGINAL ORDER / REQUEST:\n"+original+
+   "\n\nROADMAP:\n"+items.map((m,i)=>(i+1)+". "+m.title+" / "+(m.details||"")).join("\n")+
+   "\n\nSUBMITTED LINKS:\n"+links.join("\n")+
+   "\n\nSTUDIO LINKS:\n"+studioLinks.map(([label,url])=>label+": "+url).join("\n")+
+   "\n\nYour private invitation will be emailed separately when the studio owner issues access in Client Management. This email does not contain an access code.\n\nAn official one-page PDF is attached.\n\nVELORYZ STUDIO"};
 }
 export function invitationMail(project:ProjectEmail,code:string,url:string,expires:string){
  const html=brandEmail("PRIVATE CLIENT ACCESS / ONE-TIME","Your private workspace awaits.",
@@ -91,7 +131,7 @@ async function createPdf(project:ProjectEmail,items:DocumentMilestone[]){
  px.drawText("ISSUED "+normalPdf(date(project.accepted_at||new Date().toISOString())).toUpperCase(),{x:388,y:735,size:7.6,font:bold,color:C.white});
  px.drawText("ONE-SHEET  /  A4",{x:455,y:812,size:7.2,font:regular,color:color("#d2cad4")});
  function fitted(value:unknown,x:number,y:number,max:number,size=10,weight=false,ink=C.ink){
-  let t=normalPdf(value).replace(/\s+/g," ").trim()||"—";
+  let t=normalPdf(value).replace(/\s+/g," ").trim()||"-";
   const ft=weight?bold:regular;
   while(t.length>1&&ft.widthOfTextAtSize(t,size)>max)t=t.slice(0,-2);
   if(t!==normalPdf(value).replace(/\s+/g," ").trim())t=t.replace(/[ .,;:-]+$/,"")+"...";
