@@ -1,0 +1,40 @@
+/* Full supplied reference experience: HTML semantics, brand assets, animation and real-data wiring. */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const read=path=>fs.readFileSync(new URL('../'+path,import.meta.url),'utf8');
+const encoded=read('lib/claude-reference-shell.ts');
+assert.match(encoded,/^\/\*\*[\s\S]*?\*\/\s*export default "/);
+const html=JSON.parse(encoded.slice(encoded.indexOf('export default ')+15).trim().replace(/;$/,''));
+const styles=read('public/claude-reference-experience.css');
+const adapter=read('public/claude-reference-enhancements.js');
+const page=read('lib/page-handler.ts');
+const security=read('lib/response-security.ts');
+assert(html.startsWith('<!DOCTYPE html>'),'Keep supplied full HTML document');
+for(const name of ['home','services','work','design','process','pricing','studio','reviews','contact','create','client']){
+ assert(html.includes('data-p="'+name+'"'),'Missing supplied full UI page: '+name);
+ assert(html.includes('href="#'+name+'"'),'Missing original circular-menu route: '+name);
+}
+assert(html.includes('id="mn"')&&html.includes('id="curt"'),'Full-screen circular menu and route curtain remain');
+assert(html.includes('clip-path:circle('),'Menu and opening circular masks must remain');
+assert(html.includes('id="bigV"')&&html.includes("brand/veloryz-mark.svg"),'Original V logo replaces sample SVG without losing motion');
+assert(html.includes('id="load"')&&html.includes('id="skip"'),'Skippable fullscreen introduction remains');
+assert(html.includes('id="hzs"')&&html.includes('id="trk"'),'Scroll-controlled service panels remain');
+assert(html.includes('id="libs"')&&html.includes('id="decks"'),'Scroll-controlled showcase decks remain');
+assert(html.includes('id="vz-live-reviews-track"'),'Continuous review ribbon exists');
+assert(html.includes('href="/create/"')&&html.includes('href="/client/"'),'Real project creator and private client portal remain linked');
+assert(html.includes('href="/privacy/choices/"'),'Privacy controls must lead to a working route');
+const scripts=[...html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);
+assert.equal(scripts.length,1,'Visual reference must maintain its original single scroll clock');
+assert.doesNotThrow(()=>new vm.Script(scripts[0]),'Exact reference scroll and page controller must parse');
+assert.doesNotThrow(()=>new vm.Script(adapter),'Published-data adapter must parse');
+assert(adapter.includes("fetch('/api/reviews'"),'Published reviews must come from the real public API');
+assert(adapter.includes('published.catalogue')&&adapter.includes('published.services'),'Real design catalogue and service copy must be used');
+assert(adapter.includes('['+"'Happy'"+','+"'Creative direction'"),'Five registered AI agents must replace demo names');
+assert(!adapter.includes('Madherchod AI'),'Removed persona must not be restored');
+assert(styles.includes('@keyframes vz-ref-reviews-roll')&&styles.includes('linear infinite'),'Reviews must slide automatically and loop');
+assert(styles.includes('prefers-reduced-motion'),'Reduced-motion controls must be respected');
+assert(page.includes('claudeReferenceShell')&&page.includes("get('classic')!=='1'"),'Reference root and original fallback route must both exist');
+assert(page.includes('serialise(appearance)'),'Only encoded published CMS data may reach inline scripts');
+assert(security.includes('https://fonts.gstatic.com')&&security.includes('https://fonts.googleapis.com'),'Fraunces and Inter Tight typography must be allowed under CSP');
+console.log('PASS: original reference menu, page curtains, scroll animation, official V, CMS, reviews, privacy, AI and legacy workflows.');

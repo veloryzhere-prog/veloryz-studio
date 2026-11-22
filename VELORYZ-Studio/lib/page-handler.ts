@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import siteShell from './site-shell';
+import claudeReferenceShell from './claude-reference-shell';
 import {renderIndexableBody} from './search-index-content';
 import {renderHtmlDocument} from './docs-server-html';
 import clientPortalShell from './client-portal-shell';
@@ -19,6 +20,29 @@ const htmlDocumentPath=(p:string)=>{
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ // Owner-supplied editorial reference experience becomes the public homepage.
+ // Keep the existing SPA available with ?classic=1 for account/project workflows.
+ // All admin, documentation, client, pricing and creator endpoints retain their original handlers.
+ if(path==='/'&&new URL(request.url).searchParams.get('classic')!=='1'){
+  const published=await getPublished(env,request.url);
+  const site=published.state.site;
+  const appearance={
+   site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description},
+   services:(published.state.services||[]).filter((x:any)=>x&&x.name).slice(0,5)
+    .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
+   catalogue:(published.state.catalogue||[]).filter((x:any)=>x&&x.enabled!==false).slice(0,4)
+    .map((x:any)=>({id:x.id,name:x.name,description:x.description,category:x.category,author:x.author,
+     image:x.image,cover:x.cover,price:x.price,enabled:x.enabled}))
+  };
+  const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV);
+  let html=claudeReferenceShell.replace('</head>',`<script>window.VELORYZ_REFERENCE_DATA=${serialise(appearance)};</script></head>`);
+  html=pageMetadata(html,{title:'VELORYZ Studio | Website Design, Development & Creative Technology',
+   description:'VELORYZ Studio builds thoughtful websites, visual identities, digital products and creative motion experiences.',
+   url:base+'/',image:base+'/assets/brand/official/Main-Transparent.webp',site});
+  const response=secureHtml(html,200);
+  if(!import.meta.env.DEV&&base!==new URL(request.url).origin)response.headers.set('X-Robots-Tag','noindex, nofollow');
+  return response;
+ }
  // Google Search Console ownership token. Respond with the uploaded file's exact
  // content before the site CMS / SPA fallback, without redirecting or wrapping it.
  if(path==='/googleb802659617480672.html')return new Response('google-site-verification: googleb802659617480672.html',{
