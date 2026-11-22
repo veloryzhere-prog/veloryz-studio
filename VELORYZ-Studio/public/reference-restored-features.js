@@ -49,7 +49,7 @@ function chrome(){
  const footer=$('footer');if(footer){
   const more=el('div','vz-reference-support-links');
   const links=[['Book a consultation','/book/'],['Quick create project','/create/'],['Our studio and team','/studio/'],['Motion Playground','/motion/'],['Client Portal','/client/'],['Contact us','/contact/'],['Help Centre','/help/studio/'],['Support AI','/support/'],['Terms','/terms/'],['Cookies','/cookies/'],['Privacy','/privacy/']];
-  links.forEach(([txt,url])=>{const a=el('a','',txt+' ↗');a.href=url;more.append(a);});
+  links.forEach(([txt,url])=>{const a=el('a','',txt+' ↗');a.href=url;if(txt==='Quick create project')a.dataset.vzQuickCreate='footer';more.append(a);});
   footer.querySelector('.row')?.after(more);
  }
 }
