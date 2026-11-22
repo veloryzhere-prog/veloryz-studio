@@ -36,7 +36,7 @@ for(const asset of assets){
 }
 assert(ai.includes('headerPortrait')&&ai.includes("portrait.src=a.avatar")&&ai.includes('img.src=agent.avatar'),'Portraits must appear for current persona, selector tabs and launcher');
 assert(portraitsCSS.includes('vz-ai-current-avatar')&&portraitsCSS.includes('vz-studio-agent-portrait'),'Portrait UI must be fully styled');
-assert(heritage.includes('http://www.w3.org/2000/svg')&&heritage.includes('viewBox')&&heritage.includes('wa-symbol'),'Bottom-right WhatsApp icon must be SVG rather than a dot');
+assert(heritage.includes('http://www.w3.org/2000/svg')&&heritage.includes("setAttribute('viewBox','0 0 16 16')")&&heritage.includes('vz-wa-uiverse-icon'),'Bottom-right Uiverse WhatsApp SVG must remain integrated');
 assert(heritage.includes('wa.me/919955326740'),'Preserve existing contact destination');
 assert(hero.includes('getContext(\'2d\'')&&hero.includes('pointermove')&&hero.includes('requestAnimationFrame'),'Original pointer-response particle system is required');
 assert(hero.includes('IntersectionObserver')&&hero.includes("document.hidden")&&hero.includes("StudioMotion"),'Hero animation must respect viewport, tab visibility and motion choices');
