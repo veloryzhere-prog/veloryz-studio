@@ -68,14 +68,15 @@ class VeloryzFrameCut extends HTMLElement {
   listen(document,'studio:brand-intro-complete',sync);
   listen(window,'pageshow',sync);
   listen(window.StudioMotion,'change',sync);
-  reduced.addEventListener?.('change',sync);
+  const onReducedChange=()=>{if(reduced.matches){manual=false;held=true;}sync();};
+  reduced.addEventListener?.('change',onReducedChange);
   network?.addEventListener?.('change',sync);
   label();
   sync();
   this.disposeScene=()=>{
    controller.abort();
    observer?.disconnect();
-   reduced.removeEventListener?.('change',sync);
+   reduced.removeEventListener?.('change',onReducedChange);
    network?.removeEventListener?.('change',sync);
    pause();
    video.removeAttribute('src');
