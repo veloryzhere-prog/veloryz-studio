@@ -35,6 +35,7 @@ export function findDesignPreview(id:string,cms:any[]=[]):DesignPreviewRecord|nu
 export function renderDesignPreview(design:DesignPreviewRecord):string{
  const record=JSON.stringify(design).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
  const title=escape(design.name),category=escape(design.category);
+ const createUrl=design.originalTemplateId?'/create/?template='+encodeURIComponent(design.originalTemplateId):'/create/?reference='+encodeURIComponent(design.id);
  const desc=escape(design.description).slice(0,320);
  return '<!doctype html><html lang="en"><head><meta charset="utf-8">'+
  '<meta name="viewport" content="width=device-width, initial-scale=1">'+
