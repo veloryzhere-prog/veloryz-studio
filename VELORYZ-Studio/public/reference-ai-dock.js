@@ -95,5 +95,6 @@ form.addEventListener('submit',async e=>{
   log.scrollTop=log.scrollHeight;
  }
 });
+window.VeloryzReferenceAI={open(agentId='happy'){if(agents.some(x=>x.id===agentId))active=agentId;open(true);},close(){open(false);}};
 renderHistory();
 })();
