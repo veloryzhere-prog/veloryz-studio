@@ -25,6 +25,7 @@ const sources=Object.freeze([
  row('route','Contact the VELORYZ team','Human team support for project proposals, current project questions and special requests.','/contact/','No AI can send a message or issue an invitation for a visitor.',3),
  row('route','Browse designs and templates','Explore design directions and project concepts. Confirm rights and exact scope with the studio; referenced third-party designs are not automatically VELORYZ-owned.','/design/','Published starting figures are indicative, not firm quotes.',3),
  row('route','Services','Public service areas including digital design, identity, development and creative motion.','/services/','Services are scoped to each individual request.',2),
+ row('route','Pricing and custom quotes','Public starting figures are indicative and can change with features, licensing, content, integrations and agreed delivery scope. A final quote is prepared by the team.','/pricing/','Review published price ranges and create a project brief for an individual proposal.',4),
  row('route','Book a discovery call','Submit a preferred meeting time and project idea. Booking is a request until confirmed by staff.','/book/','Do not claim confirmed appointment times.',2),
  row('route','Project payments','Review published payment information. Never ask for PINs, passwords, card details or OTPs.','/payments/','Only staff can verify that a particular invoice or milestone is paid.',2)
 ].filter(x=>x.path));
