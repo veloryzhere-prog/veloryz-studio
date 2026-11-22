@@ -10,7 +10,8 @@ export default "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf
  if(!link)return;
  if(hide&&document.activeElement===link)$('#mb')?.focus();
  link.hidden=hide;
- link.style.setProperty('display',hide?'none':'inline-flex','important');
+ if(hide)link.style.setProperty('display','none','important');
+ else link.style.removeProperty('display');
  link.setAttribute('aria-hidden',hide?'true':'false');
  if(hide)link.setAttribute('tabindex','-1');
  else link.removeAttribute('tabindex');
