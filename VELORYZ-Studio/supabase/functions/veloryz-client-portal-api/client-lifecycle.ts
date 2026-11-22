@@ -22,43 +22,60 @@ async function stableUUID(enquiry:string,kind:string){
 type Db=(name:string,...values:unknown[])=>Promise<any[]>;
 type Batch=(statements:unknown[][])=>Promise<any[]>;
 type Delivery=(project:any,kind:string,recipient:string,outcome:any)=>Promise<void>;
-type Invitation=(project:any,now:string,revoke:boolean)=>Promise<any>;
+function originalRequestSnapshot(request:any){
+ const entries:[string,unknown][]=[
+  ['Submission reference',request.reference],['Submitted at',request.created_at],
+  ['Client name',request.name],['Client email',request.email],
+  ['Phone',request.phone],['Company / organization',request.company],
+  ['Requested service',request.service],['Indicative budget preference',request.budget],
+  ['Preferred consultation date',request.preferred_date],
+  ['Preferred consultation time',request.preferred_time],
+  ['Original request and every submitted field',request.message]
+ ];
+ return entries.filter(([,v])=>v!==undefined&&v!==null&&String(v).trim()).map(([key,value])=>key+': '+String(value)).join('\n\n');
+}
+export async function sendAcceptanceSummary(project:any,items:any[],recordDelivery:Delivery){
+ let result:any;
+ try{
+  const bytes=await makeProjectSummaryPdf(project,items);
+  result=await sendGmailMail({to:project.client_email,...acceptanceMail(project,items),
+   attachments:[{filename:"VELORYZ-"+String(project.request_reference||"Project").replace(/[^a-z0-9-]/gi,"").slice(0,48)+"-Order-Summary.pdf",
+    bytes,contentType:"application/pdf"}]});
+  result.pdf_generated=true;
+ }catch{
+  result={status:"failed",pdf_generated:false,message:"The project remains accepted, but its detailed PDF could not be attached. Review the project record and retry the summary email from Client Management."};
+ }
+ await recordDelivery(project,"acceptance",project.client_email,result);
+ return result;
+}
 export async function acceptClientProject(
- enquiryId:string,now:string,db:Db,batch:Batch,issueInvitation:Invitation,recordDelivery:Delivery
+ enquiryId:string,now:string,db:Db,batch:Batch,recordDelivery:Delivery
 ){
  if(!v4id.test(String(enquiryId)))throw Object.assign(new Error("Invalid project request identifier."),{status:400});
  const request=(await db("getEnquiry",enquiryId))[0];
  if(!request)throw Object.assign(new Error("Project request not found. Refresh the inbox."),{status:404});
  if(request.status==="closed")throw Object.assign(new Error("Closed requests must be reopened before acceptance."),{status:409});
  const prev=(await db("findAccepted",enquiryId))[0];
- if(prev)return {ok:true,already_accepted:true,id:prev.id,project:prev,message:"Already accepted. No duplicate email or invitation was issued."};
+ if(prev)return {ok:true,already_accepted:true,id:prev.id,project:(await db('getProjectFull',prev.id))[0],message:'This request is already accepted. No duplicate summary or invitation was sent; use Client Management to retry a failed acceptance email or issue access.'};
  const info=creatorFields(request.message),category=shorten(info.Project||request.service||"Creative",90);
  const starter=shorten(info.Template||"",65),title=shorten(starter&&starter.toLowerCase()!=="custom"?starter+" / "+category:category+" project",160);
  const summary=shorten((info.Goal?info.Goal+"\n\n":"")+String(request.message||""),1700);
  const plan="Review the entire original brief with our team, confirm scope and agree milestones before production.";
- const id=crypto.randomUUID(),values=[id,request.name,request.email,title,summary,"planning","Discover",0,"",plan,now,now,request.id,request.reference,request.message,now];
+ const id=crypto.randomUUID(),fullBrief=originalRequestSnapshot(request),values=[id,request.name,request.email,title,summary,"planning","Discover",0,"",plan,now,now,request.id,request.reference,fullBrief,now];
  const statements:any[][]=[["acceptProject",...values]];
  for(const [name,detail] of milestones)statements.push([
   "addMilestoneOnce",await stableUUID(request.id,name),id,"milestone",name,detail,"upcoming","","",now,now
  ]);
  statements.push(["linkEnquiry",request.id,now,now,request.id]);
  const outcome=await batch(statements);
- const project=(await db("findAccepted",enquiryId))[0];
- if(!project)throw Object.assign(new Error("The accepted project could not be linked."),{status:503});
+ const linked=(await db("findAccepted",enquiryId))[0];
+ if(!linked)throw Object.assign(new Error("The accepted project could not be linked."),{status:503});
+ const project=(await db('getProjectFull',linked.id))[0];
  if(!(outcome[0]?.results?.length))return {ok:true,already_accepted:true,id:project.id,project,message:"Already accepted in another session. No duplicate invitation was issued."};
  const items=(await db("listItems",project.id)).filter((x:any)=>x.type==="milestone");
- let acceptance:any;
- try{
-  const pdf=await makeProjectSummaryPdf(project,items);
-  acceptance=await sendGmailMail({
-   to:project.client_email,...acceptanceMail(project,items),
-   attachments:[{filename:"VELORYZ-"+String(project.request_reference||"Project").replace(/[^a-z0-9-]/gi,"").slice(0,48)+"-Summary.pdf",bytes:pdf,contentType:"application/pdf"}]
-  });
- }catch{
-  acceptance={status:"failed",message:"The project was accepted, but the acceptance PDF/email could not be prepared. Download the summary in Client Management."};
- }
- await recordDelivery(project,"acceptance",project.client_email,acceptance);
- const invitation=await issueInvitation(project,now,false);
+ const acceptance=await sendAcceptanceSummary(project,items,recordDelivery);
+ // Never issue an invitation during acceptance. Access must be approved and sent
+ // explicitly by the owner from Client Management in a separate action.
  return {ok:true,already_accepted:false,id:project.id,project,reference:project.request_reference,
-  acceptance_delivery:acceptance,invitation};
+  acceptance_delivery:acceptance,invitation_pending:true};
 }
