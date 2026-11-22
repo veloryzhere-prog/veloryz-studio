@@ -49,7 +49,7 @@ export async function GET(request: Request) {
  const base=publicOrigin(env.PUBLIC_SITE_URL||env.STUDIO_PUBLIC_URL,new URL(request.url).origin,import.meta.env.DEV),normal=path.replace(/\/+$/,'')||'/';
  const slug=(value:string)=>value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
  const people=[{name:data.state.site.founderName,slug:slug(data.state.site.founderName)},...data.state.team];
- const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/sitemap':'Site map','/help/assistant':'Help Centre AI','/support':'Contact Support AI','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
+ const pages:Record<string,string>={'/':'Built to be remembered.','/docs':'Documentation & studio guides','/sitemap':'Site map','/help/assistant':'Help Centre AI','/support':'Contact Support AI','/design':'Design library','/designs':'Design library','/pricing':'Pricing & scope','/create':'Create a project','/book':'Book a discovery call','/developers':'APIs & integrations','/veloryz':'The VELORYZ platform','/payments':'Project payments','/work':'Selected work','/journey':'From idea to experience','/motion':'Interactive motion playground','/process':'Project process & delivery standards','/services':'Design & development services','/studio':'The studio','/velori':'VELORI — A VELORYZ product','/contact':'Contact the studio','/privacy':'Privacy policy','/cookies':'Cookie and storage policy','/terms':'Website terms','/privacy/choices':'Privacy rights and preferences','/teamjob':'The studio collective','/concepts/aurel':'AUREL Atelier — Studio concept','/concepts/orbit':'ORBIT Workspace — Studio concept','/concepts/forme':'FORME Objects — Studio concept'};
  for(const person of people)pages['/teamjob/'+(person.slug||slug(person.name))]=person.name+' — Studio profile';
  for(const document of ["overview","experience","architecture","project-ai","pricing","client-portal","privacy","copyright","quality","troubleshooting","communications"])pages['/docs/'+document]='VELORYZ '+document.replace(/-/g,' ')+' documentation';
  for(const [docPath,docTitle] of Object.entries(studioDocsRoutes))pages[docPath]=docTitle;
@@ -83,7 +83,11 @@ export async function GET(request: Request) {
   '/book':'Request a VELORYZ Studio discovery conversation. Preferred dates are requests until the studio confirms availability.',
   '/contact':'Contact VELORYZ Studio in Bokaro, Jharkhand, about websites, design, software and digital projects.',
   '/developers':'Explore practical web development, APIs, integration design, protected systems and backend delivery approaches.',
-  '/studio':'Meet VELORYZ Studio and explore its design, development and creative direction team.'
+  '/studio':'Meet VELORYZ Studio and explore its design, development and creative direction team.',
+  '/privacy':'Read how VELORYZ Studio uses enquiry, client, AI and browser preference data, and how to request correction or deletion.',
+  '/cookies':'Review necessary and optional browser storage, cookie choices and consent settings.',
+  '/terms':'Read VELORYZ Studio website terms, project agreement principles and cancellation and refund guidance.',
+  '/privacy/choices':'Manage browser consent, local measurement and privacy access, deletion and opt-out requests.'
  };
  const known=Object.hasOwn(pages,normal);
  let html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise(data)};</script>${match}`);
