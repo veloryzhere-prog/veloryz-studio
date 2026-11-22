@@ -1,4 +1,4 @@
-import {mailStatus,sendGmailMail,invitationMail,messageMail,makeProjectSummaryPdf} from './gmail-lifecycle.ts';
+import {mailStatus,sendGmailMail,invitationMail,messageMail,brandEmail,makeProjectSummaryPdf} from './gmail-lifecycle.ts';
 import {acceptClientProject} from './client-lifecycle.ts';
 // Isolated VELORYZ client portal API. Never import a service key into the browser.
 const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
@@ -163,6 +163,15 @@ async function main(req){
   if(action==="/admin/projects"&&req.method==="GET"){
    const projects=await db("listProjectsFull"),pid=u.searchParams.get("id");
    return send(pid?{projects,workspace:await view(id(pid))}:{projects});
+  }
+  if(action==="/admin/test-email"&&req.method==="POST"){
+   if(!mailStatus().configured)return send({ok:false,status:"not-configured",message:"Configure VELORYZ_GMAIL_APP_PASSWORD in Supabase first."},503);
+   const recipient="veloryz.here@gmail.com";
+   const outcome=await sendGmailMail({to:recipient,subject:"VELORYZ | Gmail sender connection test",
+    html:brandEmail("PRIVATE OWNER DELIVERY TEST","Gmail SMTP is reachable.",
+     '<p style="line-height:1.7;color:#596079">Your VELORYZ Studio Gmail test was accepted by the SMTP provider. This is an owner-only test; no client record or invitation was changed.</p>'),
+    text:"VELORYZ Studio Gmail test message. This is an owner-only delivery test and has no client effect."});
+   return send({ok:outcome.status==="sent",...outcome},outcome.status==="sent"?200:503);
   }
   if(action==="/admin/accept"&&req.method==="POST"){
    const v=await payload(req);
