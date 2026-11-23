@@ -166,6 +166,7 @@ body.vz-r20 .v4-welcome-meta span{
  font-size:10px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:#786c73;
 }
 .v4-r20-roadmap b{display:block;color:#272126;font-size:12px;margin-bottom:4px}
+.v4-r20-session-note{margin:14px 0 22px!important;font-size:11px!important;line-height:1.55!important;color:#756a70!important;max-width:58ch}
 body.vz-r20 .v4-question-wrap{max-width:1180px;margin-inline:auto}
 body.vz-r20 .v4-side-number{opacity:.36}
 body.vz-r20 .v4-top-progress span:last-child{font-variant-numeric:tabular-nums}
@@ -223,6 +224,8 @@ body.vz-r20 .vz-chat-page-head{
  border-bottom:1px solid rgba(45,36,41,.14);padding-bottom:22px;margin-bottom:28px;
 }
 body.vz-r20 .vz-chat-page-head h1{max-width:18ch}
+.vz-r20-assistant-context{margin:-8px 0 28px;padding:14px 16px;border-left:2px solid #e2482b;background:rgba(226,72,43,.055);font-size:12px;line-height:1.65;color:rgba(39,31,35,.72);max-width:74ch}
+body.vz-r20-assistant-route #main{background:linear-gradient(180deg,rgba(246,239,232,.76),transparent 420px)}
 
 /* Footer density on SPA pages. */
 body.vz-r20 .footer-directory{
