@@ -19,8 +19,24 @@
   document.body.prepend(skip);
  }
 
- const route=location.pathname.replace(/\/index\.html$/,'/').replace(/\.html$/,'/').replace(/\/+$/,'/')||'/';
- body.dataset.vzRoute=route;
+ const normalRoute=()=>location.pathname.replace(/\/index\.html$/,'/').replace(/\.html$/,'/').replace(/\/+$/,'/')||'/';
+ let route=normalRoute();
+ const syncRoute=()=>{
+  route=normalRoute();
+  body.dataset.vzRoute=route;
+  body.classList.toggle('vz-r20-assistant-route',route==='/help/assistant/'||route==='/support/');
+  body.classList.toggle('vz-r20-docs-route',route==='/docs/'||route.startsWith('/docs/')||route.startsWith('/help/studio/'));
+  requestAnimationFrame(()=>{
+   const chat=document.querySelector('.vz-chat-page');
+   if(chat&&!chat.querySelector('.vz-r20-assistant-context')){
+    const note=document.createElement('p');
+    note.className='vz-r20-assistant-context';
+    note.textContent=route==='/support/'?'A focused support workspace for project questions, technical help and direct next steps.':'A focused help workspace. Choose the assistant that matches what you need, or return to the main site at any time.';
+    chat.querySelector('.vz-chat-page-head')?.after(note);
+   }
+  });
+ };
+ syncRoute();
 
  let frame=0;
  const syncScroll=()=>{
@@ -70,7 +86,7 @@
   });
  };
  requestAnimationFrame(markImages);
- addEventListener('studio:route',()=>requestAnimationFrame(markImages));
+ addEventListener('studio:route',()=>{syncRoute();requestAnimationFrame(markImages)});
 
  // Idle prefetch only the highest-intent internal routes.
  const prefetch=()=>{
