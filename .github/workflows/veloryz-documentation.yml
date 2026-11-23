@@ -106,6 +106,8 @@ jobs:
         run: node tools/test-silk-ui-2026.mjs
       - name: Verify R17 brand flow, logo fade and smoother shared scrolling
         run: node tools/test-brand-flow-r17.mjs
+      - name: Verify R20 complete public experience upgrade
+        run: node tools/test-public-experience-r20.mjs
       - name: Validate Cloudflare Worker identity and build runtime
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Typecheck

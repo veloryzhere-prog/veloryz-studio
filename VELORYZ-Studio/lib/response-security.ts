@@ -13,14 +13,21 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  // Private pages, admin, client portal, immersive design previews and 404 pages
  // deliberately retain their isolated, original presentation and motion.
  const ui2026Release='silk-ui-20261123-r5';
- if(!privatePage&&status===200)headers['X-VELORYZ-UI-Release']=ui2026Release;
+ const experienceRelease='public-experience-20261123-r20';
+ if(!privatePage&&status===200){
+  headers['X-VELORYZ-UI-Release']=ui2026Release;
+  headers['X-VELORYZ-Experience-Release']=experienceRelease;
+ }
  const silkUiAssets=!privatePage&&status===200
   ? '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r5">'
    +'<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r5">'
    +'<meta name="veloryz-ui-release" content="'+ui2026Release+'">'
    +'<link rel="stylesheet" href="/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9">'
+   +'<link rel="stylesheet" href="/veloryz-experience-r20.css?v=20261123-r20">'
+   +'<meta name="veloryz-experience-release" content="'+experienceRelease+'">'
    +'<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'
    +'<script src="/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9" defer></script>'
+   +'<script src="/veloryz-experience-r20.js?v=20261123-r20" defer></script>'
   : '';
  const editorialAssets=!privatePage&&status===200
   ? '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'

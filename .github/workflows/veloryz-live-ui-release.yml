@@ -24,6 +24,13 @@ on:
       - "VELORYZ-Studio/public/reference-brand-flow-r17.js"
       - "VELORYZ-Studio/public/smooth-scroll.js"
       - "VELORYZ-Studio/tools/test-brand-flow-r17.mjs"
+      - "VELORYZ-Studio/public/veloryz-experience-r20.css"
+      - "VELORYZ-Studio/public/veloryz-experience-r20.js"
+      - "VELORYZ-Studio/public/creator-v4.js"
+      - "VELORYZ-Studio/public/docs-hub.js"
+      - "VELORYZ-Studio/public/veloryz-open-library.js"
+      - "VELORYZ-Studio/public/app.js"
+      - "VELORYZ-Studio/tools/test-public-experience-r20.mjs"
       - "VELORYZ-Studio/tools/test-reference-menu-r6.mjs"
       - "VELORYZ-Studio/public/reference-hero-immersive.js"
       - "VELORYZ-Studio/public/button-feedback.js"
@@ -55,6 +62,8 @@ jobs:
         run: node tools/test-design-market-r9.mjs
       - name: Verify R17 header fade, footer brand frame and smooth-motion profile
         run: node tools/test-brand-flow-r17.mjs
+      - name: Verify R20 navigation, conversion, docs, marketplace and accessibility
+        run: node tools/test-public-experience-r20.mjs
       - name: Validate Cloudflare Worker identity before probing production
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets

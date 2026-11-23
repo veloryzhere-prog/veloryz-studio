@@ -44,23 +44,30 @@ async function waitForR9Deployment(){
  for(let attempt=1;attempt<=20;attempt++){
   try{
    const bust='?vz_r9_qc='+Date.now();
-   const [market,homeStage,brand,designHtml]=await Promise.all([
+   const [market,homeStage,brand,designHtml,r20Css,r20Js,homeHtml]=await Promise.all([
     fetch(root+'/veloryz-open-library.js'+bust,{cache:'no-store'}),
     fetch(root+'/reference-site-upgrade.js'+bust,{cache:'no-store'}),
     fetch(root+'/veloryz-brand-motion-r9.css'+bust,{cache:'no-store'}),
-    fetch(root+'/design/'+bust,{cache:'no-store'})
+    fetch(root+'/design/'+bust,{cache:'no-store'}),
+    fetch(root+'/veloryz-experience-r20.css'+bust,{cache:'no-store'}),
+    fetch(root+'/veloryz-experience-r20.js'+bust,{cache:'no-store'}),
+    fetch(root+'/'+bust,{cache:'no-store'})
    ]);
-   const [marketText,homeText,brandText,designText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text()]);
-   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok
+   const [marketText,homeText,brandText,designText,r20CssText,r20JsText,homeHtmlText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text(),r20Css.text(),r20Js.text(),homeHtml.text()]);
+   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
+    &&marketText.includes('Starting budget (INR)')
     &&homeText.includes("items=(picked.length?picked:all).slice(0,7)")
     &&homeText.includes('const setActive=next=>')
     &&brandText.includes('position:absolute;inset:0;z-index:-1')
+    &&r20CssText.includes('.vz-r20-skip')
+    &&r20JsText.includes("skip.textContent='Skip to main content'")
+    &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261123-r20"')
     &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
-    &&designText.includes('/app.js?v=20261123-r9-journey-market');
-   if(ready){result.deployment={release:'design-market-20261123-r9',attempt};return}
-   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', design HTML '+designHtml.status+', R9 markers '+ready;
+    &&designText.includes('/veloryz-experience-r20.js?v=20261123-r20');
+   if(ready){result.deployment={release:'public-experience-20261123-r20',attempt};return}
+   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);
  }
@@ -100,6 +107,9 @@ async function check(page){
   }).slice(0,20).map(a=>({text:(a.textContent||'').trim().slice(0,50),href:a.getAttribute('href')}));
   return {viewport,layout,brokenImages,invalidTargets,
    release:$('meta[name="veloryz-ui-release"]')?.content||'not found',
+   experienceRelease:$('meta[name="veloryz-experience-release"]')?.content||'not found',
+   r20Body:document.body.classList.contains('vz-r20'),
+   skipLink:Boolean(document.querySelector('.vz-r20-skip[href^="#"]')),
    menuRelease:$('link[href*="reference-menu-morph-r6.css"]')?.href||'not found',
    qcStyle:$('link[href*="reference-qc-layout-r7.css"]')?.href||'not found'};
  });
@@ -184,15 +194,52 @@ try {
       if(row.probe.homeDesignSharp.railBlur&&row.probe.homeDesignSharp.railBlur!=='none')row.issues.push('Homepage design rail still uses backdrop blur');
 
     }
+    if(route.path!=='/client/'){
+      if(!row.probe.r20Body)row.issues.push('R20 public experience body class missing');
+      if(row.probe.experienceRelease!=='public-experience-20261123-r20')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
+      if(!row.probe.skipLink)row.issues.push('Accessible R20 skip link missing');
+    }else if(row.probe.r20Body){
+      row.issues.push('R20 public layer leaked into isolated client route');
+    }
+    if(route.path==='/'){
+      row.probe.r20Home=await page.evaluate(()=>({
+        primaryLinks:document.querySelectorAll('.vz-home-primary-links a').length,
+        createHref:document.querySelector('.vz-hero-cta-main')?.getAttribute('href')||'',
+        moreControls:Boolean(document.querySelector('[data-vz-r20-3d-more]'))
+      }));
+      if(row.probe.r20Home.primaryLinks<6||row.probe.r20Home.createHref!=='/create/'||!row.probe.r20Home.moreControls)row.issues.push('R20 homepage navigation/primary CTA/compact 3D controls missing');
+    }
+    if(route.path==='/create/'){
+      row.probe.r20Create=await page.evaluate(()=>({
+        roadmap:document.querySelectorAll('.v4-r20-roadmap span').length,
+        note:Boolean(document.querySelector('.v4-r20-session-note'))
+      }));
+      if(row.probe.r20Create.roadmap!==5||!row.probe.r20Create.note)row.issues.push('R20 Project Creator roadmap/session guidance missing');
+    }
+    if(route.path==='/docs/'){
+      row.probe.r20Docs=await page.evaluate(()=>({
+        startLinks:document.querySelectorAll('.docs-r20-start a').length,
+        search:Boolean(document.querySelector('#docs-search'))
+      }));
+      if(row.probe.r20Docs.startLinks!==4||!row.probe.r20Docs.search)row.issues.push('R20 documentation start paths/search missing');
+    }
+    if(route.path==='/help/assistant/'){
+      row.probe.r20Help=await page.evaluate(()=>Boolean(document.querySelector('.vz-r20-assistant-context')));
+      if(!row.probe.r20Help)row.issues.push('R20 Help Assistant route identity context missing');
+    }
     if(route.path==='/design/'){
       row.probe.designR9=await page.evaluate(()=>({
         root:Boolean(document.querySelector('.vz-real-library.vz-r9-market')),
         cards:document.querySelectorAll('.vz-source-card').length,
         motion:Boolean(document.querySelector('[data-source-motion]')),
         price:Boolean(document.querySelector('[data-source-price]')),
-        reviews:Boolean(document.querySelector('[data-source-review-trust]'))
+        reviews:Boolean(document.querySelector('[data-source-review-trust]')),
+        priceNote:Boolean(document.querySelector('.vz-r20-price-note')),
+        budgetLabel:[...document.querySelectorAll('.vz-source-toolbar label>span')].some(x=>x.textContent.trim()==='Starting budget (INR)'),
+        rightsLabel:document.querySelector('.vz-source-filters')?.getAttribute('aria-label')||''
       }));
       if(!row.probe.designR9.root||row.probe.designR9.cards<12||!row.probe.designR9.motion||!row.probe.designR9.price)row.issues.push('R9 Design Market missing expected renderer/cards/filters');
+      if(!row.probe.designR9.priceNote||!row.probe.designR9.budgetLabel||row.probe.designR9.rightsLabel!=='Source availability and usage context')row.issues.push('R20 Design Market language/context missing');
     }
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
