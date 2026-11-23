@@ -55,7 +55,7 @@ async function waitForR9Deployment(){
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
     &&homeText.includes("items=(picked.length?picked:all).slice(0,7)")
-    &&homeText.includes('setActive(next,local)')
+    &&homeText.includes('const setActive=next=>')
     &&brandText.includes('position:absolute;inset:0;z-index:-1')
     &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designText.includes('/app.js?v=20261123-r9-journey-market');
@@ -173,6 +173,15 @@ try {
         rail:document.querySelectorAll('[data-vz-library-go]').length
       }));
       if(row.probe.homeDesignR9.stages<3||row.probe.homeDesignR9.rail<3)row.issues.push('R9 homepage design stage did not hydrate');
+      row.probe.homeDesignSharp=await page.evaluate(()=>({
+        visibleCounters:Boolean(document.querySelector('#vz-library-count,#vz-library-index')),
+        scaledPreview:getComputedStyle(document.querySelector('.vz-home-design-card.is-active img')).transform,
+        railBlur:getComputedStyle(document.querySelector('.vz-library-rail')).backdropFilter
+      }));
+      if(row.probe.homeDesignSharp.visibleCounters)row.issues.push('Homepage design showcase still exposes count/index UI');
+      if(row.probe.homeDesignSharp.scaledPreview!=='none'&&row.probe.homeDesignSharp.scaledPreview!=='matrix(1, 0, 0, 1, 0, 0)')row.issues.push('Homepage design preview still has a transform that may soften it: '+row.probe.homeDesignSharp.scaledPreview);
+      if(row.probe.homeDesignSharp.railBlur&&row.probe.homeDesignSharp.railBlur!=='none')row.issues.push('Homepage design rail still uses backdrop blur');
+
     }
     if(route.path==='/design/'){
       row.probe.designR9=await page.evaluate(()=>({
