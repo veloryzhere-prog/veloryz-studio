@@ -27,7 +27,8 @@ assert(page.includes('published.state.catalogue')&&!page.includes('.slice(0,12)'
 const library=read('public/reference-site-upgrade.js'),dock=read('public/reference-ai-dock.js'),shared=read('public/reference-shared-menu.js');
 assert(library.includes('published.catalogue'),'Gallery must use real CMS catalogue');
 assert(library.includes('createCard'),'Gallery must render item previews, descriptions and prices');
-assert(library.includes('track.replaceChildren(...items.map(createCard))'),'Full homepage library must render each published design once');
+assert(library.includes('track.replaceChildren(...cards)')&&library.includes("items=(picked.length?picked:all).slice(0,7)"),'Homepage must render a finite curated design story rather than all published designs at once');
+assert(!library.includes('travel*1.12'),'Homepage design story must not derive vertical travel from full catalogue width');
 assert(library.includes('window.VeloryzReferenceGallery={update')&&home.includes('VeloryzReferenceGallery.update'),'Gallery must use the original requestAnimationFrame scroll clock');
 assert(home.includes('/reference-review-loop.js'),'Seamless review controller is loaded');
 assert.doesNotThrow(()=>new vm.Script(read('public/reference-review-loop.js')),'Review loop JavaScript must parse');
