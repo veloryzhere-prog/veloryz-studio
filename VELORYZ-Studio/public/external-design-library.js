@@ -137,7 +137,6 @@ document.addEventListener('input',e=>{if(e.target.matches('[data-ext-search]')){
 document.addEventListener('change',e=>{if(e.target.matches('[data-ext-sort]')){sort=e.target.value;refresh();}if(e.target.matches('[data-ext-motion]')){motionBand=e.target.value;limit=24;refresh();}if(e.target.matches('[data-ext-price]')){priceBand=e.target.value;limit=24;refresh();}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(active)close();closeBag();}});
 document.addEventListener('studio:route',()=>{if(!document.querySelector('#vz-external-store')){close();closeBag();reviewsLoaded=false}else requestAnimationFrame(()=>{refresh();syncBag();loadReviewTrust()})});
-if(typeof MutationObserver==='function')new MutationObserver(()=>{if(document.querySelector('#vz-external-store')){refresh();syncBag();loadReviewTrust()}}).observe(document.body,{childList:true,subtree:true});
 requestAnimationFrame(()=>{if(document.querySelector('#vz-external-store')){refresh();syncBag();loadReviewTrust()}});
 window.VeloryzExternalDesignLibrary={render,showcase,entries};
 if(window.VeloryzTemplateStore)window.VeloryzTemplateStore.render=render;
