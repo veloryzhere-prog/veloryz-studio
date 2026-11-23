@@ -9,10 +9,14 @@ const nodeVersion=read('.node-version').trim();
 const vite=read('vite.config.ts');
 
 assert.equal(wrangler.name,'veloryz-studio01','Cloudflare Git integration must deploy to the connected Worker name');
-assert.equal(wrangler.main,'./worker/index.ts','Wrangler must point to the real Vinext Worker entry');
+assert.equal(wrangler.main,'./dist/server/index.js','Nested Wrangler must deploy the generated Vinext Worker entry');
 assert.equal(wrangler.compatibility_date,'2026-05-15','Compatibility date must stay aligned with the current Worker types/runtime contract');
 assert.deepEqual(wrangler.compatibility_flags,['nodejs_compat'],'Worker must retain Node compatibility');
 assert.equal(wrangler.keep_vars,true,'Deploys must preserve dashboard-managed runtime variables/secrets');
+assert.equal(wrangler.assets?.directory,'./dist/client','Nested Wrangler must deploy generated client assets');
+assert.equal(wrangler.no_bundle,true,'Nested Wrangler must preserve Vinext no_bundle output');
+assert.equal(wrangler.ai?.binding,'AI','Nested Wrangler must preserve the AI binding');
+assert(String(wrangler.build?.command||'').includes('pnpm build'),'Nested Wrangler must build the app before direct deploy');
 assert.equal(nodeVersion,'22','Cloudflare build Node major must match GitHub CI');
 assert.equal(pkg.packageManager,'pnpm@11.25.0','Workers Builds must use the exact pnpm version pinned by packageManager');
 assert.equal(pkg.engines?.node,'>=22.13.0','Project Node requirement changed unexpectedly');
