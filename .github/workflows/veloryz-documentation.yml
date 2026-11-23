@@ -112,6 +112,8 @@ jobs:
         run: corepack pnpm build
       - name: Verify generated Cloudflare Worker output
         run: node tools/test-generated-cloudflare-output.mjs
+      - name: Dry-run nested Cloudflare deploy config used when project root is VELORYZ-Studio
+        run: corepack pnpm exec wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-nested-dryrun"
       - name: Dry-run the exact repository-root Cloudflare deploy config
         working-directory: .
         run: VELORYZ-Studio/node_modules/.bin/wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-root-dryrun"
