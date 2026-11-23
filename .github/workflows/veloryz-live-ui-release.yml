@@ -27,6 +27,6 @@ jobs:
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
-          VELORYZ_UI_RELEASE: silk-ui-20261123-r2
+          VELORYZ_UI_RELEASE: silk-ui-20261123-r3
           VELORYZ_PROBE_ATTEMPTS: 16
         run: node tools/check-live-ui-release.mjs
