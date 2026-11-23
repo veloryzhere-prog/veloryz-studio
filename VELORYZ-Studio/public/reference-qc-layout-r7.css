@@ -1,0 +1,173 @@
+/* VELORYZ / QC Layout Stabilisation R7
+ * Applied only to the ACTIVE public reference-shell homepage.
+ * Improves overlap, touch targets, narrow navigation, and fluid type while
+ * retaining official 3D V, editorial hero, scarf, menu R6 and real site routes.
+ *
+ * This is a deliberately small, final corrective layer, not another theme.
+ */
+body.vz-reference-site .vz-material-hero {
+  max-width:100%;
+  overflow-x:clip;
+}
+body.vz-reference-site .vz-material-hero #heroTxt {
+  min-width:0;
+}
+body.vz-reference-site .vz-material-hero .btns .btn {
+  min-height:46px;
+  line-height:1.25;
+  text-wrap:balance;
+}
+body.vz-reference-site .vz-material-hero :is(.vz-hero-edition,.vz-hero-eyebrow,.vz-hero-practices) {
+  max-width:100%;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-controls,
+body.vz-reference-site .vz-material-hero #bigV {
+  box-sizing:border-box;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-control-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+}
+body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
+  min-height:38px;
+  min-width:38px;
+  line-height:1.2;
+  white-space:nowrap;
+  flex:0 0 auto;
+}
+@media (min-width:921px) {
+  /* The legacy hero could put long typography over the real 3D model.
+   * Reserve a true right-hand visual area instead of z-index fighting.
+   */
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    width:100%;
+    padding-right:clamp(320px,34vw,540px);
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    max-width:100%;
+    font-size:clamp(4.7rem,7.45vw,9.25rem);
+    line-height:.96;
+    overflow-wrap:normal;
+  }
+  body.vz-reference-site .vz-material-hero #h1 .ln {
+    overflow:visible;
+    padding-bottom:.12em;
+  }
+  body.vz-reference-site .vz-material-hero #bigV {
+    right:clamp(22px,4vw,75px);
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    right:clamp(23px,4vw,77px);
+    width:min(410px,36vw);
+    max-width:calc(100vw - 45px);
+    top:calc(clamp(80px,11svh,126px) + clamp(280px,31vw,430px) + 16px);
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
+    padding:9px 12px;
+  }
+}
+@media (min-width:921px) and (max-width:1220px) {
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    padding-right:clamp(310px,35vw,430px);
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    font-size:clamp(4rem,7.1vw,7.2rem);
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    width:min(380px,38vw);
+    right:clamp(18px,3vw,40px);
+  }
+}
+@media (max-width:920px) {
+  /* Below this breakpoint the model becomes a top-row artwork and the
+   * editorial copy flows beneath it. Keep controls in normal flow.
+   */
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    width:100%;
+    padding-right:clamp(18px,5vw,48px);
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    position:relative!important;
+    inset:auto!important;
+    width:min(490px,calc(100% - 36px))!important;
+    margin:clamp(14px,2.4svh,24px) auto 0!important;
+    padding:14px!important;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
+    min-height:42px;
+    padding:8px 11px;
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    max-width:100%;
+  }
+}
+@media (max-width:540px) {
+  /* 3 fixed header actions + official logo are impossible to fit at 320px.
+   * 'Create' remains in the fullscreen menu and the hero CTA.
+   */
+  body.vz-reference-site .vz-header-actions .vz-header-create {
+    display:none!important;
+  }
+  body.vz-reference-site .vz-header-actions {
+    right:max(10px,env(safe-area-inset-right,0px));
+    gap:7px;
+    max-width:calc(100vw - 128px);
+  }
+  body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph {
+    flex-shrink:0;
+    min-width:107px!important;
+    padding-inline:11px!important;
+  }
+  body.vz-reference-site .vz-material-hero #heroTxt {
+    padding-inline:clamp(17px,4.5vw,24px);
+  }
+  body.vz-reference-site .vz-material-hero .btns {
+    display:flex;
+    flex-wrap:wrap;
+    width:100%;
+  }
+  body.vz-reference-site .vz-material-hero .btns .btn {
+    max-width:100%;
+    min-width:0;
+    text-align:center;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-controls {
+    width:calc(100% - 34px)!important;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-control-buttons {
+    gap:8px;
+  }
+  body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
+    min-height:44px;
+    min-width:44px;
+  }
+  body.vz-reference-site #mn .vz-menu-container {
+    padding-inline:clamp(17px,5vw,24px);
+  }
+}
+@media (max-width:360px) {
+  body.vz-reference-site .vz-header-actions .vz-home-motion-button {
+    min-width:38px;
+    max-width:40px;
+    padding-inline:8px!important;
+  }
+  body.vz-reference-site .vz-material-hero #h1 {
+    font-size:clamp(2.38rem,11vw,3.2rem);
+    letter-spacing:-.045em;
+  }
+  body.vz-reference-site .vz-material-hero .vz-hero-practices {
+    gap:8px 11px;
+  }
+}
+@media (hover:none),(pointer:coarse) {
+  body.vz-reference-site .vz-material-hero :is(.btn,[data-logo-action]),
+  body.vz-reference-site :is(#mb,.vz-header-create) {
+    -webkit-tap-highlight-color:transparent;
+  }
+}
+/* Keyboard focus is always visible even if any legacy style removes outline. */
+body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button:focus-visible {
+  outline:3px solid var(--acc,#e2482b);
+  outline-offset:3px;
+}
