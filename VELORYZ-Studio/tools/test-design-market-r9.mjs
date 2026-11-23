@@ -35,11 +35,15 @@ assert(homeCss.includes('#vz-home-library.is-static'),'Reduced-motion/static lib
 assert(!home.includes('id="vz-library-count"')&&!home.includes('id="vz-library-index"'),'Homepage design showcase must not expose numeric count/index labels');
 assert(home.includes('Curated directions / scroll to reveal'),'Homepage design intro must use non-numeric curation language');
 assert(!homeJs.includes("data-vz-library-go")&&!homeJs.includes("createElement('nav')"),'Homepage design showcase must not recreate the old numbered nav rail');
+assert(homeJs.includes('function removeLegacyLibraryChrome('),'Runtime cleanup must remove any stale rail/count nodes');
+assert(home.includes('vz-home-library-clean-r14')&&home.includes('vz-home-library-cleanup-r14'),'Homepage shell needs inline hard-stop cleanup');
+assert(!homeCss.includes('position:absolute;right:clamp(9px,1.2vw,18px);top:50%'),'Obsolete rail styling must be physically removed from CSS');
+
 assert(!homeJs.includes("padStart(2,'0')+' / '+String(items.length)"),'Current design counter must remain removed');
 assert(!homeCss.includes('scale(1.025)')&&!homeCss.includes('scale(.985)'),'Homepage design preview must not use GPU resampling scales that can blur screenshots');
 assert(homeCss.includes('filter:none!important')&&homeCss.includes('backdrop-filter:none!important'),'Preview surface must explicitly stay sharp');
 assert(homeCss.includes(':is(#vz-library-count,#vz-library-index)')&&homeCss.includes('.vz-home-library-intro>.tag'),'CSS must suppress stale R9 counting if old HTML/JS is mixed with the R11 stylesheet during rollout');
-assert(homeCss.includes('nav.vz-library-rail')&&homeCss.includes('display:none!important'),'Stale cached nav rail must be suppressed so global nav styling cannot create a blur band');
+assert(homeCss.includes('#vz-home-library .vz-library-rail')&&homeCss.includes('display:none!important'),'Stale cached rail must be suppressed so no blur band can render');
 assert(home.includes('body>nav{position:fixed')&&!home.includes('\nnav{position:fixed'),'Fixed header navigation CSS must be scoped to the top-level nav, never nested component navs');
 
 
@@ -90,7 +94,7 @@ assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'Publi
 assert(security.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')&&security.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9'),'R9 public brand-motion assets missing');
 assert(shell.includes('/veloryz-open-library.css?v=20261123-market-r9')&&shell.includes('/veloryz-open-library.js?v=20261123-market-r9'),'Actual design library R9 cache key missing');
 assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261123-market-r9'),'Compatibility library R9 cache key missing');
-assert(home.includes('/reference-site-upgrade.css?v=20261123-navblur-r12')&&home.includes('/reference-site-upgrade.js?v=20261123-navblur-r12'),'Homepage finite design stage needs the sharp R11 cache key');
+assert(home.includes('/reference-site-upgrade.css?v=20261123-clean-r14')&&home.includes('/reference-site-upgrade.js?v=20261123-clean-r14'),'Homepage finite design stage needs the sharp R11 cache key');
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
 assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
