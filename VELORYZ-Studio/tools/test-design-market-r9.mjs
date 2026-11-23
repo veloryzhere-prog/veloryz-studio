@@ -30,6 +30,9 @@ assert(!homeJs.includes("travel*1.12"),'Never derive vertical travel from the gi
 assert(!homeJs.includes("travel=Math.max(0,lastW-viewWidth)"),'Old entire-catalogue horizontal travel must stay removed');
 assert(homeJs.includes("data.vzLibraryStage")||homeJs.includes("dataset.vzLibraryStage"),'Featured designs need stage identity');
 assert(homeJs.includes("const setActive=next=>"),'Scroll progression must change the active preview');
+assert(homeJs.includes("addEventListener('scroll',requestLibraryUpdate")&&homeJs.includes("libraryFrame=requestAnimationFrame"),'Homepage design showcase must update from its own passive scroll listener');
+assert(!homeJs.includes("motionIsFull"),'Design switching must not be disabled by the global full-motion mode');
+
 assert(homeCss.includes('HOME DESIGN STAGE R9')&&homeCss.includes('.vz-home-design-card.is-active'),'Pinned one-design-at-a-time stage CSS missing');
 assert(homeCss.includes('#vz-home-library.is-static'),'Reduced-motion/static library fallback missing');
 assert(!home.includes('id="vz-library-count"')&&!home.includes('id="vz-library-index"'),'Homepage design showcase must not expose numeric count/index labels');
