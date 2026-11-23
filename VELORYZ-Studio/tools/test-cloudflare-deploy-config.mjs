@@ -19,5 +19,9 @@ assert.equal(pkg.engines?.node,'>=22.13.0','Project Node requirement changed une
 assert(fs.existsSync(new URL('worker/index.ts',root)),'Worker entry file is missing');
 assert(vite.includes('cloudflare({'),'Cloudflare Vite plugin is missing');
 assert(vite.includes('config: {'),'Cloudflare Vite plugin must still merge programmatic bindings into Wrangler config');
-assert(!/config:\s*\{[^}]*name\s*:/s.test(vite),'vite.config.ts must not override the canonical Worker name');
+const localStart=vite.indexOf('const localBindingConfig = {');
+const localEnd=vite.indexOf('\n};',localStart);
+assert(localStart>=0&&localEnd>localStart,'localBindingConfig block is missing');
+const localConfigSource=vite.slice(localStart,localEnd);
+assert(!/\bname\s*:/.test(localConfigSource),'localBindingConfig must not override the canonical Worker name');
 console.log('PASS: Cloudflare Worker identity, Node/pnpm versions and Vite/Wrangler deployment contract are explicit.');
