@@ -101,6 +101,9 @@
     transform .3s var(--vzu-ease);
   /* The radius covers even a wide button from a corner-origin entry. */
   --vz-r: 150%;
+  /* Explicit on :hover: the older .btn:hover background shorthand must not erase
+     the radial fill (regression found in real Chromium with the existing base rule). */
+  background-image: radial-gradient(circle at var(--vz-bx) var(--vz-by), var(--acc) var(--vz-r), transparent calc(var(--vz-r) + .5%));
   background-color: transparent;
   border-color: var(--acc);
   color: #fff;
