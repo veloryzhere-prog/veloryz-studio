@@ -80,12 +80,22 @@ assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'Publi
 assert(security.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')&&security.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9'),'R9 public brand-motion assets missing');
 assert(shell.includes('/veloryz-open-library.css?v=20261123-market-r9')&&shell.includes('/veloryz-open-library.js?v=20261123-market-r9'),'Actual design library R9 cache key missing');
 assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261123-market-r9'),'Compatibility library R9 cache key missing');
-assert(home.includes('/reference-site-upgrade.css?v=20261123-design-stage-r9')&&home.includes('/reference-site-upgrade.js?v=20261123-design-stage-r9'),'Homepage finite design stage needs an R9 cache key');
+assert(home.includes('/reference-site-upgrade.css?v=20261123-design-stage-r9')&&home.includes('/reference-site-upgrade.js?v=20261123-design-stage-r10'),'Homepage finite design stage needs an R9 cache key');
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
 assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
+const r10Polish=read('public/veloryz-r10-polish.css'),pageHandler=read('lib/page-handler.ts'),openDesigns=JSON.parse(read('public/veloryz-open-designs.json'));
+assert(r10Polish.includes('Visual QC Polish R10')&&r10Polish.includes('opacity:.58'),'R10 must keep scrubbed copy readable while retaining scroll animation');
+assert(r10Polish.includes('border-radius:0!important')&&r10Polish.includes("background-image:url('/assets/brand/veloryz-mark.svg')"),'R10 labels must use the V mark without circular badge styling');
+assert(r10Polish.includes('body.vz-ref-public-route .vz-ai-dock[data-open="false"] .vz-ai-launch'),'R10 mobile public pages must compact the AI launcher');
+assert(security.includes('/veloryz-r10-polish.css?v=20261123-r10-polish')&&security.includes('qcAssets+finalPublicPolish'),'R10 public polish must load last and remain private-page isolated');
+assert(pageHandler.includes('catalogueTotal:openDesigns.items.filter(item=>item.enabled!==false).length'),'Homepage must receive the full open-design count, not only its curated subset');
+assert(homeJs.includes('Number(published.catalogueTotal)')&&homeJs.includes("vz-library-total-copy"),'Home design stage must render the full catalogue count consistently');
+const smarter=openDesigns.items.find(x=>x.id==='os-nonprofit-and-community-smartergiving-nonprofit');
+assert(smarter?.previewImage?.includes('/master/screenshots/screenshot.png'),'SmarterGiving preview must point at its actual GitHub default branch');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
 assert(liveGate.includes('VELORYZ / CURATED DESIGN MARKET')&&liveGate.includes("$"+"$('#mn a').forEach(function(a,i)"),'Production gate must verify actual R9 market and correct list-based menu initializer');
 assert(visualQc.includes('waitForR9Deployment')&&visualQc.includes('-design-stage-mid.png')&&visualQc.includes('-marketplace.png'),'Visual QC must wait for R9 and capture the repaired surfaces');
+assert(visualQc.includes('heroWordOpacity')&&visualQc.includes('tagRadius')&&visualQc.includes('110 total designs'),'Visual QC must assert readability, no-circle labels and catalogue-count consistency');
 
 /* Syntax and stylesheet integrity. */
 for(const p of ['public/reference-site-upgrade.js','public/veloryz-open-library.js','public/external-design-library.js','public/veloryz-brand-motion-r9.js','public/app.js'])
