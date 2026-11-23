@@ -69,6 +69,8 @@ assert(app.includes('class="teaser-star" src="/assets/brand/veloryz-mark.svg"'),
 assert(brandJs.includes("mark.src='/assets/brand/veloryz-mark.svg'")&&brandJs.includes('vz-click-mark'),'Click response must use the VELORYZ mark');
 assert(!brandCss.includes('border-radius:50%'),'R9 brand-motion layer must not create circular decorative feedback');
 assert(brandCss.includes('.vz-brand-backdrop')&&brandCss.includes('linear-gradient'),'Background motion uses angular/linear brand fields');
+assert(brandCss.includes('position:absolute;inset:0;z-index:-1'),'Brand backdrop must stack behind authored content');
+assert(!brandCss.includes('>:not(.vz-brand-backdrop){position:relative'),'Brand decoration must never overwrite sticky/absolute child positioning');
 assert(brandJs.includes("addEventListener('scroll',requestPaint"),'Background parallax must be scroll-driven');
 assert(!brandJs.includes('setInterval('),'Brand background motion must not add a perpetual interval');
 assert(brandCss.includes('prefers-reduced-motion')&&brandJs.includes("['reduced','paused']"),'Brand feedback must respect motion settings');

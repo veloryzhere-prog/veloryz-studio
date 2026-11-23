@@ -18,7 +18,7 @@ body.motion-edition :is(.tag,.eyebrow)::before{
  transform:rotate(-8deg);opacity:.82;
 }
 .vz-brand-backdrop{
- position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
  contain:paint;
 }
 .vz-brand-backdrop::before{
@@ -38,7 +38,6 @@ body.motion-edition :is(.tag,.eyebrow)::before{
 body.vz-reference-site [data-vz-brand-surface],
 body.vz-ref-public-route [data-vz-brand-surface],
 body.motion-edition [data-vz-brand-surface]{position:relative;isolation:isolate}
-body :is([data-vz-brand-surface])>:not(.vz-brand-backdrop){position:relative;z-index:1}
 .vz-feedback-target{
  --vz-r9-ring:rgba(226,72,43,0);
  transition:
