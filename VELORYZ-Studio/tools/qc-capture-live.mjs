@@ -154,6 +154,8 @@ try {
 finally{await browser?.close().catch(()=>{});}
 const issueCount=result.pages.reduce((n,p)=>n+p.issues.length,0);
 const captured=result.pages.reduce((n,p)=>n+p.screenshots.length,0);
+const livePages=result.pages.filter(p=>p.status===200).length;
+if(!livePages)result.errors.push('Public site could not be fetched: no page returned HTTP 200. Failure frames are NOT live-site screenshots.');
 const report=[
  '# VELORYZ — Public Site Visual QC',
  '',
