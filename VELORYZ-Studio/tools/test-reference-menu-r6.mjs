@@ -34,7 +34,7 @@ for(const url of ['#home','#services','#work','#design','#pricing','#studio','#r
   assert.ok(block.includes('href="'+url+'"'),'Navigation destination missing: '+url);
 }
 assert.ok(!html.includes("this.textContent=o?'Close':'Menu'"),'Menu click must not destroy its icon and labels');
-assert.ok(!/(?<!\\$)\\$\\('#mn a'\\)\\.forEach/.test(html),'Menu initialization must iterate all links through $, not the single-element $ helper');
+assert.ok(html.includes("$$('#mn a').forEach(function(a,i)"),'Menu initialization must iterate all links via the list helper $$()');
 assert.ok(!html.includes("$('#mb').textContent='Menu'"),'Hash route must not erase menu glyph markup');
 for(const marker of [
   '#mb.vz-menu-morph',
