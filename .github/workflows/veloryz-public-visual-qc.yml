@@ -21,6 +21,9 @@ on:
       - "VELORYZ-Studio/public/reference-public-integrity.css"
       - "VELORYZ-Studio/lib/site-shell.ts"
       - "VELORYZ-Studio/lib/response-security.ts"
+      - "VELORYZ-Studio/wrangler.jsonc"
+      - "VELORYZ-Studio/.node-version"
+      - "VELORYZ-Studio/tools/test-cloudflare-deploy-config.mjs"
       - ".github/workflows/veloryz-public-visual-qc.yml"
 
 permissions:
@@ -45,7 +48,7 @@ jobs:
         with:
           node-version: "22"
       - name: Validate QC source and stylesheet before browser capture
-        run: node tools/test-reference-qc-r7.mjs && node tools/test-design-market-r9.mjs
+        run: node tools/test-reference-qc-r7.mjs && node tools/test-design-market-r9.mjs && node tools/test-cloudflare-deploy-config.mjs
       - name: Install independent Playwright browser harness
         run: |
           mkdir -p "$RUNNER_TEMP/veloryz-qc"
