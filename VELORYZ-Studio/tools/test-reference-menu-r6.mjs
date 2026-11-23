@@ -26,7 +26,7 @@ for(const marker of [
   'class="vz-menu-primary"',
   'class="vz-menu-utility"',
   'class="vz-menu-bottom"',
-  '/reference-site-upgrade.js?v=20261123-reference-menu-r6'
+  '/reference-site-upgrade.js?v=20261123-design-stage-r9'
 ])assert.ok(html.includes(marker),'Live menu markup missing: '+marker);
 const block=html.slice(html.indexOf('<div id="mn"'),html.indexOf('</div></div><div id="curt"')+12);
 assert.equal((block.match(/<a\s/g)||[]).length,14,'All 14 existing primary destinations must remain');
