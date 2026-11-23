@@ -10,6 +10,8 @@ const source=read('lib/claude-reference-shell.ts');
 const html=JSON.parse(source.slice(source.indexOf('export default ')+15).trim().replace(/;$/,''));
 const css=read('public/reference-qc-layout-r7.css');
 const response=read('lib/response-security.ts');
+const publicReadability=read('public/reference-public-integrity.css');
+const publicShell=read('lib/site-shell.ts');
 const probe=read('tools/qc-capture-live.mjs');
 const workflow=read('../.github/workflows/veloryz-public-visual-qc.yml');
 assert.ok(html.includes('vz-editorial-r5')&&html.includes('vz-menu-morph'),'QC targets the real public reference homepage');
@@ -29,6 +31,9 @@ for(const marker of [
 assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length,'CSS curly braces balanced');
 assert.ok(!css.includes('radial-gradient('),'QC must not add prohibited small circle visual decorations');
 assert.ok(response.includes("referenceMenu=!privatePage&&status===200"),'Admin/client isolation preserved');
+assert.ok(publicReadability.includes('vz-qc-readable-copy-in')&&publicReadability.includes('#584c41'),'Secondary page hero copy must remain readable');
+assert.ok(publicReadability.includes('prefers-reduced-motion'),'Readability animation must respect motion preferences');
+assert.ok(publicShell.includes('reference-public-integrity.css?v=20261123-readable-copy-r8'),'Legible public copy CSS must not be stale');
 assert.ok(response.includes('const qcAssets=referenceMenu'),'QC CSS must target reference homepage only');
 assert.ok(response.includes('/reference-qc-layout-r7.css?v=20261123-layout-qc-r7'),'QC CSS cache-busted');
 assert.ok(response.includes("X-VELORYZ-QC-Release"),'R7 detectable on actual live host');
