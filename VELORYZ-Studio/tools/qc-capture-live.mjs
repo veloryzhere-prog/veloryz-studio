@@ -45,17 +45,18 @@ async function waitForR9Deployment(){
  for(let attempt=1;attempt<=20;attempt++){
   try{
    const bust='?vz_r9_qc='+Date.now();
-   const [market,homeStage,brand,designHtml,r20Css,r20Js,homeHtml]=await Promise.all([
+   const [market,homeStage,brand,designHtml,r20Css,r20Js,homeHtml,creatorHtml]=await Promise.all([
     fetch(root+'/veloryz-open-library.js'+bust,{cache:'no-store'}),
     fetch(root+'/reference-site-upgrade.js'+bust,{cache:'no-store'}),
     fetch(root+'/veloryz-brand-motion-r9.css'+bust,{cache:'no-store'}),
     fetch(root+'/design/'+bust,{cache:'no-store'}),
     fetch(root+'/veloryz-experience-r20.css'+bust,{cache:'no-store'}),
     fetch(root+'/veloryz-experience-r20.js'+bust,{cache:'no-store'}),
-    fetch(root+'/'+bust,{cache:'no-store'})
+    fetch(root+'/'+bust,{cache:'no-store'}),
+    fetch(root+'/create/'+bust,{cache:'no-store'})
    ]);
-   const [marketText,homeText,brandText,designText,r20CssText,r20JsText,homeHtmlText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text(),r20Css.text(),r20Js.text(),homeHtml.text()]);
-   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok
+   const [marketText,homeText,brandText,designText,r20CssText,r20JsText,homeHtmlText,creatorHtmlText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text(),r20Css.text(),r20Js.text(),homeHtml.text(),creatorHtml.text()]);
+   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok&&creatorHtml.ok
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
     &&marketText.includes('Starting budget (INR)')
