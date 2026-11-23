@@ -266,6 +266,7 @@
  // R26: reference-inspired context motion without another scroll engine.
  const initR26SpatialSystem=()=>{
   if(!body.classList.contains('vz-reference-site'))return;
+  const alreadyBound=body.dataset.vzR26Spatial==='1';
 
   // Add small editorial indices to the existing scenes rather than duplicating headings.
   const sceneLabels=[
@@ -286,6 +287,8 @@
 
   // The native CSS scroll timelines carry the visual motion. JS only provides
   // low-cost direction/velocity context to the fixed navigation.
+  if(alreadyBound)return;
+  body.dataset.vzR26Spatial='1';
   let previousY=scrollY,previousTime=performance.now(),cooldown=0;
   const syncVelocity=now=>{
    cooldown=0;
