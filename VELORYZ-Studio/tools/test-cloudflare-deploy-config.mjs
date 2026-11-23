@@ -24,4 +24,15 @@ const localEnd=vite.indexOf('\n};',localStart);
 assert(localStart>=0&&localEnd>localStart,'localBindingConfig block is missing');
 const localConfigSource=vite.slice(localStart,localEnd);
 assert(!/\bname\s*:/.test(localConfigSource),'localBindingConfig must not override the canonical Worker name');
-console.log('PASS: Cloudflare Worker identity, Node/pnpm versions and Vite/Wrangler deployment contract are explicit.');
+
+const repoRoot=new URL('../../',import.meta.url);
+const rootWrangler=JSON.parse(fs.readFileSync(new URL('wrangler.jsonc',repoRoot),'utf8'));
+const rootPkg=JSON.parse(fs.readFileSync(new URL('package.json',repoRoot),'utf8'));
+assert.equal(rootWrangler.name,'veloryz-studio01','Repository-root Wrangler must target the connected Worker');
+assert.equal(rootWrangler.main,'VELORYZ-Studio/dist/server/index.js','Repository-root Wrangler must deploy the generated Vinext Worker entry');
+assert.equal(rootWrangler.assets?.directory,'VELORYZ-Studio/dist/client','Repository-root Wrangler must deploy generated client assets');
+assert.equal(rootWrangler.no_bundle,true,'Repository-root Wrangler must preserve Vinext no_bundle output');
+assert(String(rootWrangler.build?.command||'').includes('pnpm --dir VELORYZ-Studio build'),'Repository-root Wrangler must build the nested VELORYZ app first');
+assert(String(rootPkg.scripts?.deploy||'').includes('VELORYZ-Studio'),'Repository-root deploy script must delegate to the real app');
+
+console.log('PASS: Cloudflare Worker identity, root deploy shim, Node/pnpm versions and Vite/Wrangler deployment contract are explicit.');
