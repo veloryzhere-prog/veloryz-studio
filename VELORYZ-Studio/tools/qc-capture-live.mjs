@@ -170,13 +170,14 @@ try {
       row.probe.homeDesignR9=await page.evaluate(()=>({
         stages:document.querySelectorAll('[data-vz-library-stage]').length,
         active:document.querySelector('.vz-home-design-card.is-active h3')?.textContent?.trim()||'none',
-        rail:document.querySelectorAll('[data-vz-library-go]').length
+        rail:document.querySelectorAll('[data-vz-library-go],.vz-library-rail').length
       }));
-      if(row.probe.homeDesignR9.stages<3||row.probe.homeDesignR9.rail<3)row.issues.push('R9 homepage design stage did not hydrate');
+      if(row.probe.homeDesignR9.stages<3)row.issues.push('R9 homepage design stage did not hydrate');
+      if(row.probe.homeDesignR9.rail!==0)row.issues.push('Homepage design showcase still contains the obsolete navigation rail');
       row.probe.homeDesignSharp=await page.evaluate(()=>({
         visibleCounters:Boolean(document.querySelector('#vz-library-count,#vz-library-index')),
         scaledPreview:getComputedStyle(document.querySelector('.vz-home-design-card.is-active img')).transform,
-        railBlur:getComputedStyle(document.querySelector('.vz-library-rail')).backdropFilter
+        railBlur:(()=>{const rail=document.querySelector('.vz-library-rail');return rail?getComputedStyle(rail).backdropFilter:'none'})()
       }));
       if(row.probe.homeDesignSharp.visibleCounters)row.issues.push('Homepage design showcase still exposes count/index UI');
       if(row.probe.homeDesignSharp.scaledPreview!=='none'&&row.probe.homeDesignSharp.scaledPreview!=='matrix(1, 0, 0, 1, 0, 0)')row.issues.push('Homepage design preview still has a transform that may soften it: '+row.probe.homeDesignSharp.scaledPreview);
