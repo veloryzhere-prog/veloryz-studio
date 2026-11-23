@@ -4,10 +4,10 @@
 (()=>{'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state=()=>window.STUDIO_STATE?.state||window.STUDIO_STATE||{};
-const entries=()=>Array.isArray(state().catalogue)?state().catalogue.filter(x=>x.enabled!==false&&x.demo&&x.source):[];
-const image=p=>p.image||'';
+const entries=()=>Array.isArray(state().catalogue)?state().catalogue.filter(x=>x.enabled!==false&&(x.demo||x.liveDemo||x.localSource)&&x.source):[];
+const image=p=>p.image||p.previewImage||p.cover||'';
 const fmt=v=>'₹'+Number(v||0).toLocaleString('en-IN');
-const link=(p)=>p.demo||p.source;
+const link=(p)=>p.demo||p.liveDemo||p.localSource||p.source;
 const motionBucket=p=>{const t=String(p?.motion||'').toLowerCase();return t.includes('high')?'high':t.includes('medium')?'medium':t.includes('low')?'low':'varies'};
 const motionWeight=p=>({high:4,medium:3,low:2,varies:1}[motionBucket(p)]||1);
 const reviewLabel=p=>p?.rights==='candidate'?'Studio reviewed':p?.rights==='review'?'Source review required':p?.rights==='restricted'?'Restricted source':'Rights check';
