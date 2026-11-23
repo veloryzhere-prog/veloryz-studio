@@ -40,16 +40,19 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/reference-restored-features.css?v=20261123-journey-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
+   const brandFlowLinked=home.body.includes('/reference-brand-flow-r17.css?v=20261123-brandflow-r17')
+    &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-brandflow-r17');
    const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261123-r9-journey-market');
-   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs]=await Promise.all([
+   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,flowCss,flowJs,smoothJs]=await Promise.all([
     ...silkAssets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css'),
     load('/reference-site-upgrade.js'),load('/reference-site-upgrade.css'),
     load('/veloryz-open-library.js'),load('/veloryz-open-library.css'),
     load('/veloryz-brand-motion-r9.js'),load('/veloryz-brand-motion-r9.css'),
-    load('/reference-restored-features.css'),load('/app.js')
+    load('/reference-restored-features.css'),load('/app.js'),
+    load('/reference-brand-flow-r17.css'),load('/reference-brand-flow-r17.js'),load('/smooth-scroll.js')
    ]);
    const menuOK=menuCss.status===200
     &&menuCss.body.includes('clip-path: circle(150vmax')
@@ -97,15 +100,22 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&brandJs.body.includes("mark.src='/assets/brand/veloryz-mark.svg'")
     &&brandCss.body.includes('position:absolute;inset:0;z-index:-1')
     &&!brandCss.body.includes('>:not(.vz-brand-backdrop){position:relative');
+   const brandFlowOK=flowCss.status===200&&flowJs.status===200&&smoothJs.status===200
+    &&flowCss.body.includes('--vz-brand-scroll-opacity')
+    &&flowCss.body.includes('footer.vz-footer-in')
+    &&flowJs.body.includes("addEventListener('scroll',requestSync,{passive:true})")
+    &&flowJs.body.includes("setProperty('--vz-brand-scroll-opacity'")
+    &&smoothJs.body.includes('lerp:0.09')
+    &&smoothJs.body.includes('wheelMultiplier:0.9');
    const journeyOK=journeyCss.status===200&&appJs.status===200
     &&journeyCss.body.includes('CLICKABLE PROJECT JOURNEY R9')
     &&appJs.body.includes("const href=i===3?'/create/':i===4?'/reviews.html':'/design/'")
     &&appJs.body.includes('class="teaser-star" src="/assets/brand/veloryz-mark.svg"');
-   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK&&r14ChromeGone&&r15SimpleScrollOK){
+   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&brandFlowLinked&&brandFlowOK&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK&&r14ChromeGone&&r15SimpleScrollOK){
     console.log('PASS: production '+origin+' serves '+release+' plus R9 finite home design stage, actual design-market renderer, VELORYZ feedback, clickable Journey and cache-busted public assets.');
     process.exit(0);
    }
-   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R14 clean showcase '+r11SharpOK+', R14 rail/counter removal '+r14ChromeGone+'.';
+   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R17 links '+brandFlowLinked+', R17 brand flow '+brandFlowOK+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R14 clean showcase '+r11SharpOK+', R14 rail/counter removal '+r14ChromeGone+'.';
   }else{
    lastError='Live HTML not at base release '+release+': homepage '+home.status+', create '+creator.status+', design page '+designPage.status+', detail '+designDetail.status+'.';
   }
