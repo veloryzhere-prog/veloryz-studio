@@ -5,6 +5,13 @@ on:
     branches: [main]
     paths:
       - "VELORYZ-Studio/tools/qc-capture-live.mjs"
+      - "VELORYZ-Studio/public/veloryz-experience-r20.css"
+      - "VELORYZ-Studio/public/veloryz-experience-r20.js"
+      - "VELORYZ-Studio/public/creator-v4.js"
+      - "VELORYZ-Studio/public/docs-hub.js"
+      - "VELORYZ-Studio/public/veloryz-open-library.js"
+      - "VELORYZ-Studio/public/app.js"
+      - "VELORYZ-Studio/lib/response-security.ts"
       - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
       - "VELORYZ-Studio/tools/test-reference-qc-r7.mjs"
       - "VELORYZ-Studio/public/reference-qc-layout-r7.css"
