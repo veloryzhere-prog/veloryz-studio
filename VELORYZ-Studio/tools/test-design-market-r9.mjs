@@ -40,6 +40,7 @@ assert(!homeCss.includes('scale(1.025)')&&!homeCss.includes('scale(.985)'),'Home
 assert(homeCss.includes('filter:none!important')&&homeCss.includes('backdrop-filter:none!important'),'Preview surface must explicitly stay sharp');
 assert(homeCss.includes(':is(#vz-library-count,#vz-library-index)')&&homeCss.includes('.vz-home-library-intro>.tag'),'CSS must suppress stale R9 counting if old HTML/JS is mixed with the R11 stylesheet during rollout');
 assert(homeCss.includes('nav.vz-library-rail')&&homeCss.includes('display:none!important'),'Stale cached nav rail must be suppressed so global nav styling cannot create a blur band');
+assert(home.includes('body>nav{position:fixed')&&!home.includes('\nnav{position:fixed'),'Fixed header navigation CSS must be scoped to the top-level nav, never nested component navs');
 
 
 /* The REAL /design renderer is veloryz-open-library.js, which intentionally
