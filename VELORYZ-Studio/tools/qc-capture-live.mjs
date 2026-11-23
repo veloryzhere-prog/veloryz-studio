@@ -64,10 +64,10 @@ async function waitForR9Deployment(){
     &&brandText.includes('position:absolute;inset:0;z-index:-1')
     &&r20CssText.includes('.vz-r20-skip')
     &&r20JsText.includes("skip.textContent='Skip to main content'")
-    &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261123-r23"')
+    &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261123-r24"')
     &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
-    &&designText.includes('/veloryz-experience-r20.js?v=20261123-r23');
-   if(ready){result.deployment={release:'public-experience-20261123-r23',attempt};return}
+    &&designText.includes('/veloryz-experience-r20.js?v=20261123-r24');
+   if(ready){result.deployment={release:'public-experience-20261123-r24',attempt};return}
    last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);
@@ -197,7 +197,7 @@ try {
     }
     if(route.path!=='/client/'){
       if(!row.probe.r20Body)row.issues.push('R20 public experience body class missing');
-      if(row.probe.experienceRelease!=='public-experience-20261123-r23')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
+      if(row.probe.experienceRelease!=='public-experience-20261123-r24')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
       if(!row.probe.skipLink)row.issues.push('Accessible R20 skip link missing');
     }else if(row.probe.r20Body){
       row.issues.push('R20 public layer leaked into isolated client route');
