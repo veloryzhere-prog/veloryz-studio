@@ -214,7 +214,7 @@ try {
       if(row.probe.r20Home.primaryLinks<6||row.probe.r20Home.createHref!=='/create/'||!row.probe.r20Home.moreControls)row.issues.push('R20 homepage navigation/primary CTA/compact 3D controls missing');
       if(row.probe.r20Home.footerCopy.includes('Study Smarter'))row.issues.push('R22 footer still contains stale Study Smarter copy');
       if(row.probe.r20Home.r26Indices<4)row.issues.push('R26 editorial section indexing did not hydrate');
-      if(row.probe.r20Home.r27Rail<5&&innerWidth>1100)row.issues.push('R27 cinematic chapter rail did not hydrate');
+      if(row.probe.r20Home.r27Rail<5&&(row.probe.viewport?.width||0)>1100)row.issues.push('R27 cinematic chapter rail did not hydrate');
     }
     if(route.path==='/create/'){
       row.probe.r20Create=await page.evaluate(()=>({
