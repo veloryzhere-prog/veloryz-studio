@@ -19,87 +19,132 @@ function buildGallery(){
  const count=$('#vz-library-count');
  const fill=$('#vz-library-progress-fill');
  if(!track||!viewport||!section)return;
- const items=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x&&x.enabled!==false&&toText(x.name)):[];
- if(!items.length){
+ const all=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x&&x.enabled!==false&&toText(x.name)):[];
+ if(!all.length){
   const a=document.createElement('a');a.href='/design/';a.className='btn fill';a.textContent='Explore the available design directions ↗';
-  track.replaceChildren(a);
-  section.classList.add('is-static');
+  track.replaceChildren(a);section.classList.add('is-static');
   if(index)index.textContent='Browse the full library ↗';
   if(count)count.textContent='Design library / Explore';
   return;
  }
+ const motionWeight=value=>{
+  const t=toText(value).toLowerCase();
+  return t.includes('very high')?5:t.includes('high')?4:t.includes('medium')?3:t.includes('low')?2:1;
+ };
+ const eligible=all.filter(item=>safeImg(item.image||item.cover||item.previewImage)&&Number(item.price||0)>0&&item.rights!=='restricted');
+ eligible.sort((a,b)=>
+  Number(b.previewType==='real-upstream-site')-Number(a.previewType==='real-upstream-site')||
+  motionWeight(b.motion)-motionWeight(a.motion)||
+  Number(a.price||0)-Number(b.price||0)
+ );
+ const picked=[],seen=new Set();
+ for(const item of eligible){
+  const cat=toText(item.category||'Design direction');
+  if(seen.has(cat))continue;
+  picked.push(item);seen.add(cat);
+  if(picked.length===7)break;
+ }
+ for(const item of eligible)if(picked.length<7&&!picked.includes(item))picked.push(item);
+ const items=(picked.length?picked:all).slice(0,7);
+ const money=value=>Number(value||0)>0?'₹'+Number(value).toLocaleString('en-IN'):'Project quote';
+ const rights=value=>value==='candidate'?'Studio reviewed':value==='review'?'Source review required':'Rights check';
  const createCard=(item,i)=>{
-  const article=document.createElement('article');article.className='vz-home-design-card';
+  const article=document.createElement('article');article.className='vz-home-design-card';article.dataset.vzLibraryStage=String(i);article.setAttribute('aria-hidden',i?'true':'false');
   const art=document.createElement('a');art.className='vz-home-design-art';art.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';
   art.setAttribute('aria-label','Explore '+toText(item.name)+' in the VELORYZ design library');
-  const image=safeImg(item.image||item.cover);
+  const image=safeImg(item.image||item.cover||item.previewImage);
   if(image){
-   const img=document.createElement('img');img.src=image;img.loading=i<3?'eager':'lazy';img.decoding='async';
+   const img=document.createElement('img');img.src=image;img.loading=i<2?'eager':'lazy';img.decoding='async';
    img.alt=toText(item.name)+' published design preview';
    img.addEventListener('error',()=>{if(!img.dataset.retryOriginal&&safeImg(item.fallbackImage)){img.dataset.retryOriginal='1';img.src=safeImg(item.fallbackImage);return}img.hidden=true;art.classList.add('vz-art-unavailable')});
    art.append(img);
   }else art.classList.add('vz-art-unavailable');
   const body=document.createElement('div');body.className='vz-home-design-body';
-  const tag=document.createElement('span');tag.className='tag';
-  tag.textContent=toText(item.category||'Design direction')+' / '+String(i+1).padStart(2,'0');
+  const kicker=document.createElement('div');kicker.className='vz-home-design-kicker';
+  const tag=document.createElement('span');tag.className='tag';tag.textContent=toText(item.category||'Design direction')+' / '+String(i+1).padStart(2,'0');
+  const price=document.createElement('strong');price.className='vz-home-design-price';price.textContent='From '+money(item.price);
+  kicker.append(tag,price);
   const title=document.createElement('h3');title.textContent=toText(item.name);
-  const desc=document.createElement('p');
-  desc.textContent=truncate(item.description||'Explore this design direction and its project requirements in the published VELORYZ library.',185);
+  const desc=document.createElement('p');desc.textContent=truncate(item.description||'A selected website direction ready to be adapted around your brand, content and product goals.',185);
+  const signals=document.createElement('div');signals.className='vz-home-design-signals';
+  for(const label of [rights(item.rights),toText(item.motion||'Responsive')+' motion','VELORYZ adaptation']){
+   const chip=document.createElement('span');chip.textContent=label;signals.append(chip);
+  }
   const foot=document.createElement('div');foot.className='vz-home-design-meta';
-  const info=document.createElement('div');info.className='vz-home-design-byline';
-  const studio=document.createElement('strong');studio.textContent='VELORYZ Studio / Curated design';
-  info.append(studio);
-  const link=document.createElement('a');link.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';link.textContent='Explore design ↗';
-  link.setAttribute('aria-label','View published library details for '+toText(item.name));
-  foot.append(info,link);body.append(tag,title,desc,foot);article.append(art,body);return article;
+  const by=document.createElement('div');by.className='vz-home-design-byline';
+  const studio=document.createElement('strong');studio.textContent='VELORYZ Studio / curated direction';by.append(studio);
+  const links=document.createElement('div');links.className='vz-home-design-links';
+  const detail=document.createElement('a');detail.href=item.id?'/design/'+encodeURIComponent(item.id)+'/':'/design/';detail.textContent='View details ↗';
+  const create=document.createElement('a');create.href='/create/?reference='+encodeURIComponent(item.id||'design');create.textContent='Use this direction ↗';
+  links.append(detail,create);foot.append(by,links);
+  body.append(kicker,title,desc,signals,foot);article.append(art,body);return article;
  };
- track.replaceChildren(...items.map(createCard)); // one complete set, no duplicate artificial items
- track.setAttribute('aria-label',items.length+' real website design directions, presented through scrolling');
- let travel=0,lastW=0,lastViewW=0;
+ const cards=items.map(createCard);
+ track.replaceChildren(...cards);
+ track.setAttribute('aria-label',items.length+' curated design directions controlled by vertical scrolling');
+ viewport.querySelector('.vz-library-rail')?.remove();
+ const rail=document.createElement('nav');rail.className='vz-library-rail';rail.setAttribute('aria-label','Featured design positions');
+ items.forEach((item,i)=>{
+  const b=document.createElement('button');b.type='button';b.dataset.vzLibraryGo=String(i);b.setAttribute('aria-label','Show '+toText(item.name));b.textContent=String(i+1).padStart(2,'0');
+  if(i===0)b.setAttribute('aria-current','true');rail.append(b);
+ });
+ viewport.append(rail);
+ let step=620,active=-1;
  const motionIsFull=()=>!window.StudioMotion||window.StudioMotion.level==='full';
  const clamp=v=>Math.max(0,Math.min(1,v));
+ const setActive=(next,local=0)=>{
+  if(next===active&&cards[next]){cards[next].style.setProperty('--vz-library-local',local.toFixed(4));return}
+  active=next;
+  cards.forEach((card,i)=>{
+   card.classList.toggle('is-active',i===next);
+   card.classList.toggle('is-before',i<next);
+   card.classList.toggle('is-after',i>next);
+   card.setAttribute('aria-hidden',String(i!==next));
+   card.style.setProperty('--vz-library-local',i===next?local.toFixed(4):'0');
+  });
+  rail.querySelectorAll('button').forEach((b,i)=>i===next?b.setAttribute('aria-current','true'):b.removeAttribute('aria-current'));
+ };
+ const recalc=()=>{
+  step=Math.round(Math.max(500,Math.min(760,innerHeight*.7)));
+  const distance=Math.max(step,(items.length-1)*step);
+  section.style.setProperty('--vz-library-scroll-distance',distance+'px');
+  section.style.setProperty('--vz-library-stage-count',String(items.length));
+  if(count)count.textContent=String(items.length).padStart(2,'0')+' featured / '+String(all.length).padStart(2,'0')+' total designs';
+ };
  const update=()=>{
-  if(!section.isConnected||!viewport.clientWidth)return;
+  if(!section.isConnected)return;
   const full=motionIsFull();
   section.classList.toggle('is-static',!full);
   if(!full){
-   track.style.transform='none';
+   setActive(0,0);
    if(fill)fill.style.transform='scaleX(0)';
-   if(index)index.textContent='Swipe designs horizontally ↔';
+   if(index)index.textContent='Swipe or open the complete library ↗';
    return;
   }
-  if(track.scrollWidth!==lastW||viewport.clientWidth!==lastViewW)recalc();
-  const range=Math.max(1,section.offsetHeight-window.innerHeight);
+  const range=Math.max(1,section.offsetHeight-innerHeight);
   const progress=clamp(-section.getBoundingClientRect().top/range);
-  track.style.transform='translate3d('+(-travel*progress).toFixed(2)+'px,0,0)';
+  const scaled=progress*Math.max(1,items.length-1);
+  const next=Math.min(items.length-1,Math.floor(scaled+0.00001));
+  const local=clamp(scaled-next);
+  setActive(next,local);
   if(fill)fill.style.transform='scaleX('+progress.toFixed(4)+')';
-  if(index){
-   const nearest=Math.min(items.length,Math.max(1,Math.round(progress*(items.length-1))+1));
-   index.textContent=String(nearest).padStart(2,'0')+' / '+String(items.length).padStart(2,'0');
-  }
+  if(index)index.textContent=String(next+1).padStart(2,'0')+' / '+String(items.length).padStart(2,'0')+' · '+toText(items[next]?.name);
  };
- const recalc=()=>{
-  const viewWidth=viewport.clientWidth; if(!viewWidth)return;
-  lastW=track.scrollWidth;lastViewW=viewWidth;
-  travel=Math.max(0,lastW-viewWidth);
-  section.style.setProperty('--vz-library-scroll-distance',Math.max(1,Math.ceil(travel*1.12))+'px');
-  if(count)count.textContent=String(items.length).padStart(2,'0')+' VELORYZ selected designs';
-  if(index&&!section.classList.contains('is-static'))index.textContent='01 / '+String(items.length).padStart(2,'0');
- };
- window.VeloryzReferenceGallery={update,refresh:recalc,get count(){return items.length}};
- // Same scroll clock as the original horizontally pinned services sequence.
- // The existing page tick calls update(); no independent high-frequency animation loop.
- requestAnimationFrame(()=>{recalc();update();});
+ rail.addEventListener('click',event=>{
+  const button=event.target.closest('[data-vz-library-go]');if(!button)return;
+  const n=Number(button.dataset.vzLibraryGo)||0;
+  if(!motionIsFull()){cards[n]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});return}
+  const top=section.getBoundingClientRect().top+scrollY+n*step;
+  scrollTo({top,behavior:'smooth'});
+ });
+ window.VeloryzReferenceGallery={update,refresh:()=>{recalc();update()},get count(){return all.length},get featuredCount(){return items.length}};
+ requestAnimationFrame(()=>{recalc();setActive(0,0);update()});
  if(typeof ResizeObserver==='function'){
-  const observer=new ResizeObserver(()=>{recalc();update();});
-  observer.observe(viewport);observer.observe(track);
- }else window.addEventListener('resize',()=>{recalc();update();},{passive:true});
- document.addEventListener('DOMContentLoaded',()=>{
-  window.StudioMotion?.addEventListener?.('change',()=>{recalc();update();});
-  recalc();update();
- },{once:true});
- window.addEventListener('pageshow',()=>{recalc();update();});
- window.addEventListener('hashchange',()=>requestAnimationFrame(()=>{recalc();update();}));
+  const observer=new ResizeObserver(()=>{recalc();update()});observer.observe(viewport);observer.observe(section);
+ }else window.addEventListener('resize',()=>{recalc();update()},{passive:true});
+ document.addEventListener('DOMContentLoaded',()=>{window.StudioMotion?.addEventListener?.('change',()=>{recalc();update()});recalc();update()},{once:true});
+ window.addEventListener('pageshow',()=>{recalc();update()});
+ window.addEventListener('hashchange',()=>requestAnimationFrame(()=>{recalc();update()}));
 }
 function menuFocus(){
  const menu=$('#mn'),button=$('#mb');
