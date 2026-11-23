@@ -449,3 +449,60 @@ html[data-motion="reduced"] .vz-reference-site .btn:hover {
   color:#fff;
  }
 }
+
+/* ========================================================================
+ * SILK R4 — ACTUAL VELORYZ SITE ADAPTER
+ * The original Silk reference mockup used .vz-reference-site .btn/.pan.
+ * VELORYZ public pages render .button and .project-link/.process-card
+ * under #main, so reference-only styles never matched the real homepage.
+ * Keep this additive and preserve original assets, typography and layout.
+ * ======================================================================== */
+:is(#main, .site-header) .button,
+#main .motion-secondary {
+  --vz-bx: 50%;
+  --vz-by: 50%;
+  --vz-liquid-color: #b84224;
+  background-image: radial-gradient(
+    circle at var(--vz-bx) var(--vz-by),
+    var(--vz-liquid-color) var(--vz-r),
+    transparent calc(var(--vz-r) + .5%)
+  );
+  background-repeat: no-repeat;
+  transition:
+    --vz-r .7s cubic-bezier(.65, 0, .35, 1),
+    transform .3s var(--vzu-ease),
+    background-color .3s,
+    color .3s,
+    box-shadow .4s var(--vzu-ease);
+}
+:is(#main, .site-header) .button:where(.light, .outline, .orange) {
+  --vz-liquid-color: #f4ad8c;
+}
+:is(#main, .site-header) .button:is(:hover, :focus-visible),
+#main .motion-secondary:is(:hover, :focus-visible) {
+  --vz-r: 160%;
+  /* Explicit image wins the old .button:hover background shorthand. */
+  background-image: radial-gradient(
+    circle at var(--vz-bx) var(--vz-by),
+    var(--vz-liquid-color) var(--vz-r),
+    transparent calc(var(--vz-r) + .5%)
+  );
+}
+#main :is(.project-link, .process-card, .feature-card, .service-item, .delivery-card, .team-card) {
+  background-image: radial-gradient(
+    350px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(226, 72, 43, calc(var(--vz-spot, 0) * .14)),
+    transparent 70%
+  );
+  background-repeat: no-repeat;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(#main, .site-header) .button,
+  #main .motion-secondary { transition-duration: 0s !important; }
+}
+html[data-motion="paused"] :is(#main, .site-header) .button,
+html[data-motion="reduced"] :is(#main, .site-header) .button,
+html[data-motion="paused"] #main .motion-secondary,
+html[data-motion="reduced"] #main .motion-secondary {
+  transition-duration: 0s !important;
+}
