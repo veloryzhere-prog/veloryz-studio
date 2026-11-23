@@ -18,8 +18,8 @@ const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r26'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r26')&&security.includes('/veloryz-experience-r20.js?v=20261123-r26'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261123-r27'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261123-r27')&&security.includes('/veloryz-experience-r20.js?v=20261123-r27'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -52,6 +52,8 @@ assert(css.includes('/* R25 / product-finish layer */')&&css.includes('vz-r25-ro
 assert(js.includes('const beginRoutePending=anchor=>')&&js.includes('const initSectionReveals=()=>')&&js.includes('const syncMenuState=()=>'),'R25 route/reveal/menu polish missing');
 assert(css.includes('/* R26 / spatial editorial system')&&css.includes('@supports (animation-timeline:view())')&&css.includes('@keyframes vz26-v-drift'),'R26 native scroll-driven spatial system missing');
 assert(js.includes('const initR26SpatialSystem=()=>')&&js.includes('vz-r26-fast-scroll')&&js.includes('vz-r26-section-index'),'R26 editorial indexing/velocity context missing');
+assert(css.includes('/* R27 / cinematic chapter composition */')&&css.includes('.vz-r27-chapter-rail')&&css.includes('@keyframes vz27-deck-cinema'),'R27 cinematic composition CSS missing');
+assert(js.includes('const initR27Chapters=()=>')&&js.includes('vz-r27-chapter-rail')&&js.includes('vzR27Chapters'),'R27 chapter navigation missing');
 assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
@@ -103,4 +105,4 @@ assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace re
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
-console.log('PASS: R26 preserves R25 product finish while adding native scroll-timeline typography, spatial continuity, editorial section indexing and velocity-aware navigation.');
+console.log('PASS: R27 preserves R26 spatial identity while adding cinematic chapter navigation, design-stage depth, stacked-process choreography and a stronger final scene.');

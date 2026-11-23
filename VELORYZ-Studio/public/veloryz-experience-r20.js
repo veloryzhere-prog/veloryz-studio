@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R26
+/* VELORYZ / Public Experience R27
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -306,6 +306,53 @@
  };
  requestAnimationFrame(initR26SpatialSystem);
  addEventListener('studio:route',()=>requestAnimationFrame(initR26SpatialSystem));
+
+ // R27: chapter-based scene navigation for the reference homepage.
+ const initR27Chapters=()=>{
+  if(!body.classList.contains('vz-reference-site'))return;
+  const chapters=[
+   ['#tp','01','Intro'],
+   ['.stmt','02','Position'],
+   ['#hzs','03','Capabilities'],
+   ['#libs','04','Design'],
+   ['.pr','05','Process'],
+   ['.cta','06','Start']
+  ].map(([selector,no,label])=>({selector,no,label,node:document.querySelector(selector)})).filter(item=>item.node);
+  if(!chapters.length)return;
+
+  chapters.forEach(item=>item.node.classList.add('vz-r27-scene'));
+  let rail=document.querySelector('.vz-r27-chapter-rail');
+  if(!rail){
+   rail=document.createElement('div');
+   rail.className='vz-r27-chapter-rail';
+   rail.setAttribute('aria-hidden','true');
+   rail.innerHTML=chapters.map(item=>'<span data-r27-chapter="'+item.no+'"><i></i><b>'+item.no+' '+item.label+'</b></span>').join('');
+   document.body.append(rail);
+  }
+
+  if(body.dataset.vzR27Chapters==='1')return;
+  body.dataset.vzR27Chapters='1';
+  if(!('IntersectionObserver'in window))return;
+
+  const activate=no=>{
+   rail.querySelectorAll('[data-r27-chapter]').forEach(el=>el.classList.toggle('is-active',el.dataset.r27Chapter===no));
+   body.dataset.vzR27Chapter=no;
+  };
+  const observer=new IntersectionObserver(entries=>{
+   const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>{
+    const ac=Math.abs((a.boundingClientRect.top+a.boundingClientRect.height/2)-innerHeight/2);
+    const bc=Math.abs((b.boundingClientRect.top+b.boundingClientRect.height/2)-innerHeight/2);
+    return ac-bc;
+   })[0];
+   if(!visible)return;
+   const item=chapters.find(chapter=>chapter.node===visible.target);
+   if(item)activate(item.no);
+  },{rootMargin:'-18% 0px -38% 0px',threshold:[.08,.2,.45]});
+  chapters.forEach(item=>observer.observe(item.node));
+  activate(chapters[0].no);
+ };
+ requestAnimationFrame(initR27Chapters);
+ addEventListener('studio:route',()=>requestAnimationFrame(initR27Chapters));
 
  // Idle + intent prefetch for high-value same-origin destinations.
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
