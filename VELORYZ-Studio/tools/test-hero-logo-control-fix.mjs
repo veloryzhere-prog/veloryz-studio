@@ -10,7 +10,7 @@ const model=read('src/motion/experience.mjs');
 const inspector=read('src/motion/inspection.mjs');
 const css=read('public/reference-hero-immersive.css');
 const particles=read('public/reference-hero-immersive.js');
-assert(html.includes('class="hero vz-aurora-hero vz-material-hero"'),'Only the top hero gets revised background');
+assert(html.includes('class="hero vz-aurora-hero vz-material-hero vz-editorial-r5"'),'Only the approved editorial homepage hero gets the revised background');
 assert(html.includes('data-logo-source="official-glb"'),'Keep the original full-depth VELORYZ 3D asset');
 assert(html.includes('/assets/brand/official/Main-Dark-Ink-Transparent.webp'),'Approved official logo remains in navigation');
 assert(html.includes('/assets/brand/veloryz-mark.svg'),'Logo fallback remains');
@@ -32,6 +32,7 @@ assert(css.includes('.vz-reference-site .vz-material-hero')&&css.includes('linea
 assert(!css.includes('conic-gradient(')&&!css.includes('@keyframes vzHeroAura'),'Remove disliked neon animated aurora entirely');
 assert(css.includes('filter:none!important')&&css.includes('.vz-official-header-brand img'),'Do not recolour approved official wordmark with filters');
 assert(css.includes('vz-3d-controls')&&css.includes('vz-3d-control-buttons'),'Visible model control panel required');
+assert(particles.includes("if(hero.classList.contains('vz-editorial-r5'))"),'Approved R5 editorial home must skip the old particle canvas and preserve its logo fallback');
 assert(particles.includes('visible')&&particles.includes('document.hidden')&&particles.includes("window.StudioMotion"),'Particle motion must stop offscreen and respect preferences');
 assert(particles.includes("now-lastTime<33"),'Particle animation must cap at 30fps to leave scroll render budget');
 assert(particles.includes('time*p.vx')&&particles.includes('time*p.vy'),'Particles must genuinely travel, not merely twinkle');
@@ -39,4 +40,4 @@ assert(particles.includes('const count=clamp('),'Mobile particle population must
 assert(particles.includes('brand.src=\'/assets/brand/official/Main-Dark-Ink-Transparent.png\''),'Correct wordmark fallback is required');
 assert.doesNotThrow(()=>new vm.Script(particles),'Particle JS must parse');
 for(const p of ['public/reference-hero-immersive.css','public/reference-hero-immersive.js'])assert(read(p).length>1000,'Hero asset missing: '+p);
-console.log('PASS: original-color 3D logo, correctly centered model, user rotation/continue/reset controls, hero-only warm background and visible capped particles.');
+console.log('PASS: original-color 3D logo, correctly centered model, user rotation/continue/reset controls, hero-only warm background and legacy capped particle fallback disabled in R5.');
