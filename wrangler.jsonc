@@ -1,0 +1,24 @@
+{
+  "$schema": "./VELORYZ-Studio/node_modules/wrangler/config-schema.json",
+  "name": "veloryz-studio01",
+  "main": "VELORYZ-Studio/dist/server/index.js",
+  "assets": {
+    "directory": "VELORYZ-Studio/dist/client"
+  },
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "keep_vars": true,
+  "no_bundle": true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.js", "**/*.mjs"]
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "build": {
+    "command": "corepack pnpm --dir VELORYZ-Studio install --frozen-lockfile && corepack pnpm --dir VELORYZ-Studio build"
+  }
+}
