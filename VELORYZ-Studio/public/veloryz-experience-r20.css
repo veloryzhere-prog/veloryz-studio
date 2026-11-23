@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R26
+/* VELORYZ / Public Experience R27
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -915,4 +915,185 @@ body.vz-r20.vz-r25-menu-open{
   opacity:1!important;
  }
  .vz-reference-site .vz-home-topbar{transition:none!important}
+}
+
+/* R27 / cinematic chapter composition */
+.vz-reference-site .vz-r27-chapter-rail{
+ position:fixed;
+ left:clamp(12px,1.2vw,20px);
+ top:50%;
+ z-index:44;
+ display:grid;
+ gap:8px;
+ transform:translateY(-50%);
+ mix-blend-mode:difference;
+ color:#f7f0e4;
+ pointer-events:none;
+}
+.vz-reference-site .vz-r27-chapter-rail span{
+ display:grid;
+ grid-template-columns:18px auto;
+ align-items:center;
+ gap:8px;
+ min-height:18px;
+ font:600 8px/1 var(--sans);
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ opacity:.38;
+ transform:translateX(-3px);
+ transition:opacity 320ms ease,transform 520ms var(--vz20-ease);
+}
+.vz-reference-site .vz-r27-chapter-rail i{
+ display:block;
+ width:10px;
+ height:1px;
+ background:currentColor;
+ transition:width 520ms var(--vz20-ease);
+}
+.vz-reference-site .vz-r27-chapter-rail span.is-active{
+ opacity:1;
+ transform:none;
+}
+.vz-reference-site .vz-r27-chapter-rail span.is-active i{width:18px}
+
+.vz-reference-site .vz-r27-scene{
+ position:relative;
+}
+.vz-reference-site .vz-r27-scene::after{
+ content:"";
+ position:absolute;
+ left:clamp(20px,5vw,72px);
+ right:clamp(20px,5vw,72px);
+ bottom:0;
+ height:1px;
+ background:linear-gradient(90deg,currentColor,transparent 72%);
+ opacity:.08;
+ pointer-events:none;
+}
+.vz-reference-site .lib.vz-r27-scene::after{opacity:.16}
+
+.vz-reference-site .lib .stage{
+ position:relative;
+}
+.vz-reference-site .lib .stage::before{
+ content:"";
+ position:absolute;
+ inset:-6% -5%;
+ z-index:-1;
+ border:1px solid rgba(247,240,228,.08);
+ border-radius:clamp(24px,4vw,52px);
+ transform:rotate(-1.2deg);
+}
+.vz-reference-site .lib .decks{
+ transform-origin:50% 60%;
+}
+.vz-reference-site .lib .dts{
+ padding-inline:clamp(0px,2vw,28px);
+}
+.vz-reference-site .lib .dt h3{
+ font-size:clamp(2.7rem,5.5vw,5rem)!important;
+ letter-spacing:-.055em!important;
+}
+.vz-reference-site .lib .dt p{
+ font-size:clamp(.95rem,1.2vw,1.08rem);
+ line-height:1.72;
+}
+.vz-reference-site .pr .stack{
+ position:relative;
+}
+.vz-reference-site .pr .stack::before{
+ content:"";
+ position:absolute;
+ left:clamp(8px,1vw,14px);
+ top:2%;
+ bottom:5%;
+ width:1px;
+ background:linear-gradient(180deg,transparent,var(--vz26-spine-strong),transparent);
+}
+.vz-reference-site .sc{
+ overflow:hidden;
+}
+.vz-reference-site .sc::after{
+ content:"";
+ position:absolute;
+ right:-8%;
+ bottom:-28%;
+ width:clamp(180px,26vw,420px);
+ aspect-ratio:1;
+ border:1px solid currentColor;
+ border-radius:50%;
+ opacity:.06;
+ pointer-events:none;
+}
+.vz-reference-site .sc:nth-child(even)::after{
+ right:auto;
+ left:-10%;
+ border-radius:22%;
+ transform:rotate(14deg);
+}
+
+.vz-reference-site .cta::after{
+ content:"";
+ position:absolute;
+ inset:12% 8% auto;
+ height:52%;
+ border:1px solid currentColor;
+ border-radius:50%;
+ opacity:.055;
+ transform:rotate(-6deg);
+ pointer-events:none;
+}
+.vz-reference-site footer .vz-footer-official{
+ position:relative;
+}
+.vz-reference-site footer .vz-footer-official::before{
+ content:"FINAL / VELORYZ";
+ display:block;
+ margin-bottom:18px;
+ font:600 9px/1 var(--sans);
+ letter-spacing:.16em;
+ opacity:.46;
+}
+
+@supports (animation-timeline:view()){
+ .vz-reference-site .lib .decks{
+  animation:vz27-deck-cinema linear both;
+  animation-timeline:view();
+  animation-range:entry 6% cover 48%;
+ }
+ .vz-reference-site .sc{
+  animation:vz27-stack-entry linear both;
+  animation-timeline:view();
+  animation-range:entry 4% cover 38%;
+ }
+ .vz-reference-site .cta::after{
+  animation:vz27-cta-orbit linear both;
+  animation-timeline:view();
+  animation-range:entry 0% cover 70%;
+ }
+ @keyframes vz27-deck-cinema{
+  from{opacity:.45;transform:perspective(1000px) translate3d(0,54px,0) rotateX(7deg) scale(.96)}
+  to{opacity:1;transform:perspective(1000px) none}
+ }
+ @keyframes vz27-stack-entry{
+  from{opacity:.45;transform:translate3d(0,34px,0) scale(.985)}
+  to{opacity:1;transform:none}
+ }
+ @keyframes vz27-cta-orbit{
+  from{transform:rotate(-12deg) scale(.82);opacity:0}
+  to{transform:rotate(4deg) scale(1.05);opacity:.07}
+ }
+}
+
+@media(max-width:1100px){
+ .vz-reference-site .vz-r27-chapter-rail{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-reference-site .lib .decks,
+ .vz-reference-site .sc,
+ .vz-reference-site .cta::after{
+  animation:none!important;
+  transform:none!important;
+  opacity:1;
+ }
 }
