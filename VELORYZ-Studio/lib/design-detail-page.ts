@@ -35,10 +35,10 @@ const head=(name:string,description:string,mode:'detail'|'immersive')=>
  '<link rel="stylesheet" href="/veloryz-design-preview.css?v=20261123-marketplace-v7">'+
  // Apply UI 2026 polish to the VELORYZ-owned detail wrapper, never the
  // third-party interactive website or the immersive preview iframe.
- (mode==='detail'?'<meta name="veloryz-ui-release" content="silk-ui-20261123-r2">'+
-  '<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r2">'+
-  '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r2">'+
-  '<script src="/veloryz-silk-2026.js?v=20261123-route-r2" defer></script>':'')+
+ (mode==='detail'?'<meta name="veloryz-ui-release" content="silk-ui-20261123-r3">'+
+  '<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r3">'+
+  '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r3">'+
+  '<script src="/veloryz-silk-2026.js?v=20261123-route-r3" defer></script>':'')+
  '<script src="/veloryz-design-preview.js?v=20261123-marketplace-v7" defer></script></head>';
 const brand=()=>'<a class="vz-market-brand" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Transparent.webp" width="128" height="46" alt="VELORYZ Studio" decoding="async"><span class="vz-market-brand-text">VELORYZ<small>CREATIVE & TECHNOLOGY STUDIO</small></span></a>';
 const projectUrl=(p:DesignPreviewRecord)=>'/create/?reference='+encodeURIComponent(p.id)+'&estimate='+Math.round(p.price||6000);
