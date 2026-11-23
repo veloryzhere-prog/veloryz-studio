@@ -35,8 +35,8 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('data-vz-menu-version="reference-r6"')
     &&home.body.includes('/reference-menu-morph-r6.css?v=20261123-reference-menu-r6')
     &&liveControllerFixed;
-   const r9HomeLinked=home.body.includes('/reference-site-upgrade.css?v=20261123-navblur-r12')
-    &&home.body.includes('/reference-site-upgrade.js?v=20261123-navblur-r12')
+   const r9HomeLinked=home.body.includes('/reference-site-upgrade.css?v=20261123-clean-r14')
+    &&home.body.includes('/reference-site-upgrade.js?v=20261123-clean-r14')
     &&home.body.includes('/reference-restored-features.css?v=20261123-journey-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
@@ -80,6 +80,10 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&!homeStageJs.body.includes("data-vz-library-go")
     &&homeStageCss.body.includes('nav.vz-library-rail')
     &&homeStageCss.body.includes('display:none!important');
+   const r14ChromeGone=!home.body.includes('vz-library-rail')
+    &&!home.body.includes('vz-library-index')
+    &&!home.body.includes('Featured design positions')
+    &&!home.body.includes('01 / 07');
    const r9MarketOK=actualMarketJs.status===200&&actualMarketCss.status===200
     &&actualMarketJs.body.includes('VELORYZ / CURATED DESIGN MARKET')
     &&actualMarketJs.body.includes('data-source-motion')
@@ -94,11 +98,11 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&journeyCss.body.includes('CLICKABLE PROJECT JOURNEY R9')
     &&appJs.body.includes("const href=i===3?'/create/':i===4?'/reviews.html':'/design/'")
     &&appJs.body.includes('class="teaser-star" src="/assets/brand/veloryz-mark.svg"');
-   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK){
+   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK&&r14ChromeGone){
     console.log('PASS: production '+origin+' serves '+release+' plus R9 finite home design stage, actual design-market renderer, VELORYZ feedback, clickable Journey and cache-busted public assets.');
     process.exit(0);
    }
-   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R12 sharp showcase '+r11SharpOK+'.';
+   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R14 clean showcase '+r11SharpOK+', R14 rail/counter removal '+r14ChromeGone+'.';
   }else{
    lastError='Live HTML not at base release '+release+': homepage '+home.status+', create '+creator.status+', design page '+designPage.status+', detail '+designDetail.status+'.';
   }
