@@ -84,7 +84,7 @@ assert(home.includes('/reference-site-upgrade.css?v=20261123-design-stage-r9')&&
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
 assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
-assert(liveGate.includes('VELORYZ / CURATED DESIGN MARKET')&&liveGate.includes("$('#mn a').forEach(function(a,i)"),'Production gate must verify actual R9 market and correct list-based menu initializer');
+assert(liveGate.includes('VELORYZ / CURATED DESIGN MARKET')&&liveGate.includes("$"+"$('#mn a').forEach(function(a,i)"),'Production gate must verify actual R9 market and correct list-based menu initializer');
 assert(visualQc.includes('waitForR9Deployment')&&visualQc.includes('-design-stage-mid.png')&&visualQc.includes('-marketplace.png'),'Visual QC must wait for R9 and capture the repaired surfaces');
 
 /* Syntax and stylesheet integrity. */
