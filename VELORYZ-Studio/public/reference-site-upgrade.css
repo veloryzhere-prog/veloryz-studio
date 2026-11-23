@@ -505,6 +505,10 @@
 }
 .vz-reference-site #vz-home-library .vz-home-library-bottom{position:relative;z-index:5;color:var(--vz-lib-muted);display:grid;grid-template-columns:auto minmax(120px,1fr) auto;align-items:center;gap:18px}
 .vz-reference-site #vz-home-library .vz-home-library-bottom .tag{color:var(--vz-lib-muted)!important}
+.vz-reference-site #vz-home-library :is(#vz-library-count,#vz-library-index),
+.vz-reference-site #vz-home-library .vz-home-library-intro>.tag{
+ display:none!important;
+}
 .vz-reference-site #vz-home-library .vz-library-progress{background:rgba(247,240,228,.15)!important}
 .vz-reference-site #vz-home-library .vz-library-progress i{background:#e2482b!important}
 .vz-reference-site #vz-home-library .vz-home-library-bottom .btn.fill{background:#f7f0e4!important;color:#17120f!important;border-color:#f7f0e4!important}
