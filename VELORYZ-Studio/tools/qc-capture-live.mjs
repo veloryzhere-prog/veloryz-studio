@@ -92,7 +92,7 @@ try {
    const row={route:route.path,viewport:screen.name,screenshots:[],status:0,issues:[],consoleErrors:[],requestErrors:[]};
    const page=await context.newPage();
    const responseIssues=[];
-   page.on('pageerror',e=>row.consoleErrors.push(String(e).slice(0,260)));
+   page.on('pageerror',e=>row.consoleErrors.push(String(e.stack||e).slice(0,640)));
    page.on('console',msg=>{if(msg.type()==='error')row.consoleErrors.push(msg.text().slice(0,260));});
    page.on('requestfailed',req=>{const u=req.url();if(u.startsWith(root))row.requestErrors.push({url:u.slice(0,200),reason:req.failure()?.errorText});});
    page.on('response',resp=>{
@@ -102,11 +102,21 @@ try {
    try{
     const response=await page.goto(root+route.path,{waitUntil:'domcontentloaded',timeout:35000});
     row.status=response?.status()||0;
-    // Allow the official intro and any initial hydration to complete without user data.
-    if(route.path==='/') {
-      try{await page.locator('#skip').click({timeout:2200});}catch{}
+    // The privacy dialog legitimately blocks underlying controls until a
+    // choice is made. Choose 'Reject optional' in this DISPOSABLE guest
+    // browser context; never turn on tracking or submit any project data.
+    await page.waitForTimeout(600);
+    const reject=page.getByRole('button',{name:/^Reject optional$/i});
+    if(await reject.count()) {
+      try{
+        await reject.click({timeout:4200});
+        row.consentChoice='Reject optional (temporary QC session)';
+      }catch(e){row.issues.push('Could not dismiss privacy dialog: '+String(e.message||e).slice(0,140));}
     }
-    await page.waitForTimeout(850);
+    if(route.path==='/') {
+      try{await page.locator('#skip').click({timeout:1500});}catch{}
+    }
+    await page.waitForTimeout(700);
     row.probe=await check(page);
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
