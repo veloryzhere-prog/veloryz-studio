@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R20
+/* VELORYZ / Public Experience R21
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -406,3 +406,25 @@ body.vz-r20.v4-creator-page .v4-question-heading p{
 
 /* R20.2 avoids adding blur-heavy overlays or persistent loops. */
 
+
+/* R21 / measurement-era stability and accessibility refinement */
+html{scrollbar-gutter:stable}
+.vz-r21-status{
+ position:fixed!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+ overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+@media(prefers-contrast:more){
+ body.vz-r20 :where(a,button,input,select,textarea,summary):focus-visible{outline-width:4px!important}
+ body.vz-r20 :where(.button,.btn,button,[role=button]){border-width:2px!important}
+ body.vz-r20 .vz-chat-page,
+ body.vz-r20 .vz-source-toolbar,
+ .docs-r20-start>a{border-color:currentColor!important}
+}
+@media(forced-colors:active){
+ .vz-reference-site .vz-hero-cta-main,
+ .vz-reference-site .vz-hero-cta-alt,
+ .vz-reference-site .vz-3d-more,
+ .vz-r20-assistant-actions a{forced-color-adjust:auto}
+ body.vz-r20 .footer-intro .brand img,
+ body.vz-r20 .footer-intro .veloryz-brand-icon{filter:none!important}
+}
