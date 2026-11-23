@@ -33,6 +33,7 @@ assert(!/compatibility_flags\s*:/.test(localConfigSource),'localBindingConfig mu
 const repoRoot=new URL('../../',import.meta.url);
 const rootWrangler=JSON.parse(fs.readFileSync(new URL('wrangler.jsonc',repoRoot),'utf8'));
 const rootPkg=JSON.parse(fs.readFileSync(new URL('package.json',repoRoot),'utf8'));
+const deployWorkflow=fs.readFileSync(new URL('.github/workflows/veloryz-deploy-cloudflare.yml',repoRoot),'utf8');
 assert.equal(rootWrangler.name,'veloryz-studio01','Repository-root Wrangler must target the connected Worker');
 assert.equal(rootWrangler.compatibility_date,'2026-11-23','Repository-root Wrangler must match the current runtime date');
 assert(!('compatibility_flags' in rootWrangler),'Repository-root Wrangler must omit redundant nodejs_compat');
@@ -41,5 +42,9 @@ assert.equal(rootWrangler.assets?.directory,'VELORYZ-Studio/dist/client','Reposi
 assert.equal(rootWrangler.no_bundle,true,'Repository-root Wrangler must preserve Vinext no_bundle output');
 assert(String(rootWrangler.build?.command||'').includes('pnpm --dir VELORYZ-Studio build'),'Repository-root Wrangler must build the nested VELORYZ app first');
 assert(String(rootPkg.scripts?.deploy||'').includes('VELORYZ-Studio'),'Repository-root deploy script must delegate to the real app');
+
+assert(!deployWorkflow.includes('exit 78'),'Missing optional Cloudflare API token must not hard-fail the fallback workflow');
+assert(deployWorkflow.includes("available=false")&&deployWorkflow.includes("available == 'true'"),'Fallback deploy must explicitly gate direct publish on credential availability');
+assert(deployWorkflow.includes('Cloudflare Git integration'),'Fallback workflow must state the normal Git integration publication path');
 
 console.log('PASS: Cloudflare Worker identity, root deploy shim, Node/pnpm versions and Vite/Wrangler deployment contract are explicit.');
