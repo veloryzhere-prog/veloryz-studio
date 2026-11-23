@@ -9,6 +9,9 @@ on:
       - "VELORYZ-Studio/lib/response-security.ts"
       - "VELORYZ-Studio/lib/claude-reference-shell.ts"
       - "VELORYZ-Studio/public/reference-elegance-r5.css"
+      - "VELORYZ-Studio/public/reference-menu-morph-r6.css"
+      - "VELORYZ-Studio/public/reference-site-upgrade.js"
+      - "VELORYZ-Studio/tools/test-reference-menu-r6.mjs"
       - "VELORYZ-Studio/public/reference-hero-immersive.js"
       - "VELORYZ-Studio/public/button-feedback.js"
       - "VELORYZ-Studio/tools/test-reference-elegance-r5.mjs"
@@ -33,6 +36,8 @@ jobs:
         run: node tools/test-silk-ui-2026.mjs
       - name: Verify active R5 homepage, original logo and menu controls
         run: node tools/test-reference-elegance-r5.mjs
+      - name: Verify reference Menu/Close morph and keyboard access
+        run: node tools/test-reference-menu-r6.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
