@@ -43,7 +43,7 @@ const routes={
   '/work/':{title:'Selected Work — VELORYZ Studio',render:workPage},
   '/process/':{title:'Our Process & Delivery Standards — VELORYZ Studio',render:deliveryPage},
   '/services/':{title:'Design & Development Services — VELORYZ Studio',render:servicesPage},
-  '/studio/':{title:'The Studio, Aryan & Our Team — VELORYZ Studio',render:studioPage},
+  '/studio/':{title:'The Studio & Team — VELORYZ Studio',render:studioPage},
   '/velori/':{title:'VELORI — A VELORYZ Product',render:veloriPage},
   '/contact/':{title:'Let’s Build Together — Contact VELORYZ Studio',render:()=>contactPage()+needHelpBlock()},
  '/teamjob/':{title:'The People — VELORYZ Studio',render:teamDirectoryPage},
