@@ -29,9 +29,16 @@ assert(homeJs.includes("items=(picked.length?picked:all).slice(0,7)"),'Only seve
 assert(!homeJs.includes("travel*1.12"),'Never derive vertical travel from the giant catalogue track');
 assert(!homeJs.includes("travel=Math.max(0,lastW-viewWidth)"),'Old entire-catalogue horizontal travel must stay removed');
 assert(homeJs.includes("data.vzLibraryStage")||homeJs.includes("dataset.vzLibraryStage"),'Featured designs need stage identity');
-assert(homeJs.includes("data-vz-library-go")&&homeJs.includes("setActive(next,local)"),'Scroll and rail selection must change the active preview');
+assert(homeJs.includes("data-vz-library-go")&&homeJs.includes("const setActive=next=>"),'Scroll and rail selection must change the active preview');
 assert(homeCss.includes('HOME DESIGN STAGE R9')&&homeCss.includes('.vz-home-design-card.is-active'),'Pinned one-design-at-a-time stage CSS missing');
 assert(homeCss.includes('#vz-home-library.is-static'),'Reduced-motion/static library fallback missing');
+assert(!home.includes('id="vz-library-count"')&&!home.includes('id="vz-library-index"'),'Homepage design showcase must not expose numeric count/index labels');
+assert(home.includes('Curated directions / scroll to reveal'),'Homepage design intro must use non-numeric curation language');
+assert(homeJs.includes("b.textContent=''"),'Design rail buttons must be visual ticks, not visible numbers');
+assert(!homeJs.includes("padStart(2,'0')+' / '+String(items.length)"),'Current design counter must remain removed');
+assert(!homeCss.includes('scale(1.025)')&&!homeCss.includes('scale(.985)'),'Homepage design preview must not use GPU resampling scales that can blur screenshots');
+assert(homeCss.includes('filter:none!important')&&homeCss.includes('backdrop-filter:none!important'),'Preview image and rail backdrop must explicitly stay sharp');
+
 
 /* The REAL /design renderer is veloryz-open-library.js, which intentionally
    overwrites window.designPage after the compatibility marketplace loads. */
@@ -80,7 +87,7 @@ assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'Publi
 assert(security.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')&&security.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9'),'R9 public brand-motion assets missing');
 assert(shell.includes('/veloryz-open-library.css?v=20261123-market-r9')&&shell.includes('/veloryz-open-library.js?v=20261123-market-r9'),'Actual design library R9 cache key missing');
 assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261123-market-r9'),'Compatibility library R9 cache key missing');
-assert(home.includes('/reference-site-upgrade.css?v=20261123-design-stage-r9')&&home.includes('/reference-site-upgrade.js?v=20261123-design-stage-r9'),'Homepage finite design stage needs an R9 cache key');
+assert(home.includes('/reference-site-upgrade.css?v=20261123-design-sharp-r11')&&home.includes('/reference-site-upgrade.js?v=20261123-design-sharp-r11'),'Homepage finite design stage needs the sharp R11 cache key');
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
 assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
