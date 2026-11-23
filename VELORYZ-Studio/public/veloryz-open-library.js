@@ -4,7 +4,7 @@
 const previous=window.VeloryzExternalDesignLibrary||{};
 const legacy=typeof previous.entries==='function'?previous.entries.bind(previous):()=>[];
 let imported=Array.isArray(window.VELORYZ_OPEN_DESIGNS)?window.VELORYZ_OPEN_DESIGNS:[],
-category='All',rights='All',motion='All',price='All',query='',sort='featured',page=1,reviewLoaded=false;
+category='All',rights='All',motion='All',price='All',query='',sort='featured',page=1;
 const perPage=24;
 let observer=null,loadStarted=false;
 const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -90,7 +90,10 @@ function showcase(){
  ).join('')+'</div><p class="vz-source-home-note">Made for exploring ideas with VELORYZ Studio.</p>';
 }
 function curated(items,count=6){
- const pool=items.filter(p=>p.previewImage&&p.rights!=='restricted').slice().sort((a,b)=>score(b)-score(a)||Number(/high/i.test(b.motion||''))-Number(/high/i.test(a.motion||''))||(a.price||6000)-(b.price||6000));
+ const pool=items.filter(p=>p.previewImage&&p.rights!=='restricted').slice().sort((a,b)=>
+  score(b)-score(a)||
+  Number(/very high|high/i.test(b.motion||''))-Number(/very high|high/i.test(a.motion||''))||
+  (a.price||6000)-(b.price||6000));
  const out=[],seen=new Set();
  for(const p of pool){if(seen.has(p.category))continue;seen.add(p.category);out.push(p);if(out.length===count)break}
  for(const p of pool)if(out.length<count&&!out.includes(p))out.push(p);
@@ -98,7 +101,21 @@ function curated(items,count=6){
 }
 function featured(items){
  const preferred=curated(items,3);
- return '<div class="vfunction render(){
+ return '<div class="vz-source-feature-images" aria-label="Curated VELORYZ design directions">'+
+ preferred.map((p,i)=>'<a class="vz-source-feature-card vz-feature-'+i+'" href="'+path(p)+'">'+
+ '<img class="vz-source-image" src="/studio-preview-images/'+encodeURIComponent(p.id)+'" data-fallback-src="'+escape(p.previewImage)+'" alt="Preview of '+escape(p.name)+'" decoding="async">'+
+ '<span><b>'+String(i+1).padStart(2,'0')+'</b>'+escape(p.name)+'</span></a>').join('')+
+ '<img class="vz-r9-hero-mark" src="/assets/brand/veloryz-mark.svg" alt="" aria-hidden="true"></div>';
+}
+function featuredGrid(items){
+ return '<div class="vz-r9-feature-grid">'+curated(items,6).map((p,i)=>
+  '<article>'+art(p)+'<div><span>'+String(i+1).padStart(2,'0')+' / '+escape(p.category)+'</span>'+
+  '<h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3>'+
+  '<p>'+escape(p.description||'A selected direction ready for deeper review.')+'</p>'+
+  '<footer><strong>From '+money(p.price)+'</strong><a href="'+createPath(p)+'">Start with this ↗</a></footer></div></article>'
+ ).join('')+'</div>';
+}
+function render(){
  const items=entries(),s=stats(items),categories=['All',...new Set(items.map(p=>p.category))].sort((a,b)=>a==='All'?-1:b==='All'?1:a.localeCompare(b));
  const list=filtered(items),visible=list.slice(0,page*perPage);
  const prices=items.map(p=>Number(p.price||0)).filter(Boolean),lowest=prices.length?Math.min(...prices):6000;
@@ -120,7 +137,7 @@ function featured(items){
  '<label><span>Budget</span><select data-source-price>'+['All','Under ₹15k','₹15k–₹30k','₹30k+'].map(v=>'<option'+(v===price?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="price-asc"'+(sort==='price-asc'?' selected':'')+'>Price: low to high</option><option value="price-desc"'+(sort==='price-desc'?' selected':'')+'>Price: high to low</option><option value="name"'+(sort==='name'?' selected':'')+'>Name A–Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
  '<div class="vz-source-filters" role="group" aria-label="Source and rights status">'+[
- ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Studio reviewed'],['review','Needs source review'],['restricted','Creative reference']
+  ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Studio reviewed'],['review','Needs source review'],['restricted','Creative reference']
  ].map(([value,label])=>'<button type="button" data-source-rights="'+value+'" aria-pressed="'+(rights===value)+'">'+label+'</button>').join('')+'</div>'+
  '<div class="vz-source-list-head"><span id="vz-source-result-count" aria-live="polite">'+list.length+' matching directions</span><span>PRICES ARE STARTING VELORYZ BUILD ESTIMATES</span></div>'+
  '<div class="vz-source-grid" id="vz-source-grid">'+visible.map(card).join('')+'</div>'+
@@ -159,7 +176,7 @@ function refresh(){
  animateCards(root);
 }
 function loadReviewTrust(){
- const host=document.querySelector('[data-source-review-trust]');if(!host||reviewLoaded)return;reviewLoaded=true;
+ const host=document.querySelector('[data-source-review-trust]');if(!host||host.dataset.reviewLoaded==='1')return;host.dataset.reviewLoaded='1';
  fetch('/api/reviews',{credentials:'same-origin',cache:'no-store'}).then(r=>{if(!r.ok)throw Error('review api');return r.json()}).then(data=>{
   const rows=Array.isArray(data.reviews)?data.reviews.filter(x=>x&&typeof x.body==='string'&&x.body.trim()):[];
   const count=Math.max(rows.length,Number(data.summary?.count)||0),avg=Number(data.summary?.average)||0;
