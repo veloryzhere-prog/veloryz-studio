@@ -28,6 +28,8 @@ on:
       - "VELORYZ-Studio/public/veloryz-experience-r20.js"
       - "VELORYZ-Studio/public/creator-v4.js"
       - "VELORYZ-Studio/public/docs-hub.js"
+      - "VELORYZ-Studio/public/knowledge-v4.js"
+      - "VELORYZ-Studio/public/knowledge-v4.css"
       - "VELORYZ-Studio/public/veloryz-open-library.js"
       - "VELORYZ-Studio/public/app.js"
       - "VELORYZ-Studio/tools/test-public-experience-r20.mjs"

@@ -47,14 +47,15 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&designPage.body.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261123-r9-journey-market');
-   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,flowCss,flowJs,smoothJs,r20Css,r20Js,creatorJs,docsJs]=await Promise.all([
+   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,flowCss,flowJs,smoothJs,r20Css,r20Js,creatorJs,docsJs,knowledgeJs,knowledgeCss]=await Promise.all([
     ...silkAssets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css'),
     load('/reference-site-upgrade.js'),load('/reference-site-upgrade.css'),
     load('/veloryz-open-library.js'),load('/veloryz-open-library.css'),
     load('/veloryz-brand-motion-r9.js'),load('/veloryz-brand-motion-r9.css'),
     load('/reference-restored-features.css'),load('/app.js'),
     load('/reference-brand-flow-r17.css'),load('/reference-brand-flow-r17.js'),load('/smooth-scroll.js'),
-    load('/veloryz-experience-r20.css'),load('/veloryz-experience-r20.js'),load('/creator-v4.js'),load('/docs-hub.js')
+    load('/veloryz-experience-r20.css'),load('/veloryz-experience-r20.js'),load('/creator-v4.js'),load('/docs-hub.js'),
+    load('/knowledge-v4.js'),load('/knowledge-v4.css')
    ]);
    const menuOK=menuCss.status===200
     &&menuCss.body.includes('clip-path: circle(150vmax')
@@ -112,7 +113,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&flowCss.body.includes('filter:brightness(0) invert(96%)')
     &&smoothJs.body.includes('lerp:0.09')
     &&smoothJs.body.includes('wheelMultiplier:0.9');
-   const r20OK=r20Linked&&r20Css.status===200&&r20Js.status===200&&creatorJs.status===200&&docsJs.status===200
+   const r20OK=r20Linked&&r20Css.status===200&&r20Js.status===200&&creatorJs.status===200&&docsJs.status===200&&knowledgeJs.status===200&&knowledgeCss.status===200
     &&r20Js.body.includes("skip.textContent='Skip to main content'")
     &&r20Js.body.includes("data-vz-r20-3d-more")
     &&r20Css.body.includes('.docs-r20-start')
@@ -121,6 +122,14 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&creatorJs.body.includes('01 Discover')
     &&creatorJs.body.includes('05 Send brief')
     &&docsJs.body.includes('Choose the outcome, not the entire library.')
+    &&docsPage.body.includes('/knowledge-v4.js?v=20261123-r20-1')
+    &&docsPage.body.includes('/knowledge-v4.css?v=20261123-r20-1')
+    &&knowledgeJs.body.includes('Start with the outcome.')
+    &&knowledgeJs.body.includes('/docs/overview.html')
+    &&knowledgeJs.body.includes('/docs/pricing.html')
+    &&knowledgeJs.body.includes('/docs/client-portal.html')
+    &&knowledgeJs.body.includes('/docs/copyright.html')
+    &&knowledgeCss.body.includes('.kb-feature-grid.kb-r20-outcomes')
     &&actualMarketJs.body.includes('Starting budget (INR)')
     &&actualMarketJs.body.includes('Starting build estimates are shown in INR.')
     &&appJs.body.includes("['/contact/','Contact']")

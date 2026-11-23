@@ -218,10 +218,12 @@ try {
     }
     if(route.path==='/docs/'){
       row.probe.r20Docs=await page.evaluate(()=>({
-        startLinks:document.querySelectorAll('.docs-r20-start a').length,
-        search:Boolean(document.querySelector('#docs-search'))
+        outcomes:document.querySelectorAll('.kb-feature-grid.kb-r20-outcomes .kb-r20-outcome').length,
+        outcomeHrefs:[...document.querySelectorAll('.kb-feature-grid.kb-r20-outcomes .kb-r20-outcome')].map(a=>a.getAttribute('href')),
+        search:Boolean(document.querySelector('[data-kb-search],#docs-search'))
       }));
-      if(row.probe.r20Docs.startLinks!==4||!row.probe.r20Docs.search)row.issues.push('R20 documentation start paths/search missing');
+      const expectedDocs=['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'];
+      if(row.probe.r20Docs.outcomes!==4||JSON.stringify(row.probe.r20Docs.outcomeHrefs)!==JSON.stringify(expectedDocs)||!row.probe.r20Docs.search)row.issues.push('R20.1 authoritative documentation outcome paths/search missing');
     }
     if(route.path==='/help/assistant/'){
       row.probe.r20Help=await page.evaluate(()=>Boolean(document.querySelector('.vz-r20-assistant-context')));

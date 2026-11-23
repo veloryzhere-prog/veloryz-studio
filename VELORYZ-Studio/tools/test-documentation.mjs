@@ -86,8 +86,8 @@ console.log('Documentation quality checks passed: 141 Studio/Help articles, 11 s
 const ui=file('public/knowledge-v4.js');
 const design=file('public/knowledge-v4.css');
 assert.doesNotThrow(()=>new Function(ui),'Living Blueprint browser script must parse');
-assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.js?v=20261121-multi-agent-v3'),'Design script not loaded');
-assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.css?v=20261121-living-blueprint-v4'),'Design stylesheet not loaded');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.js?v=20261123-r20-1'),'Design script not loaded');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.css?v=20261123-r20-1'),'Design stylesheet not loaded');
 assert.ok(app.includes("['/docs/','Docs']"),'Top navigation must use only Docs label');
 const header=app.slice(app.indexOf('function header(){'),app.indexOf('function footer(){'));
 assert.ok(!header.includes('Useful Links'),'Header must not duplicate Docs with Useful Links');
@@ -121,7 +121,9 @@ new Function('window','document','fetch','location','studioCMS',ui)(
 assert.match(mockWindow.VeloryzDocs.render(),/Opening the knowledge system/,'Loading feedback must appear');
 await new Promise(resolve=>setImmediate(resolve));
 const home=mockWindow.VeloryzDocs.render();
-assert.equal((home.match(/class="kb-feature kb-feature-/g)||[]).length,3,'Three primary Docs destinations required');
+assert.equal((home.match(/class="kb-feature kb-feature-/g)||[]).length,4,'Four outcome-first Docs destinations required');
+for(const href of ['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'])assert.ok(home.includes('href="'+href+'"'),'R20.1 Docs outcome missing '+href);
+assert.match(home,/Start with the outcome\./,'R20.1 outcome-first Docs heading missing');
 assert.match(home,/kb-sidebar/,'Documentation workspace sidebar missing');
 assert.match(home,/data-kb-search/,'Prominent search trigger missing');
 mockLocation.pathname='/help/studio/';

@@ -13,6 +13,8 @@ const security=read('lib/response-security.ts');
 const app=read('public/app.js');
 const creator=read('public/creator-v4.js');
 const docs=read('public/docs-hub.js');
+const knowledge=read('public/knowledge-v4.js');
+const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
@@ -54,6 +56,10 @@ for(const stage of ['01 Discover','02 Inspiration','03 Capabilities','04 Investm
 assert(creator.includes('Your brief stays available for this browser session'),'Creator session persistence copy must remain truthful');
 
 assert(docs.includes('Choose the outcome, not the entire library.'),'Docs outcome-first start layer missing');
+assert(knowledge.includes('Start with the outcome.'),'Authoritative Knowledge V4 Docs start heading missing');
+for(const path of ['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'])assert(knowledge.includes(path),'Knowledge V4 R20 outcome path missing: '+path);
+assert(knowledge.includes('kb-r20-outcomes')&&knowledgeCss.includes('.kb-feature-grid.kb-r20-outcomes'),'Knowledge V4 four-card R20 outcome layout missing');
+assert(siteShell.includes('/docs-hub.js?v=20261123-r20-1')&&siteShell.includes('/knowledge-v4.js?v=20261123-r20-1')&&siteShell.includes('/knowledge-v4.css?v=20261123-r20-1'),'Active Docs assets need R20.1 cache keys');
 for(const path of ['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'])assert(docs.includes(path),'Docs start path missing: '+path);
 
 assert(market.includes('Motion level'),'Marketplace motion filter needs plain language');
@@ -63,7 +69,7 @@ assert(market.includes('Source availability and usage context'),'Marketplace rig
 assert(market.includes('Studio-reviewed source')&&market.includes('Source review needed')&&market.includes('Reference only'),'Marketplace source labels are incomplete');
 assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace result heading must identify INR');
 
-assert(!siteShell.includes('"founder": {"@type": "Person"'),'Public Organization schema should stay studio-first rather than single-owner-first');
+assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
 console.log('PASS: R20 public experience improves navigation, conversion, docs, marketplace, creator onboarding, accessibility, mobile resilience and public/private isolation.');
