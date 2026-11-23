@@ -86,8 +86,8 @@ console.log('Documentation quality checks passed: 141 Studio/Help articles, 11 s
 const ui=file('public/knowledge-v4.js');
 const design=file('public/knowledge-v4.css');
 assert.doesNotThrow(()=>new Function(ui),'Living Blueprint browser script must parse');
-assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.js?v=20261121-multi-agent-v3'),'Design script not loaded');
-assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.css?v=20261121-living-blueprint-v4'),'Design stylesheet not loaded');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.js?v=20261123-r20-1'),'Design script not loaded');
+assert.ok(file('lib/site-shell.ts').includes('knowledge-v4.css?v=20261123-r20-1'),'Design stylesheet not loaded');
 assert.ok(app.includes("['/docs/','Docs']"),'Top navigation must use only Docs label');
 const header=app.slice(app.indexOf('function header(){'),app.indexOf('function footer(){'));
 assert.ok(!header.includes('Useful Links'),'Header must not duplicate Docs with Useful Links');
