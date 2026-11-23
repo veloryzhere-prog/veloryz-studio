@@ -20,7 +20,10 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
    +'<meta name="veloryz-ui-release" content="'+ui2026Release+'">'
    +'<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'
   : '';
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+'<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'+'</head>');
+ const editorialAssets=!privatePage&&status===200
+  ? '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'
+  : '';
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
