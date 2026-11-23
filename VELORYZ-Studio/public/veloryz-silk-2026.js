@@ -255,5 +255,5 @@
  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, { once: true });
  else start();
 
- window.VeloryzSilk = { version: 'silk-2026.2', get enabled() { return allowed(); } };
+ window.VeloryzSilk = { version: 'silk-2026.3', get enabled() { return allowed(); } };
 })();
