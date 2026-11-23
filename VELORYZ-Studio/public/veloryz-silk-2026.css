@@ -17,6 +17,48 @@
   --vz-ease-inout: cubic-bezier(.65, 0, .35, 1);
 }
 
+/* ---------- V2: registered liquid radius and animated card spotlight ---------- */
+@property --vz-r { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --vz-spot { syntax: '<number>'; inherits: false; initial-value: 0; }
+
+/* Confetti is transient decoration only, outside every layout and pointer target. */
+.vz-burst {
+ position: fixed;
+ z-index: 2147483000;
+ pointer-events: none;
+ border-radius: 50%;
+ will-change: transform, opacity;
+}
+
+/* V2: long editorial paragraphs reveal individual words along their view timeline. */
+.vz-w { display: inline; }
+@supports (animation-timeline: view()) {
+ @media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="paused"]):not([data-motion="reduced"]) [data-vz-scrub] {
+   view-timeline-name: --vz-scrub;
+   view-timeline-axis: block;
+  }
+  html:not([data-motion="paused"]):not([data-motion="reduced"]) [data-vz-scrub] .vz-w {
+   opacity: .2;
+   animation: vz-word linear both;
+   animation-timeline: --vz-scrub;
+   animation-range: cover var(--a, 0%) cover var(--b, 100%);
+  }
+ }
+}
+@keyframes vz-word { to { opacity: 1; } }
+
+/* Both reduced-motion and a site-level pause must make all words legible immediately. */
+html[data-motion="paused"] [data-vz-scrub] .vz-w,
+html[data-motion="reduced"] [data-vz-scrub] .vz-w {
+ animation: none !important;
+ opacity: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+ [data-vz-scrub] .vz-w { animation: none !important; opacity: 1 !important; }
+ .vz-burst { display: none !important; }
+}
+
 /* ---------- Typography polish (zero specificity: never overrides existing rules) ---------- */
 :where(h1, h2, h3) { text-wrap: balance; }
 :where(p, li, .lead) { text-wrap: pretty; }
