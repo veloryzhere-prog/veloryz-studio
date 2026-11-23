@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "VELORYZ-Studio/tools/qc-capture-live.mjs"
+      - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
       - "VELORYZ-Studio/tools/test-reference-qc-r7.mjs"
       - "VELORYZ-Studio/public/reference-qc-layout-r7.css"
       - "VELORYZ-Studio/public/reference-site-upgrade.js"

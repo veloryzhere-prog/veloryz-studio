@@ -8,6 +8,12 @@ on:
       - "VELORYZ-Studio/public/veloryz-*.js"
       - "VELORYZ-Studio/lib/response-security.ts"
       - "VELORYZ-Studio/lib/claude-reference-shell.ts"
+      - "VELORYZ-Studio/lib/site-shell.ts"
+      - "VELORYZ-Studio/public/reference-site-upgrade.css"
+      - "VELORYZ-Studio/public/reference-restored-features.css"
+      - "VELORYZ-Studio/public/external-design-library.js"
+      - "VELORYZ-Studio/public/external-design-library.css"
+      - "VELORYZ-Studio/tools/test-design-market-r9.mjs"
       - "VELORYZ-Studio/public/reference-elegance-r5.css"
       - "VELORYZ-Studio/public/reference-menu-morph-r6.css"
       - "VELORYZ-Studio/public/reference-site-upgrade.js"
@@ -38,9 +44,11 @@ jobs:
         run: node tools/test-reference-elegance-r5.mjs
       - name: Verify reference Menu/Close morph and keyboard access
         run: node tools/test-reference-menu-r6.mjs
+      - name: Verify R9 finite design stage, actual market renderer and brand feedback
+        run: node tools/test-design-market-r9.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
           VELORYZ_UI_RELEASE: silk-ui-20261123-r5
-          VELORYZ_PROBE_ATTEMPTS: 16
+          VELORYZ_PROBE_ATTEMPTS: 20
         run: node tools/check-live-ui-release.mjs
