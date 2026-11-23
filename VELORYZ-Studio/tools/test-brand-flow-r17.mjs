@@ -9,8 +9,8 @@ const css=read('public/reference-brand-flow-r17.css');
 const js=read('public/reference-brand-flow-r17.js');
 const smooth=read('public/smooth-scroll.js');
 
-assert(html.includes('/reference-brand-flow-r17.css?v=20261123-brandflow-r17'),'R17 brand flow CSS is not linked');
-assert(html.includes('/reference-brand-flow-r17.js?v=20261123-brandflow-r17'),'R17 brand flow JS is not linked');
+assert(html.includes('/reference-brand-flow-r17.css?v=20261123-header-footer-r19'),'R17 brand flow CSS is not linked');
+assert(html.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19'),'R17 brand flow JS is not linked');
 assert(html.includes('/assets/brand/official/Main-Dark-Ink-Transparent.webp'),'Official header logo asset changed');
 assert(html.includes('/assets/brand/official/Main-Transparent.webp'),'Official footer logo asset changed');
 assert(html.includes('/assets/brand/veloryz-mark.svg'),'Original VELORYZ mark must remain in the reference shell');
@@ -28,6 +28,11 @@ assert(js.includes('requestAnimationFrame'),'Header logo scroll updates must be 
 assert(js.includes("IntersectionObserver"),'Footer brand reveal must be intersection-driven');
 assert(js.includes("setProperty('--vz-brand-scroll-opacity'"),'Header logo fade value is not updated from scroll');
 assert(js.includes("classList.toggle('is-scrolled-away'"),'Header logo should become inert only after it has faded out');
+assert(js.includes('const end=Math.max(96,Math.min(150,innerHeight*.16))'),'Header logo must finish fading after a short page scroll');
+assert(css.includes('.vz-official-header-brand.is-scrolled-away')&&css.includes('visibility:hidden'),'Scrolled header logo must be fully hidden, not merely dimmed');
+assert(!css.includes('.vz-header-actions.is-scrolled-away'),'Quick Create / Menu controls must never inherit the logo hide state');
+assert(css.includes('filter:brightness(0) invert(96%)'),'Footer official logo must use the high-contrast warm-light treatment');
+
 assert(!js.includes('setInterval('),'R17 must not add a perpetual interval loop');
 assert(!js.includes('new Lenis'),'R17 must reuse the existing scroll engine instead of creating a second one');
 
