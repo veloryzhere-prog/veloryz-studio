@@ -20,6 +20,7 @@ function buildGallery(){
  const fill=$('#vz-library-progress-fill');
  if(!track||!viewport||!section)return;
  const all=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x&&x.enabled!==false&&toText(x.name)):[];
+ const totalAvailable=Math.max(all.length,Number(published.catalogueTotal)||0);
  if(!all.length){
   const a=document.createElement('a');a.href='/design/';a.className='btn fill';a.textContent='Explore the available design directions ↗';
   track.replaceChildren(a);section.classList.add('is-static');
@@ -110,7 +111,8 @@ function buildGallery(){
   const distance=Math.max(step,(items.length-1)*step);
   section.style.setProperty('--vz-library-scroll-distance',distance+'px');
   section.style.setProperty('--vz-library-stage-count',String(items.length));
-  if(count)count.textContent=String(items.length).padStart(2,'0')+' featured / '+String(all.length).padStart(2,'0')+' total designs';
+  if(count)count.textContent=String(items.length).padStart(2,'0')+' featured / '+String(totalAvailable).padStart(2,'0')+' total designs';
+  const totalCopy=$('#vz-library-total-copy');if(totalCopy)totalCopy.textContent='Seven high-signal directions / '+totalAvailable+' total';
  };
  const update=()=>{
   if(!section.isConnected)return;
