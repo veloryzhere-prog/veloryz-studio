@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R21
+/* VELORYZ / Public Experience R22
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -94,13 +94,44 @@
  if(document.readyState==='complete')observeVitals();else addEventListener('load',observeVitals,{once:true});
 
  let frame=0;
+ let lastDepth=0;
+ const depthSteps=[25,50,75,90];
  const syncScroll=()=>{
   frame=0;
   body.classList.toggle('vz-r20-scrolled',scrollY>18);
+  const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+  const depth=Math.min(100,Math.round(scrollY/max*100));
+  body.classList.toggle('vz-r22-depth-50',depth>=50);
+  for(const step of depthSteps){
+   if(depth>=step&&lastDepth<step)emitMetric('scroll_depth',{depth:step});
+  }
+  lastDepth=Math.max(lastDepth,depth);
  };
  addEventListener('scroll',()=>{if(!frame)frame=requestAnimationFrame(syncScroll)},{passive:true});
  addEventListener('pageshow',syncScroll);
  syncScroll();
+
+ // Homepage section awareness: keep the fixed navigation useful as the page moves.
+ const initHomeSectionNav=()=>{
+  if(!body.classList.contains('vz-reference-site')||!('IntersectionObserver'in window))return;
+  const links=[...document.querySelectorAll('.vz-home-primary-links a[href^="#"]')];
+  if(!links.length)return;
+  const targets=links.map(link=>({link,id:link.getAttribute('href').slice(1)}))
+   .map(item=>({...item,section:document.getElementById(item.id)})).filter(item=>item.section);
+  if(!targets.length)return;
+  const activate=id=>{
+   for(const item of targets){
+    if(item.id===id)item.link.setAttribute('aria-current','location');
+    else item.link.removeAttribute('aria-current');
+   }
+  };
+  const sectionObserver=new IntersectionObserver(entries=>{
+   const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+   if(visible)activate(visible.target.id);
+  },{rootMargin:'-22% 0px -58% 0px',threshold:[.08,.2,.45]});
+  targets.forEach(item=>sectionObserver.observe(item.section));
+ };
+ requestAnimationFrame(initHomeSectionNav);
 
  // Home 3D: keep four useful controls visible, move secondary controls behind one disclosure.
  const controls=document.querySelector('.vz-reference-site .vz-3d-controls');
@@ -142,6 +173,7 @@
  };
  requestAnimationFrame(markImages);
  addEventListener('studio:route',()=>{
+  lastDepth=0;
   syncRoute();
   requestAnimationFrame(()=>{
    markImages();

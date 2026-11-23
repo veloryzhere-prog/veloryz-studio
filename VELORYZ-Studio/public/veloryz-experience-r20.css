@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R21
+/* VELORYZ / Public Experience R22
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -428,3 +428,112 @@ html{scrollbar-gutter:stable}
  body.vz-r20 .footer-intro .brand img,
  body.vz-r20 .footer-intro .veloryz-brand-icon{filter:none!important}
 }
+
+/* R22 / premium visual refinement */
+:root{
+ --vz22-tight:clamp(14px,1.8vw,24px);
+ --vz22-section:clamp(72px,9vw,138px);
+ --vz22-hairline:rgba(54,42,48,.13);
+}
+.vz-reference-site .hero{
+ min-height:max(760px,100svh);
+ padding-bottom:clamp(76px,9vw,128px)!important;
+}
+.vz-reference-site #heroTxt{
+ max-width:min(760px,62vw);
+}
+.vz-reference-site .hero .lead{
+ max-width:62ch;
+ text-wrap:pretty;
+}
+.vz-reference-site .hero .btns{
+ margin-top:clamp(24px,3vw,38px)!important;
+}
+.vz-reference-site .hero .btn{
+ position:relative;
+ overflow:hidden;
+ transition:
+  transform 560ms var(--vz20-ease),
+  box-shadow 560ms var(--vz20-ease),
+  border-color 260ms ease,
+  background-color 260ms ease!important;
+}
+.vz-reference-site .hero .btn:hover{transform:translate3d(0,-3px,0)}
+.vz-reference-site .vz-hero-cta-main:hover{box-shadow:0 18px 44px rgba(32,25,23,.18)}
+.vz-reference-site .vz-hero-practices{
+ margin-top:clamp(24px,3vw,38px);
+ padding-top:18px;
+ border-top:1px solid var(--vz22-hairline);
+}
+.vz-reference-site .vz-home-primary-links a[aria-current=location]{
+ opacity:1;
+}
+.vz-reference-site .vz-home-primary-links a[aria-current=location]::after{
+ transform:scaleX(1);
+ transform-origin:left;
+}
+.vz-reference-site .vz-3d-controls{
+ transition:
+  opacity 420ms var(--vz20-ease),
+  transform 520ms var(--vz20-ease),
+  box-shadow 420ms ease!important;
+}
+@media(hover:hover) and (pointer:fine){
+ .vz-reference-site .vz-3d-controls:not(:hover):not(:focus-within){
+  opacity:.84;
+  transform:translate3d(0,2px,0);
+ }
+}
+body.vz-r20:not(.vz-reference-site) #main>section,
+body.vz-r20:not(.vz-reference-site) #main>.section{
+ scroll-margin-top:104px;
+}
+body.vz-r20 .footer-living-intro>p{
+ text-wrap:balance;
+ letter-spacing:-.025em;
+}
+body.vz-r20 .footer-knowledge-copy{
+ max-width:34ch;
+ line-height:1.55;
+}
+body.vz-r20 .footer-directory-top{
+ gap:clamp(44px,7vw,100px);
+}
+body.vz-r20 .footer-dir-group a,
+body.vz-r20 .footer-dir-group button{
+ transition:opacity 220ms ease,transform 420ms var(--vz20-ease)!important;
+}
+body.vz-r20 .footer-dir-group a:hover,
+body.vz-r20 .footer-dir-group button:hover{
+ transform:translate3d(3px,0,0);
+}
+body.vz-r20.vz-r22-depth-50 .header-end .button.small{
+ box-shadow:0 8px 24px rgba(34,24,31,.09);
+}
+@media(max-width:720px){
+ .vz-reference-site .hero{
+  min-height:auto;
+  padding-bottom:clamp(84px,18vw,126px)!important;
+ }
+ .vz-reference-site #heroTxt{max-width:none}
+ .vz-reference-site .vz-hero-practices{
+  display:flex;
+  gap:8px 14px;
+  flex-wrap:wrap;
+ }
+ body.vz-r20 .footer-directory-top{gap:38px}
+ body.vz-r20 .footer-living-intro>p{max-width:12ch}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-reference-site .hero .btn,
+ .vz-reference-site .vz-3d-controls,
+ body.vz-r20 .footer-dir-group a,
+ body.vz-r20 .footer-dir-group button{
+  transition:none!important;
+  transform:none!important;
+ }
+}
+/* Make the branded intro feel faster and less blocking while preserving its identity. */
+.vz-reference-site #load{transition-duration:.82s!important}
+.vz-reference-site #load.go .ring{animation-duration:1.65s!important}
+.vz-reference-site #load .wm{transition-duration:1.05s,.72s!important}

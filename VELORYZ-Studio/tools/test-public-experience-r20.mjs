@@ -18,8 +18,8 @@ const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r21'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r21')&&security.includes('/veloryz-experience-r20.js?v=20261123-r21'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261123-r22'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261123-r22')&&security.includes('/veloryz-experience-r20.js?v=20261123-r22'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -31,6 +31,8 @@ assert(js.includes("data-vz-r20-3d-more")&&js.includes("data-vz-r20-advanced"),'
 assert(js.includes("const advanced=['continue','left','right','front']"),'R20.2 must keep the four useful 3D controls visible and tuck secondary controls away');
 assert(js.includes('vz-r20-assistant-actions'),'Help/support shortcut navigation missing');
 assert(js.includes("metricKey='vz:r21:experience'")&&js.includes("'veloryz:experience-metric'"),'R21 privacy-safe local experience measurement missing');
+assert(js.includes("emitMetric('scroll_depth'")&&js.includes("vz-r22-depth-50"),'R22 scroll-depth refinement signal missing');
+assert(js.includes("aria-current','location'")&&js.includes('initHomeSectionNav'),'R22 homepage section-aware navigation missing');
 assert(js.includes("emitMetric('journey_click'")&&js.includes("emitMetric('route_view'"),'R21 funnel/route instrumentation missing');
 assert(js.includes("metric:'LCP'")&&js.includes("metric:'CLS'")&&js.includes("metric:'INP'"),'R21 Core Web Vitals observation missing');
 assert(js.includes("connection?.saveData")&&js.includes("effectiveType"),'R21 prefetch must respect data-saver/slow connections');
@@ -39,6 +41,8 @@ assert(css.includes('::view-transition-old(root)')&&css.includes('::view-transit
 assert(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'R20.2 mobile 3D control grid missing');
 assert(css.includes('@media(prefers-contrast:more)')&&css.includes('@media(forced-colors:active)'),'R21 high-contrast accessibility hardening missing');
 assert(css.includes('scrollbar-gutter:stable'),'R21 layout-shift stability hint missing');
+assert(css.includes('/* R22 / premium visual refinement */')&&css.includes('.vz-reference-site #load{transition-duration:.82s!important}'),'R22 premium motion refinement missing');
+assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
 
@@ -89,4 +93,4 @@ assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace re
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
-console.log('PASS: R21 public experience preserves R20 UX while adding privacy-safe funnel measurement, Core Web Vitals observation, data-saver-aware prefetching and stronger accessibility.');
+console.log('PASS: R22 preserves R21 measurement and accessibility while refining homepage hierarchy, section-aware navigation, intro timing, footer brand language and mobile spacing.');
