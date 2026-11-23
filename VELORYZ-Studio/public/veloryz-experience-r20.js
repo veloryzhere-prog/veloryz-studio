@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R23
+/* VELORYZ / Public Experience R24
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -181,6 +181,36 @@
    status.textContent=(document.title.split(' — ')[0]||'Page')+' loaded';
    emitMetric('route_view',{title:document.title});
   });
+ });
+
+ // R24: mirror visible Creator selection state into accessible button state.
+ const syncChoiceStates=()=>{
+  document.querySelectorAll('button.v4-choice').forEach(choice=>{
+   choice.setAttribute('aria-pressed',String(choice.classList.contains('is-selected')));
+  });
+ };
+ const queueChoiceSync=()=>requestAnimationFrame(syncChoiceStates);
+ queueChoiceSync();
+ document.addEventListener('click',event=>{
+  if(event.target.closest?.('.v4-choice'))queueChoiceSync();
+ },{capture:true});
+ addEventListener('studio:route',queueChoiceSync);
+
+ // R24: slash focuses the active Docs/Design search without stealing typing from forms.
+ document.addEventListener('keydown',event=>{
+  const active=event.target;
+  const editing=active?.matches?.('input,textarea,select,[contenteditable=true]');
+  if(event.key==='/'&&!editing&&!event.metaKey&&!event.ctrlKey&&!event.altKey){
+   const search=document.querySelector('[data-kb-search],#docs-search,[data-source-search]');
+   if(search){
+    event.preventDefault();
+    search.focus({preventScroll:false});
+    status.textContent='Search focused';
+   }
+  }else if(event.key==='Escape'&&active?.matches?.('[data-kb-search],#docs-search,[data-source-search]')){
+   active.blur();
+   status.textContent='Search closed';
+  }
  });
 
  // Idle + intent prefetch for high-value same-origin destinations.
