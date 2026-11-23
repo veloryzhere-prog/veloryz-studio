@@ -3,7 +3,7 @@
  * All probes are read-only and cache-busted. No secrets or project data are queried.
  */
 const origin=(process.env.VELORYZ_LIVE_URL||'https://veloryz.online').replace(/\/$/,'');
-const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r2';
+const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r3';
 const maxAttempts=Math.max(1,Number(process.env.VELORYZ_PROBE_ATTEMPTS)||16);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const load=async path=>{
