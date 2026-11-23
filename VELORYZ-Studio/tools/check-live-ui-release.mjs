@@ -3,7 +3,7 @@
  * All probes are read-only and cache-busted. No secrets or project data are queried.
  */
 const origin=(process.env.VELORYZ_LIVE_URL||'https://veloryz.online').replace(/\/$/,'');
-const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r4';
+const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r5';
 const maxAttempts=Math.max(1,Number(process.env.VELORYZ_PROBE_ATTEMPTS)||16);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const load=async path=>{
@@ -24,7 +24,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   if(publicOK&&designOK){
    const assets=['/veloryz-silk-2026.css','/veloryz-ui-2026.css','/veloryz-silk-2026.js'];
    const pagesLinked=[home,creator,design].every(page=>assets.every(asset=>
-    page.body.includes(asset+'?v=20261123-route-r4')));
+    page.body.includes(asset+'?v=20261123-route-r5')));
    const [silkCss,uiCss,js]=await Promise.all(assets.map(load));
    const assetsOK=silkCss.status===200&&uiCss.status===200&&js.status===200
     &&silkCss.body.includes('@property --vz-r')&&silkCss.body.includes('.vz-burst')
@@ -34,7 +34,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&uiCss.body.includes(':is(#main, .site-header) .button')
     &&uiCss.body.includes('#main :is(.project-link, .process-card, .feature-card')
     &&uiCss.body.includes('--vz-r: 160%')
-    &&js.body.includes("version: 'silk-2026.3'")
+    &&js.body.includes("version: 'silk-2026.4'")
     &&js.body.includes('function burst(')&&js.body.includes('function scrubParagraphs()')
     &&js.body.includes("getElementById('site-progress')")
     &&js.body.includes("const BTN = '.btn,.button");
