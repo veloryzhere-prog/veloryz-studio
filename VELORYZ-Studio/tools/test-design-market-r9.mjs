@@ -97,7 +97,7 @@ assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'Publi
 assert(security.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')&&security.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9'),'R9 public brand-motion assets missing');
 assert(shell.includes('/veloryz-open-library.css?v=20261123-market-r9')&&shell.includes('/veloryz-open-library.js?v=20261123-market-r9'),'Actual design library R9 cache key missing');
 assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261123-market-r9'),'Compatibility library R9 cache key missing');
-assert(home.includes('/reference-site-upgrade.css?v=20261123-clean-r14')&&home.includes('/reference-site-upgrade.js?v=20261123-clean-r14'),'Homepage finite design stage needs the sharp R11 cache key');
+assert(home.includes('/reference-site-upgrade.css?v=20261123-simple-scroll-r15')&&home.includes('/reference-site-upgrade.js?v=20261123-simple-scroll-r15'),'Homepage finite design stage needs the sharp R11 cache key');
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
 assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
