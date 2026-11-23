@@ -113,7 +113,8 @@ jobs:
       - name: Verify generated Cloudflare Worker output
         run: node tools/test-generated-cloudflare-output.mjs
       - name: Dry-run the exact repository-root Cloudflare deploy config
-        run: corepack pnpm exec wrangler deploy --config ../wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-root-dryrun"
+        working-directory: .
+        run: VELORYZ-Studio/node_modules/.bin/wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-root-dryrun"
       - name: Verify bundled first-party Lenis runtime
         run: node tools/test-lenis-bundle.mjs
       - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
