@@ -40,8 +40,8 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/reference-restored-features.css?v=20261123-journey-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
-   const brandFlowLinked=home.body.includes('/reference-brand-flow-r17.css?v=20261123-brandflow-r17')
-    &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-brandflow-r17');
+   const brandFlowLinked=home.body.includes('/reference-brand-flow-r17.css?v=20261123-header-footer-r19')
+    &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19');
    const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
@@ -105,6 +105,9 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&flowCss.body.includes('footer.vz-footer-in')
     &&flowJs.body.includes("addEventListener('scroll',requestSync,{passive:true})")
     &&flowJs.body.includes("setProperty('--vz-brand-scroll-opacity'")
+    &&flowJs.body.includes('const end=Math.max(96,Math.min(150,innerHeight*.16))')
+    &&flowCss.body.includes('visibility:hidden')
+    &&flowCss.body.includes('filter:brightness(0) invert(96%)')
     &&smoothJs.body.includes('lerp:0.09')
     &&smoothJs.body.includes('wheelMultiplier:0.9');
    const journeyOK=journeyCss.status===200&&appJs.status===200
