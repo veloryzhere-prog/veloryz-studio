@@ -7,6 +7,16 @@ on:
       - "VELORYZ-Studio/tools/qc-capture-live.mjs"
       - "VELORYZ-Studio/tools/test-reference-qc-r7.mjs"
       - "VELORYZ-Studio/public/reference-qc-layout-r7.css"
+      - "VELORYZ-Studio/public/reference-site-upgrade.js"
+      - "VELORYZ-Studio/public/reference-site-upgrade.css"
+      - "VELORYZ-Studio/public/reference-restored-features.css"
+      - "VELORYZ-Studio/public/veloryz-open-library.js"
+      - "VELORYZ-Studio/public/veloryz-open-library.css"
+      - "VELORYZ-Studio/public/external-design-library.js"
+      - "VELORYZ-Studio/public/external-design-library.css"
+      - "VELORYZ-Studio/public/veloryz-brand-motion-r9.js"
+      - "VELORYZ-Studio/public/veloryz-brand-motion-r9.css"
+      - "VELORYZ-Studio/lib/claude-reference-shell.ts"
       - "VELORYZ-Studio/public/reference-public-integrity.css"
       - "VELORYZ-Studio/lib/site-shell.ts"
       - "VELORYZ-Studio/lib/response-security.ts"
@@ -34,7 +44,7 @@ jobs:
         with:
           node-version: "22"
       - name: Validate QC source and stylesheet before browser capture
-        run: node tools/test-reference-qc-r7.mjs
+        run: node tools/test-reference-qc-r7.mjs && node tools/test-design-market-r9.mjs
       - name: Install independent Playwright browser harness
         run: |
           mkdir -p "$RUNNER_TEMP/veloryz-qc"

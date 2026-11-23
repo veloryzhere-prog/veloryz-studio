@@ -267,3 +267,44 @@
  .vz-reference-site .vz-studio-full-grid{grid-template-columns:1fr}
  .vz-reference-site .vz-studio-full-grid a{min-height:145px;padding:22px}
 }
+
+
+/* VELORYZ / CLICKABLE PROJECT JOURNEY R9
+ * Fix explicit contrast across light/dark themes and turn every stage into a
+ * meaningful route. Official V marks replace the former generic star glyph.
+ */
+.vz-reference-site .vz-reference-journey{background:linear-gradient(180deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 91%,#b98a72) 100%)!important}
+.vz-reference-site .vz-journey-stage{
+ color:#191512!important;text-decoration:none!important;
+ border-radius:18px!important;outline-offset:5px;
+ background:#f1e5d6!important;border-color:rgba(25,21,18,.18)!important;
+ box-shadow:0 28px 85px -48px rgba(25,21,18,.42)!important;
+}
+.vz-reference-site .vz-journey-stage:nth-child(1){background:linear-gradient(132deg,#f4eadc,#e9d8c3)!important}
+.vz-reference-site .vz-journey-stage:nth-child(2){background:linear-gradient(132deg,#e9d4c1,#f3e7d8)!important}
+.vz-reference-site .vz-journey-stage:nth-child(3){background:linear-gradient(132deg,#efe3d2,#dbc4b6)!important}
+.vz-reference-site .vz-journey-stage:nth-child(4){background:linear-gradient(132deg,#e8cbbb,#f0ded0)!important}
+.vz-reference-site .vz-journey-stage:nth-child(5){background:linear-gradient(132deg,#f0e2cd,#dfc7b2)!important}
+.vz-reference-site .vz-journey-stage :is(h3,strong){color:#191512!important}
+.vz-reference-site .vz-journey-stage p{color:#584c42!important}
+.vz-reference-site .vz-journey-index span{color:#695b51!important}
+.vz-reference-site .vz-stage-mark{width:42px;height:42px;object-fit:contain;filter:none;transform:rotate(-8deg);transition:transform .55s cubic-bezier(.16,1,.3,1)}
+.vz-reference-site .vz-journey-stage:hover .vz-stage-mark,.vz-reference-site .vz-journey-stage:focus-visible .vz-stage-mark{transform:rotate(8deg) translateY(-3px) scale(1.08)}
+.vz-reference-site .vz-journey-stage h3 em{color:#b64c31!important}
+.vz-reference-site .vz-journey-destination{display:inline-flex;margin-top:24px;padding-top:9px;border-top:1px solid rgba(25,21,18,.22);color:#8f3b29!important;font-size:.72rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase}
+.vz-reference-site .vz-journey-stage-line{height:2px!important;border-radius:0!important;background:linear-gradient(90deg,#b94d33 0 34%,rgba(25,21,18,.16) 34% 100%)!important;transform-origin:left;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.vz-reference-site .vz-journey-stage:hover,.vz-reference-site .vz-journey-stage:focus-visible{transform:translateY(-5px) rotate(-.15deg);box-shadow:0 38px 105px -45px rgba(25,21,18,.52)!important}
+.vz-reference-site .vz-journey-stage:hover .vz-journey-stage-line,.vz-reference-site .vz-journey-stage:focus-visible .vz-journey-stage-line{transform:scaleX(.72)}
+.vz-reference-site .vz-journey-stage:focus-visible{outline:3px solid #b94d33!important}
+@media(max-width:850px){
+ .vz-reference-site .vz-journey-stage{top:11vh!important;margin-bottom:10vh!important}
+}
+@media(max-width:580px){
+ .vz-reference-site .vz-journey-stage{min-height:390px!important;padding:24px!important}
+ .vz-reference-site .vz-stage-mark{width:34px;height:34px}
+ .vz-reference-site .vz-journey-stage h3{font-size:clamp(2.65rem,14vw,4.4rem)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-reference-site .vz-journey-stage,.vz-reference-site .vz-stage-mark,.vz-reference-site .vz-journey-stage-line{transition:none!important}
+ .vz-reference-site .vz-journey-stage:hover{transform:none!important}
+}

@@ -1,0 +1,108 @@
+/* VELORYZ / Brand Motion R9
+ * Public-site interaction layer: V-mark language, angular backgrounds and
+ * touch/click feedback. No generic orbital dots or small circular badges.
+ */
+:root{--vz-r9-ease:cubic-bezier(.16,1,.3,1);--vz-r9-ink:#17120f;--vz-r9-paper:#f7f0e4;--vz-r9-accent:#e2482b}
+body :is(.vz-reference-site,.vz-ref-public-route,.motion-edition) :is(.tag,.eyebrow),
+body.vz-reference-site :is(.tag,.eyebrow),
+body.vz-ref-public-route :is(.tag,.eyebrow){
+ display:inline-flex;align-items:center;gap:9px!important;
+ padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+body.vz-reference-site :is(.tag,.eyebrow)::before,
+body.vz-ref-public-route :is(.tag,.eyebrow)::before,
+body.motion-edition :is(.tag,.eyebrow)::before{
+ content:"";display:inline-block;flex:0 0 auto;width:15px;height:15px;
+ background:url('/assets/brand/veloryz-mark.svg') center/contain no-repeat;
+ transform:rotate(-8deg);opacity:.82;
+}
+.vz-brand-backdrop{
+ position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ contain:paint;
+}
+.vz-brand-backdrop::before{
+ content:"";position:absolute;inset:-12% -8%;
+ background:
+  repeating-linear-gradient(112deg,transparent 0 82px,rgba(226,72,43,.055) 83px 84px,transparent 85px 166px),
+  linear-gradient(128deg,transparent 0 56%,rgba(21,18,14,.035) 56.2% 56.7%,transparent 57%);
+ transform:translate3d(0,var(--vz-brand-shift,0px),0);
+}
+.vz-brand-backdrop::after{
+ content:"";position:absolute;right:clamp(-80px,-4vw,-20px);top:clamp(22px,8vh,110px);
+ width:clamp(190px,28vw,520px);aspect-ratio:1;
+ background:url('/assets/brand/veloryz-mark.svg') center/contain no-repeat;
+ opacity:.035;transform:rotate(-9deg) translate3d(0,calc(var(--vz-brand-shift,0px) * -.55),0);
+ filter:grayscale(1) contrast(1.2);
+}
+body.vz-reference-site [data-vz-brand-surface],
+body.vz-ref-public-route [data-vz-brand-surface],
+body.motion-edition [data-vz-brand-surface]{position:relative;isolation:isolate}
+body :is([data-vz-brand-surface])>:not(.vz-brand-backdrop){position:relative;z-index:1}
+.vz-feedback-target{
+ --vz-r9-ring:rgba(226,72,43,0);
+ transition:
+  transform .34s var(--vz-r9-ease),
+  box-shadow .34s var(--vz-r9-ease),
+  filter .34s var(--vz-r9-ease),
+  border-color .34s ease!important;
+ -webkit-tap-highlight-color:transparent;
+}
+@media(hover:hover) and (pointer:fine){
+ .vz-feedback-target:hover{
+  filter:brightness(1.025) saturate(1.03);
+  box-shadow:0 12px 30px -24px rgba(21,18,14,.65),inset 0 -2px 0 rgba(226,72,43,.28);
+ }
+ .vz-feedback-target:is(a,button):hover{transform:translateY(-2px)}
+}
+.vz-feedback-target.vz-touching{transform:translateY(1px) scale(.975)!important;filter:brightness(.96)!important}
+.vz-feedback-target:focus-visible{outline:3px solid var(--vz-r9-accent)!important;outline-offset:4px!important}
+.vz-click-mark{
+ position:fixed;left:0;top:0;z-index:2147482000;pointer-events:none;
+ width:18px;height:18px;object-fit:contain;
+ transform:translate3d(var(--vz-click-x),var(--vz-click-y),0) rotate(var(--vz-click-r)) scale(.72);
+ opacity:.9;filter:drop-shadow(0 4px 8px rgba(21,18,14,.18));
+ animation:vzBrandClick .62s var(--vz-r9-ease) forwards;
+}
+@keyframes vzBrandClick{
+ 0%{opacity:.9;transform:translate3d(var(--vz-click-x),var(--vz-click-y),0) rotate(var(--vz-click-r)) scale(.68)}
+ 58%{opacity:.72}
+ 100%{opacity:0;transform:translate3d(calc(var(--vz-click-x) + var(--vz-click-dx)),calc(var(--vz-click-y) + var(--vz-click-dy)),0) rotate(calc(var(--vz-click-r) + 34deg)) scale(1.08)}
+}
+body.vz-ref-public-route #main>section:nth-of-type(3n+2) .vz-brand-backdrop::after{left:clamp(-85px,-5vw,-30px);right:auto;transform:rotate(11deg) translate3d(0,calc(var(--vz-brand-shift,0px) * -.55),0)}
+@media(max-width:640px){
+ .vz-brand-backdrop::after{width:clamp(150px,48vw,240px);opacity:.028}
+ .vz-feedback-target:is(a,button){touch-action:manipulation}
+}
+@media(prefers-reduced-motion:reduce){
+ .vz-feedback-target{transition:none!important}
+ .vz-click-mark{display:none!important}
+ .vz-brand-backdrop::before,.vz-brand-backdrop::after{transform:none!important}
+}
+html[data-motion="paused"] .vz-click-mark,html[data-motion="reduced"] .vz-click-mark{display:none!important}
+
+
+/* Standard public SPA journey / teaser alignment with R9 brand language. */
+body.motion-edition .platform-teaser>.teaser-star{
+ width:clamp(38px,4.6vw,62px)!important;height:clamp(38px,4.6vw,62px)!important;
+ object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important;
+ color:transparent!important;filter:none!important;transform:rotate(-8deg);
+}
+body.motion-edition .journey-chapter{
+ display:block;color:#211a16!important;text-decoration:none!important;
+ position:relative;border:1px solid rgba(33,26,22,.15);
+ background:linear-gradient(138deg,#f7edde,#ead6c5);
+ padding:clamp(20px,3vw,34px);transition:transform .42s var(--vz-r9-ease),border-color .3s,box-shadow .42s;
+}
+body.motion-edition .journey-chapter:nth-child(2){background:linear-gradient(138deg,#ecd8c5,#f6eade)}
+body.motion-edition .journey-chapter:nth-child(3){background:linear-gradient(138deg,#f0e5d5,#e0c8ba)}
+body.motion-edition .journey-chapter:nth-child(4){background:linear-gradient(138deg,#e8ccbd,#f1e0d2)}
+body.motion-edition .journey-chapter:nth-child(5){background:linear-gradient(138deg,#f0e1cd,#dec4af)}
+body.motion-edition .journey-chapter :is(h3,strong){color:#211a16!important}
+body.motion-edition .journey-chapter p{color:#5e5046!important}
+body.motion-edition .journey-outcome{display:flex;align-items:center;gap:9px;color:#6c5d52!important}
+body.motion-edition .journey-outcome img{width:17px;height:17px;object-fit:contain;transform:rotate(-8deg)}
+body.motion-edition .journey-route{display:inline-flex;margin-top:18px;padding-top:8px;border-top:1px solid rgba(33,26,22,.18);font-size:.69rem;font-weight:760;letter-spacing:.06em;text-transform:uppercase;color:#a7442c}
+body.motion-edition .journey-chapter:hover,body.motion-edition .journey-chapter:focus-visible{transform:translateY(-4px);border-color:rgba(226,72,43,.52);box-shadow:0 24px 55px -42px rgba(33,26,22,.7)}
+body.motion-edition .journey-browser-brand{display:inline-flex!important;align-items:center;gap:6px}
+body.motion-edition .journey-browser-brand img{width:14px;height:14px;object-fit:contain;filter:none}

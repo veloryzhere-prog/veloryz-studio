@@ -106,6 +106,8 @@ jobs:
         run: corepack pnpm build
       - name: Verify bundled first-party Lenis runtime
         run: node tools/test-lenis-bundle.mjs
+      - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
+        run: node tools/test-design-market-r9.mjs
       - name: Validate internal VELORYZ design library, sources and creator routes
         run: node tools/test-expanded-design-library.mjs
       - name: Validate original storefront, twelve live templates, and purchase requests
