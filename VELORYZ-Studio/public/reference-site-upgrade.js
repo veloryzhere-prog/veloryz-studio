@@ -85,7 +85,6 @@ function buildGallery(){
  track.setAttribute('aria-label','Curated design directions controlled by vertical scrolling');
  viewport.querySelector('.vz-library-rail')?.remove();
  let step=620,active=-1;
- const motionIsFull=()=>!window.StudioMotion||window.StudioMotion.level==='full';
  const clamp=v=>Math.max(0,Math.min(1,v));
  const setActive=next=>{
   if(next===active&&cards[next])return
@@ -105,14 +104,7 @@ function buildGallery(){
  };
  const update=()=>{
   if(!section.isConnected)return;
-  const full=motionIsFull();
-  section.classList.toggle('is-static',!full);
-  if(!full){
-   active=-1;
-   cards.forEach(card=>{card.classList.add('is-active');card.classList.remove('is-before','is-after');card.setAttribute('aria-hidden','false');card.inert=false});
-   if(fill)fill.style.transform='scaleX(0)';
-   return;
-  }
+  section.classList.remove('is-static');
   const range=Math.max(1,section.offsetHeight-innerHeight);
   const progress=clamp(-section.getBoundingClientRect().top/range);
   const scaled=progress*Math.max(1,items.length-1);
@@ -121,12 +113,19 @@ function buildGallery(){
   if(fill)fill.style.transform='scaleX('+progress.toFixed(4)+')';
  };
  window.VeloryzReferenceGallery={update,refresh:()=>{recalc();update()},get count(){return all.length},get featuredCount(){return items.length}};
+ let libraryFrame=0;
+ const requestLibraryUpdate=()=>{
+  if(libraryFrame)return;
+  libraryFrame=requestAnimationFrame(()=>{libraryFrame=0;update()});
+ };
+ window.addEventListener('scroll',requestLibraryUpdate,{passive:true});
+ window.addEventListener('resize',()=>{recalc();requestLibraryUpdate()},{passive:true});
  requestAnimationFrame(()=>{recalc();setActive(0);update()});
  if(typeof ResizeObserver==='function'){
-  const observer=new ResizeObserver(()=>{recalc();update()});observer.observe(viewport);observer.observe(section);
- }else window.addEventListener('resize',()=>{recalc();update()},{passive:true});
- document.addEventListener('DOMContentLoaded',()=>{window.StudioMotion?.addEventListener?.('change',()=>{recalc();update()});recalc();update()},{once:true});
- window.addEventListener('pageshow',()=>{recalc();update()});
+  const observer=new ResizeObserver(()=>{recalc();requestLibraryUpdate()});observer.observe(viewport);observer.observe(section);
+ }
+ document.addEventListener('DOMContentLoaded',()=>{recalc();update()},{once:true});
+ window.addEventListener('pageshow',()=>{recalc();requestLibraryUpdate()});
  window.addEventListener('hashchange',()=>requestAnimationFrame(()=>{removeLegacyLibraryChrome();recalc();update()}));
  const legacyChromeObserver=typeof MutationObserver==='function'?new MutationObserver(()=>removeLegacyLibraryChrome(section)):null;
  legacyChromeObserver?.observe(section,{childList:true,subtree:true});
