@@ -51,8 +51,9 @@ body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
     overflow-wrap:normal;
   }
   body.vz-reference-site .vz-material-hero #h1 .ln {
-    overflow:visible;
-    padding-bottom:.12em;
+    overflow:hidden;
+    min-height:1.1em;
+    padding-bottom:.15em;
   }
   body.vz-reference-site .vz-material-hero #bigV {
     right:clamp(22px,4vw,75px);
