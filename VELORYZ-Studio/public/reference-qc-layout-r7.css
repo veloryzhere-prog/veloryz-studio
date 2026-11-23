@@ -172,3 +172,83 @@ body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button:focus-vis
   outline:3px solid var(--acc,#e2482b);
   outline-offset:3px;
 }
+
+
+/* Screenshot QC follow-up (320–540px): the two full-width floating contact
+ * pills obscured the hero's main CTA and text. Keep both services available,
+ * but expose compact, properly named 50px touch controls on narrow phones.
+ * Desktop original Uiverse WhatsApp interaction stays unchanged.
+ */
+@media (max-width:540px) {
+  body.vz-reference-site .vz-ai-dock[data-open="false"] .vz-ai-launch {
+    box-sizing:border-box;
+    width:50px!important;
+    min-width:50px!important;
+    max-width:50px!important;
+    height:50px!important;
+    min-height:50px!important;
+    padding:4px!important;
+    justify-content:center!important;
+    border-radius:14px!important;
+    gap:0!important;
+  }
+  body.vz-reference-site .vz-ai-dock[data-open="false"] .vz-ai-launch img {
+    width:40px!important;
+    height:40px!important;
+    border-radius:11px!important;
+    flex:none;
+  }
+  body.vz-reference-site .vz-ai-dock[data-open="false"] .vz-ai-launch span {
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    padding:0!important;
+    margin:-1px!important;
+    overflow:hidden!important;
+    clip-path:inset(50%)!important;
+    white-space:nowrap!important;
+  }
+  body.vz-reference-site .vz-ai-dock[data-open="false"] .vz-ai-launch::after {
+    position:absolute;
+    right:-2px;
+    top:-2px;
+    width:7px;
+    height:7px;
+    border:2px solid var(--bg,#f7f0e4);
+    box-shadow:none;
+  }
+  body.vz-reference-site a.whatsapp-float.vz-wa-uiverse {
+    box-sizing:border-box;
+    display:grid!important;
+    place-items:center;
+    width:50px!important;
+    height:50px!important;
+    min-width:50px!important;
+    min-height:50px!important;
+    right:12px!important;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;
+    padding:7px!important;
+    border-radius:14px!important;
+    background:#25D366!important;
+    color:#fff!important;
+  }
+  body.vz-reference-site a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-label {
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    padding:0!important;
+    margin:-1px!important;
+    overflow:hidden!important;
+    clip-path:inset(50%)!important;
+    white-space:nowrap!important;
+  }
+  body.vz-reference-site a.whatsapp-float.vz-wa-uiverse .vz-wa-uiverse-icon {
+    position:static!important;
+    width:25px!important;
+    height:25px!important;
+    opacity:1!important;
+    transform:none!important;
+    fill:#fff!important;
+    color:#fff!important;
+  }
+}
