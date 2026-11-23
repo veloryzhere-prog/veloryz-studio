@@ -104,6 +104,13 @@ body.vz-reference-site .vz-material-hero .vz-3d-control-buttons button {
   }
 }
 @media (max-width:540px) {
+  /* The previous model right:-6vw clipped the actual V edge at 320px. */
+  body.vz-reference-site .vz-material-hero #bigV {
+    right:clamp(10px,3.9vw,20px)!important;
+    width:min(58vw,260px)!important;
+    height:min(58vw,260px)!important;
+    aspect-ratio:1;
+  }
   /* 3 fixed header actions + official logo are impossible to fit at 320px.
    * 'Create' remains in the fullscreen menu and the hero CTA.
    */
