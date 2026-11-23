@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R22
+/* VELORYZ / Public Experience R23
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -537,3 +537,38 @@ body.vz-r20.vz-r22-depth-50 .header-end .button.small{
 .vz-reference-site #load{transition-duration:.82s!important}
 .vz-reference-site #load.go .ring{animation-duration:1.65s!important}
 .vz-reference-site #load .wm{transition-duration:1.05s,.72s!important}
+
+/* R23 / performance and interaction hardening */
+@supports(content-visibility:auto){
+ body.vz-r20 .vz-source-card,
+ body.vz-r20 .docs-item,
+ body.vz-r20 .project-link,
+ body.vz-r20 .service-item,
+ body.vz-r20 .process-card,
+ body.vz-r20 .pricing-card{
+  content-visibility:auto;
+  contain-intrinsic-size:1px 520px;
+ }
+ body.vz-r20 .docs-item{contain-intrinsic-size:1px 240px}
+ body.vz-r20 .service-item,
+ body.vz-r20 .process-card,
+ body.vz-r20 .pricing-card{contain-intrinsic-size:1px 320px}
+}
+body.vz-r20 :where(a,button,input,select,textarea,summary){
+ -webkit-tap-highlight-color:transparent;
+}
+@media(max-width:720px){
+ body.vz-r20 :where(input,select,textarea){font-size:16px!important}
+ body.vz-r20 .footer-dir-group a,
+ body.vz-r20 .footer-dir-group button,
+ .vz-r20-assistant-actions a{
+  min-height:44px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ ::view-transition-old(root),
+ ::view-transition-new(root){animation:none!important}
+ .vz-reference-site #load,
+ .vz-reference-site #load .wm,
+ .vz-reference-site #load .ring{transition:none!important;animation:none!important}
+}
