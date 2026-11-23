@@ -9,6 +9,9 @@ on:
       - "VELORYZ-Studio/lib/response-security.ts"
       - "VELORYZ-Studio/lib/claude-reference-shell.ts"
       - "VELORYZ-Studio/lib/site-shell.ts"
+      - "VELORYZ-Studio/wrangler.jsonc"
+      - "VELORYZ-Studio/.node-version"
+      - "VELORYZ-Studio/tools/test-cloudflare-deploy-config.mjs"
       - "VELORYZ-Studio/public/reference-site-upgrade.css"
       - "VELORYZ-Studio/public/reference-restored-features.css"
       - "VELORYZ-Studio/public/external-design-library.js"
@@ -46,6 +49,8 @@ jobs:
         run: node tools/test-reference-menu-r6.mjs
       - name: Verify R9 finite design stage, actual market renderer and brand feedback
         run: node tools/test-design-market-r9.mjs
+      - name: Validate Cloudflare Worker identity before probing production
+        run: node tools/test-cloudflare-deploy-config.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
