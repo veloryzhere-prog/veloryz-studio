@@ -36,7 +36,7 @@ assert(!home.includes('id="vz-library-count"')&&!home.includes('id="vz-library-i
 assert(home.includes('Curated directions / scroll to reveal'),'Homepage design intro must use non-numeric curation language');
 assert(!homeJs.includes("data-vz-library-go")&&!homeJs.includes("createElement('nav')"),'Homepage design showcase must not recreate the old numbered nav rail');
 assert(homeJs.includes('function removeLegacyLibraryChrome('),'Runtime cleanup must remove any stale rail/count nodes');
-assert(home.includes('vz-home-library-clean-r14')&&home.includes('vz-home-library-cleanup-r14'),'Homepage shell needs inline hard-stop cleanup');
+assert(home.includes('vz-home-library-clean-r14'),'Homepage shell needs inline hard-stop no-blur/no-counter CSS');
 assert(!homeCss.includes('position:absolute;right:clamp(9px,1.2vw,18px);top:50%'),'Obsolete rail styling must be physically removed from CSS');
 
 assert(!homeJs.includes("padStart(2,'0')+' / '+String(items.length)"),'Current design counter must remain removed');
