@@ -12,13 +12,13 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  // removed floating Create button; only the assets are imported here.
  // Private pages, admin, client portal, immersive design previews and 404 pages
  // deliberately retain their isolated, original presentation and motion.
- const ui2026Release='silk-ui-20261123-r3';
+ const ui2026Release='silk-ui-20261123-r4';
  if(!privatePage&&status===200)headers['X-VELORYZ-UI-Release']=ui2026Release;
  const silkUiAssets=!privatePage&&status===200
-  ? '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r3">'
-   +'<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r3">'
+  ? '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r4">'
+   +'<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r4">'
    +'<meta name="veloryz-ui-release" content="'+ui2026Release+'">'
-   +'<script src="/veloryz-silk-2026.js?v=20261123-route-r3" defer></script>'
+   +'<script src="/veloryz-silk-2026.js?v=20261123-route-r4" defer></script>'
   : '';
  html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.

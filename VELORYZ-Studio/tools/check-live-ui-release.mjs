@@ -3,7 +3,7 @@
  * All probes are read-only and cache-busted. No secrets or project data are queried.
  */
 const origin=(process.env.VELORYZ_LIVE_URL||'https://veloryz.online').replace(/\/$/,'');
-const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r3';
+const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r4';
 const maxAttempts=Math.max(1,Number(process.env.VELORYZ_PROBE_ATTEMPTS)||16);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const load=async path=>{
@@ -22,13 +22,27 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   const publicOK=[home,creator].every(p=>p.status===200&&p.header===release&&p.body.includes('name="veloryz-ui-release" content="'+release+'"'));
   const designOK=design.status===200&&design.body.includes('name="veloryz-ui-release" content="'+release+'"');
   if(publicOK&&designOK){
-   const [css,js]=await Promise.all([load('/veloryz-ui-2026.css'),load('/veloryz-silk-2026.js')]);
-   const assetsOK=css.status===200&&js.status===200&&css.body.includes('body.v4-creator-page .v4-root .v4-welcome')&&css.body.includes('body.vz-market-body:not(.vz-market-immersive)')&&css.body.includes('--vz-r: 150%')&&css.body.includes('--vz-spot, 0')&&js.body.includes("version: 'silk-2026.2'")&&js.body.includes('function burst(')&&js.body.includes('function scrubParagraphs()');
-   if(assetsOK){
-    console.log('PASS: production VELORYZ origin='+origin+' serves '+release+' on homepage, creator and design detail, including live styles and motion script.');
+   const assets=['/veloryz-silk-2026.css','/veloryz-ui-2026.css','/veloryz-silk-2026.js'];
+   const pagesLinked=[home,creator,design].every(page=>assets.every(asset=>
+    page.body.includes(asset+'?v=20261123-route-r4')));
+   const [silkCss,uiCss,js]=await Promise.all(assets.map(load));
+   const assetsOK=silkCss.status===200&&uiCss.status===200&&js.status===200
+    &&silkCss.body.includes('@property --vz-r')&&silkCss.body.includes('.vz-burst')
+    &&silkCss.body.includes('animation-timeline: --vz-scrub')
+    &&uiCss.body.includes('body.v4-creator-page .v4-root .v4-welcome')
+    &&uiCss.body.includes('body.vz-market-body:not(.vz-market-immersive)')
+    &&uiCss.body.includes(':is(#main, .site-header) .button')
+    &&uiCss.body.includes('#main :is(.project-link, .process-card, .feature-card')
+    &&uiCss.body.includes('--vz-r: 160%')
+    &&js.body.includes("version: 'silk-2026.3'")
+    &&js.body.includes('function burst(')&&js.body.includes('function scrubParagraphs()')
+    &&js.body.includes("getElementById('site-progress')")
+    &&js.body.includes("const BTN = '.btn,.button");
+   if(pagesLinked&&assetsOK){
+    console.log('PASS: production '+origin+' serves '+release+' on homepage, creator and design detail, all three linked assets, real homepage button/card selectors and runtime.');
     process.exit(0);
    }
-   lastError='HTML has release marker, but linked CSS/JS is missing or stale. Stylesheet status '+css.status+', script status '+js.status+'.';
+   lastError='HTML release marker found but real-site asset links/current JS or CSS failed verification. Linked '+pagesLinked+'; silk CSS '+silkCss.status+', UI CSS '+uiCss.status+', JS '+js.status+'.';
   }else{
    lastError='Live HTML not at '+release+': homepage '+home.status+' ('+(home.header||'no release')+'), create '+creator.status+' ('+(creator.header||'no release')+'), design '+design.status+' (marker '+designOK+').';
   }

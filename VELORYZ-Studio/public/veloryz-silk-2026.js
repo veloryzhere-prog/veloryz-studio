@@ -1,6 +1,6 @@
 'use strict';
 /**
- * VELORYZ Silk 2026 v2: cursor-origin liquid hover, jelly press, burst particles, word scrub and card spotlight.
+ * VELORYZ Silk 2026 v2 (real-site R4 adapter): cursor-origin liquid hover, jelly press, burst particles, word scrub and card spotlight.
  *
  *  - Springy hover lift on selected cards (Web Animations, compositor-friendly).
  *  - Tactile press feedback on buttons and chips.
@@ -28,10 +28,10 @@
 
  const closest = (target, sel) => target instanceof Element ? target.closest(sel) : null;
  // Keep the V4 Creator and marketplace selectors added after the first ZIP integration.
- const LIFT = '.dc,.fl,.vz-doc-guide,.vz-studio-full-grid>a,.pc,.v4-choice,.v4-feature-card,.v4-style-card,.v4-template-card,.v4-number-card,.vz-market-related-card';
- const SPOT = '.pan,.fl,.pc,.brief,.mt,.vz-doc-guide,.vz-live-review-card,.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.vz-market-related-card';
- const PRESS = '.btn,.chip,.mbtn,.vz-header-create,.stars button,.v4-choice,.v4-primary,.v4-top-next,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.vz-market-btn';
- const BTN = '.btn,.v4-primary,.vz-market-btn';
+ const LIFT = '.dc,.fl,.vz-doc-guide,.vz-studio-full-grid>a,.pc,.v4-choice,.v4-feature-card,.v4-style-card,.v4-template-card,.v4-number-card,.vz-market-related-card,.project-link,.process-card,.feature-card,.delivery-card,.team-card';
+ const SPOT = '.pan,.fl,.pc,.brief,.mt,.vz-doc-guide,.vz-live-review-card,.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.vz-market-related-card,.project-link,.process-card,.feature-card,.service-item,.delivery-card,.team-card';
+ const PRESS = '.btn,.button,.motion-secondary,.cta-orb,.project-link,.chip,.mbtn,.vz-header-create,.stars button,.v4-choice,.v4-primary,.v4-top-next,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card,.vz-market-btn';
+ const BTN = '.btn,.button,.motion-secondary,.cta-orb,.v4-primary,.vz-market-btn';
  const SCRUB_SKIP = '.hero,.cta,footer,nav,#mn,details,form,.fm,.pan,.sc,.cs,.lib,.po,.v4-root,.vz-market-body,.vz-kinetic-card,.btn,[data-lenis-prevent],[contenteditable]';
 
  const FRAMES = {
@@ -223,7 +223,7 @@
 
  /* ----- Scroll progress bar ----- */
  function mountProgress() {
-  if (doc.getElementById('prog') || doc.querySelector('.vz-silk-progress') || !doc.body) return;
+  if (doc.getElementById('prog') || doc.getElementById('site-progress') || doc.querySelector('.vz-silk-progress') || !doc.body) return;
   const bar = doc.createElement('div');
   bar.className = 'vz-silk-progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -255,5 +255,5 @@
  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, { once: true });
  else start();
 
- window.VeloryzSilk = { version: 'silk-2026.2', get enabled() { return allowed(); } };
+ window.VeloryzSilk = { version: 'silk-2026.3', get enabled() { return allowed(); } };
 })();
