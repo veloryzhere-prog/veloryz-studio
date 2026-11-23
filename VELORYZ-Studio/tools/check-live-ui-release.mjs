@@ -28,11 +28,15 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const editorialLinked=home.body.includes('vz-editorial-r5')
     &&home.body.includes('class="vz-hero-practices"')
     &&home.body.includes('/reference-elegance-r5.css?v=20261123-editorial-r5');
+   // A release marker alone once passed while the live homepage still loaded
+   // an older broken singleton '$().forEach' Menu controller.
+   const liveControllerFixed=home.body.includes("$('#mn a').forEach(function(a,i)");
    const menuLinked=home.menuHeader==='reference-menu-20261123-r6'
     &&home.body.includes('id="mb" class="mbtn vz-menu-morph"')
     &&home.body.includes('data-vz-menu-version="reference-r6"')
     &&home.body.includes('/reference-menu-morph-r6.css?v=20261123-reference-menu-r6')
-    &&home.body.includes('/reference-site-upgrade.js?v=20261123-reference-menu-r6');
+    &&home.body.includes('/reference-site-upgrade.js?v=20261123-reference-menu-r6')
+    &&liveControllerFixed;
    const [silkCss,uiCss,js,editorial,menuCss]=await Promise.all([
     ...assets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css')
    ]);
@@ -63,7 +67,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     console.log('PASS: production '+origin+' serves '+release+' on homepage, creator and design detail, all linked assets, active editorial hero, R6 circular Menu/Close morph, all assets, selectors and runtime.');
     process.exit(0);
    }
-   lastError='HTML release marker found but the active R5 homepage or assets failed verification. Core linked '+pagesLinked+', editorial linked '+editorialLinked+', editorial valid '+editorialOK+', menu linked '+menuLinked+', menu valid '+menuOK+'; Silk CSS '+silkCss.status+', UI CSS '+uiCss.status+', JS '+js.status+', editorial CSS '+editorial.status+'.';
+   lastError='HTML release marker found but the active R5 homepage or assets failed verification. Core linked '+pagesLinked+', editorial linked '+editorialLinked+', editorial valid '+editorialOK+', menu linked '+menuLinked+', menu valid '+menuOK+', live controller fixed '+liveControllerFixed+'; Silk CSS '+silkCss.status+', UI CSS '+uiCss.status+', JS '+js.status+', editorial CSS '+editorial.status+'.';
   }else{
    lastError='Live HTML not at '+release+': homepage '+home.status+' ('+(home.header||'no release')+'), create '+creator.status+' ('+(creator.header||'no release')+'), design '+design.status+' (marker '+designOK+').';
   }
