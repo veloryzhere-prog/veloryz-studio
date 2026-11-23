@@ -36,20 +36,22 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/reference-menu-morph-r6.css?v=20261123-reference-menu-r6')
     &&liveControllerFixed;
    const r9HomeLinked=home.body.includes('/reference-site-upgrade.css?v=20261123-design-stage-r9')
-    &&home.body.includes('/reference-site-upgrade.js?v=20261123-design-stage-r9')
+    &&home.body.includes('/reference-site-upgrade.js?v=20261123-design-stage-r10')
     &&home.body.includes('/reference-restored-features.css?v=20261123-journey-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
+   const r10PolishLinked=home.body.includes('/veloryz-r10-polish.css?v=20261123-r10-polish')
+    &&designPage.body.includes('/veloryz-r10-polish.css?v=20261123-r10-polish');
    const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261123-r9-journey-market');
-   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs]=await Promise.all([
+   const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,r10Css]=await Promise.all([
     ...silkAssets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css'),
     load('/reference-site-upgrade.js'),load('/reference-site-upgrade.css'),
     load('/veloryz-open-library.js'),load('/veloryz-open-library.css'),
     load('/veloryz-brand-motion-r9.js'),load('/veloryz-brand-motion-r9.css'),
-    load('/reference-restored-features.css'),load('/app.js')
+    load('/reference-restored-features.css'),load('/app.js'),load('/veloryz-r10-polish.css')
    ]);
    const menuOK=menuCss.status===200
     &&menuCss.body.includes('clip-path: circle(150vmax')
@@ -85,11 +87,16 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&journeyCss.body.includes('CLICKABLE PROJECT JOURNEY R9')
     &&appJs.body.includes("const href=i===3?'/create/':i===4?'/reviews.html':'/design/'")
     &&appJs.body.includes('class="teaser-star" src="/assets/brand/veloryz-mark.svg"');
-   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK){
-    console.log('PASS: production '+origin+' serves '+release+' plus R9 finite home design stage, actual design-market renderer, VELORYZ feedback, clickable Journey and cache-busted public assets.');
+   const r10OK=r10Css.status===200
+    &&r10Css.body.includes('Visual QC Polish R10')
+    &&r10Css.body.includes('opacity:.58')
+    &&r10Css.body.includes('border-radius:0!important')
+    &&r10Css.body.includes('body.vz-ref-public-route .vz-ai-dock[data-open="false"] .vz-ai-launch');
+   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r10PolishLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r10OK){
+    console.log('PASS: production '+origin+' serves '+release+' plus R9 finite home design stage, actual design-market renderer, VELORYZ feedback, clickable Journey, and R10 screenshot polish.');
     process.exit(0);
    }
-   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+'.';
+   lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R10 polish links '+r10PolishLinked+', R10 polish '+r10OK+'.';
   }else{
    lastError='Live HTML not at base release '+release+': homepage '+home.status+', create '+creator.status+', design page '+designPage.status+', detail '+designDetail.status+'.';
   }
