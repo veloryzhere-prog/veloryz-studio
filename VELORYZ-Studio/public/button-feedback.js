@@ -19,7 +19,7 @@ const nonVisual=(el)=>el.matches('[data-vz-fx-off],.vz-fx-opt-out')||
 const isEnabled=(el)=>!el.matches(':disabled,[disabled],[aria-disabled="true"],[inert]')&&!el.closest('[inert]');
 const motionOK=()=>{
  const level=document.documentElement.dataset.motion;
- return !document.hidden&&level!=='paused'&&level!=='reduced'&&!media?.matches;
+ return !document.hidden&&level!=='paused'&&level!=='reduced'&&(!media?.matches||level==='full');
 };
 const hasPseudo=el=>{
  const content=selector=>{
