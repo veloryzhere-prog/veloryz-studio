@@ -38,6 +38,34 @@ const result={
  pages:[], errors:[]
 };
 let browser=null;
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function waitForR9Deployment(){
+ let last='not checked';
+ for(let attempt=1;attempt<=20;attempt++){
+  try{
+   const bust='?vz_r9_qc='+Date.now();
+   const [market,homeStage,brand,designHtml]=await Promise.all([
+    fetch(root+'/veloryz-open-library.js'+bust,{cache:'no-store'}),
+    fetch(root+'/reference-site-upgrade.js'+bust,{cache:'no-store'}),
+    fetch(root+'/veloryz-brand-motion-r9.css'+bust,{cache:'no-store'}),
+    fetch(root+'/design/'+bust,{cache:'no-store'})
+   ]);
+   const [marketText,homeText,brandText,designText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text()]);
+   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok
+    &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
+    &&marketText.includes('data-source-motion')
+    &&homeText.includes("items=(picked.length?picked:all).slice(0,7)")
+    &&homeText.includes('setActive(next,local)')
+    &&brandText.includes('position:absolute;inset:0;z-index:-1')
+    &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
+    &&designText.includes('/app.js?v=20261123-r9-journey-market');
+   if(ready){result.deployment={release:'design-market-20261123-r9',attempt};return}
+   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', design HTML '+designHtml.status+', R9 markers '+ready;
+  }catch(error){last=String(error)}
+  if(attempt<20)await sleep(10000);
+ }
+ throw new Error('R9 public deployment not ready after release probes: '+last);
+}
 const visible=(rect,innerWidth,innerHeight)=>rect.width>0&&rect.height>0
  &&rect.bottom>0&&rect.right>0&&rect.top<innerHeight&&rect.left<innerWidth;
 async function snapshot(page,filename) {
@@ -52,7 +80,7 @@ async function check(page){
   const layout={
    overflowX:Math.max(0,document.documentElement.scrollWidth-innerWidth),
    main:box(document.querySelector('main,#main')),
-   headline:box(document.querySelector('#h1,.hero h1,.page-intro h1')),
+   headline:box(document.querySelector('#h1,.hero h1,.page-intro h1,.vz-r9-market-hero h1')),
    v3d:box(document.querySelector('#bigV')),
    controls:box(document.querySelector('.vz-3d-controls')),
    brand:box(document.querySelector('body.vz-reference-site > nav .vz-official-header-brand, .site-header .brand')),
@@ -77,6 +105,7 @@ async function check(page){
  });
 }
 try {
+ await waitForR9Deployment();
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
  for(const screen of screens){
   const context=await browser.newContext({
@@ -138,6 +167,22 @@ try {
       });
       if(!row.probe.homeInitializerFixed)row.issues.push('Production homepage serves obsolete broken menu JS (single-element forEach)');
       if(row.probe.scrollY>24)row.issues.push('Could not reset homepage scroll to top: '+row.probe.scrollY+' px');
+      row.probe.homeDesignR9=await page.evaluate(()=>({
+        stages:document.querySelectorAll('[data-vz-library-stage]').length,
+        active:document.querySelector('.vz-home-design-card.is-active h3')?.textContent?.trim()||'none',
+        rail:document.querySelectorAll('[data-vz-library-go]').length
+      }));
+      if(row.probe.homeDesignR9.stages<3||row.probe.homeDesignR9.rail<3)row.issues.push('R9 homepage design stage did not hydrate');
+    }
+    if(route.path==='/design/'){
+      row.probe.designR9=await page.evaluate(()=>({
+        root:Boolean(document.querySelector('.vz-real-library.vz-r9-market')),
+        cards:document.querySelectorAll('.vz-source-card').length,
+        motion:Boolean(document.querySelector('[data-source-motion]')),
+        price:Boolean(document.querySelector('[data-source-price]')),
+        reviews:Boolean(document.querySelector('[data-source-review-trust]'))
+      }));
+      if(!row.probe.designR9.root||row.probe.designR9.cards<12||!row.probe.designR9.motion||!row.probe.designR9.price)row.issues.push('R9 Design Market missing expected renderer/cards/filters');
     }
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
@@ -149,6 +194,27 @@ try {
       await page.evaluate(()=>scrollTo({top:Math.round(innerHeight*.88),behavior:'instant'}));
       await page.waitForTimeout(500);
       const mid=name+'-scroll.png';await snapshot(page,mid);row.screenshots.push(mid);
+    }
+    if(route.path==='/'){
+      const lib=page.locator('#vz-home-library');
+      if(await lib.count()){
+       await page.evaluate(()=>{const el=document.querySelector('#vz-home-library');scrollTo({top:el.getBoundingClientRect().top+scrollY+20,behavior:'instant'})});
+       await page.waitForTimeout(700);
+       const first=name+'-design-stage.png';await snapshot(page,first);row.screenshots.push(first);
+       const stage=await page.evaluate(()=>{const el=document.querySelector('#vz-home-library');const range=Math.max(1,el.offsetHeight-innerHeight);scrollTo({top:el.getBoundingClientRect().top+scrollY+range*.55,behavior:'instant'});return range});
+       await page.waitForTimeout(700);
+       row.homeDesignMid=await page.evaluate(()=>document.querySelector('.vz-home-design-card.is-active h3')?.textContent?.trim()||'none');
+       const later=name+'-design-stage-mid.png';await snapshot(page,later);row.screenshots.push(later);
+       if(stage<1200)row.issues.push('Homepage design-stage scroll range unexpectedly short: '+Math.round(stage)+' px');
+      }
+    }
+    if(route.path==='/design/'){
+      const market=page.locator('#vz-source-collection');
+      if(await market.count()){
+       await market.scrollIntoViewIfNeeded();
+       await page.waitForTimeout(650);
+       const marketShot=name+'-marketplace.png';await snapshot(page,marketShot);row.screenshots.push(marketShot);
+      }
     }
     if(route.path==='/'){
       await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
