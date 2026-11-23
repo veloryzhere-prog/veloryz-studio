@@ -100,6 +100,7 @@ function buildGallery(){
    card.classList.toggle('is-before',i<next);
    card.classList.toggle('is-after',i>next);
    card.setAttribute('aria-hidden',String(i!==next));
+   card.inert=i!==next;
    card.style.setProperty('--vz-library-local',i===next?local.toFixed(4):'0');
   });
   rail.querySelectorAll('button').forEach((b,i)=>i===next?b.setAttribute('aria-current','true'):b.removeAttribute('aria-current'));
@@ -116,7 +117,8 @@ function buildGallery(){
   const full=motionIsFull();
   section.classList.toggle('is-static',!full);
   if(!full){
-   setActive(0,0);
+   active=-1;
+   cards.forEach(card=>{card.classList.add('is-active');card.classList.remove('is-before','is-after');card.setAttribute('aria-hidden','false');card.inert=false;card.style.setProperty('--vz-library-local','0')});
    if(fill)fill.style.transform='scaleX(0)';
    if(index)index.textContent='Swipe or open the complete library ↗';
    return;
