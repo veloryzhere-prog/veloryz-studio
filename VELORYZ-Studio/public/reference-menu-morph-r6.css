@@ -1,0 +1,321 @@
+/* VELORYZ / Reference Menu Morph R6
+ * Based on the user's original "VELORYZ Studio — Full Site Design.html".
+ * Preserve its pill MENU->CLOSE and circular full-screen reveal.
+ * Refinements: two-line glyph morph, stepped entrance, responsive secondary
+ * links, hover/focus tracing and reduced-motion accessibility.
+ * This file is injected AFTER R5 only on the real reference homepage.
+ */
+body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph {
+  --vz-menu-ease: cubic-bezier(.76, 0, .24, 1);
+  --vz-menu-accent: #e2482b;
+  z-index: 145 !important;
+  min-width: 136px !important;
+  min-height: 49px !important;
+  height: 49px !important;
+  display: inline-flex !important;
+  flex-direction: row;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 18px !important;
+  padding: 9px 17px !important;
+  border: 1px solid rgba(36, 28, 25, .55) !important;
+  border-radius: 999px !important;
+  color: #211b17 !important;
+  background: rgba(250, 244, 235, .97) !important;
+  mix-blend-mode: normal !important;
+  box-shadow: 0 1px 1px rgba(30, 20, 15, .06), 0 10px 25px -19px rgba(30, 20, 15, .35);
+  cursor: pointer;
+  overflow: hidden;
+  transform: translateY(0);
+  transition:
+    border-color .34s ease,
+    color .34s ease,
+    background-color .34s ease,
+    box-shadow .44s cubic-bezier(.16, 1, .3, 1),
+    transform .36s cubic-bezier(.16, 1, .3, 1) !important;
+}
+body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph:is(:hover, :focus-visible) {
+  border-color: var(--vz-menu-accent) !important;
+  box-shadow: 0 0 0 1px rgba(226, 72, 43, .3), 0 13px 30px -17px rgba(58, 35, 27, .34);
+  transform: translateY(-2px);
+}
+body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph:active {
+  transform: translateY(0) scale(.967);
+  box-shadow: inset 0 2px 6px rgba(36, 24, 21, .10);
+}
+body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph:focus-visible {
+  outline: 3px solid var(--vz-menu-accent) !important;
+  outline-offset: 4px !important;
+}
+body.vz-reference-site .vz-menu-labels {
+  position: relative;
+  display: block;
+  height: 17px;
+  width: 49px;
+  overflow: hidden;
+  font: 600 11px/17px var(--sans, sans-serif);
+  letter-spacing: .15em;
+  text-align: left;
+}
+body.vz-reference-site .vz-menu-labels > span {
+  position: absolute;
+  inset: 0;
+  display: block;
+  white-space: nowrap;
+  transition:
+    opacity .28s ease,
+    transform .48s cubic-bezier(.16, 1, .3, 1);
+}
+body.vz-reference-site .vz-menu-label-menu {opacity:1;transform:translateY(0)}
+body.vz-reference-site .vz-menu-label-close {opacity:0;transform:translateY(120%)}
+body.vz-reference-site .vz-menu-glyph {
+  display: block;
+  width: 20px;
+  height: 16px;
+  position: relative;
+  flex: none;
+}
+body.vz-reference-site .vz-menu-glyph i {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  border-radius: 0;
+  background: currentColor;
+  transform-origin: center;
+  transition:
+    width .45s cubic-bezier(.16, 1, .3, 1),
+    top .45s cubic-bezier(.16, 1, .3, 1),
+    transform .5s cubic-bezier(.16, 1, .3, 1);
+}
+body.vz-reference-site .vz-menu-glyph i:last-child {top:11px;width:14px}
+body.vz-reference-site .vz-menu-morph:is(:hover, :focus-visible) .vz-menu-glyph i:last-child {width:20px}
+body.vz-reference-site.vz-menu-open .vz-header-actions > #mb.vz-menu-morph {
+  background: #f7f0e4 !important;
+  color: #1b1714 !important;
+  border-color: rgba(27, 23, 20, .4) !important;
+  transform: translateY(0);
+}
+body.vz-reference-site.vz-menu-open .vz-menu-label-menu {opacity:0;transform:translateY(-120%)}
+body.vz-reference-site.vz-menu-open .vz-menu-label-close {opacity:1;transform:translateY(0)}
+body.vz-reference-site.vz-menu-open .vz-menu-glyph i:first-child {
+  top:8px;transform:rotate(45deg);
+}
+body.vz-reference-site.vz-menu-open .vz-menu-glyph i:last-child {
+  width:20px;top:8px;transform:rotate(-45deg);
+}
+/* The supplied original opens a circle from the actual MENU control.
+   Calculate the origin in JS for reliable desktop, tablet and mobile origins. */
+body.vz-reference-site #mn[data-vz-menu-version="reference-r6"] {
+  --vz-menu-origin-x: calc(100% - 72px);
+  --vz-menu-origin-y: 40px;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 138 !important;
+  box-sizing: border-box;
+  display: block !important;
+  padding: 0 !important;
+  background: var(--inv, #15120e) !important;
+  color: var(--invfg, #f7f0e4) !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  clip-path: circle(0px at var(--vz-menu-origin-x) var(--vz-menu-origin-y)) !important;
+  -webkit-clip-path: circle(0px at var(--vz-menu-origin-x) var(--vz-menu-origin-y)) !important;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    clip-path .94s cubic-bezier(.76, 0, .24, 1),
+    -webkit-clip-path .94s cubic-bezier(.76, 0, .24, 1),
+    visibility 0s linear .94s !important;
+  will-change: clip-path;
+}
+body.vz-reference-site #mn[data-vz-menu-version="reference-r6"].open {
+  clip-path: circle(150vmax at var(--vz-menu-origin-x) var(--vz-menu-origin-y)) !important;
+  -webkit-clip-path: circle(150vmax at var(--vz-menu-origin-x) var(--vz-menu-origin-y)) !important;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    clip-path .94s cubic-bezier(.76, 0, .24, 1),
+    -webkit-clip-path .94s cubic-bezier(.76, 0, .24, 1),
+    visibility 0s !important;
+}
+body.vz-reference-site.vz-menu-open {overflow:hidden}
+body.vz-reference-site #mn .vz-menu-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.28fr) minmax(240px, .72fr);
+  column-gap: clamp(40px, 8vw, 180px);
+  align-content: center;
+  row-gap: clamp(28px, 4vh, 58px);
+  min-height: 100svh;
+  padding:
+    max(115px, calc(env(safe-area-inset-top, 0px) + 94px))
+    clamp(24px, 8.5vw, 150px)
+    max(48px, env(safe-area-inset-bottom, 0px));
+}
+body.vz-reference-site #mn :is(.vz-menu-primary, .vz-menu-utility) {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+body.vz-reference-site #mn .vz-menu-kicker {
+  font: 600 clamp(.7rem, .9vw, .85rem)/1.3 var(--sans, sans-serif);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: #b0a394;
+  margin: 0 0 clamp(16px, 2.8vh, 32px);
+  padding: 0 0 14px;
+  border-bottom: 1px solid rgba(247, 240, 228, .2);
+}
+body.vz-reference-site #mn a {
+  display: flex !important;
+  position: relative;
+  width: 100% !important;
+  max-width: none !important;
+  align-items: baseline !important;
+  justify-content: space-between;
+  gap: 16px;
+  border: none !important;
+  border-bottom: 1px solid rgba(247, 240, 228, .15) !important;
+  margin: 0 !important;
+  padding: clamp(4px, .65vh, 10px) 4px clamp(5px, .85vh, 11px) 0 !important;
+  color: var(--invfg, #f7f0e4) !important;
+  background: transparent !important;
+  transform: translate3d(0, 39px, 0) !important;
+  translate: none !important;
+  opacity: 0 !important;
+  transition:
+    transform .78s cubic-bezier(.16, 1, .3, 1),
+    opacity .6s ease,
+    color .28s,
+    border-color .28s !important;
+  transition-delay: 0s !important;
+  pointer-events: none;
+}
+body.vz-reference-site #mn a::before {content:none !important;display:none !important}
+body.vz-reference-site #mn a::after {
+  content: "↗";
+  font-family: var(--sans, sans-serif);
+  font-size: .65em;
+  line-height: 1;
+  opacity: .35;
+  transform: translate(-8px, 8px);
+  transition: opacity .36s, transform .45s cubic-bezier(.16, 1, .3, 1);
+  pointer-events: none;
+  flex: none;
+}
+body.vz-reference-site #mn.open a {
+  transform: translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto;
+  transition-delay: calc(.22s + var(--vz-menu-stagger, 0ms)) !important;
+}
+body.vz-reference-site #mn a:is(:hover, :focus-visible, .cur) {
+  color: #f2ae91 !important;
+  border-color: var(--acc, #e2482b) !important;
+}
+body.vz-reference-site #mn a:is(:hover, :focus-visible)::after {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+body.vz-reference-site #mn a:focus-visible {
+  outline: 2px solid #f2ae91 !important;
+  outline-offset: 4px !important;
+}
+body.vz-reference-site #mn .vz-menu-primary a {
+  font-family: var(--serif, Georgia, serif) !important;
+  font-weight: 300 !important;
+  font-size: clamp(2.15rem, min(4.4vw, 5.2vh), 4.6rem) !important;
+  letter-spacing: -.035em;
+  line-height: 1.06 !important;
+  min-height: 0 !important;
+}
+body.vz-reference-site #mn .vz-menu-utility a {
+  font-family: var(--sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: clamp(1.06rem, 1.5vw, 1.45rem) !important;
+  line-height: 1.35 !important;
+  letter-spacing: -.012em;
+  min-height: 0 !important;
+  padding-block: clamp(9px, 1.25vh, 16px) !important;
+}
+body.vz-reference-site #mn .vz-menu-bottom {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 22px;
+  border-top: 1px solid rgba(247, 240, 228, .17);
+  padding-top: 19px;
+  color: #aa9b8c;
+  font: 500 clamp(.68rem, .83vw, .78rem)/1.4 var(--sans, sans-serif);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .48s ease, transform .48s ease;
+}
+body.vz-reference-site #mn.open .vz-menu-bottom {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .6s;
+}
+@media (max-width: 960px) {
+  body.vz-reference-site #mn .vz-menu-container {
+    grid-template-columns: minmax(0, 1fr) minmax(190px, .7fr);
+    column-gap: clamp(20px, 5vw, 60px);
+    padding-inline: clamp(24px, 6vw, 70px);
+  }
+  body.vz-reference-site #mn .vz-menu-primary a {
+    font-size: clamp(2rem, 5.2vw, 3.7rem) !important;
+  }
+}
+@media (max-width: 680px) {
+  body.vz-reference-site .vz-header-actions > #mb.vz-menu-morph {
+    min-width: 111px !important;
+    padding: 9px 12px !important;
+    gap: 9px !important;
+  }
+  body.vz-reference-site #mn .vz-menu-container {
+    grid-template-columns: 1fr;
+    align-content: start;
+    row-gap: 24px;
+    padding: max(89px, calc(env(safe-area-inset-top, 0px) + 78px)) 24px
+      max(37px, calc(env(safe-area-inset-bottom, 0px) + 24px));
+  }
+  body.vz-reference-site #mn .vz-menu-primary a {
+    font-size: clamp(1.85rem, 6.5vw, 2.7rem) !important;
+    padding-block: 7px !important;
+  }
+  body.vz-reference-site #mn .vz-menu-utility a {
+    font-size: 1rem !important;
+    padding-block: 11px !important;
+  }
+  body.vz-reference-site #mn .vz-menu-kicker {margin-bottom: 10px}
+  body.vz-reference-site #mn .vz-menu-bottom {display: grid;gap: 8px}
+}
+/* The user-selected full-motion preference may override OS reduced motion,
+   but explicit paused/reduced or an untouched OS preference must not animate. */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) body.vz-reference-site #mn[data-vz-menu-version="reference-r6"],
+  html:not([data-motion="full"]) body.vz-reference-site #mn a,
+  html:not([data-motion="full"]) body.vz-reference-site .vz-menu-morph,
+  html:not([data-motion="full"]) body.vz-reference-site .vz-menu-morph *,
+  html:not([data-motion="full"]) body.vz-reference-site #mn .vz-menu-bottom {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+html[data-motion="paused"] body.vz-reference-site #mn[data-vz-menu-version="reference-r6"],
+html[data-motion="reduced"] body.vz-reference-site #mn[data-vz-menu-version="reference-r6"],
+html[data-motion="paused"] body.vz-reference-site #mn :is(a, .vz-menu-bottom),
+html[data-motion="reduced"] body.vz-reference-site #mn :is(a, .vz-menu-bottom),
+html[data-motion="paused"] body.vz-reference-site .vz-menu-morph,
+html[data-motion="reduced"] body.vz-reference-site .vz-menu-morph {
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
