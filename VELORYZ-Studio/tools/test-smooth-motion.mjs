@@ -49,8 +49,8 @@ vm.runInNewContext(scroll,{window:mockWindow,document:mockDoc,matchMedia:getMedi
 assert.equal(FakeLenis.instances.length,1,'Full motion on desktop must instantiate Lenis once');
 assert.equal(root.dataset.vzSmoothWheel,'lenis');
 const engine=FakeLenis.instances[0];
-assert.equal(engine.options.lerp,.105,'High-quality Lenis easing, without sluggish multi-second trails');
-assert.equal(engine.options.wheelMultiplier,.92,'Controlled wheel distance');
+assert.equal(engine.options.lerp,.09,'R17 Lenis easing should be smoother without becoming floaty');
+assert.equal(engine.options.wheelMultiplier,.9,'R17 keeps wheel distance controlled while softening interpolation');
 assert.equal(engine.options.syncTouch,false);
 assert.ok(engine.options.prevent({matches:s=>s.includes('dialog')}),'Nested modal should scroll natively');
 mockWindow.VeloryzScroll.sync();

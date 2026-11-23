@@ -20,6 +20,10 @@ on:
       - "VELORYZ-Studio/public/reference-elegance-r5.css"
       - "VELORYZ-Studio/public/reference-menu-morph-r6.css"
       - "VELORYZ-Studio/public/reference-site-upgrade.js"
+      - "VELORYZ-Studio/public/reference-brand-flow-r17.css"
+      - "VELORYZ-Studio/public/reference-brand-flow-r17.js"
+      - "VELORYZ-Studio/public/smooth-scroll.js"
+      - "VELORYZ-Studio/tools/test-brand-flow-r17.mjs"
       - "VELORYZ-Studio/tools/test-reference-menu-r6.mjs"
       - "VELORYZ-Studio/public/reference-hero-immersive.js"
       - "VELORYZ-Studio/public/button-feedback.js"
@@ -49,6 +53,8 @@ jobs:
         run: node tools/test-reference-menu-r6.mjs
       - name: Verify R9 finite design stage, actual market renderer and brand feedback
         run: node tools/test-design-market-r9.mjs
+      - name: Verify R17 header fade, footer brand frame and smooth-motion profile
+        run: node tools/test-brand-flow-r17.mjs
       - name: Validate Cloudflare Worker identity before probing production
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
