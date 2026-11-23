@@ -35,8 +35,8 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('data-vz-menu-version="reference-r6"')
     &&home.body.includes('/reference-menu-morph-r6.css?v=20261123-reference-menu-r6')
     &&liveControllerFixed;
-   const r9HomeLinked=home.body.includes('/reference-site-upgrade.css?v=20261123-clean-r14')
-    &&home.body.includes('/reference-site-upgrade.js?v=20261123-clean-r14')
+   const r9HomeLinked=home.body.includes('/reference-site-upgrade.css?v=20261123-simple-scroll-r15')
+    &&home.body.includes('/reference-site-upgrade.js?v=20261123-simple-scroll-r15')
     &&home.body.includes('/reference-restored-features.css?v=20261123-journey-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
@@ -101,7 +101,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&journeyCss.body.includes('CLICKABLE PROJECT JOURNEY R9')
     &&appJs.body.includes("const href=i===3?'/create/':i===4?'/reviews.html':'/design/'")
     &&appJs.body.includes('class="teaser-star" src="/assets/brand/veloryz-mark.svg"');
-   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK&&r14ChromeGone){
+   if(pagesLinked&&silkOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK&&r9HomeLinked&&r9DesignLinked&&r9HomeOK&&r9MarketOK&&r9BrandOK&&journeyOK&&r11SharpOK&&r14ChromeGone&&r15SimpleScrollOK){
     console.log('PASS: production '+origin+' serves '+release+' plus R9 finite home design stage, actual design-market renderer, VELORYZ feedback, clickable Journey and cache-busted public assets.');
     process.exit(0);
    }
