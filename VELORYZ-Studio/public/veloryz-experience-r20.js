@@ -31,7 +31,14 @@
    if(chat&&!chat.querySelector('.vz-r20-assistant-context')){
     const note=document.createElement('p');
     note.className='vz-r20-assistant-context';
-    note.textContent=route==='/support/'?'A focused support workspace for project questions, technical help and direct next steps.':'A focused help workspace. Choose the assistant that matches what you need, or return to the main site at any time.';
+    note.textContent=route==='/support/'?'A focused support workspace for project questions, technical help and direct next steps. Human contact remains available at any time.':'A focused help workspace. Choose the assistant that matches what you need, browse documentation, or return to the main site at any time.';
+    const actions=document.createElement('nav');
+    actions.className='vz-r20-assistant-actions';
+    actions.setAttribute('aria-label','Help and support shortcuts');
+    actions.innerHTML=route==='/support/'
+      ? '<a href="/contact/">Contact the team ↗</a><a href="/docs/">Browse documentation ↗</a><a href="/report-bug/">Report a bug ↗</a>'
+      : '<a href="/docs/">Browse documentation ↗</a><a href="/support/">Contact Support AI ↗</a><a href="/contact/">Contact the team ↗</a>';
+    note.after(actions);
     chat.querySelector('.vz-chat-page-head')?.after(note);
    }
   });
@@ -51,7 +58,7 @@
  const controls=document.querySelector('.vz-reference-site .vz-3d-controls');
  if(controls&&!controls.querySelector('[data-vz-r20-3d-more]')){
   const buttonBox=controls.querySelector('.vz-3d-control-buttons');
-  const advanced=['gentle','spin','left','right'];
+  const advanced=['continue','left','right','front'];
   advanced.forEach(action=>buttonBox?.querySelector('[data-logo-action="'+action+'"]')?.setAttribute('data-vz-r20-advanced',''));
   const more=document.createElement('button');
   more.type='button';more.className='vz-3d-more';more.dataset.vzR203dMore='';
@@ -86,7 +93,13 @@
   });
  };
  requestAnimationFrame(markImages);
- addEventListener('studio:route',()=>{syncRoute();requestAnimationFrame(markImages)});
+ addEventListener('studio:route',()=>{
+  syncRoute();
+  requestAnimationFrame(()=>{
+   markImages();
+   document.querySelector('#main')?.setAttribute('aria-live','off');
+  });
+ });
 
  // Idle prefetch only the highest-intent internal routes.
  const prefetch=()=>{
