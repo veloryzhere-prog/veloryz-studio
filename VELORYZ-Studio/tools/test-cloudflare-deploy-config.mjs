@@ -28,6 +28,7 @@ const localEnd=vite.indexOf('\n};',localStart);
 assert(localStart>=0&&localEnd>localStart,'localBindingConfig block is missing');
 const localConfigSource=vite.slice(localStart,localEnd);
 assert(!/\bname\s*:/.test(localConfigSource),'localBindingConfig must not override the canonical Worker name');
+assert(!/compatibility_flags\s*:/.test(localConfigSource),'localBindingConfig must not duplicate compatibility_flags from wrangler.jsonc');
 
 const repoRoot=new URL('../../',import.meta.url);
 const rootWrangler=JSON.parse(fs.readFileSync(new URL('wrangler.jsonc',repoRoot),'utf8'));
