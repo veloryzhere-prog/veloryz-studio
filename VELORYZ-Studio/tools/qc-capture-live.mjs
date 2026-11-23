@@ -44,23 +44,26 @@ async function waitForR9Deployment(){
  for(let attempt=1;attempt<=20;attempt++){
   try{
    const bust='?vz_r9_qc='+Date.now();
-   const [market,homeStage,brand,designHtml]=await Promise.all([
+   const [market,homeStage,brand,r10,designHtml]=await Promise.all([
     fetch(root+'/veloryz-open-library.js'+bust,{cache:'no-store'}),
     fetch(root+'/reference-site-upgrade.js'+bust,{cache:'no-store'}),
     fetch(root+'/veloryz-brand-motion-r9.css'+bust,{cache:'no-store'}),
+    fetch(root+'/veloryz-r10-polish.css'+bust,{cache:'no-store'}),
     fetch(root+'/design/'+bust,{cache:'no-store'})
    ]);
-   const [marketText,homeText,brandText,designText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text()]);
-   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok
+   const [marketText,homeText,brandText,r10Text,designText]=await Promise.all([market.text(),homeStage.text(),brand.text(),r10.text(),designHtml.text()]);
+   const ready=market.ok&&homeStage.ok&&brand.ok&&r10.ok&&designHtml.ok
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
     &&homeText.includes("items=(picked.length?picked:all).slice(0,7)")
     &&homeText.includes('setActive(next,local)')
     &&brandText.includes('position:absolute;inset:0;z-index:-1')
+    &&r10Text.includes('Visual QC Polish R10')
+    &&r10Text.includes('opacity:.58')
     &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
     &&designText.includes('/app.js?v=20261123-r9-journey-market');
    if(ready){result.deployment={release:'design-market-20261123-r9',attempt};return}
-   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', design HTML '+designHtml.status+', R9 markers '+ready;
+   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R10 '+r10.status+', design HTML '+designHtml.status+', R9/R10 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);
  }
@@ -170,19 +173,36 @@ try {
       row.probe.homeDesignR9=await page.evaluate(()=>({
         stages:document.querySelectorAll('[data-vz-library-stage]').length,
         active:document.querySelector('.vz-home-design-card.is-active h3')?.textContent?.trim()||'none',
-        rail:document.querySelectorAll('[data-vz-library-go]').length
+        rail:document.querySelectorAll('[data-vz-library-go]').length,
+        totalText:document.querySelector('#vz-library-count')?.textContent?.trim()||'',
+        topTotal:document.querySelector('#vz-library-total-copy')?.textContent?.trim()||''
       }));
       if(row.probe.homeDesignR9.stages<3||row.probe.homeDesignR9.rail<3)row.issues.push('R9 homepage design stage did not hydrate');
+      if(!/110 total designs/i.test(row.probe.homeDesignR9.totalText)||!/110 total/i.test(row.probe.homeDesignR9.topTotal))row.issues.push('Homepage Design Library total count is inconsistent with 110-item marketplace');
     }
     if(route.path==='/design/'){
-      row.probe.designR9=await page.evaluate(()=>({
-        root:Boolean(document.querySelector('.vz-real-library.vz-r9-market')),
-        cards:document.querySelectorAll('.vz-source-card').length,
-        motion:Boolean(document.querySelector('[data-source-motion]')),
-        price:Boolean(document.querySelector('[data-source-price]')),
-        reviews:Boolean(document.querySelector('[data-source-review-trust]'))
-      }));
+      row.probe.designR9=await page.evaluate(()=>{
+        const heroWord=document.querySelector('.vz-r9-market-hero .vz-source-hero-text>p .vz-w');
+        const label=document.querySelector('.vz-r9-market .vz-source-eyebrow');
+        const ai=document.querySelector('.vz-ai-dock[data-open="false"] .vz-ai-launch');
+        const wa=document.querySelector('a.whatsapp-float.vz-wa-uiverse');
+        const pseudo=label?getComputedStyle(label,'::before'):null;
+        return {
+         root:Boolean(document.querySelector('.vz-real-library.vz-r9-market')),
+         cards:document.querySelectorAll('.vz-source-card').length,
+         motion:Boolean(document.querySelector('[data-source-motion]')),
+         price:Boolean(document.querySelector('[data-source-price]')),
+         reviews:Boolean(document.querySelector('[data-source-review-trust]')),
+         heroWordOpacity:heroWord?Number(getComputedStyle(heroWord).opacity):1,
+         labelRadius:pseudo?.borderRadius||'none',
+         aiWidth:ai?Math.round(ai.getBoundingClientRect().width):0,
+         whatsappWidth:wa?Math.round(wa.getBoundingClientRect().width):0
+        };
+      });
       if(!row.probe.designR9.root||row.probe.designR9.cards<12||!row.probe.designR9.motion||!row.probe.designR9.price)row.issues.push('R9 Design Market missing expected renderer/cards/filters');
+      if(row.probe.designR9.heroWordOpacity<.5)row.issues.push('Design Market hero copy starts below readable scrub opacity: '+row.probe.designR9.heroWordOpacity);
+      if(row.probe.designR9.labelRadius!=='0px')row.issues.push('Design Market label still renders a circular V badge: '+row.probe.designR9.labelRadius);
+      if(innerWidth<=540&&Math.max(row.probe.designR9.aiWidth,row.probe.designR9.whatsappWidth)>60)row.issues.push('Mobile floating contact control still covers marketplace actions');
     }
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
@@ -211,14 +231,23 @@ try {
       if(await journey.count()){
        await journey.scrollIntoViewIfNeeded();
        await page.waitForTimeout(650);
-       row.journey=await page.evaluate(()=>({
-        cards:document.querySelectorAll('#vz-reference-journey .vz-journey-stage').length,
-        links:[...document.querySelectorAll('#vz-reference-journey .vz-journey-stage')].map(a=>a.getAttribute('href')),
-        contrast:getComputedStyle(document.querySelector('#vz-reference-journey .vz-journey-stage:nth-child(2)')).color
-       }));
+       row.journey=await page.evaluate(()=>{
+        const tag=document.querySelector('#vz-reference-journey .tag');
+        const intro=document.querySelector('#vz-reference-journey .vz-journey-heading>p:not(.tag) .vz-w');
+        const pseudo=tag?getComputedStyle(tag,'::before'):null;
+        return {
+         cards:document.querySelectorAll('#vz-reference-journey .vz-journey-stage').length,
+         links:[...document.querySelectorAll('#vz-reference-journey .vz-journey-stage')].map(a=>a.getAttribute('href')),
+         contrast:getComputedStyle(document.querySelector('#vz-reference-journey .vz-journey-stage:nth-child(2)')).color,
+         tagRadius:pseudo?.borderRadius||'none',
+         introWordOpacity:intro?Number(getComputedStyle(intro).opacity):1
+        };
+       });
        const journeyShot=name+'-journey.png';await snapshot(page,journeyShot);row.screenshots.push(journeyShot);
        const expected=['/design/','/design/','/design/','/create/','/reviews.html'];
        if(row.journey.cards!==5||JSON.stringify(row.journey.links)!==JSON.stringify(expected))row.issues.push('Project Journey routes/stages differ from R9 contract');
+       if(row.journey.tagRadius!=='0px')row.issues.push('Journey label still renders a circular V badge: '+row.journey.tagRadius);
+       if(row.journey.introWordOpacity<.5)row.issues.push('Journey intro copy starts below readable scrub opacity: '+row.journey.introWordOpacity);
       }
     }
     if(route.path==='/design/'){
