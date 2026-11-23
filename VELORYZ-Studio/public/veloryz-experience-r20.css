@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R23
+/* VELORYZ / Public Experience R24
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -571,4 +571,65 @@ body.vz-r20 :where(a,button,input,select,textarea,summary){
  .vz-reference-site #load,
  .vz-reference-site #load .wm,
  .vz-reference-site #load .ring{transition:none!important;animation:none!important}
+}
+
+/* R24 / interaction-state and finish polish */
+body.vz-r20 :where(h1,h2,.vz-editorial-headline,.v4-question-heading h1,.kb-v4 h1,.kb-v4 h2,.vz-source-section-head h2){
+ text-wrap:balance;
+}
+body.vz-r20 :where(p,.lead,.v4-question-heading p,.kb-v4 p){
+ text-wrap:pretty;
+}
+body.vz-r20 :where(button,.button,.btn,[role=button],.v4-choice,.docs-r20-start>a,.vz-source-card-actions a){
+ -webkit-user-select:none;
+ user-select:none;
+}
+body.vz-r20 :where(button,.button,.btn,[role=button],.v4-choice,.docs-r20-start>a,.vz-source-card-actions a):active{
+ transform:translate3d(0,1px,0) scale(.985)!important;
+ transition-duration:80ms!important;
+}
+body.vz-r20 .v4-choice[aria-pressed=true]{
+ border-color:#4f7c5c!important;
+ background:#f0f7f1!important;
+ box-shadow:inset 0 0 0 1px #4f7c5c,0 8px 24px rgba(54,91,65,.07)!important;
+}
+body.vz-r20 .v4-choice[aria-pressed=true] .v4-choice-check{
+ background:#4d7656!important;
+ border-color:#4d7656!important;
+ color:#fff!important;
+}
+body.vz-r20 .docs-search:focus-within,
+body.vz-r20 .vz-source-toolbar:focus-within{
+ box-shadow:0 16px 42px rgba(35,25,32,.10);
+}
+body.vz-r20 .docs-search:focus-within input,
+body.vz-r20 .vz-source-toolbar :where(input,select):focus-visible{
+ border-color:rgba(105,70,121,.5)!important;
+}
+body.vz-r20 .vz-source-list-head [aria-live]{
+ font-variant-numeric:tabular-nums;
+}
+body.vz-r20 .vz-source-card-actions a,
+body.vz-r20 .docs-r20-start>a{
+ will-change:auto;
+}
+@media(hover:hover) and (pointer:fine){
+ body.vz-r20 .docs-r20-start>a:hover,
+ body.vz-r20 .vz-source-card-actions a:hover{
+  box-shadow:0 12px 28px rgba(39,27,36,.08);
+ }
+}
+@media(max-width:720px){
+ body.vz-r20 .v4-choice,
+ body.vz-r20 .docs-r20-start>a,
+ body.vz-r20 .vz-source-card-actions a{
+  -webkit-tap-highlight-color:transparent;
+ }
+ body.vz-r20 .vz-source-card-actions{gap:10px}
+ body.vz-r20 .vz-source-card-actions a{min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.vz-r20 :where(button,.button,.btn,[role=button],.v4-choice,.docs-r20-start>a,.vz-source-card-actions a):active{
+  transform:none!important;
+ }
 }
