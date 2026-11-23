@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R24
+/* VELORYZ / Public Experience R25
  * Site-wide clarity, accessibility, responsive rhythm and performance polish.
  * Public routes only. Private/admin/client experiences remain isolated.
  */
@@ -632,4 +632,59 @@ body.vz-r20 .docs-r20-start>a{
  body.vz-r20 :where(button,.button,.btn,[role=button],.v4-choice,.docs-r20-start>a,.vz-source-card-actions a):active{
   transform:none!important;
  }
+}
+
+/* R25 / product-finish layer */
+body.vz-r20.vz-r25-route-pending{cursor:progress}
+body.vz-r20.vz-r25-route-pending :where(a,button){cursor:progress}
+body.vz-r20.vz-r25-route-pending #main{
+ opacity:.72;
+ transform:translate3d(0,2px,0);
+ transition:opacity 160ms ease,transform 240ms var(--vz20-ease);
+}
+body.vz-r20 #main{
+ transition:opacity 260ms ease,transform 360ms var(--vz20-ease);
+}
+body.vz-r20 .vz-r25-reveal{
+ opacity:0;
+ transform:translate3d(0,18px,0);
+ transition:opacity 680ms var(--vz20-ease),transform 760ms var(--vz20-ease);
+}
+body.vz-r20 .vz-r25-reveal.is-visible{
+ opacity:1;
+ transform:none;
+}
+body.vz-r20 :where(.vz-source-empty,.v4-empty,.docs-empty,.empty-state,[data-empty-state]){
+ border:1px dashed rgba(70,54,63,.22);
+ border-radius:16px;
+ background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(248,244,239,.78));
+ padding:clamp(24px,4vw,44px);
+ color:#6f626b;
+}
+body.vz-r20 :where(.v4-error,.vz-error,.docs-error,[role=alert]){
+ box-shadow:0 8px 24px rgba(125,62,47,.06);
+}
+body.vz-r20.vz-r25-menu-open{
+ overflow:hidden!important;
+ overscroll-behavior:none;
+}
+@media(max-width:720px){
+ body.vz-r20.vz-r25-menu-open #main,
+ body.vz-r20.vz-r25-menu-open #footer{
+  pointer-events:none;
+  user-select:none;
+ }
+ body.vz-r20 .mobile-nav{
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body.vz-r20 #main,
+ body.vz-r20.vz-r25-route-pending #main,
+ body.vz-r20 .vz-r25-reveal{
+  transition:none!important;
+  transform:none!important;
+ }
+ body.vz-r20 .vz-r25-reveal{opacity:1!important}
 }

@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R24
+/* VELORYZ / Public Experience R25
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -212,6 +212,56 @@
    status.textContent='Search closed';
   }
  });
+
+ // R25: subtle route-pending feedback for same-origin SPA navigation.
+ const beginRoutePending=anchor=>{
+  if(!anchor)return;
+  let url;
+  try{url=new URL(anchor.href,location.href)}catch{return}
+  if(url.origin!==location.origin||url.hash&&url.pathname===location.pathname)return;
+  body.classList.add('vz-r25-route-pending');
+  status.textContent='Opening '+((anchor.textContent||'page').trim().slice(0,60)||'page');
+ };
+ document.addEventListener('click',event=>{
+  const anchor=event.target.closest?.('a[href]');
+  if(anchor&&!event.defaultPrevented&&event.button===0&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey)beginRoutePending(anchor);
+ },{capture:true});
+ addEventListener('pageshow',()=>body.classList.remove('vz-r25-route-pending'));
+ addEventListener('studio:route',()=>body.classList.remove('vz-r25-route-pending'));
+
+ // R25: one-time reveal for meaningful public sections, not every small element.
+ const initSectionReveals=()=>{
+  const selectors=['.docs-r20-start','.vz-r9-featured','.vz-source-collection','.vz-need-help','.vz-footer-help','.service-grid','.project-grid','.process-grid','.pricing-grid'];
+  const sections=[...document.querySelectorAll(selectors.join(','))];
+  sections.forEach(section=>section.classList.add('vz-r25-reveal'));
+  if(!sections.length)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver'in window)){
+   sections.forEach(section=>section.classList.add('is-visible'));return;
+  }
+  const observer=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    entry.target.classList.add('is-visible');
+    observer.unobserve(entry.target);
+   });
+  },{rootMargin:'0px 0px -10% 0px',threshold:.08});
+  sections.forEach(section=>observer.observe(section));
+ };
+ requestAnimationFrame(initSectionReveals);
+ addEventListener('studio:route',()=>requestAnimationFrame(initSectionReveals));
+
+ // R25: synchronize body scroll-lock with the mobile menu's actual expanded state.
+ const syncMenuState=()=>{
+  const trigger=document.querySelector('#mb,.menu-toggle');
+  const expanded=trigger?.getAttribute('aria-expanded')==='true';
+  body.classList.toggle('vz-r25-menu-open',expanded);
+ };
+ const menuTrigger=document.querySelector('#mb,.menu-toggle');
+ if(menuTrigger&&'MutationObserver'in window){
+  new MutationObserver(syncMenuState).observe(menuTrigger,{attributes:true,attributeFilter:['aria-expanded']});
+  syncMenuState();
+ }
+ addEventListener('studio:route',()=>body.classList.remove('vz-r25-menu-open'));
 
  // Idle + intent prefetch for high-value same-origin destinations.
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;

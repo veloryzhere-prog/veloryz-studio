@@ -18,8 +18,8 @@ const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r24'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r24')&&security.includes('/veloryz-experience-r20.js?v=20261123-r24'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261123-r25'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261123-r25')&&security.includes('/veloryz-experience-r20.js?v=20261123-r25'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -48,6 +48,8 @@ assert(js.includes('const prefetchHref=href=>')&&js.includes("document.addEventL
 assert(js.includes('const syncChoiceStates=()=>')&&js.includes("'aria-pressed'"),'R24 Creator accessible selected-state sync missing');
 assert(js.includes("event.key==='/'")&&js.includes("'Search focused'")&&js.includes("event.key==='Escape'"),'R24 Docs/Design search keyboard shortcut missing');
 assert(css.includes('/* R24 / interaction-state and finish polish */')&&css.includes('text-wrap:balance')&&css.includes('scale(.985)'),'R24 tactile/typographic finish layer missing');
+assert(css.includes('/* R25 / product-finish layer */')&&css.includes('vz-r25-route-pending')&&css.includes('vz-r25-reveal'),'R25 product-finish CSS missing');
+assert(js.includes('const beginRoutePending=anchor=>')&&js.includes('const initSectionReveals=()=>')&&js.includes('const syncMenuState=()=>'),'R25 route/reveal/menu polish missing');
 assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
@@ -99,4 +101,4 @@ assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace re
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
-console.log('PASS: R24 preserves R23 performance while polishing tactile states, balanced typography, Creator selection semantics and Docs/Design keyboard search.');
+console.log('PASS: R25 preserves R24 interaction polish while adding route feedback, section reveals, stronger empty/error states and mobile menu scroll-lock.');
