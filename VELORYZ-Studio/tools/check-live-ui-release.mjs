@@ -80,6 +80,9 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&!homeStageJs.body.includes("data-vz-library-go")
     &&homeStageCss.body.includes('nav.vz-library-rail')
     &&homeStageCss.body.includes('display:none!important');
+   const r15SimpleScrollOK=homeStageJs.body.includes("addEventListener('scroll',requestLibraryUpdate")
+    &&homeStageJs.body.includes("libraryFrame=requestAnimationFrame")
+    &&!homeStageJs.body.includes('motionIsFull');
    const r14ChromeGone=!home.body.includes('vz-library-rail')
     &&!home.body.includes('vz-library-index')
     &&!home.body.includes('Featured design positions')
