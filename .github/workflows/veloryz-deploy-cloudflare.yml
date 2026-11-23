@@ -1,0 +1,83 @@
+name: Deploy VELORYZ to Cloudflare
+on:
+  push:
+    branches: [main]
+    paths:
+      - "VELORYZ-Studio/**"
+      - "package.json"
+      - "wrangler.jsonc"
+      - ".github/workflows/veloryz-deploy-cloudflare.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veloryz-cloudflare-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+
+      - name: Install Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Select Cloudflare credential without exposing it
+        id: cf
+        shell: bash
+        env:
+          CF_TOKEN_PRIMARY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_TOKEN_ALT: ${{ secrets.CF_API_TOKEN }}
+          CF_TOKEN_WORKERS: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
+          CF_ACCOUNT_SECRET: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          token="${CF_TOKEN_PRIMARY:-}"
+          [ -n "$token" ] || token="${CF_TOKEN_ALT:-}"
+          [ -n "$token" ] || token="${CF_TOKEN_WORKERS:-}"
+          if [ -z "$token" ]; then
+            echo "No supported Cloudflare API token secret is configured." >&2
+            exit 78
+          fi
+          echo "::add-mask::$token"
+          printf 'token=%s\n' "$token" >> "$GITHUB_OUTPUT"
+          account="${CF_ACCOUNT_SECRET:-79ba8abc7fa1363384b49c1e18c02c45}"
+          printf 'account=%s\n' "$account" >> "$GITHUB_OUTPUT"
+
+      - name: Install app dependencies
+        working-directory: VELORYZ-Studio
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Build current production Worker
+        working-directory: VELORYZ-Studio
+        run: corepack pnpm build
+
+      - name: Verify generated Worker and R14 homepage cleanup
+        working-directory: VELORYZ-Studio
+        run: |
+          node tools/test-generated-cloudflare-output.mjs
+          node tools/test-design-market-r9.mjs
+
+      - name: Deploy generated Worker to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ steps.cf.outputs.token }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.cf.outputs.account }}
+        run: VELORYZ-Studio/node_modules/.bin/wrangler deploy --config wrangler.jsonc
+
+      - name: Verify live homepage has no Design Library rail/counter
+        env:
+          VELORYZ_LIVE_URL: https://veloryz.online
+          VELORYZ_UI_RELEASE: silk-ui-20261123-r5
+          VELORYZ_PROBE_ATTEMPTS: 20
+        working-directory: VELORYZ-Studio
+        run: node tools/check-live-ui-release.mjs
