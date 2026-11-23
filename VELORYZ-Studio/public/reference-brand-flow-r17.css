@@ -80,7 +80,10 @@
  animation:vz-r17-header-arrive 1.05s var(--vz-r17-ease) both;
 }
 .vz-reference-site .vz-official-header-brand.is-scrolled-away{
+ opacity:0!important;
+ visibility:hidden;
  pointer-events:none;
+ transform:translate3d(0,-16px,0) scale(.96)!important;
 }
 @keyframes vz-r17-header-arrive{
  from{opacity:0;transform:translate3d(0,-12px,0) scale(.97)}
@@ -142,9 +145,10 @@
  height:auto;
  object-fit:contain;
  object-position:left center;
- opacity:.12;
+ opacity:.22;
  transform:translate3d(0,30px,0) scale(.985);
  transform-origin:left bottom;
+ filter:brightness(0) invert(96%) sepia(11%) saturate(230%) hue-rotate(349deg) brightness(103%) contrast(95%);
  transition:
   opacity 1s ease,
   transform 1.18s var(--vz-r17-ease);
@@ -161,6 +165,7 @@
 .vz-reference-site footer.vz-footer-in .vz-footer-official img{
  opacity:1;
  transform:none;
+ filter:brightness(0) invert(96%) sepia(11%) saturate(230%) hue-rotate(349deg) brightness(103%) contrast(95%);
 }
 .vz-reference-site footer.vz-footer-in .vz-footer-official .tag{
  opacity:.78;
