@@ -24,6 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Regression test actual homepage and Silk interactions
+        run: node tools/test-silk-ui-2026.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
