@@ -15,16 +15,12 @@ function buildGallery(){
  const track=$('#vz-home-library-track');
  const viewport=$('#vz-home-library-viewport');
  const section=$('#vz-home-library');
- const index=$('#vz-library-index');
- const count=$('#vz-library-count');
  const fill=$('#vz-library-progress-fill');
  if(!track||!viewport||!section)return;
  const all=Array.isArray(published.catalogue)?published.catalogue.filter(x=>x&&x.enabled!==false&&toText(x.name)):[];
  if(!all.length){
   const a=document.createElement('a');a.href='/design/';a.className='btn fill';a.textContent='Explore the available design directions ↗';
   track.replaceChildren(a);section.classList.add('is-static');
-  if(index)index.textContent='Browse the full library ↗';
-  if(count)count.textContent='Design library / Explore';
   return;
  }
  const motionWeight=value=>{
@@ -61,7 +57,7 @@ function buildGallery(){
   }else art.classList.add('vz-art-unavailable');
   const body=document.createElement('div');body.className='vz-home-design-body';
   const kicker=document.createElement('div');kicker.className='vz-home-design-kicker';
-  const tag=document.createElement('span');tag.className='tag';tag.textContent=toText(item.category||'Design direction')+' / '+String(i+1).padStart(2,'0');
+  const tag=document.createElement('span');tag.className='tag';tag.textContent=toText(item.category||'Design direction');
   const price=document.createElement('strong');price.className='vz-home-design-price';price.textContent='From '+money(item.price);
   kicker.append(tag,price);
   const title=document.createElement('h3');title.textContent=toText(item.name);
@@ -81,19 +77,19 @@ function buildGallery(){
  };
  const cards=items.map(createCard);
  track.replaceChildren(...cards);
- track.setAttribute('aria-label',items.length+' curated design directions controlled by vertical scrolling');
+ track.setAttribute('aria-label','Curated design directions controlled by vertical scrolling');
  viewport.querySelector('.vz-library-rail')?.remove();
  const rail=document.createElement('nav');rail.className='vz-library-rail';rail.setAttribute('aria-label','Featured design positions');
  items.forEach((item,i)=>{
-  const b=document.createElement('button');b.type='button';b.dataset.vzLibraryGo=String(i);b.setAttribute('aria-label','Show '+toText(item.name));b.textContent=String(i+1).padStart(2,'0');
+  const b=document.createElement('button');b.type='button';b.dataset.vzLibraryGo=String(i);b.setAttribute('aria-label','Show '+toText(item.name));b.textContent='';
   if(i===0)b.setAttribute('aria-current','true');rail.append(b);
  });
  viewport.append(rail);
  let step=620,active=-1;
  const motionIsFull=()=>!window.StudioMotion||window.StudioMotion.level==='full';
  const clamp=v=>Math.max(0,Math.min(1,v));
- const setActive=(next,local=0)=>{
-  if(next===active&&cards[next]){cards[next].style.setProperty('--vz-library-local',local.toFixed(4));return}
+ const setActive=next=>{
+  if(next===active&&cards[next])return
   active=next;
   cards.forEach((card,i)=>{
    card.classList.toggle('is-active',i===next);
@@ -101,7 +97,6 @@ function buildGallery(){
    card.classList.toggle('is-after',i>next);
    card.setAttribute('aria-hidden',String(i!==next));
    card.inert=i!==next;
-   card.style.setProperty('--vz-library-local',i===next?local.toFixed(4):'0');
   });
   rail.querySelectorAll('button').forEach((b,i)=>i===next?b.setAttribute('aria-current','true'):b.removeAttribute('aria-current'));
  };
@@ -109,8 +104,6 @@ function buildGallery(){
   step=Math.round(Math.max(500,Math.min(760,innerHeight*.7)));
   const distance=Math.max(step,(items.length-1)*step);
   section.style.setProperty('--vz-library-scroll-distance',distance+'px');
-  section.style.setProperty('--vz-library-stage-count',String(items.length));
-  if(count)count.textContent=String(items.length).padStart(2,'0')+' featured / '+String(all.length).padStart(2,'0')+' total designs';
  };
  const update=()=>{
   if(!section.isConnected)return;
@@ -118,19 +111,16 @@ function buildGallery(){
   section.classList.toggle('is-static',!full);
   if(!full){
    active=-1;
-   cards.forEach(card=>{card.classList.add('is-active');card.classList.remove('is-before','is-after');card.setAttribute('aria-hidden','false');card.inert=false;card.style.setProperty('--vz-library-local','0')});
+   cards.forEach(card=>{card.classList.add('is-active');card.classList.remove('is-before','is-after');card.setAttribute('aria-hidden','false');card.inert=false});
    if(fill)fill.style.transform='scaleX(0)';
-   if(index)index.textContent='Swipe or open the complete library ↗';
    return;
   }
   const range=Math.max(1,section.offsetHeight-innerHeight);
   const progress=clamp(-section.getBoundingClientRect().top/range);
   const scaled=progress*Math.max(1,items.length-1);
   const next=Math.min(items.length-1,Math.floor(scaled+0.00001));
-  const local=clamp(scaled-next);
-  setActive(next,local);
+  setActive(next);
   if(fill)fill.style.transform='scaleX('+progress.toFixed(4)+')';
-  if(index)index.textContent=String(next+1).padStart(2,'0')+' / '+String(items.length).padStart(2,'0')+' · '+toText(items[next]?.name);
  };
  rail.addEventListener('click',event=>{
   const button=event.target.closest('[data-vz-library-go]');if(!button)return;
@@ -140,7 +130,7 @@ function buildGallery(){
   scrollTo({top,behavior:'smooth'});
  });
  window.VeloryzReferenceGallery={update,refresh:()=>{recalc();update()},get count(){return all.length},get featuredCount(){return items.length}};
- requestAnimationFrame(()=>{recalc();setActive(0,0);update()});
+ requestAnimationFrame(()=>{recalc();setActive(0);update()});
  if(typeof ResizeObserver==='function'){
   const observer=new ResizeObserver(()=>{recalc();update()});observer.observe(viewport);observer.observe(section);
  }else window.addEventListener('resize',()=>{recalc();update()},{passive:true});
