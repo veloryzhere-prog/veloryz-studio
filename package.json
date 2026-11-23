@@ -1,0 +1,14 @@
+{
+  "name": "veloryz-studio-deploy-root",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "install:app": "corepack pnpm --dir VELORYZ-Studio install --frozen-lockfile",
+    "build": "corepack pnpm run install:app && corepack pnpm --dir VELORYZ-Studio build",
+    "deploy": "corepack pnpm run build && corepack pnpm --dir VELORYZ-Studio exec wrangler deploy --config dist/server/wrangler.json",
+    "deploy:preview": "corepack pnpm run build && corepack pnpm --dir VELORYZ-Studio exec wrangler versions upload --config dist/server/wrangler.json"
+  }
+}
