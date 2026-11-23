@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R25
+/* VELORYZ / Public Experience R26
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -262,6 +262,47 @@
   syncMenuState();
  }
  addEventListener('studio:route',()=>body.classList.remove('vz-r25-menu-open'));
+
+ // R26: reference-inspired context motion without another scroll engine.
+ const initR26SpatialSystem=()=>{
+  if(!body.classList.contains('vz-reference-site'))return;
+
+  // Add small editorial indices to the existing scenes rather than duplicating headings.
+  const sceneLabels=[
+   ['.stmt','02 / POSITION'],
+   ['.hz .head','03 / CAPABILITIES'],
+   ['.lib .top','04 / SELECTED DESIGN'],
+   ['.pr .wrap','05 / PROCESS'],
+   ['.cta .stick','06 / START']
+  ];
+  for(const [selector,label] of sceneLabels){
+   const host=document.querySelector(selector);
+   if(!host||host.querySelector('.vz-r26-section-index'))continue;
+   const marker=document.createElement('span');
+   marker.className='vz-r26-section-index';
+   marker.textContent=label;
+   host.prepend(marker);
+  }
+
+  // The native CSS scroll timelines carry the visual motion. JS only provides
+  // low-cost direction/velocity context to the fixed navigation.
+  let previousY=scrollY,previousTime=performance.now(),cooldown=0;
+  const syncVelocity=now=>{
+   cooldown=0;
+   const dt=Math.max(16,now-previousTime);
+   const dy=scrollY-previousY;
+   const velocity=Math.abs(dy/dt);
+   body.classList.toggle('vz-r26-fast-scroll',velocity>.95);
+   body.classList.toggle('vz-r26-scroll-up',dy<-1);
+   body.classList.toggle('vz-r26-scroll-down',dy>1);
+   previousY=scrollY;previousTime=now;
+  };
+  addEventListener('scroll',()=>{
+   if(!cooldown)cooldown=requestAnimationFrame(syncVelocity);
+  },{passive:true});
+ };
+ requestAnimationFrame(initR26SpatialSystem);
+ addEventListener('studio:route',()=>requestAnimationFrame(initR26SpatialSystem));
 
  // Idle + intent prefetch for high-value same-origin destinations.
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
