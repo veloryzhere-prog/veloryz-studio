@@ -1,4 +1,4 @@
-/* VELORYZ / Public Experience R22
+/* VELORYZ / Public Experience R23
  * Public-route accessibility, progressive enhancement, local journey measurement and light performance work.
  */
 (()=>{
@@ -183,15 +183,22 @@
   });
  });
 
- // Idle prefetch only the highest-intent internal routes.
- const prefetch=()=>{
-  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  if(document.visibilityState!=='visible'||connection?.saveData||/^(slow-)?2g$/.test(connection?.effectiveType||''))return;
-  ['/create/','/design/','/docs/','/contact/'].forEach(href=>{
-   if(document.head.querySelector('link[rel=prefetch][href="'+href+'"]'))return;
-   const link=document.createElement('link');link.rel='prefetch';link.href=href;document.head.append(link);
-  });
+ // Idle + intent prefetch for high-value same-origin destinations.
+ const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+ const canPrefetch=()=>document.visibilityState==='visible'&&!connection?.saveData&&!/^(slow-)?2g$/.test(connection?.effectiveType||'');
+ const prefetchHref=href=>{
+  if(!canPrefetch()||!href)return;
+  let url;
+  try{url=new URL(href,location.href)}catch{return}
+  if(url.origin!==location.origin)return;
+  const path=url.pathname.replace(/\/+$/,'/')||'/';
+  if(!['/create/','/design/','/docs/','/contact/','/pricing/','/work/'].includes(path))return;
+  if(document.head.querySelector('link[rel=prefetch][href="'+path+'"]'))return;
+  const link=document.createElement('link');link.rel='prefetch';link.href=path;document.head.append(link);
  };
+ const prefetch=()=>['/create/','/design/','/docs/','/contact/'].forEach(prefetchHref);
+ document.addEventListener('pointerover',event=>prefetchHref(event.target.closest?.('a[href]')?.getAttribute('href')),{passive:true});
+ document.addEventListener('focusin',event=>prefetchHref(event.target.closest?.('a[href]')?.getAttribute('href')));
  if('requestIdleCallback'in window)requestIdleCallback(prefetch,{timeout:2400});
  else setTimeout(prefetch,1800);
 })();
