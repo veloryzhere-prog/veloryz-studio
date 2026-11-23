@@ -13,6 +13,8 @@ on:
       - "VELORYZ-Studio/scripts/build-template-gallery.mjs"
       - "VELORYZ-Studio/scripts/template-*.mjs"
       - "VELORYZ-Studio/package.json"
+      - "VELORYZ-Studio/wrangler.jsonc"
+      - "VELORYZ-Studio/.node-version"
       - "VELORYZ-Studio/pnpm-lock.yaml"
       - ".github/workflows/veloryz-documentation.yml"
   pull_request:
@@ -100,6 +102,8 @@ jobs:
         run: node tools/test-search-indexability.mjs
       - name: Verify uploaded VELORYZ Silk motion and UI 2026 integration
         run: node tools/test-silk-ui-2026.mjs
+      - name: Validate Cloudflare Worker identity and build runtime
+        run: node tools/test-cloudflare-deploy-config.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
