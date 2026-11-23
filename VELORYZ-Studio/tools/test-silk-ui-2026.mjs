@@ -10,6 +10,7 @@ const silkCss=read('public/veloryz-silk-2026.css');
 const uiCss=read('public/veloryz-ui-2026.css');
 const security=read('lib/response-security.ts');
 const handler=read('lib/page-handler.ts');
+const liveApp=read('public/app.js');
 assert.doesNotThrow(()=>new vm.Script(silkJs),'Uploaded motion JS must be syntactically valid');
 assert.ok(silkJs.length>5000&&silkCss.length>3000&&uiCss.length>8500,'Both uploaded assets must be fully installed');
 for(const [filename,css] of [['silk',silkCss],['UI',uiCss]]){
@@ -50,6 +51,19 @@ for(const token of ['@property --vz-r','@property --vz-spot','.vz-burst','.vz-w'
 for(const token of ['--vz-r: 150%','radial-gradient(circle at var(--vz-bx) var(--vz-by)','body.v4-creator-page .v4-root .v4-primary','body.vz-market-body:not(.vz-market-immersive) .vz-market-btn','var(--vz-spot, 0)']){
  assert.ok(uiCss.includes(token),'Silk v2 cursor-origin liquid/spotlight styles missing: '+token);
 }
+
+// Regression: the shipped homepage renders .button/.project-link/.process-card,
+// not the old external reference mockup's .btn/.pan selectors.
+for(const token of ['class="button','project-link','process-card','feature-card']){
+ assert.ok(liveApp.includes(token),'Live app must render expected home control/card: '+token);
+}
+for(const token of [':is(#main, .site-header) .button','#main .motion-secondary','#main :is(.project-link, .process-card, .feature-card','--vz-r: 160%']){
+ assert.ok(uiCss.includes(token),'Silk must style real-site home markup: '+token);
+}
+for(const token of ['.button,.motion-secondary,.cta-orb','site-progress','.project-link,.process-card,.feature-card']){
+ assert.ok(silkJs.includes(token),'Silk must bind real site interactions without progress duplication: '+token);
+}
+
 assert.ok(!silkJs.includes("addEventListener('wheel'"),'New Silk must never compete with the first-party Lenis wheel controller');
 
 assert.ok(!security.includes('const projectLink='),'Do not reinstate the removed floating Create button');
@@ -63,7 +77,7 @@ assert.ok(handler.includes('const response=secureHtml(html,known?200:404)'),'Nor
 
 // Exercise the actual uploaded motion script against representative page DOMs.
 // No custom scroll engine, wheel interception, duplicate progress, or hidden controls.
-function boot({existingProgress=false,reduced=false}={}){
+function boot({existingProgress=false,existingSiteProgress=false,reduced=false}={}){
  const docEvents=new Map(),winEvents=new Map(),children=[],animations=[];
  class FakeElement {
   constructor(){this.isConnected=true;this.style={setProperty(){}};this.classList={add(){},remove(){}};}
@@ -83,7 +97,7 @@ function boot({existingProgress=false,reduced=false}={}){
  const doc={
   documentElement:root,readyState:'complete',hidden:false,
   body:{append(el){children.push(el);}},
-  getElementById(id){return id==='prog'&&existingProgress?{}:id==='main'?main:null;},
+  getElementById(id){return id==='prog'&&existingProgress?{}:id==='site-progress'&&existingSiteProgress?{}:id==='main'?main:null;},
   querySelector(){return children.find(x=>x.className==='vz-silk-progress')||null;},
   createElement(){return new FakeElement();},
   addEventListener(name,callback){const group=docEvents.get(name)||[];group.push(callback);docEvents.set(name,group);}
@@ -121,7 +135,8 @@ page.docEvents.get('pointerdown')[0]({button:0,target:new page.FakeElement()});
 assert.equal(page.animations.length,beforePause,'No new animations while paused');
 page.docEvents.get('click')[0]({target:button,clientX:91,clientY:33,detail:1});
 assert.equal(page.animations.length,beforePause,'Click bursts must also stop while paused');
-assert.equal(boot({existingProgress:true}).children.length,0,'Original homepage progress bar must not be duplicated');
+assert.equal(boot({existingProgress:true}).children.length,0,'Older progress bar must not be duplicated');
+assert.equal(boot({existingSiteProgress:true}).children.length,0,'Real homepage #site-progress must not be duplicated');
 assert.equal(boot({reduced:true}).window.VeloryzSilk.enabled,true,'Explicit full motion setting retains user override');
 const reducedAuto=boot({reduced:true});
 reducedAuto.root.dataset.motion='';
