@@ -479,6 +479,19 @@
  color:#1b1713!important;font-size:.76rem!important;font-weight:650;text-decoration:none;
  border-bottom:1px solid rgba(226,72,43,.5);padding-bottom:3px;
 }
+/* R12: the old rail was a <nav>, so the page-level nav{left:0;right:0} rule
+   stretched it across the showcase. Because that rail also used backdrop blur,
+   it produced the large frosted band seen in production. The scroll story does
+   not need a visible rail, so suppress it even if stale cached JS recreates it. */
+.vz-reference-site #vz-home-library nav.vz-library-rail,
+.vz-reference-site #vz-home-library .vz-library-rail{
+ display:none!important;
+ left:auto!important;right:auto!important;inset:auto!important;
+ width:0!important;height:0!important;padding:0!important;
+ background:transparent!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ filter:none!important;
+}
 .vz-reference-site #vz-home-library .vz-library-rail{
  position:absolute;right:clamp(9px,1.2vw,18px);top:50%;translate:0 -50%;z-index:8;
  display:flex;flex-direction:column;gap:4px;padding:8px;
