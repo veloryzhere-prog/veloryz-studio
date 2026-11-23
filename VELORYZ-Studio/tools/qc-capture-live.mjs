@@ -96,6 +96,8 @@ try {
    page.on('console',msg=>{if(msg.type()==='error')row.consoleErrors.push(msg.text().slice(0,260));});
    page.on('requestfailed',req=>{const u=req.url();if(u.startsWith(root))row.requestErrors.push({url:u.slice(0,200),reason:req.failure()?.errorText});});
    page.on('response',resp=>{
+    // No logged-in session is expected in this public-only QC session.
+    if(route.path==='/client/'&&resp.status()===401&&/\/api\/client-portal\/session/.test(resp.url()))return;
     if(resp.status()>=400&&resp.url().startsWith(root)&&responseIssues.length<30)
      responseIssues.push({status:resp.status(),url:resp.url().slice(0,180)});
    });
@@ -116,8 +118,27 @@ try {
     if(route.path==='/') {
       try{await page.locator('#skip').click({timeout:1500});}catch{}
     }
-    await page.waitForTimeout(700);
+    // A scripted intro, SPA route restoration or the consent modal can move
+    // scroll before the page is ready. Take TOP evidence at the real top.
+    await page.waitForTimeout(1600);
+    await page.evaluate(()=>{
+      try{window.VeloryzScroll?.scrollTo?.(0,{immediate:true,force:true});}catch{}
+      window.scrollTo({top:0,left:0,behavior:'instant'});
+      document.scrollingElement.scrollTop=0;
+    });
+    await page.waitForTimeout(350);
+    row.url=page.url();
     row.probe=await check(page);
+    row.probe.scrollY=await page.evaluate(()=>window.scrollY);
+    if(route.path==='/'){
+      row.probe.activeView=await page.evaluate(()=>document.querySelector('.pg.act')?.getAttribute('data-p')||'none');
+      row.probe.homeInitializerFixed=await page.evaluate(()=>{
+        const script=[...document.scripts].find(s=>s.textContent?.includes('--vz-menu-stagger'));
+        return Boolean(script?.textContent?.includes("$$('#mn a').forEach(function(a,i)"));
+      });
+      if(!row.probe.homeInitializerFixed)row.issues.push('Production homepage serves obsolete broken menu JS (single-element forEach)');
+      if(row.probe.scrollY>24)row.issues.push('Could not reset homepage scroll to top: '+row.probe.scrollY+' px');
+    }
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
     if(row.probe.layout.brandActionsOverlap>48)row.issues.push('Header brand overlaps fixed controls: '+row.probe.layout.brandActionsOverlap+' px²');
