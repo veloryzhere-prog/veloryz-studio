@@ -202,7 +202,7 @@ try {
       if(!row.probe.designR9.root||row.probe.designR9.cards<12||!row.probe.designR9.motion||!row.probe.designR9.price)row.issues.push('R9 Design Market missing expected renderer/cards/filters');
       if(row.probe.designR9.heroWordOpacity<.5)row.issues.push('Design Market hero copy starts below readable scrub opacity: '+row.probe.designR9.heroWordOpacity);
       if(row.probe.designR9.labelRadius!=='0px')row.issues.push('Design Market label still renders a circular V badge: '+row.probe.designR9.labelRadius);
-      if(innerWidth<=540&&Math.max(row.probe.designR9.aiWidth,row.probe.designR9.whatsappWidth)>60)row.issues.push('Mobile floating contact control still covers marketplace actions');
+      if(screen.width<=540&&Math.max(row.probe.designR9.aiWidth,row.probe.designR9.whatsappWidth)>60)row.issues.push('Mobile floating contact control still covers marketplace actions');
     }
     if(row.status!==200)row.issues.push('HTTP status '+row.status);
     if(row.probe.layout.overflowX>8)row.issues.push('Horizontal overflow: '+row.probe.layout.overflowX+' px');
