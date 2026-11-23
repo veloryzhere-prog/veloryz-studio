@@ -18,8 +18,8 @@ const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r20'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r20')&&security.includes('/veloryz-experience-r20.js?v=20261123-r20'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261123-r20-2'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261123-r20-2')&&security.includes('/veloryz-experience-r20.js?v=20261123-r20-2'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -28,6 +28,11 @@ assert(js.includes("requestIdleCallback"),'High-intent route prefetch should sta
 assert(!js.includes('new Lenis'),'R20 must reuse the existing Lenis runtime, never create another scroll engine');
 assert(!js.includes('setInterval('),'R20 must not add permanent animation loops');
 assert(js.includes("data-vz-r20-3d-more")&&js.includes("data-vz-r20-advanced"),'3D advanced-control disclosure missing');
+assert(js.includes("const advanced=['continue','left','right','front']"),'R20.2 must keep the four useful 3D controls visible and tuck secondary controls away');
+assert(js.includes('vz-r20-assistant-actions'),'Help/support shortcut navigation missing');
+assert(css.includes('::view-transition-old(root)')&&css.includes('::view-transition-new(root)'),'R20.2 route transition polish missing');
+assert(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'R20.2 mobile 3D control grid missing');
+
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
 
 assert(css.includes('.vz-r20-skip'),'Skip-link styling missing');
@@ -49,6 +54,11 @@ assert(shell.includes('/assets/brand/veloryz-mark.svg'),'Official VELORYZ mark m
 
 assert(app.includes("['/contact/','Contact']"),'Public SPA desktop navigation needs direct Contact access');
 assert(app.includes("['/pricing/','Pricing']"),'Public SPA desktop navigation needs Pricing');
+assert(app.includes("title:'Help Centre — VELORYZ Studio'"),'Help route needs clear product identity');
+assert(app.includes("title:'Support — VELORYZ Studio'"),'Support route needs clear product identity');
+assert(app.includes("'/design/':'Browse VELORYZ design directions"),'Design route needs explicit search metadata');
+assert(app.includes("duration:480,easing:'cubic-bezier(.22,1,.36,1)'"),'SPA fallback transitions must use the smoother R20.2 profile');
+
 for(const group of ['Explore','Build with us','Help & knowledge','Policies & reference'])assert(app.includes("label:'"+group+"'"),'Simplified footer group missing: '+group);
 assert(!app.includes("title:'The Studio, Aryan & Our Team"),'Public Studio title must remain team-first');
 

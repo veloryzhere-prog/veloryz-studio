@@ -22,6 +22,7 @@ const routes=[
  {name:'studio',path:'/studio/'},
  {name:'docs',path:'/docs/'},
  {name:'help-ai',path:'/help/assistant/'},
+ {name:'support',path:'/support/'},
  {name:'client-login',path:'/client/'}
 ];
 const screens=[
@@ -63,10 +64,10 @@ async function waitForR9Deployment(){
     &&brandText.includes('position:absolute;inset:0;z-index:-1')
     &&r20CssText.includes('.vz-r20-skip')
     &&r20JsText.includes("skip.textContent='Skip to main content'")
-    &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261123-r20"')
+    &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261123-r20-2"')
     &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
-    &&designText.includes('/veloryz-experience-r20.js?v=20261123-r20');
-   if(ready){result.deployment={release:'public-experience-20261123-r20',attempt};return}
+    &&designText.includes('/veloryz-experience-r20.js?v=20261123-r20-2');
+   if(ready){result.deployment={release:'public-experience-20261123-r20-2',attempt};return}
    last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);
@@ -196,7 +197,7 @@ try {
     }
     if(route.path!=='/client/'){
       if(!row.probe.r20Body)row.issues.push('R20 public experience body class missing');
-      if(row.probe.experienceRelease!=='public-experience-20261123-r20')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
+      if(row.probe.experienceRelease!=='public-experience-20261123-r20-2')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
       if(!row.probe.skipLink)row.issues.push('Accessible R20 skip link missing');
     }else if(row.probe.r20Body){
       row.issues.push('R20 public layer leaked into isolated client route');
@@ -225,9 +226,15 @@ try {
       const expectedDocs=['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'];
       if(row.probe.r20Docs.outcomes!==4||JSON.stringify(row.probe.r20Docs.outcomeHrefs)!==JSON.stringify(expectedDocs)||!row.probe.r20Docs.search)row.issues.push('R20.1 authoritative documentation outcome paths/search missing');
     }
-    if(route.path==='/help/assistant/'){
-      row.probe.r20Help=await page.evaluate(()=>Boolean(document.querySelector('.vz-r20-assistant-context')));
-      if(!row.probe.r20Help)row.issues.push('R20 Help Assistant route identity context missing');
+    if(route.path==='/help/assistant/'||route.path==='/support/'){
+      row.probe.r20Help=await page.evaluate(()=>({
+        context:Boolean(document.querySelector('.vz-r20-assistant-context')),
+        shortcuts:document.querySelectorAll('.vz-r20-assistant-actions a').length,
+        title:document.title
+      }));
+      if(!row.probe.r20Help.context||row.probe.r20Help.shortcuts<3)row.issues.push('R20.2 Help/Support route identity or shortcuts missing');
+      if(route.path==='/help/assistant/'&&!row.probe.r20Help.title.startsWith('Help Centre'))row.issues.push('Help route title is unclear: '+row.probe.r20Help.title);
+      if(route.path==='/support/'&&!row.probe.r20Help.title.startsWith('Support'))row.issues.push('Support route title is unclear: '+row.probe.r20Help.title);
     }
     if(route.path==='/design/'){
       row.probe.designR9=await page.evaluate(()=>({
