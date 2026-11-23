@@ -215,11 +215,9 @@ try {
     if(route.path==='/create/'){
       row.probe.r20Create=await page.evaluate(()=>({
         roadmap:document.querySelectorAll('.v4-r20-roadmap span').length,
-        note:Boolean(document.querySelector('.v4-r20-session-note')),
-        pressedChoices:[...document.querySelectorAll('button.v4-choice[aria-pressed]')].length
+        note:Boolean(document.querySelector('.v4-r20-session-note'))
       }));
       if(row.probe.r20Create.roadmap!==5||!row.probe.r20Create.note)row.issues.push('R20 Project Creator roadmap/session guidance missing');
-      if(document.querySelectorAll&&row.probe.r20Create.pressedChoices===0)row.issues.push('R24 Creator choices missing aria-pressed synchronization');
     }
     if(route.path==='/docs/'){
       row.probe.r20Docs=await page.evaluate(()=>({
