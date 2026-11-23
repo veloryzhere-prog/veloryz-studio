@@ -23,7 +23,7 @@ for(const token of ['--vzu-ease','--vzu-sh-1','.vz-reference-site .btn','.vz-ref
 }
 assert.ok(security.includes('!privatePage&&status===200'),'Skip Silk/UI on private, preview and error responses');
 const urls=['veloryz-silk-2026.css','veloryz-ui-2026.css','veloryz-silk-2026.js'];
-for(const name of urls)assert.ok(security.includes('/'+name+'?v=20261123-route-r3'),'Public asset must have explicit release cache version: '+name);
+for(const name of urls)assert.ok(security.includes('/'+name+'?v=20261123-route-r4'),'Public asset must have explicit release cache version: '+name);
 assert.ok(urls.every((s,i)=>i===0||security.indexOf(urls[i-1])<security.indexOf(s)),'CSS must load before additive motion JS, with UI polish last among styles');
 
 const designDetail=read('lib/design-detail-page.ts');
@@ -33,15 +33,15 @@ for (const selector of ['body.v4-creator-page .v4-root .v4-welcome','body.v4-cre
 for (const selector of ['.v4-choice','.v4-feature-card','.v4-template-card','.v4-primary','.vz-market-related-card','.vz-market-btn']) {
  assert.ok(silkJs.includes(selector),'Silk must reach functional route interactive components: '+selector);
 }
-assert.ok(security.includes("const ui2026Release='silk-ui-20261123-r3'"),'Public pages need a traceable release fingerprint');
+assert.ok(security.includes("const ui2026Release='silk-ui-20261123-r4'"),'Public pages need a traceable release fingerprint');
 assert.ok(security.includes("headers['X-VELORYZ-UI-Release']=ui2026Release"),'Live server must reveal its actual installed UI version');
 assert.ok(security.includes('<meta name="veloryz-ui-release"'),'Public HTML must expose the active release');
 assert.ok(designDetail.includes("mode==='detail'?'<meta name=\"veloryz-ui-release\""),'Design details must load the refinement explicitly');
-assert.ok(designDetail.includes('/veloryz-silk-2026.js?v=20261123-route-r3'),'Design detail should animate the actual card and CTA elements');
-assert.ok(designDetail.includes('/veloryz-ui-2026.css?v=20261123-route-r3'),'Design detail should get its own UI treatment');
+assert.ok(designDetail.includes('/veloryz-silk-2026.js?v=20261123-route-r4'),'Design detail should animate the actual card and CTA elements');
+assert.ok(designDetail.includes('/veloryz-ui-2026.css?v=20261123-route-r4'),'Design detail should get its own UI treatment');
 assert.ok(designDetail.includes("mode==='detail'?"),'Embedded original source previews must remain isolated');
 
-for(const token of ["version: 'silk-2026.2'","function burst(","function scrubParagraphs()","--vz-bx","--vz-by","--mx","--my","SCRUB_SKIP"]){
+for(const token of ["version: 'silk-2026.3'","function burst(","function scrubParagraphs()","--vz-bx","--vz-by","--mx","--my","SCRUB_SKIP"]){
  assert.ok(silkJs.includes(token),'Silk v2 interaction or text scrub missing: '+token);
 }
 for(const token of ['@property --vz-r','@property --vz-spot','.vz-burst','.vz-w','animation-timeline: --vz-scrub','@keyframes vz-word']){
