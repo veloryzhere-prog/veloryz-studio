@@ -15,7 +15,7 @@ const hero=text('public/reference-hero-immersive.js');
 const immersiveCSS=text('public/reference-hero-immersive.css'),portraitsCSS=text('public/reference-ai-avatars.css');
 const polish=text('public/reference-final-polish.css');
 assert(!html.includes('Independent creative experience / 01'),'Removed placeholder should stay removed');
-assert(html.includes('class="hero vz-aurora-hero vz-material-hero"'),'Interactive hero needs its scoped canvas stage');
+assert(html.includes('class="hero vz-aurora-hero vz-material-hero vz-editorial-r5"'),'Active public hero must retain the approved editorial R5 layout');
 assert(html.includes('data-logo-source="official-glb"'),'Homepage must load the actual original GLB, not only flat SVG');
 assert(html.includes('/assets/brand/official/Main-Dark-Ink-Transparent.webp'),'Original wordmark is mandatory');
 assert(html.includes('/reference-hero-immersive.js')&&html.includes('/reference-hero-immersive.css'),'Real interactive background must load');
@@ -39,6 +39,7 @@ assert(portraitsCSS.includes('vz-ai-current-avatar')&&portraitsCSS.includes('vz-
 assert(heritage.includes('http://www.w3.org/2000/svg')&&heritage.includes("setAttribute('viewBox','0 0 16 16')")&&heritage.includes('vz-wa-uiverse-icon'),'Bottom-right Uiverse WhatsApp SVG must remain integrated');
 assert(heritage.includes('wa.me/919955326740'),'Preserve existing contact destination');
 assert(hero.includes('getContext(\'2d\'')&&hero.includes('pointermove')&&hero.includes('requestAnimationFrame'),'Original pointer-response particle system is required');
+assert(hero.includes("if(hero.classList.contains('vz-editorial-r5'))"),'Editorial homepage must disable the old tiny dark-centred particles while retaining static brand fallback');
 assert(hero.includes('IntersectionObserver')&&hero.includes("document.hidden")&&hero.includes("StudioMotion"),'Hero animation must respect viewport, tab visibility and motion choices');
 assert(immersiveCSS.includes('vz-material-hero')&&immersiveCSS.includes('vz-official-header-brand img'),'Animated background and high-contrast logo styles must exist');
 assert(polish.includes('vz-ref-public-route')&&polish.includes('.cp-body'),'Public site and secure client portal share nonbreaking visual polish');
@@ -48,4 +49,4 @@ for(const p of ['reference-hero-immersive.js','reference-ai-dock.js','reference-
  assert.doesNotThrow(()=>new vm.Script(text('public/'+p)),p+' JavaScript must parse');
 for(const css of [immersiveCSS,portraitsCSS,polish])
  assert.equal(css.split('{').length,css.split('}').length,'CSS block syntax must balance');
-console.log('PASS: original real GLB 3D, interactive hero, five real avatars, readable wordmark, WhatsApp brand icon, motion and original site.');
+console.log('PASS: original real GLB 3D, editorial R5 hero without halo dots, five real avatars, readable wordmark, WhatsApp icon and original site.');
