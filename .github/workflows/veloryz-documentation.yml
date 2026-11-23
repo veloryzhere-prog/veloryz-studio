@@ -104,6 +104,8 @@ jobs:
         run: node tools/test-search-indexability.mjs
       - name: Verify uploaded VELORYZ Silk motion and UI 2026 integration
         run: node tools/test-silk-ui-2026.mjs
+      - name: Verify R17 brand flow, logo fade and smoother shared scrolling
+        run: node tools/test-brand-flow-r17.mjs
       - name: Validate Cloudflare Worker identity and build runtime
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Typecheck
