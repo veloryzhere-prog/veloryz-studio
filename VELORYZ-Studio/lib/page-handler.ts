@@ -42,6 +42,7 @@ export async function GET(request: Request) {
     .map((x:any)=>({name:x.name,short:x.short,description:x.description,tags:x.tags})),
    // Public #design is a VELORYZ-curated gallery of REAL local upstream templates.
    // The old CMS inspiration cards remain editable in Admin but no longer fill this section.
+   catalogueTotal:openDesigns.items.filter(item=>item.enabled!==false).length,
    catalogue:[
     'os-portfolio-and-agencies-8b-creative-agency',
     'os-portfolio-and-agencies-8b-design-studio',
