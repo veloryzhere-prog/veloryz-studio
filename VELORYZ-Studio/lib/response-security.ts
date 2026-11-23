@@ -29,8 +29,14 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  const menuAssets=referenceMenu
   ? '<link rel="stylesheet" href="/reference-menu-morph-r6.css?v=20261123-reference-menu-r6">'
   : '';
- if(referenceMenu)headers['X-VELORYZ-Menu-Release']='reference-menu-20261123-r6';
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+'</head>');
+ const qcAssets=referenceMenu
+  ? '<link rel="stylesheet" href="/reference-qc-layout-r7.css?v=20261123-layout-qc-r7">'
+  : '';
+ if(referenceMenu){
+  headers['X-VELORYZ-Menu-Release']='reference-menu-20261123-r6';
+  headers['X-VELORYZ-QC-Release']='visual-layout-20261123-r7';
+ }
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});

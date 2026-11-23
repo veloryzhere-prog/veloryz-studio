@@ -1,0 +1,53 @@
+name: VELORYZ public visual QC screenshots
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "VELORYZ-Studio/tools/qc-capture-live.mjs"
+      - "VELORYZ-Studio/tools/test-reference-qc-r7.mjs"
+      - "VELORYZ-Studio/public/reference-qc-layout-r7.css"
+      - "VELORYZ-Studio/lib/response-security.ts"
+      - ".github/workflows/veloryz-public-visual-qc.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veloryz-public-qc-main
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: VELORYZ-Studio
+    steps:
+      - name: Check out tracked site files
+        uses: actions/checkout@v4
+      - name: Install Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate QC source and stylesheet before browser capture
+        run: node tools/test-reference-qc-r7.mjs
+      - name: Install independent Playwright browser harness
+        run: |
+          mkdir -p "$RUNNER_TEMP/veloryz-qc"
+          npm install --prefix "$RUNNER_TEMP/veloryz-qc" --no-audit --no-fund --no-save playwright
+          "$RUNNER_TEMP/veloryz-qc/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Capture public site screenshots and detect layout defects
+        env:
+          QC_SITE_URL: https://veloryz.online
+          QC_OUTPUT_DIR: qc-artifacts
+        run: QC_PLAYWRIGHT_MODULE="$RUNNER_TEMP/veloryz-qc/node_modules/playwright/index.mjs" node tools/qc-capture-live.mjs
+      - name: Upload QC screenshots and defect report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veloryz-public-visual-qc
+          path: VELORYZ-Studio/qc-artifacts/
+          retention-days: 21
+          if-no-files-found: warn
