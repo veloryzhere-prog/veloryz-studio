@@ -108,6 +108,8 @@ jobs:
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
         run: corepack pnpm build
+      - name: Verify generated Cloudflare Worker output
+        run: node tools/test-generated-cloudflare-output.mjs
       - name: Verify bundled first-party Lenis runtime
         run: node tools/test-lenis-bundle.mjs
       - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
