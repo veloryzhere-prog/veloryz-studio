@@ -18,7 +18,7 @@ const bug=read('public/bug-report.js');
 const bugCSS=read('public/bug-report.css');
 assert(home.includes('class="vz-header-actions"'),'Menu and Quick Create must share a proper fixed toolbar');
 assert(home.includes('class="vz-header-create" href="/create/"'),'Quick Create must lead to real Creator');
-assert(home.includes('id="mb" class="mbtn" type="button"'),'Original Menu must retain its working button');
+assert(home.includes('id="mb" class="mbtn vz-menu-morph" type="button"'),'Original Menu must retain its working, accessible R6 morph button');
 assert(home.includes('aria-controls="mn"'),'Menu must expose controls metadata');
 assert(chrome.includes('actions.insertBefore(motionButton,actions.querySelector(\'#mb\'))'),'Real motion button must be inserted into same header toolbar');
 assert(headerCSS.includes('body.vz-reference-site > nav {')&&headerCSS.includes('pointer-events:none !important'),'Transparent full-width nav cannot steal click events');
