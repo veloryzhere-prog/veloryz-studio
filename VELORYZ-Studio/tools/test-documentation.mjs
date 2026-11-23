@@ -121,7 +121,9 @@ new Function('window','document','fetch','location','studioCMS',ui)(
 assert.match(mockWindow.VeloryzDocs.render(),/Opening the knowledge system/,'Loading feedback must appear');
 await new Promise(resolve=>setImmediate(resolve));
 const home=mockWindow.VeloryzDocs.render();
-assert.equal((home.match(/class="kb-feature kb-feature-/g)||[]).length,3,'Three primary Docs destinations required');
+assert.equal((home.match(/class="kb-feature kb-feature-/g)||[]).length,4,'Four outcome-first Docs destinations required');
+for(const href of ['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'])assert.ok(home.includes('href="'+href+'"'),'R20.1 Docs outcome missing '+href);
+assert.match(home,/Start with the outcome\./,'R20.1 outcome-first Docs heading missing');
 assert.match(home,/kb-sidebar/,'Documentation workspace sidebar missing');
 assert.match(home,/data-kb-search/,'Prominent search trigger missing');
 mockLocation.pathname='/help/studio/';
