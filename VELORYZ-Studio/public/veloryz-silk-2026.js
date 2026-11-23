@@ -129,7 +129,7 @@
  doc.addEventListener('pointerdown', e => {
   if (e.button !== 0 || !allowed()) return;
   const el = closest(e.target, PRESS);
-  if (!el || el.matches('[disabled],[aria-disabled="true"]') || pressed.has(el)) return;
+  if (!el || el.matches('[disabled],[aria-disabled="true"],[data-vz-fx="1"]') || pressed.has(el)) return;
   pressed.add(el);
   drive(el, 'press', 1);
   if (e.pointerType === 'touch' && typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
@@ -255,5 +255,5 @@
  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, { once: true });
  else start();
 
- window.VeloryzSilk = { version: 'silk-2026.3', get enabled() { return allowed(); } };
+ window.VeloryzSilk = { version: 'silk-2026.4', get enabled() { return allowed(); } };
 })();
