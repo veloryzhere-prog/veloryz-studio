@@ -72,31 +72,48 @@
 }
 
 /* ------------------------------------------------------------------ buttons */
+/* Exact cursor-origin liquid flood from the supplied Silk v2, composed with
+   the original VELORYZ button rather than introducing a conflicting component. */
 .vz-reference-site .btn {
   padding: 15px 28px;
   letter-spacing: .01em;
   box-shadow: var(--vzu-sh-btn);
-  background-image: linear-gradient(110deg, transparent 32%, var(--vzu-sheen) 50%, transparent 68%);
-  background-size: 260% 100%;
-  background-position: 130% 0;
+  --vz-bx: 50%;
+  --vz-by: 50%;
+  background-image: radial-gradient(circle at var(--vz-bx) var(--vz-by), var(--acc) var(--vz-r), transparent calc(var(--vz-r) + .5%));
   background-repeat: no-repeat;
   transition:
-    background-color .4s,
-    color .4s,
+    --vz-r .65s cubic-bezier(.65, 0, .35, 1),
+    color .2s,
     border-color .4s,
     box-shadow .5s var(--vzu-ease),
-    background-position 1s var(--vzu-ease),
+    background-color .3s,
     transform .3s var(--vzu-ease);
 }
 .vz-reference-site .btn:hover,
 .vz-reference-site .btn:focus-visible {
+  transition:
+    --vz-r .65s cubic-bezier(.65, 0, .35, 1),
+    color .2s .3s,
+    border-color .4s,
+    box-shadow .5s var(--vzu-ease),
+    background-color .3s,
+    transform .3s var(--vzu-ease);
+  /* The radius covers even a wide button from a corner-origin entry. */
+  --vz-r: 150%;
+  /* Explicit on :hover: the older .btn:hover background shorthand must not erase
+     the radial fill (regression found in real Chromium with the existing base rule). */
+  background-image: radial-gradient(circle at var(--vz-bx) var(--vz-by), var(--acc) var(--vz-r), transparent calc(var(--vz-r) + .5%));
+  background-color: transparent;
+  border-color: var(--acc);
+  color: #fff;
   box-shadow: var(--vzu-glow);
-  background-position: -30% 0;
 }
+.vz-reference-site .btn.fill:hover,
+.vz-reference-site .btn.fill:focus-visible { background-color: var(--fg); }
 .vz-reference-site .btn.fill {
-  box-shadow: 0 1px 0 rgba(255, 255, 255, .18) inset, 0 14px 28px -14px rgba(21, 18, 14, .65);
+ box-shadow: 0 1px 0 rgba(255, 255, 255, .18) inset, 0 14px 28px -14px rgba(21, 18, 14, .65);
 }
-.vz-reference-site .btn.fill:hover { box-shadow: var(--vzu-glow); }
 .vz-reference-site .vz-library-pause,
 .vz-reference-site .chip { box-shadow: none; }
 .vz-reference-site .chip.on { box-shadow: 0 10px 22px -12px rgba(21, 18, 14, .65); }
@@ -105,8 +122,11 @@
 .vz-reference-site :is(.pan, .dc, .fl, .pc, .brief, .mt, .vz-doc-guide, .vz-live-review-card, .ad) {
   box-shadow: var(--vzu-sh-1);
 }
-.vz-reference-site :is(.pan, .fl, .pc, .brief, .mt) {
-  background-image: linear-gradient(180deg, var(--vzu-sheen), transparent 42%);
+/* V2: live, pointer-positioned orange spotlight fades smoothly on cards. */
+.vz-reference-site :is(.pan, .fl, .pc, .brief, .mt, .vz-doc-guide, .vz-live-review-card) {
+  background-image:
+    radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(226, 72, 43, calc(var(--vz-spot, 0) * .17)), transparent 62%),
+    linear-gradient(180deg, var(--vzu-sheen), transparent 42%);
 }
 .vz-reference-site .pan { border-radius: 32px; }
 .vz-reference-site .pan .n,
@@ -361,4 +381,71 @@ body.vz-market-body:not(.vz-market-immersive) :is(.vz-market-btn,.vz-market-rela
 @media (max-width:690px) {
   body.v4-creator-page .v4-root .v4-welcome {background:linear-gradient(160deg,#fff,#f0f7ee);}
   body.vz-market-body:not(.vz-market-immersive) .vz-market-hero-image {border-radius:16px;}
+}
+
+
+/* ------------------------------------------------------------------ Silk v2 on the actual Creator and Design-page actions */
+/* These pages use their own classes and palette, so they get their own liquid fill
+   without losing their existing gradients, dimensions, typography or original brand. */
+body.v4-creator-page .v4-root .v4-primary,
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn {
+ --vz-bx: 50%;
+ --vz-by: 50%;
+ --vz-liquid-color: #497b59;
+ background-image:
+  radial-gradient(circle at var(--vz-bx) var(--vz-by), var(--vz-liquid-color) var(--vz-r), transparent calc(var(--vz-r) + .5%)),
+  linear-gradient(110deg, #254333, #3f7150);
+ transition:
+  --vz-r .65s cubic-bezier(.65,0,.35,1),
+  box-shadow .4s var(--vzu-ease),
+  color .2s,
+  border-color .35s,
+  transform .3s var(--vzu-ease);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn {
+ --vz-liquid-color: #875e8d;
+ background-image:
+  radial-gradient(circle at var(--vz-bx) var(--vz-by), var(--vz-liquid-color) var(--vz-r), transparent calc(var(--vz-r) + .5%)),
+  linear-gradient(110deg, #211a23, #61465d);
+}
+body.v4-creator-page .v4-root .v4-primary:hover:not(:disabled),
+body.v4-creator-page .v4-root .v4-primary:focus-visible,
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn:hover,
+body.vz-market-body:not(.vz-market-immersive) .vz-market-btn:focus-visible {
+ --vz-r: 150%;
+}
+/* Match the pointer-following spotlight to each route's existing color system. */
+body.v4-creator-page .v4-root :is(.v4-choice,.v4-template-card,.v4-feature-card,.v4-style-card,.v4-number-card),
+body.vz-market-body:not(.vz-market-immersive) .vz-market-related-card {
+ background-image:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(78,137,82,calc(var(--vz-spot,0) * .16)),transparent 65%);
+}
+body.vz-market-body:not(.vz-market-immersive) .vz-market-related-card {
+ background-image:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(145,91,145,calc(var(--vz-spot,0) * .15)),transparent 65%);
+}
+/* Never leave partially dimmed words or moving decorative effects on pause. */
+html[data-motion="paused"] .vz-reference-site .btn,
+html[data-motion="reduced"] .vz-reference-site .btn,
+html[data-motion="paused"] body.v4-creator-page .v4-root .v4-primary,
+html[data-motion="reduced"] body.v4-creator-page .v4-root .v4-primary,
+html[data-motion="paused"] body.vz-market-body:not(.vz-market-immersive) .vz-market-btn,
+html[data-motion="reduced"] body.vz-market-body:not(.vz-market-immersive) .vz-market-btn {
+ transition-duration:0s !important;
+}
+html[data-motion="paused"] .vz-reference-site .btn:hover,
+html[data-motion="reduced"] .vz-reference-site .btn:hover {
+ background-image:none;
+ background-color:var(--acc);
+ color:#fff;
+}
+@media (prefers-reduced-motion:reduce) {
+ .vz-reference-site .btn,
+ body.v4-creator-page .v4-root .v4-primary,
+ body.vz-market-body:not(.vz-market-immersive) .vz-market-btn {
+  transition-duration:0s!important;
+ }
+ .vz-reference-site .btn:hover {
+  background-image:none;
+  background-color:var(--acc);
+  color:#fff;
+ }
 }

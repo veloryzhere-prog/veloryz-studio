@@ -3,7 +3,7 @@
  * All probes are read-only and cache-busted. No secrets or project data are queried.
  */
 const origin=(process.env.VELORYZ_LIVE_URL||'https://veloryz.online').replace(/\/$/,'');
-const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r2';
+const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r3';
 const maxAttempts=Math.max(1,Number(process.env.VELORYZ_PROBE_ATTEMPTS)||16);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const load=async path=>{
@@ -23,7 +23,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   const designOK=design.status===200&&design.body.includes('name="veloryz-ui-release" content="'+release+'"');
   if(publicOK&&designOK){
    const [css,js]=await Promise.all([load('/veloryz-ui-2026.css'),load('/veloryz-silk-2026.js')]);
-   const assetsOK=css.status===200&&js.status===200&&css.body.includes('body.v4-creator-page .v4-root .v4-welcome')&&css.body.includes('body.vz-market-body:not(.vz-market-immersive)')&&js.body.includes('.v4-primary');
+   const assetsOK=css.status===200&&js.status===200&&css.body.includes('body.v4-creator-page .v4-root .v4-welcome')&&css.body.includes('body.vz-market-body:not(.vz-market-immersive)')&&css.body.includes('--vz-r: 150%')&&css.body.includes('--vz-spot, 0')&&js.body.includes("version: 'silk-2026.2'")&&js.body.includes('function burst(')&&js.body.includes('function scrubParagraphs()');
    if(assetsOK){
     console.log('PASS: production VELORYZ origin='+origin+' serves '+release+' on homepage, creator and design detail, including live styles and motion script.');
     process.exit(0);

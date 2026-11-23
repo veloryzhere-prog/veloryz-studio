@@ -23,7 +23,7 @@ for(const token of ['--vzu-ease','--vzu-sh-1','.vz-reference-site .btn','.vz-ref
 }
 assert.ok(security.includes('!privatePage&&status===200'),'Skip Silk/UI on private, preview and error responses');
 const urls=['veloryz-silk-2026.css','veloryz-ui-2026.css','veloryz-silk-2026.js'];
-for(const name of urls)assert.ok(security.includes('/'+name+'?v=20261123-route-r2'),'Public asset must have explicit release cache version: '+name);
+for(const name of urls)assert.ok(security.includes('/'+name+'?v=20261123-route-r3'),'Public asset must have explicit release cache version: '+name);
 assert.ok(urls.every((s,i)=>i===0||security.indexOf(urls[i-1])<security.indexOf(s)),'CSS must load before additive motion JS, with UI polish last among styles');
 
 const designDetail=read('lib/design-detail-page.ts');
@@ -33,13 +33,24 @@ for (const selector of ['body.v4-creator-page .v4-root .v4-welcome','body.v4-cre
 for (const selector of ['.v4-choice','.v4-feature-card','.v4-template-card','.v4-primary','.vz-market-related-card','.vz-market-btn']) {
  assert.ok(silkJs.includes(selector),'Silk must reach functional route interactive components: '+selector);
 }
-assert.ok(security.includes("const ui2026Release='silk-ui-20261123-r2'"),'Public pages need a traceable release fingerprint');
+assert.ok(security.includes("const ui2026Release='silk-ui-20261123-r3'"),'Public pages need a traceable release fingerprint');
 assert.ok(security.includes("headers['X-VELORYZ-UI-Release']=ui2026Release"),'Live server must reveal its actual installed UI version');
 assert.ok(security.includes('<meta name="veloryz-ui-release"'),'Public HTML must expose the active release');
 assert.ok(designDetail.includes("mode==='detail'?'<meta name=\"veloryz-ui-release\""),'Design details must load the refinement explicitly');
-assert.ok(designDetail.includes('/veloryz-silk-2026.js?v=20261123-route-r2'),'Design detail should animate the actual card and CTA elements');
-assert.ok(designDetail.includes('/veloryz-ui-2026.css?v=20261123-route-r2'),'Design detail should get its own UI treatment');
+assert.ok(designDetail.includes('/veloryz-silk-2026.js?v=20261123-route-r3'),'Design detail should animate the actual card and CTA elements');
+assert.ok(designDetail.includes('/veloryz-ui-2026.css?v=20261123-route-r3'),'Design detail should get its own UI treatment');
 assert.ok(designDetail.includes("mode==='detail'?"),'Embedded original source previews must remain isolated');
+
+for(const token of ["version: 'silk-2026.2'","function burst(","function scrubParagraphs()","--vz-bx","--vz-by","--mx","--my","SCRUB_SKIP"]){
+ assert.ok(silkJs.includes(token),'Silk v2 interaction or text scrub missing: '+token);
+}
+for(const token of ['@property --vz-r','@property --vz-spot','.vz-burst','.vz-w','animation-timeline: --vz-scrub','@keyframes vz-word']){
+ assert.ok(silkCss.includes(token),'Silk v2 registered property or scroll effect missing: '+token);
+}
+for(const token of ['--vz-r: 150%','radial-gradient(circle at var(--vz-bx) var(--vz-by)','body.v4-creator-page .v4-root .v4-primary','body.vz-market-body:not(.vz-market-immersive) .vz-market-btn','var(--vz-spot, 0)']){
+ assert.ok(uiCss.includes(token),'Silk v2 cursor-origin liquid/spotlight styles missing: '+token);
+}
+assert.ok(!silkJs.includes("addEventListener('wheel'"),'New Silk must never compete with the first-party Lenis wheel controller');
 
 assert.ok(!security.includes('const projectLink='),'Do not reinstate the removed floating Create button');
 assert.ok(!security.includes("projectLink+'</body>'"),'Do not inject retired Create button into document');
@@ -55,7 +66,8 @@ assert.ok(handler.includes('const response=secureHtml(html,known?200:404)'),'Nor
 function boot({existingProgress=false,reduced=false}={}){
  const docEvents=new Map(),winEvents=new Map(),children=[],animations=[];
  class FakeElement {
-  constructor(){this.isConnected=true;this.style={};this.classList={add(){},remove(){}};}
+  constructor(){this.isConnected=true;this.style={setProperty(){}};this.classList={add(){},remove(){}};}
+  getBoundingClientRect(){return {left:0,top:0,width:160,height:56};}
   animate(frames,options){
    const result={frames,options,paused:false,played:false,playbackRate:1,pause(){this.paused=true;},play(){this.played=true;}};
    animations.push(result);return result;
@@ -99,10 +111,16 @@ const button=new page.FakeElement();
 page.docEvents.get('pointerdown')[0]({button:0,target:button});
 assert.equal(page.animations.length,1,'Tactile press must animate the button');
 assert.equal(page.animations[0].played,true);
+page.docEvents.get('click')[0]({target:button,clientX:91,clientY:33,detail:1});
+assert.equal(page.children.filter(x=>x.className==='vz-burst').length,10,'Silk v2 must render ten burst particles on button click');
+assert.equal(page.animations.length,21,'Each particle must have independent travel and fade animations');
+const beforePause=page.animations.length;
 page.root.dataset.motion='paused';
 assert.equal(page.window.VeloryzSilk.enabled,false,'Motion pause setting must stop enhancements');
 page.docEvents.get('pointerdown')[0]({button:0,target:new page.FakeElement()});
-assert.equal(page.animations.length,1,'No new animations while paused');
+assert.equal(page.animations.length,beforePause,'No new animations while paused');
+page.docEvents.get('click')[0]({target:button,clientX:91,clientY:33,detail:1});
+assert.equal(page.animations.length,beforePause,'Click bursts must also stop while paused');
 assert.equal(boot({existingProgress:true}).children.length,0,'Original homepage progress bar must not be duplicated');
 assert.equal(boot({reduced:true}).window.VeloryzSilk.enabled,true,'Explicit full motion setting retains user override');
 const reducedAuto=boot({reduced:true});
