@@ -63,8 +63,8 @@
    engine=new window.Lenis({
     autoRaf:!window.VeloryzMotionClock,
     anchors:{offset:-82},
-    lerp:0.105,
-    wheelMultiplier:0.92,
+    lerp:0.09,
+    wheelMultiplier:0.9,
     smoothWheel:true,
     syncTouch:false,
     overscroll:true,
@@ -93,7 +93,7 @@
  }
  const jump=(target,options={})=>{
   const offset=options.offset??-82;
-  if(engine)return engine.scrollTo(target,{offset,duration:0.9,...options});
+  if(engine)return engine.scrollTo(target,{offset,duration:1.0,...options});
   const behavior=reduced.matches?'instant':'smooth';
   if(typeof target==='number'){
    window.scrollTo({top:target,behavior});
@@ -107,7 +107,7 @@
   get active(){return Boolean(engine);},
   get engine(){return engine;},
   get mode(){return engine?(coarse.matches||narrow.matches?'native-touch-lenis':'lenis-wheel'):'native';},
-  settings:{lerp:0.105,wheelMultiplier:0.92,touch:'native',clock:'shared',library:'lenis@1.3.27'},
+  settings:{lerp:0.09,wheelMultiplier:0.9,touch:'native',clock:'shared',library:'lenis@1.3.27'},
   sync,scrollTo:jump,destroy:clearEngine
  };
  window.VeloryzScroll=api;
