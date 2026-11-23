@@ -18,8 +18,8 @@ const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r22'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r22')&&security.includes('/veloryz-experience-r20.js?v=20261123-r22'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261123-r23'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261123-r23')&&security.includes('/veloryz-experience-r20.js?v=20261123-r23'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -42,6 +42,9 @@ assert(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'R20.2 mobi
 assert(css.includes('@media(prefers-contrast:more)')&&css.includes('@media(forced-colors:active)'),'R21 high-contrast accessibility hardening missing');
 assert(css.includes('scrollbar-gutter:stable'),'R21 layout-shift stability hint missing');
 assert(css.includes('/* R22 / premium visual refinement */')&&css.includes('.vz-reference-site #load{transition-duration:.82s!important}'),'R22 premium motion refinement missing');
+assert(css.includes('/* R23 / performance and interaction hardening */')&&css.includes('content-visibility:auto'),'R23 deferred card rendering missing');
+assert(css.includes('font-size:16px!important')&&css.includes('::view-transition-old(root),'),'R23 mobile form/reduced-motion hardening missing');
+assert(js.includes('const prefetchHref=href=>')&&js.includes("document.addEventListener('pointerover'")&&js.includes("document.addEventListener('focusin'"),'R23 intent prefetch missing');
 assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
@@ -93,4 +96,4 @@ assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace re
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
-console.log('PASS: R22 preserves R21 measurement and accessibility while refining homepage hierarchy, section-aware navigation, intro timing, footer brand language and mobile spacing.');
+console.log('PASS: R23 preserves R22 visuals while deferring heavy card rendering, improving mobile forms, disabling route animation for reduced motion and adding data-aware intent prefetch.');
