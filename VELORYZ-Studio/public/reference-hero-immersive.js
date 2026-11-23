@@ -4,6 +4,27 @@
 'use strict';
 const hero=document.querySelector('.vz-reference-site .vz-material-hero');
 if(!hero)return;
+/* Editorial R5 deliberately has no small orbital particles or pointer halos.
+   Preserve the approved official wordmark fallback without starting a canvas loop. */
+if(hero.classList.contains('vz-editorial-r5')){
+ const brand=document.querySelector('.vz-official-header-brand img');
+ if(brand){
+  let tried=false;
+  brand.addEventListener('error',()=>{
+   if(!tried){tried=true;brand.src='/assets/brand/official/Main-Dark-Ink-Transparent.png';}
+   else{
+    brand.hidden=true;brand.style.setProperty('display','none','important');
+    if(!brand.parentNode.querySelector('.vz-brand-text-fallback')){
+     const fallback=document.createElement('span');
+     fallback.className='vz-brand-text-fallback';fallback.textContent='VELORYZ';
+     brand.parentNode.append(fallback);
+    }
+   }
+  });
+ }
+ return;
+}
+
 const canvas=document.createElement('canvas');
 canvas.id='vz-hero-particles';
 canvas.setAttribute('aria-hidden','true');

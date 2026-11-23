@@ -7,6 +7,11 @@ on:
       - "VELORYZ-Studio/public/veloryz-*.css"
       - "VELORYZ-Studio/public/veloryz-*.js"
       - "VELORYZ-Studio/lib/response-security.ts"
+      - "VELORYZ-Studio/lib/claude-reference-shell.ts"
+      - "VELORYZ-Studio/public/reference-elegance-r5.css"
+      - "VELORYZ-Studio/public/reference-hero-immersive.js"
+      - "VELORYZ-Studio/public/button-feedback.js"
+      - "VELORYZ-Studio/tools/test-reference-elegance-r5.mjs"
       - "VELORYZ-Studio/lib/design-detail-page.ts"
       - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
       - ".github/workflows/veloryz-live-ui-release.yml"
@@ -26,9 +31,11 @@ jobs:
           node-version: '22'
       - name: Regression test actual homepage and Silk interactions
         run: node tools/test-silk-ui-2026.mjs
+      - name: Verify active R5 homepage, original logo and menu controls
+        run: node tools/test-reference-elegance-r5.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:
           VELORYZ_LIVE_URL: https://veloryz.online
-          VELORYZ_UI_RELEASE: silk-ui-20261123-r4
+          VELORYZ_UI_RELEASE: silk-ui-20261123-r5
           VELORYZ_PROBE_ATTEMPTS: 16
         run: node tools/check-live-ui-release.mjs

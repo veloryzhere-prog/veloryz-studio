@@ -1,0 +1,283 @@
+/* VELORYZ / Editorial Home R5
+ * Applies to the ACTIVE claude-reference homepage, not the ?classic=1 shell.
+ * No orbital dots, tiny dark-halo particles, extra scroll engine or logo replacements.
+ * Preserve real 3D controls, first-party navigation and motion preferences.
+ */
+body.vz-reference-site .vz-material-hero {
+ --vz-e-ink:var(--fg);
+ --vz-e-copper:var(--acc);
+ background:
+  linear-gradient(122deg, color-mix(in srgb,var(--bg) 89%,#ba9275) 0%,var(--bg) 56%,color-mix(in srgb,var(--bg) 85%,#b08b7b) 100%) !important;
+ min-height:max(100svh,865px);
+ color:var(--fg)!important;
+}
+body.vz-reference-site .vz-material-hero::before {
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:
+  repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),color-mix(in srgb,var(--fg) 7%,transparent) calc(25% - 1px),color-mix(in srgb,var(--fg) 7%,transparent) 25%),
+  linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--fg) 2%,transparent) 100%) !important;
+ opacity:.55;mask-image:linear-gradient(#000,transparent 96%);
+}
+body.vz-reference-site .vz-material-hero :is(.orb,#vz-hero-particles,#vz-hero-pointer-field) {
+ display:none!important;
+}
+body.vz-reference-site .vz-material-hero #heroTxt {
+ padding-top:clamp(155px,18svh,215px);
+ padding-bottom:clamp(28px,5svh,62px);
+}
+body.vz-reference-site .vz-material-hero .vz-hero-edition {
+ display:flex;align-items:center;gap:clamp(12px,1.8vw,24px);
+ width:min(640px,100%);margin-bottom:clamp(22px,4svh,38px);
+ color:var(--fg);font:600 clamp(.64rem,.73vw,.82rem)/1.3 var(--sans);
+ letter-spacing:.19em;text-transform:uppercase;
+}
+body.vz-reference-site .vz-hero-edition .vz-hero-edition-rule {
+ flex:1;min-width:28px;height:1px;background:color-mix(in srgb,var(--fg) 30%,transparent);
+ transform-origin:left;animation:vz-e-rule 1s cubic-bezier(.16,1,.3,1) both;
+}
+body.vz-reference-site .vz-hero-edition .vz-hero-edition-number {
+ border:1px solid color-mix(in srgb,var(--fg) 26%,transparent);
+ padding:8px 10px;font-size:.7rem;letter-spacing:.1em;
+}
+@keyframes vz-e-rule{from{scale:0 1}to{scale:1 1}}
+body.vz-reference-site .vz-material-hero .vz-hero-eyebrow {
+ border-left:3px solid var(--acc);
+ padding-left:clamp(13px,1.8vw,23px);
+ margin-bottom:clamp(18px,3svh,30px);
+}
+body.vz-reference-site .vz-material-hero #h1 {
+ font-family:var(--serif);
+ font-size:clamp(4.1rem,9.2vw,10.8rem);
+ line-height:.91;
+ letter-spacing:-.065em;
+ max-width:min(1110px,86vw);
+ text-wrap:balance;
+}
+body.vz-reference-site .vz-material-hero #h1 .ln {
+ padding-bottom:.17em;min-height:1.11em;overflow:hidden;
+}
+body.vz-reference-site .vz-material-hero #h1 .ln:first-child {
+ font-weight:300;letter-spacing:-.062em;
+}
+body.vz-reference-site .vz-material-hero #h1 .ln:last-child {
+ color:var(--fg);padding-left:clamp(8px,2.8vw,44px);
+}
+body.vz-reference-site .vz-material-hero #h1 .ln:last-child em {
+ font-weight:300;font-style:italic;
+ text-decoration:underline;text-decoration-color:var(--acc);
+ text-decoration-thickness:clamp(2px,.35vw,5px);
+ text-underline-offset:.115em;
+}
+body.vz-reference-site .vz-material-hero #heroTxt .lead {
+ max-width:min(530px,100%);
+ font-size:clamp(1.03rem,1.3vw,1.26rem);
+ line-height:1.64;
+ margin:clamp(24px,3svh,35px) 0 clamp(22px,3svh,35px);
+ color:var(--mut)!important;
+}
+body.vz-reference-site .vz-material-hero .btns {
+ max-width:min(100%,825px);
+ align-items:center;
+ gap:clamp(9px,1.1vw,17px);
+}
+body.vz-reference-site .vz-material-hero .btns .btn {
+ min-height:52px;
+ font-size:clamp(.77rem,.93vw,.92rem);
+ letter-spacing:.01em;
+}
+body.vz-reference-site .vz-material-hero .btns .vz-hero-cta-link {
+ border:0;border-bottom:1px solid color-mix(in srgb,var(--fg) 55%,transparent);
+ padding:14px 3px;border-radius:0;
+}
+body.vz-reference-site .vz-material-hero .vz-hero-practices {
+ display:flex;flex-wrap:wrap;align-items:center;
+ column-gap:clamp(14px,2vw,35px);row-gap:10px;
+ padding-top:clamp(25px,4svh,45px);margin-top:clamp(30px,4svh,48px);
+ border-top:1px solid color-mix(in srgb,var(--fg) 19%,transparent);
+ max-width:560px;
+}
+body.vz-reference-site .vz-material-hero .vz-hero-practices span {
+ font:600 clamp(.68rem,.76vw,.81rem)/1.3 var(--sans);
+ letter-spacing:.09em;text-transform:uppercase;color:var(--mut);
+}
+body.vz-reference-site .vz-material-hero .vz-hero-practices span:first-child {
+ color:var(--fg);
+}
+body.vz-reference-site .vz-material-hero #bigV::after {
+ content:"SCULPTURE / ORIGINAL V";
+ position:absolute;right:0;bottom:0;z-index:4;
+ font:600 10px/1.2 var(--sans);letter-spacing:.12em;
+ color:var(--mut);pointer-events:none;
+ border-top:1px solid color-mix(in srgb,var(--fg) 24%,transparent);
+ padding-top:11px;
+}
+body.vz-reference-site .vz-material-hero #bigV::before {
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--fg) 12%,transparent);
+ clip-path:polygon(0 0,23% 0,23% 2px,2px 2px,2px 23%,0 23%,0 0,100% 0,100% 23%,calc(100% - 2px) 23%,calc(100% - 2px) 2px,77% 2px,77% 0);
+}
+/* The active reference site uses .btn, not the classic .button. */
+body.vz-reference-site .pg .btn {
+ --vz-e-sweep:color-mix(in srgb,var(--acc) 83%,var(--fg));
+ background-image:linear-gradient(104deg,var(--vz-e-sweep),color-mix(in srgb,var(--vz-e-sweep) 72%,#f4b58c));
+ background-repeat:no-repeat;background-size:0% 100%;
+ transition:background-size .62s cubic-bezier(.65,0,.35,1),color .28s,box-shadow .4s,transform .3s,border-color .3s;
+}
+body.vz-reference-site .pg .btn:is(:hover,:focus-visible) {
+ background-image:linear-gradient(104deg,var(--vz-e-sweep),color-mix(in srgb,var(--vz-e-sweep) 72%,#f4b58c));
+ background-size:100% 100%;
+ box-shadow:0 11px 24px -14px color-mix(in srgb,var(--acc) 57%,transparent);
+}
+body.vz-reference-site .pg .btn:active:not([aria-disabled="true"]) {
+ scale:.96;
+}
+body.vz-reference-site .vz-material-hero .btns .vz-hero-cta-link {
+ --vz-e-sweep:color-mix(in srgb,var(--acc) 12%,var(--bg));
+}
+body.vz-reference-site :is(.pg .btn,.vz-header-actions > a,.vz-header-actions > button,#mn a,[data-logo-action]):focus-visible {
+ outline:3px solid var(--acc)!important;outline-offset:4px!important;
+}
+/* Menu: an architectural, numbered navigation. No glowing dots. */
+body.vz-reference-site .vz-header-actions #mb {
+ border-radius:10px!important;
+ border-left:3px solid var(--acc)!important;
+ letter-spacing:.14em;
+ transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .36s,background-color .28s!important;
+}
+body.vz-reference-site .vz-header-actions #mb:is(:hover,:focus-visible) {
+ transform:translateY(-2px);
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--acc) 44%,transparent),0 12px 27px -15px var(--fg);
+}
+body.vz-reference-site .vz-header-actions #mb:active{scale:.96}
+body.vz-reference-site.vz-menu-open .vz-header-actions #mb{
+ border-left-color:var(--fg)!important;transform:translateY(0);
+}
+body.vz-reference-site #mn {
+ counter-reset:vz-e-menu;
+ background:var(--inv);
+}
+body.vz-reference-site #mn a {
+ counter-increment:vz-e-menu;
+ display:inline-flex;align-items:baseline;gap:clamp(11px,1.2vw,18px);
+ width:100%;max-width:610px;
+ border-bottom:1px solid color-mix(in srgb,var(--invfg) 19%,transparent);
+ padding:clamp(5px,.8vh,11px) 0;
+ transition:color .3s,translate .38s cubic-bezier(.16,1,.3,1),border-color .38s;
+}
+body.vz-reference-site #mn a::before {
+ content:counter(vz-e-menu,decimal-leading-zero);
+ font:600 clamp(.65rem,.78vw,.85rem)/1.5 var(--sans);
+ letter-spacing:.08em;opacity:.58;min-width:2.3em;
+}
+body.vz-reference-site #mn a:is(:hover,:focus-visible) {
+ translate:clamp(4px,.8vw,13px) 0;
+ color:#edb294;
+ border-bottom-color:var(--acc);
+}
+body.vz-reference-site #mn a[aria-current="page"],
+body.vz-reference-site #mn a.cur {border-bottom-color:var(--acc)}
+/* Non-home public controls get the same deliberate tap/focus feedback,
+   without imposing the homepage palette on Creator, Support or Design. */
+body.motion-edition #main :is(button,.button,.v4-primary,.v4-choice,.v4-top-next):not(:disabled):not([aria-disabled="true"]):active,
+body.vz-ref-public-route #main :is(button,.button,.v4-primary,.v4-choice):not(:disabled):not([aria-disabled="true"]):active,
+body.vz-market-body:not(.vz-market-immersive) :is(button,.vz-market-btn):not(:disabled):active {
+ scale:.965;
+ filter:brightness(.96);
+}
+body.motion-edition #main :is(button,.button,.v4-primary):focus-visible,
+body.vz-ref-public-route #main :is(button,.button,.v4-primary):focus-visible {
+ outline:3px solid var(--accent,#b85e42);outline-offset:3px;
+}
+@media (max-width:1160px){
+ body.vz-reference-site .vz-material-hero #h1 {
+  font-size:clamp(4.1rem,8.4vw,8.4rem);
+  max-width:75%;
+ }
+ body.vz-reference-site .vz-material-hero #heroTxt .lead{max-width:460px}
+ body.vz-reference-site .vz-material-hero .vz-hero-practices{max-width:440px}
+}
+@media (max-width:920px){
+ body.vz-reference-site .vz-material-hero{min-height:100svh;padding-bottom:clamp(85px,12svh,135px)!important}
+ body.vz-reference-site .vz-material-hero #heroTxt{
+  padding-top:clamp(285px,43svh,445px);
+  padding-bottom:18px;
+ }
+ body.vz-reference-site .vz-material-hero #h1{
+  font-size:clamp(3.1rem,9.3vw,6.2rem);max-width:100%;
+ }
+ body.vz-reference-site .vz-material-hero #h1 .ln:last-child{padding-left:0}
+ body.vz-reference-site .vz-material-hero #bigV::after{font-size:8px}
+ body.vz-reference-site .vz-material-hero .vz-hero-practices{margin-top:24px}
+ body.vz-reference-site #mn a{max-width:100%}
+}
+@media (max-width:570px){
+ body.vz-reference-site .vz-material-hero #heroTxt{
+  padding-top:clamp(270px,42svh,350px);
+ }
+ body.vz-reference-site .vz-material-hero #h1{font-size:clamp(2.7rem,11vw,4.7rem);line-height:.99}
+ body.vz-reference-site .vz-material-hero .vz-hero-edition{letter-spacing:.1em;font-size:.61rem;margin-bottom:17px}
+ body.vz-reference-site .vz-material-hero .vz-hero-eyebrow{margin-bottom:16px}
+ body.vz-reference-site .vz-material-hero #heroTxt .lead{font-size:1rem;margin:20px 0 24px}
+ body.vz-reference-site .vz-material-hero .btns{gap:9px}
+ body.vz-reference-site .vz-material-hero .btns .btn{flex:1 1 165px;justify-content:center;min-height:48px}
+ body.vz-reference-site .vz-material-hero .btns .vz-hero-cta-link{flex-basis:100%}
+ body.vz-reference-site .vz-material-hero .vz-hero-practices{gap:7px 12px;margin-top:23px;padding-top:20px}
+ body.vz-reference-site .vz-material-hero .vz-hero-practices span{font-size:.63rem}
+ body.vz-reference-site .vz-material-hero #bigV::after{display:none}
+ body.vz-reference-site #mn{padding-inline:20px}
+ body.vz-reference-site #mn a{font-size:clamp(1.25rem,5.3vw,1.85rem);gap:9px}
+}
+@media (prefers-reduced-motion:reduce) {
+ html:not([data-motion="full"]) body.vz-reference-site .vz-hero-edition-rule {animation:none}
+ html:not([data-motion="full"]) body.vz-reference-site .pg .btn,
+ html:not([data-motion="full"]) body.vz-reference-site #mn a,
+ html:not([data-motion="full"]) body.vz-reference-site .vz-header-actions #mb {transition:none!important}
+}
+html[data-motion="paused"] body.vz-reference-site .vz-hero-edition-rule,
+html[data-motion="reduced"] body.vz-reference-site .vz-hero-edition-rule{animation:none!important}
+html[data-motion="paused"] body.vz-reference-site :is(.pg .btn,#mn a,.vz-header-actions #mb),
+html[data-motion="reduced"] body.vz-reference-site :is(.pg .btn,#mn a,.vz-header-actions #mb){transition:none!important}
+
+
+/* Maintain typography contrast in both light and dark themes. */
+body.vz-reference-site .vz-material-hero .vz-hero-eyebrow > .tag,
+body.vz-reference-site .vz-material-hero .vz-hero-location {
+ color:var(--mut)!important;
+}
+/* No small circular cursor accent in the R5 editorial first screen. */
+body.vz-reference-site #cur{display:none!important}
+/* Other public routes use the same deliberate menu/CTA response. */
+body.motion-edition .site-header .menu-toggle {
+ border-radius:11px;
+ border-left:3px solid var(--accent)!important;
+ transition:background-color .32s,transform .32s cubic-bezier(.16,1,.3,1),box-shadow .32s;
+}
+body.motion-edition .site-header .menu-toggle:is(:hover,:focus-visible) {
+ background:color-mix(in srgb,var(--accent) 12%,var(--paper));
+ transform:translateY(-2px);
+ box-shadow:0 10px 24px -16px var(--ink);
+}
+body.motion-edition .site-header .menu-toggle[aria-expanded="true"] {
+ background:var(--ink);color:var(--paper);
+ border-left-color:var(--paper)!important;
+}
+body.motion-edition .site-header .mobile-nav.open a {
+ transition:translate .32s cubic-bezier(.16,1,.3,1),color .3s;
+}
+body.motion-edition .site-header .mobile-nav.open a:is(:hover,:focus-visible) {
+ translate:7px 0;color:var(--accent);
+}
+body.motion-edition #main .button {
+ background-image:linear-gradient(105deg,var(--accent),color-mix(in srgb,var(--accent) 75%,#f9bc91));
+ background-repeat:no-repeat;background-size:0% 100%;
+ transition:background-size .58s cubic-bezier(.65,0,.35,1),transform .3s,color .3s;
+}
+body.motion-edition #main .button:is(:hover,:focus-visible) {
+ background-image:linear-gradient(105deg,var(--accent),color-mix(in srgb,var(--accent) 75%,#f9bc91));
+ background-size:100% 100%;
+}
+@media (prefers-reduced-motion:reduce){
+ html:not([data-motion="full"]) body.motion-edition :is(.site-header .menu-toggle,.site-header .mobile-nav a,#main .button){transition:none!important}
+}
+html[data-motion="paused"] body.motion-edition :is(.site-header .menu-toggle,.site-header .mobile-nav a,#main .button),
+html[data-motion="reduced"] body.motion-edition :is(.site-header .menu-toggle,.site-header .mobile-nav a,#main .button){transition:none!important}
