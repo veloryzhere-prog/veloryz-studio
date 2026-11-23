@@ -18,7 +18,9 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
   ? '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r5">'
    +'<link rel="stylesheet" href="/veloryz-ui-2026.css?v=20261123-route-r5">'
    +'<meta name="veloryz-ui-release" content="'+ui2026Release+'">'
+   +'<link rel="stylesheet" href="/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9">'
    +'<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'
+   +'<script src="/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9" defer></script>'
   : '';
  const editorialAssets=!privatePage&&status===200
   ? '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'
