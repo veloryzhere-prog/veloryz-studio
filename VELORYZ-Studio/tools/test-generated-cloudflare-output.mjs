@@ -6,3 +6,12 @@ const safe={...cfg};
 delete safe.vars;
 delete safe.secrets;
 console.log('GENERATED_WRANGLER_FULL',JSON.stringify(safe,null,2));
+
+const rootCfg=JSON.parse(fs.readFileSync(new URL('../../wrangler.jsonc',import.meta.url),'utf8'));
+if(rootCfg.name!==cfg.name)throw new Error('Root Wrangler Worker name does not match generated Worker');
+if(rootCfg.main!=='VELORYZ-Studio/dist/server/'+cfg.main)throw new Error('Root Wrangler main does not target generated server entry');
+if(rootCfg.assets?.directory!=='VELORYZ-Studio/dist/client')throw new Error('Root Wrangler assets do not target generated client output');
+if(rootCfg.no_bundle!==true)throw new Error('Root Wrangler must preserve generated no_bundle=true');
+if(rootCfg.ai?.binding!==cfg.ai?.binding)throw new Error('Root Wrangler AI binding does not match generated config');
+if(!String(rootCfg.build?.command||'').includes('pnpm --dir VELORYZ-Studio build'))throw new Error('Root Wrangler must build nested app before deploy');
+console.log('PASS: repository-root Wrangler shim matches generated Worker output and builds the nested VELORYZ app first.');
