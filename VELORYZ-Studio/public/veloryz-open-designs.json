@@ -1982,7 +1982,7 @@
       "importStatus": "catalogued",
       "previewType": "veloryz-original-concept",
       "enabled": true,
-      "previewImage": "https://raw.githubusercontent.com/smartergiving/free-nonprofit-starter-website/main/screenshots/screenshot.png",
+      "previewImage": "https://raw.githubusercontent.com/smartergiving/free-nonprofit-starter-website/master/screenshots/screenshot.png",
       "previewImageKind": "upstream-screenshot",
       "price": 15000,
       "currency": "INR",
