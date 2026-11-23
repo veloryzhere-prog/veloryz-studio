@@ -207,6 +207,19 @@ try {
        const later=name+'-design-stage-mid.png';await snapshot(page,later);row.screenshots.push(later);
        if(stage<1200)row.issues.push('Homepage design-stage scroll range unexpectedly short: '+Math.round(stage)+' px');
       }
+      const journey=page.locator('#vz-reference-journey');
+      if(await journey.count()){
+       await journey.scrollIntoViewIfNeeded();
+       await page.waitForTimeout(650);
+       row.journey=await page.evaluate(()=>({
+        cards:document.querySelectorAll('#vz-reference-journey .vz-journey-stage').length,
+        links:[...document.querySelectorAll('#vz-reference-journey .vz-journey-stage')].map(a=>a.getAttribute('href')),
+        contrast:getComputedStyle(document.querySelector('#vz-reference-journey .vz-journey-stage:nth-child(2)')).color
+       }));
+       const journeyShot=name+'-journey.png';await snapshot(page,journeyShot);row.screenshots.push(journeyShot);
+       const expected=['/design/','/design/','/design/','/create/','/reviews.html'];
+       if(row.journey.cards!==5||JSON.stringify(row.journey.links)!==JSON.stringify(expected))row.issues.push('Project Journey routes/stages differ from R9 contract');
+      }
     }
     if(route.path==='/design/'){
       const market=page.locator('#vz-source-collection');
