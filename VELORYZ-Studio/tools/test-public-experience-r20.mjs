@@ -17,9 +17,10 @@ const knowledge=read('public/knowledge-v4.js');
 const knowledgeCss=read('public/knowledge-v4.css');
 const market=read('public/veloryz-open-library.js');
 const siteShell=read('lib/site-shell.ts');
+const creatorCss=read('public/creator-v4.css');
 
-assert(security.includes("experienceRelease='public-experience-20261123-r27'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261123-r27')&&security.includes('/veloryz-experience-r20.js?v=20261123-r27'),'R20 public assets are not injected');
+assert(security.includes("experienceRelease='public-experience-20261124-r29'"),'R20 public release header marker missing');
+assert(security.includes('/veloryz-experience-r20.css?v=20261124-r29')&&security.includes('/veloryz-experience-r20.js?v=20261124-r29'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -54,6 +55,9 @@ assert(css.includes('/* R26 / spatial editorial system')&&css.includes('@support
 assert(js.includes('const initR26SpatialSystem=()=>')&&js.includes('vz-r26-fast-scroll')&&js.includes('vz-r26-section-index'),'R26 editorial indexing/velocity context missing');
 assert(css.includes('/* R27 / cinematic chapter composition */')&&css.includes('.vz-r27-chapter-rail')&&css.includes('@keyframes vz27-deck-cinema'),'R27 cinematic composition CSS missing');
 assert(js.includes('const initR27Chapters=()=>')&&js.includes('vz-r27-chapter-rail')&&js.includes('vzR27Chapters'),'R27 chapter navigation missing');
+assert(css.includes('/* R29 / public layout containment and collision hardening */')&&css.includes('overflow-x:clip!important'),'R29 public layout stabilization missing');
+assert(creatorCss.includes('/* R29 / responsive layout stabilization')&&creatorCss.includes('@media(min-width:1381px)'),'R29 Creator responsive stabilization missing');
+assert(siteShell.includes('/creator-v4.js?v=20261124-r29-layout')&&siteShell.includes('/creator-v4.css?v=20261124-r29-layout'),'R29 Creator cache identity missing');
 assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
@@ -105,4 +109,4 @@ assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace re
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 
 new Function(js);
-console.log('PASS: R27 preserves R26 spatial identity while adding cinematic chapter navigation, design-stage depth, stacked-process choreography and a stronger final scene.');
+console.log('PASS: R29 preserves the cinematic public experience while stabilizing responsive layout, Creator panel sizing and cache-consistent Creator assets.');
