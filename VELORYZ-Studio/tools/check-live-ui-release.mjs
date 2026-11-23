@@ -11,7 +11,7 @@ const load=async path=>{
  url.searchParams.set('vz_ui_release_probe',release);
  url.searchParams.set('attempt',String(Date.now()));
  const response=await fetch(url,{headers:{'Cache-Control':'no-cache'},cache:'no-store',redirect:'follow',signal:AbortSignal.timeout(15000)});
- return {status:response.status,header:response.headers.get('x-veloryz-ui-release'),body:await response.text(),url:url.href};
+ return {status:response.status,header:response.headers.get('x-veloryz-ui-release'),menuHeader:response.headers.get('x-veloryz-menu-release'),body:await response.text(),url:url.href};
 };
 let lastError='';
 for(let attempt=1;attempt<=maxAttempts;attempt++){
@@ -28,9 +28,19 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const editorialLinked=home.body.includes('vz-editorial-r5')
     &&home.body.includes('class="vz-hero-practices"')
     &&home.body.includes('/reference-elegance-r5.css?v=20261123-editorial-r5');
-   const [silkCss,uiCss,js,editorial]=await Promise.all([
-    ...assets.map(load),load('/reference-elegance-r5.css')
+   const menuLinked=home.menuHeader==='reference-menu-20261123-r6'
+    &&home.body.includes('id="mb" class="mbtn vz-menu-morph"')
+    &&home.body.includes('data-vz-menu-version="reference-r6"')
+    &&home.body.includes('/reference-menu-morph-r6.css?v=20261123-reference-menu-r6')
+    &&home.body.includes('/reference-site-upgrade.js?v=20261123-reference-menu-r6');
+   const [silkCss,uiCss,js,editorial,menuCss]=await Promise.all([
+    ...assets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css')
    ]);
+   const menuOK=menuCss.status===200
+    &&menuCss.body.includes('clip-path: circle(150vmax')
+    &&menuCss.body.includes('vz-menu-label-close')
+    &&menuCss.body.includes('vz-menu-glyph i:first-child')
+    &&menuCss.body.includes('vz-menu-stagger');
    const editorialOK=editorial.status===200
     &&editorial.body.includes('body.vz-reference-site .vz-material-hero')
     &&editorial.body.includes('#mn a::before')
@@ -49,11 +59,11 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&js.body.includes('function burst(')&&js.body.includes('function scrubParagraphs()')
     &&js.body.includes("getElementById('site-progress')")
     &&js.body.includes("const BTN = '.btn,.button");
-   if(pagesLinked&&assetsOK&&editorialLinked&&editorialOK){
-    console.log('PASS: production '+origin+' serves '+release+' on homepage, creator and design detail, all linked assets, active reference-shell editorial hero, numbered menu, real action selectors and runtime.');
+   if(pagesLinked&&assetsOK&&editorialLinked&&editorialOK&&menuLinked&&menuOK){
+    console.log('PASS: production '+origin+' serves '+release+' on homepage, creator and design detail, all linked assets, active editorial hero, R6 circular Menu/Close morph, all assets, selectors and runtime.');
     process.exit(0);
    }
-   lastError='HTML release marker found but the active R5 homepage or assets failed verification. Core linked '+pagesLinked+', editorial linked '+editorialLinked+', editorial valid '+editorialOK+'; Silk CSS '+silkCss.status+', UI CSS '+uiCss.status+', JS '+js.status+', editorial CSS '+editorial.status+'.';
+   lastError='HTML release marker found but the active R5 homepage or assets failed verification. Core linked '+pagesLinked+', editorial linked '+editorialLinked+', editorial valid '+editorialOK+', menu linked '+menuLinked+', menu valid '+menuOK+'; Silk CSS '+silkCss.status+', UI CSS '+uiCss.status+', JS '+js.status+', editorial CSS '+editorial.status+'.';
   }else{
    lastError='Live HTML not at '+release+': homepage '+home.status+' ('+(home.header||'no release')+'), create '+creator.status+' ('+(creator.header||'no release')+'), design '+design.status+' (marker '+designOK+').';
   }

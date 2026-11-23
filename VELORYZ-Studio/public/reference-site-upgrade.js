@@ -105,16 +105,37 @@ function menuFocus(){
  const menu=$('#mn'),button=$('#mb');
  if(!menu||!button)return;
  let lastFocus=null;
+ const updateOrigin=()=>{
+  // Match the original HTML reference's circular reveal, but calculate the real
+  // button centre instead of assuming a fixed desktop offset.
+  const rect=button.getBoundingClientRect();
+  menu.style.setProperty('--vz-menu-origin-x',(rect.left+rect.width/2).toFixed(1)+'px');
+  menu.style.setProperty('--vz-menu-origin-y',(rect.top+rect.height/2).toFixed(1)+'px');
+ };
  const sync=()=>{
   const open=menu.classList.contains('open');
+  updateOrigin();
   document.body.classList.toggle('vz-menu-open',open);
   button.setAttribute('aria-expanded',String(open));
+  button.setAttribute('aria-label',open?'Close menu':'Open menu');
   button.setAttribute('aria-controls','mn');
   menu.setAttribute('aria-hidden',String(!open));
+  menu.inert=!open;
   if(open&&!lastFocus){lastFocus=document.activeElement;menu.querySelector('a')?.focus({preventScroll:true});}
   if(!open&&lastFocus){const old=lastFocus;lastFocus=null;if(old?.isConnected)old.focus({preventScroll:true});}
  };
  new MutationObserver(sync).observe(menu,{attributes:true,attributeFilter:['class']});
+ window.addEventListener('resize',()=>{if(menu.classList.contains('open'))updateOrigin();},{passive:true});
+ menu.addEventListener('click',event=>{
+  // Existing hash routing still performs navigation; close on destination click.
+  if(event.target.closest('a[href]'))menu.classList.remove('open');
+ });
+ document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||!menu.classList.contains('open'))return;
+  event.preventDefault();
+  menu.classList.remove('open');
+  button.focus({preventScroll:true});
+ });
  // Keep the first/last link in the fullscreen overlay while it is open.
  document.addEventListener('keydown',e=>{
   if(!menu.classList.contains('open')||e.key!=='Tab')return;
