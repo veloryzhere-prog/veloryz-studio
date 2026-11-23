@@ -38,6 +38,7 @@ assert(homeJs.includes("b.textContent=''"),'Design rail buttons must be visual t
 assert(!homeJs.includes("padStart(2,'0')+' / '+String(items.length)"),'Current design counter must remain removed');
 assert(!homeCss.includes('scale(1.025)')&&!homeCss.includes('scale(.985)'),'Homepage design preview must not use GPU resampling scales that can blur screenshots');
 assert(homeCss.includes('filter:none!important')&&homeCss.includes('backdrop-filter:none!important'),'Preview image and rail backdrop must explicitly stay sharp');
+assert(homeCss.includes(':is(#vz-library-count,#vz-library-index)')&&homeCss.includes('.vz-home-library-intro>.tag'),'CSS must suppress stale R9 counting if old HTML/JS is mixed with the R11 stylesheet during rollout');
 
 
 /* The REAL /design renderer is veloryz-open-library.js, which intentionally
