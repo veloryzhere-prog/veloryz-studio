@@ -11,14 +11,14 @@
  const clamp=v=>Math.max(0,Math.min(1,v));
  const syncHeader=()=>{
   if(!headerBrand)return;
-  const start=24;
-  const end=Math.max(220,Math.min(340,innerHeight*.34));
+  const start=8;
+  const end=Math.max(96,Math.min(150,innerHeight*.16));
   const progress=clamp((scrollY-start)/(end-start));
-  const opacity=1-progress;
+  const opacity=progress>=.985?0:1-progress;
   headerBrand.style.setProperty('--vz-brand-scroll-opacity',opacity.toFixed(3));
   headerBrand.style.setProperty('--vz-brand-scroll-y',reduced.matches?'0px':(-12*progress).toFixed(2)+'px');
   headerBrand.style.setProperty('--vz-brand-scroll-scale',reduced.matches?'1':(1-.035*progress).toFixed(4));
-  const away=progress>.985;
+  const away=progress>=.985;
   headerBrand.classList.toggle('is-scrolled-away',away);
   if(away){
    headerBrand.setAttribute('aria-hidden','true');
