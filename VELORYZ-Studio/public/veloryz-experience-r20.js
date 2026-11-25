@@ -321,21 +321,14 @@
   if(!chapters.length)return;
 
   chapters.forEach(item=>item.node.classList.add('vz-r27-scene'));
-  let rail=document.querySelector('.vz-r27-chapter-rail');
-  if(!rail){
-   rail=document.createElement('div');
-   rail.className='vz-r27-chapter-rail';
-   rail.setAttribute('aria-hidden','true');
-   rail.innerHTML=chapters.map(item=>'<span data-r27-chapter="'+item.no+'"><i></i><b>'+item.no+' '+item.label+'</b></span>').join('');
-   document.body.append(rail);
-  }
+  // Keep scene observation, but do not render the fixed numbered chapter rail.
+  document.querySelector('.vz-r27-chapter-rail')?.remove();
 
   if(body.dataset.vzR27Chapters==='1')return;
   body.dataset.vzR27Chapters='1';
   if(!('IntersectionObserver'in window))return;
 
   const activate=no=>{
-   rail.querySelectorAll('[data-r27-chapter]').forEach(el=>el.classList.toggle('is-active',el.dataset.r27Chapter===no));
    body.dataset.vzR27Chapter=no;
   };
   const observer=new IntersectionObserver(entries=>{
