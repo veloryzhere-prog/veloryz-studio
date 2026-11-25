@@ -1,3 +1,4 @@
+import {characterStyles,conversationName,characterPrompt,guideVoice} from './persona-behaviour-r35.mjs';
 import {isSpicy,tonePrompt} from '../public/chat-tone.mjs';
 import {addressFor,nameError,familiarLead,relationshipPrompt} from './adviser-address.mjs';
 import {studioGuide} from './adviser-guide.mjs';
@@ -60,12 +61,12 @@ export async function aiConnection(env,provided){
  const status=config.storageError?'credential':config.configured?health?.status||'not_checked':'not_configured';
  return {configured:config.configured,provider:config.provider,providerLabel:providerName(config),model:config.model,status,checkedAt:health?.checkedAt||null,message:providerMessage(config,status),guideAvailable:false};
 }
-async function requestAi(config,input,instructions,maxOutput=640){
+async function requestAi(config,input,instructions,maxOutput=640,temperature=.65){
  if(!config.configured||config.provider==='guide')return {ok:false,status:'not_configured'};
  let response;
  const gemini=config.provider==='gemini';
  const endpoint=gemini?'https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(config.model)+':generateContent':'https://api.openai.com/v1/responses';
- const body=gemini?{systemInstruction:{parts:[{text:instructions}]},contents:input.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),generationConfig:{maxOutputTokens:Math.max(1024,maxOutput*2),temperature:.65}}:{model:config.model,store:false,max_output_tokens:maxOutput,instructions,input};
+ const body=gemini?{systemInstruction:{parts:[{text:instructions}]},contents:input.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),generationConfig:{maxOutputTokens:Math.max(1024,maxOutput*2),temperature}}:{model:config.model,store:false,max_output_tokens:maxOutput,instructions,input};
  try{response=await fetch(endpoint,{method:'POST',headers:gemini?{'x-goog-api-key':config.key,'Content-Type':'application/json'}:{Authorization:'Bearer '+config.key,'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(26000)});}catch{recordHealth(config,'network');return {ok:false,status:'network'};}
  let result;try{result=await response.json();}catch{result={};}
  if(!response.ok){
@@ -74,7 +75,7 @@ async function requestAi(config,input,instructions,maxOutput=640){
   recordHealth(config,status);return {ok:false,status};
  }
  const answer=(gemini?(result.candidates?.[0]?.content?.parts||[]).filter(p=>typeof p.text==='string'&&!p.thought).map(p=>p.text):(result.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text)).join('\n').trim().slice(0,4500);
- if(!answer){recordHealth(config,'provider');return {ok:false,status:'provider'};}
+ if(!answer){if(gemini&&(/SAFETY|BLOCKLIST|PROHIBITED_CONTENT|RECITATION/.test(String(result.candidates?.[0]?.finishReason||result.promptFeedback?.blockReason||''))))return {ok:false,status:'blocked'};recordHealth(config,'provider');return {ok:false,status:'provider'};}
  recordHealth(config,'live');return {ok:true,answer};
 }
 /* A valid, independently rate-limited Help/Support/Client/Creator request that is
@@ -172,19 +173,13 @@ export async function adviserChat(request,env,state){
  const handoff=/not (?:help|work|resolv)|still (?:broken|unresolved)|unresolved|human|real person|refund|payment failed|security breach/i.test(messages.at(-1).content);
  const extras=adviserNavigation(messages.at(-1).content,data.page,data.agent);
  const sources=retrievePublicStudioKnowledge(messages.filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' '),state,5).map(x=>({title:x.title,path:x.path}));
- const profile=addressFor(data.firstName,data.agent);
- if((data.firstName&&nameError(data.firstName))||(!profile&&messages.length>1)){
-  return reply({error:nameError(data.firstName),code:'NAME_REQUIRED'},400);
- }
+ const preferredName=conversationName(data.firstName,messages);
+ const profile=addressFor(preferredName,data.agent);
  const firstNamed=data.firstNamed===true;
- const turnIndex=Math.floor(messages.length/2);
- const greeting=familiarLead(profile,data.agent,turnIndex,firstNamed);
- const roast=isSpicy(messages.at(-1).content);
- const voice=relationshipPrompt(profile,data.agent,turnIndex)+tonePrompt(messages.at(-1).content,data.agent,profile?.role);
+ const voice=characterPrompt(data.agent,messages,profile,firstNamed,state.site?.[data.agent+'Brief']);
  const guide=()=>{
-  const result=studioGuide({...agent,id:data.agent},messages,state);
-  const banter=roast&&['aryan','nikhil','happy'].includes(data.agent)&&!['father','uncle','elder-uncle'].includes(profile?.role)?'Bhai, gaali apni jagah — ab actual point pe aate hain. ':'';
-  return reply({...result,answer:greeting+banter+result.answer,extras:{...extras,links:result.links?.length?result.links:extras.links},sources,canUseStudioModel:config.provider!=='guide'});
+  const result=guideVoice(data.agent,studioGuide({...agent,id:data.agent},messages,state),messages,profile);
+  return reply({...result,extras:{...extras,links:result.links?.length?result.links:extras.links},sources,canUseStudioModel:config.provider!=='guide',behaviourVersion:'r35'});
  };
  const config=await resolveAiSettings(env),health=providerHealth.get(healthId(config));
  if(!config.configured||config.provider==='guide'){
@@ -194,8 +189,7 @@ export async function adviserChat(request,env,state){
  if(health?.retryAt>Date.now()&&data.allowGuide===true)return guide();
  if(health?.retryAt>Date.now())return reply({error:'The studio AI connection is temporarily unavailable. Please retry shortly.',code:'AI_TEMPORARILY_UNAVAILABLE',agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI temporarily unavailable.',extras},503);
  const maxOutput=['nikhil','aryan'].includes(data.agent)?1600:data.agent==='ritik'?1200:950;
- const firstTurnInstruction=!profile&&messages.length===1?'\nFIRST ENCOUNTER: Answer their first question briefly and naturally. At the end, ask once for their first name so you can personalize the next replies. The existing frontend displays the required first-name input. Do not demand a full name.':'';
- const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice+firstTurnInstruction,maxOutput);
+ const result=await requestAi(config,messages,adviserPrompt(data.agent,state,handoff,messages,extras.page)+voice,maxOutput,characterStyles[data.agent].temperature);
  if(!result.ok&&data.allowGuide===true)return guide();
  if(!result.ok)return reply({error:'The VELORYZ AI engine could not respond. Please retry or contact the studio.',code:'AI_PROVIDER_'+result.status.toUpperCase(),agent:agent.name,available:false,mode:'unavailable',notice:'Studio AI reply failed · No simulated response was substituted.',extras},503);
  return reply({answer:result.answer,agent:agent.name,handoff,available:true,mode:'ai',sources,notice:'VELORYZ Studio AI · Responses may contain mistakes.',extras});
