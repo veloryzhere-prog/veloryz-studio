@@ -29,10 +29,10 @@ const log=document.createElement('div');log.className='vz-ai-log';log.setAttribu
 const disclaimer=document.createElement('p');disclaimer.className='vz-ai-disclaimer';
 disclaimer.textContent='AI assistant · Not human staff. For account-specific help, use official support or your secure client portal.';
 const form=document.createElement('form');form.className='vz-ai-form';
-const input=document.createElement('textarea');input.className='vz-ai-input';input.rows=1;input.required=true;input.maxLength=2000;input.placeholder='Ask Happy a question…';input.setAttribute('aria-label','Message to VELORYZ AI');
+const input=document.createElement('textarea');input.className='vz-ai-input';input.rows=1;input.required=true;input.maxLength=1200;input.placeholder='Ask Happy a question…';input.setAttribute('aria-label','Message to VELORYZ AI');
 const send=document.createElement('button');send.type='submit';send.className='vz-ai-send';send.textContent='➤';send.setAttribute('aria-label','Send message');
 form.append(input,send);
-const status=document.createElement('p');status.className='vz-ai-status';status.setAttribute('role','status');status.textContent='Live answers · Grounded in VELORYZ studio information';
+const status=document.createElement('p');status.className='vz-ai-status';status.setAttribute('role','status');status.textContent='Studio AI · Live availability checked on reply';
 drawer.append(header,tabs,log,disclaimer,form,status);root.append(drawer,launch);
 document.body.append(root);
 let active='happy',busy=false,controller=null;
@@ -49,18 +49,18 @@ function askVisitorName(){
  if(visitorFirstName||nameRequested)return;
  nameRequested=true;
  const wrap=el('div','vz-ai-name-capture');
- const label=el('label','vz-ai-name-label','Before we continue, what should we call you?');
+ const label=el('label','vz-ai-name-label','What should we call you? (Optional)');
  label.htmlFor='vz-ai-first-name';
  const field=el('input','vz-ai-name-input');field.id='vz-ai-first-name';field.type='text';field.required=true;
  field.maxLength=40;field.placeholder='Your first name';field.autocomplete='given-name';
  const save=el('button','vz-ai-name-save','Continue ↗');save.type='submit';
- const form=el('form','vz-ai-name-form');form.append(label,field,save);
+ const form=el('form','vz-ai-name-form');const skip=el('button','vz-ai-name-save','Skip');skip.type='button';skip.addEventListener('click',()=>{wrap.remove();input.focus({preventScroll:true});});form.append(label,field,save,skip);
  form.addEventListener('submit',e=>{
-  e.preventDefault();const name=field.value.trim().replace(/[<>]/g,'');
-  if(!name)return;
+  e.preventDefault();const name=field.value.normalize('NFC').trim();
+  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Please use a first name only.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
   visitorFirstName=name;wrap.remove();
   status.textContent='Thank you, '+name+'. Your first name stays in this browser tab.';
-  addMessage('assistant','Nice to meet you, '+name+'. What can I help you with next?');
+  const greetings={happy:'Hey '+name+'! ⚡',nikhil:'Good to meet you, '+name+'.',milky:'Lovely to meet you, '+name+' ✨',ritik:'Got it, '+name+'.',aryan:'Alright, '+name+'. Let’s get into it.'};addMessage('assistant',greetings[active]);
   input.focus({preventScroll:true});
  });
  wrap.append(form);drawer.insertBefore(wrap,disclaimer);
@@ -107,7 +107,7 @@ document.addEventListener('keydown',e=>{
  if(root.dataset.open!=='true')return;
  if(e.key==='Escape'){e.preventDefault();open(false);}
  if(e.key==='Tab'){
-  const focusables=[...drawer.querySelectorAll('button:not(:disabled),textarea')].filter(el=>el.getClientRects().length);
+  const focusables=[...drawer.querySelectorAll('button:not(:disabled),textarea,input')].filter(el=>el.getClientRects().length);
   const first=focusables[0],last=focusables[focusables.length-1];
   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
   if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
@@ -125,7 +125,7 @@ form.addEventListener('submit',async e=>{
  try{
   const response=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},
    credentials:'same-origin',signal:controller.signal,body:JSON.stringify({agent:thisAgent,allowGuide:true,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(thisAgent),
-    messages:messages.slice(-14),page:location.pathname})});
+    messages:messages.slice(-15),page:location.pathname})});
   const result=await response.json().catch(()=>({error:'Unable to read assistant response'}));
   if(!response.ok||!result.answer||!['ai','guide'].includes(result.mode))throw Error(result.error||'Live AI is temporarily unavailable.');
   messages.push({role:'assistant',content:String(result.answer)});thinking.textContent=result.answer;
