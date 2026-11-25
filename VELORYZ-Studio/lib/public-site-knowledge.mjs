@@ -1,6 +1,7 @@
 /* Public, source-backed VELORYZ site evidence. Never index private client/admin data. */
 import docs from '../public/studio-docs-index.json' with {type:'json'};
 import library from '../public/docs-library.json' with {type:'json'};
+import expanded from './knowledge-v8-articles.json' with {type:'json'};
 const stop=new Set('how what when where why which can could would should your from with this that have will does are was for and the you our a an to of or at on in is it as please tell about more like thanks hey hello help me my i we want need show give project veloryz site studio'.split(' '));
 const tokenize=s=>[...new Set(String(s??'').toLowerCase().normalize('NFKC').match(/[\p{L}\p{N}]{3,}/gu)||[])].filter(w=>!stop.has(w)).slice(0,36);
 const brief=(value,max=350)=>String(value??'').replace(/<[^>]*>/g,' ').replace(/[#*_]{1,3}/g,' ').replace(/\s+/g,' ').trim().slice(0,max);
@@ -45,7 +46,14 @@ export function publicKnowledgeIndex(state={}){
   if((o.startAt&&Date.parse(o.startAt)>Date.now())||(o.endAt&&Date.parse(o.endAt)<=Date.now()))continue;
   cms.push(row('offer',o.title,o.body,'/pricing/','Confirm eligibility with the team.',0));
  }
- return [...cms,...sources];
+ const edits=site.documentation?.edits||{};
+ const hidden=new Set(Object.entries(edits).filter(([,edit])=>edit?.visible===false).map(([path])=>path.replace(/\/+$/,'')));
+ // Editorial articles are guidance, not evidence that planned features are deployed.
+ const extended=expanded.filter(a=>!hidden.has(a.path)).map(a=>{
+  const edit=edits[a.path]||{};
+  return row('editorial-guide',edit.title||a.title,edit.summary||a.task,a.path.replace(/\/+$/,'')+'/', 'Review edition; verify actual feature availability. '+a.check+' '+(edit.markdown||a.body),1);
+ }).filter(x=>x.path);
+ return [...cms,...sources.filter(x=>!hidden.has(x.path.replace(/\/+$/,''))),...extended];
 }
 export function retrievePublicStudioKnowledge(query,state={},limit=6){
  const input=String(query||'').slice(-2000);
