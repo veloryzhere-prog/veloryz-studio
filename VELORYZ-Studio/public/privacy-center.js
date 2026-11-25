@@ -127,8 +127,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 window.VeloryzPrivacy={allowed,choice,open:()=>ui('settings'),policyVersion:VERSION};
 const legalLink=(href,text)=>'<a href="'+href+'">'+text+' ↗</a>';
 const section=(title,paragraphs)=>'<section class="vz-legal-section"><h2>'+title+'</h2>'+paragraphs.map(p=>'<p>'+p+'</p>').join('')+'</section>';
-const header=(k,title,desc)=>'<header class="vz-legal-hero"><span>'+k+'</span><h1>'+title+'</h1><p>'+desc+'</p><small>Version '+VERSION+' · Updated 22 November 2026</small></header>';
-const nav=()=>'<nav class="vz-legal-nav" aria-label="Policy pages">'+legalLink('/privacy/','Privacy')+legalLink('/cookies/','Cookies')+legalLink('/terms/','Terms')+legalLink('/privacy/choices/','Your choices')+'</nav>';
+const header=(k,title,desc)=>'<header class="vz-legal-hero"><span>'+k+'</span><h1>'+title+'</h1><p>'+desc+'</p><small>Version '+VERSION+' · Policy text updated 25 November 2026</small></header>';
+const nav=()=>'<nav class="vz-legal-nav" aria-label="Policy pages">'+legalLink('/trust','Trust Centre')+legalLink('/docs/index.html','Knowledge Workspace')+legalLink('/privacy/','Privacy')+legalLink('/cookies/','Cookies')+legalLink('/terms/','Terms')+legalLink('/privacy/choices/','Your choices')+'</nav>';
 const btn='<button type="button" class="vz-legal-settings-button" data-privacy-settings>Change privacy preferences ↗</button>';
 function policyPage(type){
  const contact='<a href="mailto:veloryz.here@gmail.com">veloryz.here@gmail.com</a>';
@@ -153,6 +153,9 @@ function policyPage(type){
   section('Security and retention',[
   'Owner and client routes are access-controlled, and client invitations are designed as time-limited single-use credentials. No internet service can guarantee absolute security.',
   'We keep data while it is needed to respond, manage a project, maintain relevant records, resolve disputes or comply with law. Specific deletion schedules depend on the record class and legal obligations; request the current schedule for your data from the studio. Optional local measurements can be cleared in the browser.'])+
+  section('Data requests and grievance handling',[
+  'Send the type of request and, if useful, a non-secret project reference to '+contact+'. Requests may require proportionate identity verification through a secure channel; never send an invitation code or password. The team will review the request and explain the outcome, applicable exceptions and any available escalation route. Clearing your browser storage does not erase project records stored on the server.',
+  'Read the '+legalLink('/docs/field-notes/privacy-requests.html','privacy request guide')+' and '+legalLink('/privacy/choices/','manage optional browser storage')+'. The relevant legal identity, grievance contact, record-specific retention schedule and active vendor arrangements can be requested from the team; this notice does not claim an unverified certification.'])+
   section('Children, changes and contact',[
   'The site is not designed to collect personal information from children without appropriate authorisation. Contact us if a child has submitted information without permission.',
   'We update this notice when the actual workflow or providers change, and may request new consent for material changes. Contact: '+contact+'.']);
@@ -167,6 +170,10 @@ function policyPage(type){
   '<tr><td><strong>Local analytics</strong></td><td>First-party navigation and performance counters stored only on your device; not uploaded as site-wide analytics.</td><td>Optional, off by default</td><td>Browser local storage until cleared or consent withdrawn.</td></tr>'+
   '<tr><td><strong>Advertising tracking</strong></td><td>No behavioural advertising trackers are currently installed by this implementation.</td><td>Not active</td><td>No marketing-tracker retention.</td></tr>'+
   '</tbody></table></div>'+
+  section('First-party browser storage identified in the code',[
+  'The consent selection is stored as <code>veloryz.privacy.choice.v1</code> with a version, timestamp and selected categories. The consent controller validates this choice for up to 180 days. A pseudonymous receipt identifier may be used by the receipt service.',
+  'Optional local measurement uses <code>veloryz.measurement.optin.v1</code> and <code>veloryz.measurement.local.v1</code>; these are cleared when measurement is not allowed. Optional campaign and consultation preferences may use <code>vz-campaign:*</code>, <code>veloryz.consultation.no-auto</code> and <code>veloryz.workInvitation.v1</code>.',
+  'This list describes the inspected consent controller, not an exhaustive deployed browser or server cookie audit. For details, see the '+legalLink('/docs/field-notes/consent-verification.html','consent verification guide')+'.'])+
   section('Reject, accept or change your decision',[
   'The first-visit banner has equally prominent “Reject optional” and “Accept optional” actions; custom categories can be saved separately. You can reopen the same controls at any time. Refusing optional storage does not stop necessary project, navigation or security features.',
   'Your browser may also offer a Global Privacy Control or Do Not Track signal. Where detected, this implementation disables optional local measurement and reserves marketing tracking as off.'])+btn;
