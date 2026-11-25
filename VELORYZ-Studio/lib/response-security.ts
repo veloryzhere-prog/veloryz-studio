@@ -27,7 +27,7 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
    +'<meta name="veloryz-experience-release" content="'+experienceRelease+'">'
    +'<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'
    +'<script src="/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9" defer></script>'
-   +'<script src="/veloryz-experience-r20.js?v=20261124-r29" defer></script>'
+   +'<script src="/veloryz-experience-r20.js?v=20261125-motion-restore-r33" defer></script>'
   : '';
  const editorialAssets=!privatePage&&status===200
   ? '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'
@@ -40,12 +40,12 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
   : '';
  const qcAssets=referenceMenu
   ? '<link rel="stylesheet" href="/reference-qc-layout-r7.css?v=20261123-layout-qc-r7">'
-   +'<link rel="stylesheet" href="/home-editorial-r32.css?v=20261125-r32">'
+   +'<link rel="stylesheet" href="/home-editorial-r32.css?v=20261125-motion-restore-r33">'
   : '';
  if(referenceMenu){
   headers['X-VELORYZ-Menu-Release']='reference-menu-20261123-r6';
   headers['X-VELORYZ-QC-Release']='visual-layout-20261123-r7';
-  headers['X-VELORYZ-Homepage-Release']='editorial-20261125-r32';
+  headers['X-VELORYZ-Homepage-Release']='motion-restore-20261125-r33';
  }
  html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
