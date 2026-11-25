@@ -1,0 +1,14 @@
+/* R34: the capabilities sequence owns its scroll geometry. */
+body.vz-reference-site main[data-p="home"] #hzs{height:auto;min-height:0;position:relative;overflow:visible}
+body.vz-reference-site main[data-p="home"] #hzs .stick{position:relative;top:auto;height:auto;min-height:0;overflow:visible;padding-block:clamp(64px,10vh,120px)}
+body.vz-reference-site main[data-p="home"] #trk{display:flex;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;padding-inline:clamp(20px,5vw,72px);box-sizing:border-box;will-change:auto;transform:none}
+body.vz-reference-site main[data-p="home"] #trk>.pan{scroll-snap-align:start;flex-shrink:0}
+body.vz-reference-site main[data-p="home"] #hzs:not(.vz-capabilities-pinned) .bar{display:none}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned{height:var(--cap-scroll-height,520vh)}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned>.stick{position:sticky;top:0;height:100svh;min-height:0;box-sizing:border-box;overflow:hidden;padding-block:clamp(72px,11vh,118px) clamp(24px,4vh,48px);justify-content:center}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned .head{flex:none}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned #trk{width:max-content;max-width:none;overflow:visible;scroll-snap-type:none;will-change:transform;flex:none;transform:translate3d(0,0,0)}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned .pan{height:min(52svh,500px);min-height:230px;box-sizing:border-box}
+body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned .bar{display:block;flex:none}
+body.vz-reference-site:not(.vz-r25-menu-open):not(.vz-menu-open){overflow-x:clip!important;overflow-y:visible}
+@media(max-height:600px){body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned>.stick{padding-block:52px 12px}body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned .head{margin-bottom:12px}body.vz-reference-site main[data-p="home"] #hzs.vz-capabilities-pinned .pan{height:48svh;min-height:170px}}
