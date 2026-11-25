@@ -1,0 +1,44 @@
+/* VELORYZ R31 — targeted editorial polish. No changes to original 3D or scarf engines. */
+body.vz-reference-site main[data-p="home"]{--r31-gutter:clamp(20px,5vw,72px);--r31-space:clamp(60px,9vw,138px)}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt .lead{max-width:48ch;line-height:1.58;text-wrap:pretty}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .btn{border-radius:10px;min-height:49px}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .vz-hero-practices{border-top:1px solid var(--line);padding-top:16px}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .vz-hero-cta-main{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .vz-hero-cta-main:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+body.vz-reference-site main[data-p="home"] .stmt{padding:var(--r31-space) var(--r31-gutter);display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,3.4fr);gap:clamp(24px,5vw,80px);align-items:start;border-bottom:1px solid var(--line)}
+body.vz-reference-site .vz-r31-label{display:flex;align-items:center;gap:9px;font:600 11px/1.5 var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--mut)}
+body.vz-reference-site .vz-r31-label::before{content:"";width:8px;height:8px;flex:none;background:var(--acc);border-radius:50%}
+body.vz-reference-site main[data-p="home"] .stmt #stmt{font-size:clamp(1.9rem,4.25vw,4.6rem);line-height:1.12;letter-spacing:-.035em;text-wrap:pretty;margin:0;max-width:22ch}
+body.vz-reference-site .vz-r31-intro-links{display:flex;gap:12px 24px;flex-wrap:wrap;margin-top:clamp(26px,4vw,48px)}
+body.vz-reference-site .vz-r31-intro-links a{font-size:14px;font-weight:600;padding:9px 0;border-bottom:1px solid var(--line)}
+body.vz-reference-site .vz-r31-intro-links a:hover{border-color:var(--acc);color:var(--acc)}
+body.vz-reference-site main[data-p="home"] .hz .head{gap:24px}
+body.vz-reference-site main[data-p="home"] .pan{border-radius:18px;padding:clamp(20px,3vw,38px);background:color-mix(in srgb,var(--bg) 83%,var(--card));border-color:var(--line)}
+body.vz-reference-site main[data-p="home"] .pan p{max-width:36ch;font-size:clamp(.9rem,1.15vw,1.1rem)}
+body.vz-reference-site main[data-p="home"] .pan .n{font-size:clamp(2.6rem,4.5vw,4.8rem)}
+body.vz-reference-site main[data-p="home"] .pan h3{text-wrap:balance;max-width:12ch}
+body.vz-reference-site .vz-r31-motion{padding:var(--r31-space) var(--r31-gutter);border-block:1px solid var(--line)}
+body.vz-reference-site .vz-r31-motion-card{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:stretch;min-height:clamp(330px,36vw,520px);overflow:hidden;border-radius:18px;background:#171319;color:#f7f0e4}
+body.vz-reference-site .vz-r31-motion-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(25px,5vw,70px)}
+body.vz-reference-site .vz-r31-motion-copy .vz-r31-label{color:#dec9e6}
+body.vz-reference-site .vz-r31-motion-copy .vz-r31-label::before{background:#dfb9f4}
+body.vz-reference-site .vz-r31-motion-copy h2{font-family:var(--serif);font-weight:300;letter-spacing:-.05em;font-size:clamp(2.8rem,5.3vw,5.7rem);line-height:.99;margin:20px 0}
+body.vz-reference-site .vz-r31-motion-copy p{font-size:clamp(.96rem,1.25vw,1.13rem);line-height:1.6;color:#e0d7df;max-width:36ch;margin-bottom:28px}
+body.vz-reference-site .vz-r31-motion-copy a{display:inline-flex;align-items:center;gap:24px;border-radius:8px;background:#ecd9f3;color:#211726;padding:14px 18px;font-size:14px;font-weight:600;min-height:48px}
+body.vz-reference-site .vz-r31-motion-copy a:hover{background:#fff}
+body.vz-reference-site .vz-r31-motion-art{position:relative;display:grid;place-items:center;overflow:hidden;min-height:260px;background:radial-gradient(ellipse at 50% 53%,#5d3558 0%,#2e2136 42%,#171319 75%);isolation:isolate}
+body.vz-reference-site .vz-r31-motion-art svg{width:100%;height:100%;position:absolute;inset:0;opacity:.92}
+body.vz-reference-site .vz-r31-motion-art .vz-r31-motion-count{position:relative;font:300 clamp(5rem,12vw,11rem)/1 var(--serif);letter-spacing:-.075em;color:#f7f0e4;display:grid;justify-items:center}
+body.vz-reference-site .vz-r31-motion-count small{font:500 11px/1.5 var(--sans);letter-spacing:.18em;color:#e3c8eb;text-transform:uppercase;margin-top:8px}
+body.vz-reference-site main[data-p="home"] .vz-reference-journey{padding-top:var(--r31-space);padding-bottom:var(--r31-space)}
+body.vz-reference-site main[data-p="home"] .vz-journey-stage{border-radius:12px}
+body.vz-reference-site main[data-p="home"] .vz-home-review-section{padding-top:var(--r31-space);padding-bottom:var(--r31-space)}
+body.vz-reference-site main[data-p="home"] .docs{padding:var(--r31-space) var(--r31-gutter)}
+body.vz-reference-site main[data-p="home"] .dg{gap:10px;margin-top:clamp(22px,4vw,48px)}
+body.vz-reference-site main[data-p="home"] .dc{min-height:132px;border-radius:12px;padding:20px}
+body.vz-reference-site main[data-p="home"] .dc b{font-size:clamp(1.2rem,1.8vw,1.65rem)}
+body.vz-reference-site :is(.vz-r31-motion-copy a,.vz-r31-intro-links a):focus-visible{outline:3px solid var(--acc);outline-offset:4px}
+body.vz-reference-site footer .vz-reference-policies{gap:12px 20px}
+@media(min-width:921px){body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{font-size:clamp(4rem,6.65vw,8.5rem);letter-spacing:-.055em}body.vz-reference-site main[data-p="home"] .vz-material-hero #h1 .ln:last-child{padding-left:0}}
+@media(max-width:760px){body.vz-reference-site main[data-p="home"] .stmt{grid-template-columns:1fr;gap:18px}body.vz-reference-site .vz-r31-motion-card{grid-template-columns:1fr}body.vz-reference-site .vz-r31-motion-art{min-height:220px}body.vz-reference-site .vz-r31-motion-copy{padding:26px}body.vz-reference-site .vz-r31-motion-copy h2{font-size:clamp(2.5rem,9vw,4.3rem)}body.vz-reference-site main[data-p="home"] .dg{grid-template-columns:repeat(2,minmax(0,1fr))}body.vz-reference-site main[data-p="home"] .dc{min-width:0;padding:15px;min-height:110px}}
+@media(max-width:360px){body.vz-reference-site main[data-p="home"] .dg{grid-template-columns:1fr}}
