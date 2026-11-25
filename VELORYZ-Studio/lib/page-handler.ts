@@ -3,6 +3,7 @@ import siteShell from './site-shell';
 import claudeReferenceShell from './claude-reference-shell';
 import {renderIndexableBody} from './search-index-content';
 import {renderHtmlDocument} from './docs-server-html';
+import {knowledgeResponse,knowledgeRoutes,knowledgeCanonical} from './knowledge-v8';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import {findDesignPreview,renderDesignPreview,renderDesignFullPreview} from './design-detail-page';
@@ -20,7 +21,7 @@ export const dynamic = 'force-dynamic';
 const isDocumentPath=(p:string)=>p==='/docs'||p.startsWith('/docs/')||p==='/help/studio'||p.startsWith('/help/studio/');
 const htmlDocumentPath=(p:string)=>{
  const base=canonicalPath(p);
- return isDocumentPath(base)?(base==='/docs'||base==='/docs/studio'||base==='/help/studio'?base+'/index.html':base+'.html'):base;
+ return Object.hasOwn(knowledgeRoutes,base)?knowledgeCanonical(base):isDocumentPath(base)?(base==='/docs'||base==='/docs/studio'||base==='/help/studio'?base+'/index.html':base+'.html'):base;
 };
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
@@ -145,6 +146,7 @@ export async function GET(request: Request) {
  for(const person of people)pages['/teamjob/'+(person.slug||slug(person.name))]=person.name+' — Studio profile';
  for(const document of ["overview","experience","architecture","project-ai","pricing","client-portal","privacy","copyright","quality","troubleshooting","communications"])pages['/docs/'+document]='VELORYZ '+document.replace(/-/g,' ')+' documentation';
  for(const [docPath,docTitle] of Object.entries(studioDocsRoutes))pages[docPath]=docTitle;
+ Object.assign(pages,knowledgeRoutes);
  const docEdits=data.state.site.documentation?.edits||{};
  for(const [rawPath,edit] of Object.entries(docEdits)){
   const p=rawPath.replace(/\/+$/,'')||'/';
@@ -162,6 +164,8 @@ export async function GET(request: Request) {
   }).join('');
   return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
  }
+ const knowledge=knowledgeResponse(request,normal,docEdits,base);
+ if(knowledge){if(!import.meta.env.DEV&&base!==new URL(request.url).origin)knowledge.headers.set('X-Robots-Tag','noindex, nofollow');return knowledge;}
  const routeDescriptions:Record<string,string>={
   '/':'VELORYZ Studio designs and develops thoughtful websites, product interfaces, identity systems and digital experiences from India, collaborating across Asia.',
   '/help/assistant':'Chat with the VELORYZ AI Help Assistant, grounded in official public documentation.',
