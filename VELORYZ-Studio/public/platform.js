@@ -5,7 +5,7 @@ function savedPlanner(){try{return VeloryzPlanner.restore(sessionStorage.getItem
 let designCategory='All',designQuery='',projectBrief=savedPlanner(),chosenDesign=null;
 let adviserIndex=0,chatMessages=[],chatBusy=false,chatAgent='',chatSession=0;
 // Conversations are kept only while this page is open, separately for each AI persona.
-let visitorFirstName='',nameRequired=false;
+let visitorFirstName='',nameRequired=false,nameSkipped=false;
 const introducedTo=new Set();
 const chatHistories=Object.create(null);
 const chatHeat=Object.create(null);
@@ -165,15 +165,16 @@ function chatBubble(message,a){
  return item;
 }
 function askFirstName(log){
- if(visitorFirstName||document.querySelector('.chat-name-card'))return;
+ if(visitorFirstName||nameSkipped||document.querySelector('.chat-name-card'))return;
  const card=document.createElement('form');
- nameRequired=true;
+ nameRequired=false;
  card.className='chat-name-card';
- card.innerHTML='<label for="chat-first-name">Your first name, please</label><p id="chat-name-help">Enter only your first name to continue chatting.</p><div><input id="chat-first-name" aria-label="Your first name" aria-describedby="chat-name-help" placeholder="Your first name" autocomplete="given-name" maxlength="40" required><button type="submit">Continue ↗</button></div>';
+ card.innerHTML='<label for="chat-first-name">What should we call you? (Optional)</label><p id="chat-name-help">Use a first name, or skip and keep chatting.</p><div><input id="chat-first-name" aria-label="Your first name" aria-describedby="chat-name-help" placeholder="Your first name" autocomplete="given-name" maxlength="40" required><button type="submit">Continue ↗</button><button type="button" data-name-skip>Skip</button></div>';
+ card.querySelector('[data-name-skip]').onclick=()=>{nameSkipped=true;nameRequired=false;card.remove();syncChatComposer();$('#expert-question')?.focus();};
  card.onsubmit=e=>{
   e.preventDefault();
   const field=card.querySelector('input'),name=field.value.normalize('NFC').trim();
-  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)||/^(?:jagriti|jagruti|जागृति|जाग्रति)$/iu.test(name)){field.setCustomValidity('Please enter your own first name only — without surnames, nicknames used as pranks, or relationship titles.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
+  if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Please enter your own first name only — without surnames, nicknames used as pranks, or relationship titles.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
   visitorFirstName=name;nameRequired=false;card.remove();syncChatComposer();chatStatus('I’ll call you '+name+'.');
   const form=$('#expert-chat-form'),input=$('#expert-question');
   if(form&&input&&!input.value.trim()&&!chatBusy){input.value='My first name is '+name+'.';sendChat(form);}else input?.focus();
