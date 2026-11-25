@@ -40,12 +40,12 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
   : '';
  const qcAssets=referenceMenu
   ? '<link rel="stylesheet" href="/reference-qc-layout-r7.css?v=20261123-layout-qc-r7">'
-   +'<link rel="stylesheet" href="/home-editorial-r31.css?v=20261125-r31">'
+   +'<link rel="stylesheet" href="/home-editorial-r32.css?v=20261125-r32">'
   : '';
  if(referenceMenu){
   headers['X-VELORYZ-Menu-Release']='reference-menu-20261123-r6';
   headers['X-VELORYZ-QC-Release']='visual-layout-20261123-r7';
-  headers['X-VELORYZ-Homepage-Release']='editorial-20261125-r31';
+  headers['X-VELORYZ-Homepage-Release']='editorial-20261125-r32';
  }
  html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
