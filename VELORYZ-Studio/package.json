@@ -27,7 +27,8 @@
     "build:docs": "node tools/build-docs.mjs",
     "test:docs": "node tools/test-docs-hub.mjs",
     "build:scroll": "node scripts/build-scroll.mjs",
-    "build:templates": "node scripts/build-template-gallery.mjs && node scripts/build-template-kits.mjs"
+    "build:templates": "node scripts/build-template-gallery.mjs && node scripts/build-template-kits.mjs",
+    "test:v2:foundation": "node --test tools/test-v2-foundation.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
