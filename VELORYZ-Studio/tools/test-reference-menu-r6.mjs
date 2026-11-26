@@ -28,11 +28,18 @@ for(const marker of [
   'class="vz-menu-bottom"',
   '/reference-site-upgrade.js?v=20261123-simple-scroll-r15'
 ])assert.ok(html.includes(marker),'Live menu markup missing: '+marker);
-const block=html.slice(html.indexOf('<div id="mn"'),html.indexOf('</div></div><div id="curt"')+12);
-assert.equal((block.match(/<a\s/g)||[]).length,14,'All 14 existing primary destinations must remain');
-for(const url of ['#home','#services','#work','#design','#pricing','#studio','#reviews','/create/','/client/','/docs/','/help/assistant/','/report-bug/']){
-  assert.ok(block.includes('href="'+url+'"'),'Navigation destination missing: '+url);
+// Verify actual menu destinations, not a historical fixed link count.
+// New studio routes may be added without breaking existing navigation.
+const menuStart=html.indexOf('<div id="mn"');
+const menuEnd=html.indexOf('<div id="curt"',menuStart);
+assert.ok(menuStart>=0&&menuEnd>menuStart,'Primary navigation block must exist');
+const block=html.slice(menuStart,menuEnd);
+const links=[...block.matchAll(/<a\s[^>]*\bhref="([^"]+)"[^>]*>/g)].map(match=>match[1]);
+const required=['#home','#services','#work','#design','#process','#pricing','#studio','#reviews','#contact','/create/','/client/','/docs/','/help/assistant/','/report-bug/','/motion-hub/','/founder/'];
+for(const url of required){
+  assert.equal(links.filter(href=>href===url).length,1,'Navigation destination must appear exactly once: '+url);
 }
+assert.equal(new Set(links).size,links.length,'Primary navigation must not contain duplicate destinations');
 assert.ok(!html.includes("this.textContent=o?'Close':'Menu'"),'Menu click must not destroy its icon and labels');
 assert.ok(html.includes("$$('#mn a').forEach(function(a,i)"),'Menu initialization must iterate all links via the list helper $$()');
 assert.ok(!html.includes("$('#mb').textContent='Menu'"),'Hash route must not erase menu glyph markup');
@@ -67,4 +74,4 @@ for(const marker of [
 assert.doesNotThrow(()=>new vm.Script(enhancement),'Reference enhancement script parses');
 const inline=html.slice(html.lastIndexOf('<script>')+8,html.lastIndexOf('</script>'));
 assert.doesNotThrow(()=>new vm.Script(inline),'Reference inline menu/router script parses');
-console.log('PASS: reference menu R6, original circular reveal, dual label morph, 14 destinations, keyboard/ARIA and public-only loading.');
+console.log('PASS: reference menu R6, original circular reveal, dual label morph, required destinations, keyboard/ARIA and public-only loading.');
