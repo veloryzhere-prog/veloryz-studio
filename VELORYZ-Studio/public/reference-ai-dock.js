@@ -15,7 +15,7 @@ launch.setAttribute('aria-expanded','false');launch.setAttribute('aria-controls'
 const img=document.createElement('img');img.src=agents[0].avatar;img.alt='';
 const launchLabel=document.createElement('span');launchLabel.textContent='Need a hand? Ask Happy';
 launch.append(img,launchLabel);
-const drawer=document.createElement('section');drawer.id='vz-ai-drawer';drawer.className='vz-ai-drawer';drawer.setAttribute('aria-label','AI conversation');
+const drawer=document.createElement('section');drawer.id='vz-ai-drawer';drawer.className='vz-ai-drawer';drawer.setAttribute('role','dialog');drawer.setAttribute('aria-labelledby','vz-ai-dock-heading');drawer.setAttribute('aria-modal','false');drawer.inert=true;
 const header=document.createElement('div');header.className='vz-ai-header';
 const heading=document.createElement('div');const kicker=document.createElement('span');kicker.className='tag';kicker.textContent='VELORYZ / STUDIO CONVERSATIONS';
 const title=document.createElement('h2');title.id='vz-ai-dock-heading';title.textContent='Happy AI';heading.append(kicker,title);
@@ -27,7 +27,7 @@ header.append(headerPortrait,heading,close);
 const tabs=document.createElement('div');tabs.className='vz-ai-personas';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Choose studio AI personality');
 const log=document.createElement('div');log.className='vz-ai-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-relevant','additions');
 const disclaimer=document.createElement('p');disclaimer.className='vz-ai-disclaimer';
-disclaimer.textContent='AI assistant · Not human staff. For account-specific help, use official support or your secure client portal.';
+disclaimer.textContent='AI assistant · Not human staff. Messages and any supplied name are sent to the studio AI service. Do not share passwords or payment details.';
 const form=document.createElement('form');form.className='vz-ai-form';
 const input=document.createElement('textarea');input.className='vz-ai-input';input.rows=1;input.required=true;input.maxLength=1200;input.placeholder='Ask Happy a question…';input.setAttribute('aria-label','Message to VELORYZ AI');
 const send=document.createElement('button');send.type='submit';send.className='vz-ai-send';send.textContent='➤';send.setAttribute('aria-label','Send message');
@@ -38,7 +38,9 @@ document.body.append(root);
 let active='happy',busy=false,controller=null;
 let visitorFirstName='',nameRequested=false;
 const introducedTo=new Set();
-const histories=new Map(agents.map(a=>[a.id,[]]));let previousFocus=null;
+const histories=new Map(agents.map(a=>[a.id,[]]));const drafts=new Map();let previousFocus=null,pending=null;
+function saveDraft(){drafts.set(active,input.value)}
+function cancelPending(){const p=pending;if(!p)return;pending=null;controller=null;p.controller.abort();const i=p.messages.indexOf(p.turn);if(i>=0)p.messages.splice(i,1);if(!drafts.get(p.agent))drafts.set(p.agent,p.question);busy=false;send.disabled=false;status.textContent='Request cancelled. You can retry.';}
 const findAgent=()=>agents.find(x=>x.id===active)||agents[0];
 const addMessage=(role,text,err=false)=>{
  const item=document.createElement('p');item.className='vz-ai-message';item.dataset.role=role;
@@ -59,12 +61,10 @@ function askVisitorName(){
   e.preventDefault();const name=field.value.normalize('NFC').trim();
   if(!/^[\p{L}][\p{L}\p{M}'’-]{0,39}$/u.test(name)){field.setCustomValidity('Please use a first name only.');field.reportValidity();field.oninput=()=>field.setCustomValidity('');return;}
   visitorFirstName=name;wrap.remove();
-  status.textContent='Thank you, '+name+'. Your first name stays in this browser tab.';
-  const greetings={happy:'Hey '+name+'! ⚡',nikhil:'Good to meet you, '+name+'.',milky:'Lovely to meet you, '+name+' ✨',ritik:'Got it, '+name+'.',aryan:'Alright, '+name+'. Let’s get into it.'};addMessage('assistant',greetings[active]);
+  status.textContent='Thank you, '+name+'. Your name will be included in your AI conversation.';
   input.focus({preventScroll:true});
  });
  wrap.append(form);drawer.insertBefore(wrap,disclaimer);
- field.focus({preventScroll:true});
 }
 function renderHistory(){
  const agent=findAgent();
@@ -73,6 +73,7 @@ function renderHistory(){
  launchLabel.textContent='Need a hand? Ask '+agent.name;
  launch.setAttribute('aria-label','Open '+agent.name+' AI studio conversation');
  root.dataset.agent=agent.id;
+ input.value=drafts.get(active)||'';
  log.replaceChildren();const messages=histories.get(active)||[];
  if(!messages.length)addMessage('assistant','You’re chatting with '+agent.name+' AI. '+agent.hint+'. What would you like to work on?');
  else for(const m of messages)addMessage(m.role,m.content);
@@ -92,55 +93,51 @@ for(const a of agents){
  const name=document.createElement('span');name.textContent=a.name;
  b.append(portrait,name);
  b.setAttribute('aria-label','Chat with '+a.name+' AI');
- b.addEventListener('click',()=>{if(busy)return;active=a.id;renderHistory();input.focus();});
+ b.addEventListener('click',()=>{if(active===a.id)return;saveDraft();cancelPending();active=a.id;renderHistory();input.focus({preventScroll:true});});
  tabs.append(b);
 }
 function open(next){
  const isOpen=typeof next==='boolean'?next:root.dataset.open!=='true';
- root.dataset.open=String(isOpen);launch.setAttribute('aria-expanded',String(isOpen));
+ if(isOpen===(root.dataset.open==='true'))return;
+ root.dataset.open=String(isOpen);launch.setAttribute('aria-expanded',String(isOpen));drawer.inert=!isOpen;
  if(isOpen){previousFocus=document.activeElement;renderHistory();input.focus({preventScroll:true});}
- else {if(controller){controller.abort();controller=null;}busy=false;send.disabled=false;(previousFocus?.isConnected?previousFocus:launch).focus({preventScroll:true});}
+ else {saveDraft();cancelPending();(previousFocus?.isConnected?previousFocus:launch).focus({preventScroll:true});}
 }
 launch.addEventListener('click',()=>open());
 close.addEventListener('click',()=>open(false));
 document.addEventListener('keydown',e=>{
  if(root.dataset.open!=='true')return;
- if(e.key==='Escape'){e.preventDefault();open(false);}
- if(e.key==='Tab'){
-  const focusables=[...drawer.querySelectorAll('button:not(:disabled),textarea,input')].filter(el=>el.getClientRects().length);
-  const first=focusables[0],last=focusables[focusables.length-1];
-  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
-  if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
- }
+ if(e.key==='Escape'&&(root.contains(document.activeElement))){e.preventDefault();open(false);}
 });
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();form.requestSubmit();}});
 form.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;
  const question=input.value.trim();if(!question)return;
  const thisAgent=active;const messages=histories.get(thisAgent);
- messages.push({role:'user',content:question});addMessage('user',question);input.value='';
+ const turn={role:'user',content:question};messages.push(turn);addMessage('user',question);input.value='';drafts.delete(thisAgent);
  busy=true;send.disabled=true;status.textContent='Connecting to '+findAgent().name+'…';
  const thinking=addMessage('assistant','Thinking…');
- controller=new AbortController();const timeout=setTimeout(()=>controller?.abort(),36000);
+ const requestController=new AbortController();controller=requestController;const request={controller:requestController,agent:thisAgent,messages,turn,question};pending=request;const timeout=setTimeout(()=>requestController.abort(),36000);
  try{
   const response=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},
-   credentials:'same-origin',signal:controller.signal,body:JSON.stringify({agent:thisAgent,allowGuide:true,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(thisAgent),
+   credentials:'same-origin',signal:requestController.signal,body:JSON.stringify({agent:thisAgent,allowGuide:true,firstName:visitorFirstName,firstNamed:Boolean(visitorFirstName)&&!introducedTo.has(thisAgent),
     messages:messages.slice(-15),page:location.pathname})});
   const result=await response.json().catch(()=>({error:'Unable to read assistant response'}));
+  if(pending!==request)return;
   if(!response.ok||!result.answer||!['ai','guide'].includes(result.mode))throw Error(result.error||'Live AI is temporarily unavailable.');
   messages.push({role:'assistant',content:String(result.answer)});thinking.textContent=result.answer;
   if(visitorFirstName)introducedTo.add(thisAgent);
-  if(!visitorFirstName)askVisitorName();
+  if(!visitorFirstName&&root.dataset.open==='true')askVisitorName();
   status.textContent=result.mode==='guide'?'Using the studio guidance system':'Connected · Live AI reply';
  }catch(error){
   // A failed request must not be mistaken for an AI-generated answer.
-  messages.pop();thinking.textContent=error.name==='AbortError'?'Request timed out. Please try again.':String(error.message||'AI unavailable');
+  if(pending!==request)return;
+  const i=messages.indexOf(turn);if(i>=0)messages.splice(i,1);if(!input.value.trim())input.value=question;saveDraft();thinking.textContent=error.name==='AbortError'?'Request timed out. Please try again.':String(error.message||'AI unavailable');
   thinking.dataset.error='true';status.textContent='No AI reply was generated';
  }finally{
-  clearTimeout(timeout);controller=null;busy=false;send.disabled=false;input.focus({preventScroll:true});
-  log.scrollTop=log.scrollHeight;
+  clearTimeout(timeout);if(pending===request){pending=null;controller=null;busy=false;send.disabled=false;if(root.dataset.open==='true'&&active===thisAgent)log.scrollTop=log.scrollHeight;}
  }
 });
-window.VeloryzReferenceAI={open(agentId='happy'){if(agents.some(x=>x.id===agentId))active=agentId;open(true);},close(){open(false);}};
+window.VeloryzReferenceAI={open(agentId='happy'){if(agents.some(x=>x.id===agentId)&&active!==agentId){saveDraft();cancelPending();active=agentId;if(root.dataset.open==='true')renderHistory();}open(true);},close(){open(false);}};
 renderHistory();
 })();
