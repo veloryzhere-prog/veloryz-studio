@@ -103,3 +103,12 @@ html body.vz-market-body [data-preview-state=visual] .vz-market-display{overflow
 html body.vz-market-body [data-preview-state=visual] .vz-market-screenshot{object-fit:contain!important;height:auto!important;min-height:0!important}
 @media(max-width:700px){html body.vz-market-immersive .vz-market-immersive-tools{justify-content:center;gap:8px;flex-wrap:wrap}html body.vz-market-immersive .vz-market-immersive-left{display:none}html body.vz-market-immersive .vz-market-immersive-head nav{gap:6px}html body.vz-market-immersive .vz-market-preview-start{font-size:11px!important}html body.vz-market-immersive .vz-market-immersive-canvas{padding:6px!important}}
 @media(prefers-reduced-motion:reduce){html body .vz-live-linear>div{transition:none!important}}
+
+/* Specificity fixes for inherited editorial rules and inline animated headings. */
+html body :is(#main,.v4-root,.vz-market-site,.vz-market-immersive-app,.k8-shell) :is(h1,h2,h3,h4,h5,h6,em),html body.vz-reference-site :is(h1,h2,h3,h4,h5,h6,em,#h1 .ln,#h1 .ln *){font-family:var(--vz-premium-font)!important;font-style:normal!important}
+html body.motion-edition.v4-creator-page .v2-create .v4-question-heading h1{font:700 clamp(30px,3.8vw,58px)/1.13 var(--vz-premium-font)!important;letter-spacing:-.045em!important}
+html body.motion-edition.v4-creator-page .v2-create .v4-welcome h1{font:750 clamp(44px,7vw,104px)/1.05 var(--vz-premium-font)!important}
+html body :is(#main,.vz-market-site,.vz-market-immersive-app,.k8-shell) :is(p,li,dt,dd,small,label,summary,blockquote) :is(em,i){font-style:normal!important}
+html body.vz-reference-site #h1 :is(em,i,span){font-style:normal!important}
+html body.vz-market-body .vz-market-display{position:relative}
+@media(max-width:780px){html body.motion-edition.v4-creator-page .v2-create .v4-question-heading h1{font-size:clamp(30px,7vw,44px)!important}}
