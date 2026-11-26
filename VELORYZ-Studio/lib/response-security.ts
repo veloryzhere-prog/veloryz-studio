@@ -1,3 +1,4 @@
+import releaseBuild from './release-build.json';
 const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export function secureHtml(html:string,status=200,privatePage=false,forceProduction=false){
  const nonce=crypto.randomUUID().replaceAll('-','');
@@ -5,6 +6,8 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  if(forceProduction||!import.meta.env.DEV)headers['Content-Security-Policy']=`default-src 'self'; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; media-src 'self' blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://chatgpt.com; upgrade-insecure-requests`;
  if((forceProduction||!import.meta.env.DEV))headers['Strict-Transport-Security']='max-age=31536000';
  if(privatePage||status===404)headers['X-Robots-Tag']='noindex, nofollow';
+ headers['X-VELORYZ-Commit']=releaseBuild.commit;
+ headers['X-VELORYZ-Release']=releaseBuild.release;
  // The old floating create CTA was disabled in CSS but still injected on every page.
  // Remove it at the HTML source. Keep the stylesheet for its other chat/form UI.
  // Merge the supplied Silk/UI bundles into the current hardened response layer.

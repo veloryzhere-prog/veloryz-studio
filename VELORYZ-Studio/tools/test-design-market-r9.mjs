@@ -36,7 +36,7 @@ assert(!homeJs.includes("motionIsFull"),'Design switching must not be disabled b
 assert(homeCss.includes('HOME DESIGN STAGE R9')&&homeCss.includes('.vz-home-design-card.is-active'),'Pinned one-design-at-a-time stage CSS missing');
 assert(homeCss.includes('#vz-home-library.is-static'),'Reduced-motion/static library fallback missing');
 assert(!home.includes('id="vz-library-count"')&&!home.includes('id="vz-library-index"'),'Homepage design showcase must not expose numeric count/index labels');
-assert(home.includes('Curated directions / scroll to reveal'),'Homepage design intro must use non-numeric curation language');
+assert(home.includes('VELORYZ / CURATED DESIGN DROP')&&home.includes('Explore curated design directions'),'Homepage design intro must use non-numeric curation language');
 assert(!homeJs.includes("data-vz-library-go")&&!homeJs.includes("createElement('nav')"),'Homepage design showcase must not recreate the old numbered nav rail');
 assert(homeJs.includes('function removeLegacyLibraryChrome('),'Runtime cleanup must remove any stale rail/count nodes');
 assert(home.includes('vz-home-library-clean-r14'),'Homepage shell needs inline hard-stop no-blur/no-counter CSS');
@@ -95,11 +95,11 @@ assert(brandCss.includes('prefers-reduced-motion')&&brandJs.includes("['reduced'
 /* Correct assets must be shipped, cache-busted, and never injected into private pages. */
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'Public motion assets must remain isolated from private pages');
 assert(security.includes('/veloryz-brand-motion-r9.css?v=20261123-brand-motion-r9')&&security.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9'),'R9 public brand-motion assets missing');
-assert(shell.includes('/veloryz-open-library.css?v=20261123-market-r9')&&shell.includes('/veloryz-open-library.js?v=20261123-market-r9'),'Actual design library R9 cache key missing');
-assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261123-market-r9'),'Compatibility library R9 cache key missing');
+assert(shell.includes('/veloryz-open-library.css?v=20261126-v2-workspaces')&&shell.includes('/veloryz-open-library.js?v=20261126-v2-workspaces'),'Actual design library R9 cache key missing');
+assert(shell.includes('/external-design-library.css?v=20261123-market-r9')&&shell.includes('/external-design-library.js?v=20261126-v2-audit1'),'Compatibility library R9 cache key missing');
 assert(home.includes('/reference-site-upgrade.css?v=20261123-simple-scroll-r15')&&home.includes('/reference-site-upgrade.js?v=20261123-simple-scroll-r15'),'Homepage finite design stage needs the sharp R11 cache key');
 assert(home.includes('/reference-restored-features.css?v=20261123-journey-r9'),'Clickable Journey CSS needs an R9 cache key');
-assert(shell.includes('/app.js?v=20261123-r9-journey-market'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
+assert(shell.includes('/app.js?v=20261126-r42'),'Standard SPA Journey/market shell must bypass pre-R9 app cache');
 const liveGate=read('tools/check-live-ui-release.mjs'),visualQc=read('tools/qc-capture-live.mjs');
 assert(liveGate.includes('VELORYZ / CURATED DESIGN MARKET')&&liveGate.includes("$"+"$('#mn a').forEach(function(a,i)"),'Production gate must verify actual R9 market and correct list-based menu initializer');
 assert(visualQc.includes('waitForR9Deployment')&&visualQc.includes('-design-stage-mid.png')&&visualQc.includes('-marketplace.png'),'Visual QC must wait for R9 and capture the repaired surfaces');

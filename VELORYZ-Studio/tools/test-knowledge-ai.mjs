@@ -30,9 +30,9 @@ assert.ok(migration.includes('revoke all')&&migration.includes('from public,anon
 assert.ok(backend.includes("admin/ai/settings"),'Owner authorization must use verified existing session');
 assert.ok(route.includes('forwardKnowledgeAi(request,env)'),'Cloudflare proxy to Supabase AI missing');
 assert.ok(route.includes("adminAllowed")&&route.includes("publicAllowed"),'Proxy method allowlists are required');
-has('lib/site-shell.ts','support-chat.js?v=20261121-multi-agent-v3');
-has('lib/site-shell.ts','creator-ai.js?v=20261121-multi-agent-v3');
-has('lib/client-portal-shell.ts','support-chat.js?v=20261121-multi-agent-v3');
+has('lib/site-shell.ts','support-chat.js?v=20261126-r42');
+has('lib/site-shell.ts','creator-ai.js?v=20261126-r42');
+has('lib/client-portal-shell.ts','support-chat.js?v=20261126-r42');
 has('lib/admin-shell.ts','admin-knowledge-ai.js?v=20261121-multi-agent-v1');
 has('public/admin.js',"'knowledge-ai':typeof knowledgeAiAdmin==='function'?knowledgeAiAdmin:null");
 has('public/client-portal.js','["ai","AI Guide","chat"]');
@@ -52,7 +52,7 @@ for(const agent of ['help','support','client','creator']){
  const html=fakeWindow.VeloryzSupportChat.render(agent,{embed:agent==='client'});
  assert.ok(html.includes('data-vz-chat="'+agent+'"'),'Agent chat shell missing '+agent);
  assert.ok(html.includes('data-vz-form'),'Chat composer missing');
- assert.ok(html.includes('Main-Dark-Ink-Transparent.webp'),'Official logo missing');
+ assert.ok(html.includes('VELORYZ ')&&html.includes('AI, not a team member.'),'Compact assistant workspace must retain clear studio and AI identity');
  assert.ok(html.includes('data-vz-reset'),'New-chat action missing');
  assert.ok(!html.includes('modal-backdrop'),'Assistant must not be a popup');
 }

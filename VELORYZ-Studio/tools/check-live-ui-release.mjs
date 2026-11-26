@@ -4,6 +4,8 @@
  */
 const origin=(process.env.VELORYZ_LIVE_URL||'https://veloryz.online').replace(/\/$/,'');
 const release=process.env.VELORYZ_UI_RELEASE||'silk-ui-20261123-r5';
+const expectedCommit=process.env.VELORYZ_EXPECTED_COMMIT||process.env.GITHUB_SHA;
+if(!/^[a-f0-9]{40}$/.test(expectedCommit||''))throw Error('Set VELORYZ_EXPECTED_COMMIT to the full deployed Git SHA');
 const r9='design-market-20261123-r9';
 const maxAttempts=Math.max(1,Number(process.env.VELORYZ_PROBE_ATTEMPTS)||20);
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -13,7 +15,7 @@ const load=async path=>{
  url.searchParams.set('vz_design_release',r9);
  url.searchParams.set('attempt',String(Date.now()));
  const response=await fetch(url,{headers:{'Cache-Control':'no-cache'},cache:'no-store',redirect:'follow',signal:AbortSignal.timeout(15000)});
- return {status:response.status,header:response.headers.get('x-veloryz-ui-release'),menuHeader:response.headers.get('x-veloryz-menu-release'),experienceHeader:response.headers.get('x-veloryz-experience-release'),body:await response.text(),url:url.href};
+ return {status:response.status,commit:response.headers.get('x-veloryz-commit'),header:response.headers.get('x-veloryz-ui-release'),menuHeader:response.headers.get('x-veloryz-menu-release'),experienceHeader:response.headers.get('x-veloryz-experience-release'),body:await response.text(),url:url.href};
 };
 let lastError='';
 for(let attempt=1;attempt<=maxAttempts;attempt++){
@@ -21,13 +23,14 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   const [home,creator,designPage,designDetail,docsPage]=await Promise.all([
    load('/'),load('/create/'),load('/design/'),load('/design/os-portfolio-and-agencies-8b-creative-agency/'),load('/docs/')
   ]);
-  const publicOK=[home,creator,designPage,docsPage].every(p=>p.status===200&&p.header===release&&p.experienceHeader==='public-experience-20261124-r29'&&p.body.includes('name="veloryz-ui-release" content="'+release+'"')&&p.body.includes('name="veloryz-experience-release" content="public-experience-20261124-r29"'));
-  const detailOK=designDetail.status===200&&designDetail.body.includes('name="veloryz-ui-release" content="'+release+'"');
+  const exact=[home,creator,designPage,docsPage,designDetail].every(p=>p.status===200&&p.commit===expectedCommit);
+  const publicOK=exact&&[home,creator,designPage].every(p=>p.header===release&&p.body.includes('name="veloryz-ui-release"'));
+  const detailOK=designDetail.body.includes('/veloryz-design-preview.js?v=20261126-r43')&&docsPage.body.includes('<main');
   if(publicOK&&detailOK){
    const silkAssets=['/veloryz-silk-2026.css','/veloryz-ui-2026.css','/veloryz-silk-2026.js'];
    const pagesLinked=[home,creator,designDetail].every(page=>silkAssets.every(asset=>page.body.includes(asset+'?v=20261123-route-r5')));
    const editorialLinked=home.body.includes('vz-editorial-r5')
-    &&home.body.includes('class="vz-hero-practices"')
+    &&home.body.includes('class="vz-hero-eyebrow"')
     &&home.body.includes('/reference-elegance-r5.css?v=20261123-editorial-r5');
    const liveControllerFixed=home.body.includes("$$('#mn a').forEach(function(a,i)");
    const menuLinked=home.menuHeader==='reference-menu-20261123-r6'
@@ -42,12 +45,12 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9');
    const brandFlowLinked=home.body.includes('/reference-brand-flow-r17.css?v=20261123-header-footer-r19')
     &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19');
-   const r20Linked=[home,creator,designPage,docsPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261124-r29'));
-   const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261124-r29-layout')&&creator.body.includes('/creator-v4.js?v=20261124-r29-layout');
-   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261123-market-r9')
-    &&designPage.body.includes('/veloryz-open-library.js?v=20261123-market-r9')
+   const r20Linked=[home,creator,designPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261126-r42'));
+   const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-v2-workspaces')&&creator.body.includes('/creator-v4.js?v=20261126-r42');
+   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-v2-workspaces')
+    &&designPage.body.includes('/veloryz-open-library.js?v=20261126-v2-workspaces')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
-    &&designPage.body.includes('/app.js?v=20261123-r9-journey-market');
+    &&designPage.body.includes('/app.js?v=20261126-r42');
    const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,flowCss,flowJs,smoothJs,r20Css,r20Js,creatorJs,docsJs,knowledgeJs,knowledgeCss]=await Promise.all([
     ...silkAssets.map(load),load('/reference-elegance-r5.css'),load('/reference-menu-morph-r6.css'),
     load('/reference-site-upgrade.js'),load('/reference-site-upgrade.css'),
@@ -128,8 +131,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&creatorJs.body.includes('businessName')
     &&creatorJs.body.includes('window.VeloryzCreatorV4')
     &&docsJs.body.includes('Choose the outcome, not the entire library.')
-    &&docsPage.body.includes('/knowledge-v4.js?v=20261123-r20-1')
-    &&docsPage.body.includes('/knowledge-v4.css?v=20261123-r20-1')
+    &&docsPage.body.includes('/knowledge-v8.css')
     &&knowledgeJs.body.includes('Start with the outcome.')
     &&knowledgeJs.body.includes('/docs/overview.html')
     &&knowledgeJs.body.includes('/docs/pricing.html')
@@ -153,7 +155,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    }
    lastError='Release HTML exists but active assets are stale/mismatched. Silk '+silkOK+', editorial '+editorialOK+', menu '+menuOK+', menu controller '+liveControllerFixed+', R9 home links '+r9HomeLinked+', R9 design links '+r9DesignLinked+', R17 links '+brandFlowLinked+', R17 brand flow '+brandFlowOK+', R29 public experience '+r20OK+', Creator cache '+creatorAssetsFresh+', R9 home '+r9HomeOK+', R9 market '+r9MarketOK+', R9 brand '+r9BrandOK+', R9 journey '+journeyOK+', R14 clean showcase '+r11SharpOK+', R14 rail/counter removal '+r14ChromeGone+'.';
   }else{
-   lastError='Live HTML not at base release '+release+': homepage '+home.status+', create '+creator.status+', design page '+designPage.status+', docs '+docsPage.status+', detail '+designDetail.status+'.';
+   lastError='Live HTML not at expected commit '+expectedCommit+' (observed '+home.commit+'): homepage '+home.status+', create '+creator.status+', design page '+designPage.status+', docs '+docsPage.status+', detail '+designDetail.status+'.';
   }
  }catch(error){lastError=String(error);}
  console.log('Live release attempt '+attempt+'/'+maxAttempts+': '+lastError);

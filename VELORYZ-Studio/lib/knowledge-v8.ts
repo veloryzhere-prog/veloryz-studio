@@ -1,3 +1,4 @@
+import releaseBuild from './release-build.json';
 import articles from './knowledge-v8-articles.json';
 import {renderHtmlDocument} from './docs-server-html';
 type Article = (typeof articles)[number];
@@ -76,6 +77,8 @@ export function knowledgeResponse(request:Request,path:string,edits:Record<strin
  const canonical=origin+knowledgeCanonical(p);
  const document='<!doctype html><html lang="'+(hi?'hi':'en')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(pageTitle)+' — VELORYZ Studio</title><meta name="description" content="'+esc(description.slice(0,300))+'"><link rel="canonical" href="'+esc(canonical)+'"><link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/knowledge-v8.css?v=20261125"><link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r42"></head><body><div class="k8-shell'+(collection||p==='/trust'?'':' k8-reader')+'">'+top+'<main id="main">'+html+support+'</main>'+foot+'</div></body></html>';
  const headers:Record<string,string>={'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Permissions-Policy':'camera=(), microphone=(), geolocation=()','Content-Security-Policy':"default-src 'self'; script-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://chatgpt.com"};
+ headers['X-VELORYZ-Commit']=releaseBuild.commit;
+ headers['X-VELORYZ-Release']=releaseBuild.release;
  if(!import.meta.env.DEV)headers['Strict-Transport-Security']='max-age=31536000';
  return new Response(document,{headers});
 }

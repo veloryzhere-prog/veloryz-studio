@@ -18,9 +18,9 @@ for(const token of [
  'class="vz-reference-site"','id="tp"','vz-editorial-r5','id="bigV"',
  'data-logo-source="official-glb"','src="/assets/brand/veloryz-mark.svg"',
  'src="/assets/brand/official/Main-Dark-Ink-Transparent.webp"',
- 'class="vz-hero-edition"','class="vz-hero-practices"',
+ 'class="vz-hero-eyebrow"','Design × Code × Motion',
  'class="btn fill mag vz-hero-cta-main"',
- 'class="btn mag vz-hero-cta-alt"','class="btn mag vz-hero-cta-link"',
+ 'class="btn mag vz-hero-cta-alt"','href="/create/"','href="#work"',
  'id="mb"','id="mn"','class="vz-3d-controls"'
 ])assert.ok(html.includes(token),'Live markup missing: '+token);
 assert.ok(security.includes("silk-ui-20261123-r5"),'Public response must identify R5');

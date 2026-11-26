@@ -56,7 +56,9 @@ async function waitForR9Deployment(){
     fetch(root+'/create/'+bust,{cache:'no-store'})
    ]);
    const [marketText,homeText,brandText,designText,r20CssText,r20JsText,homeHtmlText,creatorHtmlText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text(),r20Css.text(),r20Js.text(),homeHtml.text(),creatorHtml.text()]);
-   const ready=market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok&&creatorHtml.ok
+   const expected=process.env.VELORYZ_EXPECTED_COMMIT||process.env.GITHUB_SHA;
+   const exact=/^[a-f0-9]{40}$/.test(expected||'')&&[homeHtml,creatorHtml,designHtml].every(r=>r.headers.get('x-veloryz-commit')===expected);
+   const ready=exact&&market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok&&creatorHtml.ok
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
     &&marketText.includes('Starting budget (INR)')
@@ -66,11 +68,11 @@ async function waitForR9Deployment(){
     &&r20CssText.includes('.vz-r20-skip')
     &&r20JsText.includes("skip.textContent='Skip to main content'")
     &&homeHtmlText.includes('name="veloryz-experience-release" content="public-experience-20261124-r29"')
-    &&designText.includes('/veloryz-open-library.js?v=20261123-market-r9')
-    &&designText.includes('/veloryz-experience-r20.js?v=20261124-r29')
-    &&creatorHtmlText.includes('/creator-v4.css?v=20261124-r29-layout')
-    &&creatorHtmlText.includes('/creator-v4.js?v=20261124-r29-layout');
-   if(ready){result.deployment={release:'public-experience-20261124-r29',attempt};return}
+    &&designText.includes('/veloryz-open-library.js?v=20261126-v2-workspaces')
+    &&designText.includes('/veloryz-experience-r20.js?v=20261126-r42')
+    &&creatorHtmlText.includes('/creator-v4.css?v=20261126-v2-workspaces')
+    &&creatorHtmlText.includes('/creator-v4.js?v=20261126-r42');
+   if(ready){result.deployment={release:'R44',commit:expected,attempt};return}
    last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);

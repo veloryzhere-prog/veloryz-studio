@@ -20,7 +20,7 @@ const siteShell=read('lib/site-shell.ts');
 const creatorCss=read('public/creator-v4.css');
 
 assert(security.includes("experienceRelease='public-experience-20261124-r29'"),'R20 public release header marker missing');
-assert(security.includes('/veloryz-experience-r20.css?v=20261124-r29')&&security.includes('/veloryz-experience-r20.js?v=20261124-r29'),'R20 public assets are not injected');
+assert(security.includes('/veloryz-experience-r20.css?v=20261124-r29')&&security.includes('/veloryz-experience-r20.js?v=20261126-r42'),'R20 public assets are not injected');
 assert(security.includes("const silkUiAssets=!privatePage&&status===200"),'R20 must remain behind the existing public/private isolation boundary');
 
 assert(js.includes("skip.textContent='Skip to main content'"),'Accessible skip link missing');
@@ -57,7 +57,7 @@ assert(css.includes('/* R27 / cinematic chapter composition */')&&css.includes('
 assert(js.includes('const initR27Chapters=()=>')&&js.includes('vz-r27-chapter-rail')&&js.includes('vzR27Chapters'),'R27 chapter navigation missing');
 assert(css.includes('/* R29 / public layout containment and collision hardening */')&&css.includes('overflow-x:clip!important'),'R29 public layout stabilization missing');
 assert(creatorCss.includes('/* R29 / responsive layout stabilization')&&creatorCss.includes('@media(min-width:1381px)'),'R29 Creator responsive stabilization missing');
-assert(siteShell.includes('/creator-v4.js?v=20261124-r29-layout')&&siteShell.includes('/creator-v4.css?v=20261124-r29-layout'),'R29 Creator cache identity missing');
+assert(siteShell.includes('/creator-v4.js?v=20261126-r42')&&siteShell.includes('/creator-v4.css?v=20261126-v2-workspaces'),'R29 Creator cache identity missing');
 assert(app.includes('Dream boldly.<br>Build with purpose.')&&!app.includes('Study Smarter.<br>Build Better.'),'R22 footer brand copy refinement missing');
 
 assert(js.includes("vz-r20-assistant-route"),'Help/support route identity state missing');
