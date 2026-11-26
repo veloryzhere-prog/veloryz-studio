@@ -1,0 +1,13 @@
+/* Warm atmosphere for the original home hero only. No new render loop or canvas. */
+body.vz-reference-site main[data-p="home"] .vz-material-hero{--vz-warm-x:70%;--vz-warm-y:35%;--vz-warm-opacity:0;background:linear-gradient(132deg,#fcf7ed 0%,#f7f0e4 48%,#eddbca 100%)!important;color:#15120e!important;isolation:isolate}
+body.vz-reference-site main[data-p="home"] .vz-material-hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 76% 32%,#e6c9b366,transparent 54%),radial-gradient(ellipse at 16% 85%,#edc6ab44,transparent 48%)!important;opacity:1;mask-image:none}
+body.vz-reference-site main[data-p="home"] .vz-material-hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 300px 250px at var(--vz-warm-x) var(--vz-warm-y),#eab58e48 0%,#eac9aa22 38%,transparent 78%);opacity:var(--vz-warm-opacity);transition:opacity .55s ease}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #bigV{z-index:2}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt{z-index:4}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .vz-3d-controls{z-index:7}
+body.vz-reference-site main[data-p="home"] .vz-material-hero :is(#h1,.vz-hero-eyebrow,.vz-r32-controls-summary){color:#15120e}
+:root[data-theme="dark"] body.vz-reference-site main[data-p="home"] .vz-material-hero{background:linear-gradient(132deg,#17120e,#201711 60%,#302016)!important;color:#f7f0e4!important}
+:root[data-theme="dark"] body.vz-reference-site main[data-p="home"] .vz-material-hero::before{background:radial-gradient(ellipse at 75% 35%,#69443166,transparent 60%)!important}
+:root[data-theme="dark"] body.vz-reference-site main[data-p="home"] .vz-material-hero :is(#h1,.vz-hero-eyebrow,.vz-r32-controls-summary){color:#f7f0e4}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) body.vz-reference-site main[data-p="home"] .vz-material-hero{background:linear-gradient(132deg,#17120e,#201711 60%,#302016)!important;color:#f7f0e4!important}:root:not([data-theme="light"]) body.vz-reference-site main[data-p="home"] .vz-material-hero::before{background:radial-gradient(ellipse at 75% 35%,#69443166,transparent 60%)!important}:root:not([data-theme="light"]) body.vz-reference-site main[data-p="home"] .vz-material-hero :is(#h1,.vz-hero-eyebrow,.vz-r32-controls-summary){color:#f7f0e4}}
+@media(pointer:coarse),(prefers-reduced-motion:reduce){body.vz-reference-site main[data-p="home"] .vz-material-hero::after{display:none}}
