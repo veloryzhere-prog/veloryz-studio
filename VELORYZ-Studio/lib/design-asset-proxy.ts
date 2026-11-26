@@ -35,26 +35,24 @@ export async function serveDesignAsset(request:Request):Promise<Response|null>{
  const extension=file.split('.').pop()?.toLowerCase()||'';
  if(!mime[extension])return new Response('Unsupported preview asset',{status:415});
  // Exact, fixed GitHub repositories. User-supplied URLs/hostnames never enter the request.
- const url='https://raw.githubusercontent.com/'+src.repo+'/'+src.branch+'/'+src.dir+file;
- try{
-  const upstream=await fetch(url,{headers:{'Accept':'*/*'},redirect:'follow',signal:AbortSignal.timeout(10000)});
-  if(!upstream.ok){
-   if(upstream.status===404)return Response.redirect(src.fallback+file,302);
-   return new Response('Preview asset unavailable',{status:502,headers:{'Cache-Control':'public,max-age=60'}});
-  }
-  const contentLength=Number(upstream.headers.get('content-length')||0);
-  if(contentLength>12*1024*1024)return new Response('Preview asset too large',{status:413});
-  return new Response(upstream.body,{
-   status:200,
-   headers:{
-    'Content-Type':mime[extension],
-    'Cache-Control':'public,max-age=86400,stale-while-revalidate=604800',
-    'X-Content-Type-Options':'nosniff',
-    'Cross-Origin-Resource-Policy':'same-origin'
-   }
-  });
- }catch{
-  // One publisher-hosted fallback keeps assets accessible during GitHub Raw outages.
-  return Response.redirect(src.fallback+file,302);
+ // The sandboxed iframe has an opaque origin. Public demo assets are intentionally
+ // cross-origin readable; the allowlist and file-type restrictions remain in force.
+ const urls=[src.fallback+file,'https://raw.githubusercontent.com/'+src.repo+'/'+src.branch+'/'+src.dir+file];
+ for(const url of urls){
+  try{
+   const upstream=await fetch(url,{headers:{Accept:'*/*'},redirect:'follow',signal:AbortSignal.timeout(7500)});
+   if(!upstream.ok)continue;
+   const type=(upstream.headers.get('content-type')||'').toLowerCase();
+   if(type.includes('text/html')||type.includes('application/xhtml'))continue;
+   const length=Number(upstream.headers.get('content-length')||0);
+   if(length>12*1024*1024)return new Response('Preview asset too large',{status:413});
+   if(!upstream.body)continue;
+   const reader=upstream.body.getReader();const chunks:Uint8Array[]=[];let total=0;
+   for(;;){const part=await reader.read();if(part.done)break;total+=part.value.byteLength;if(total>12*1024*1024){await reader.cancel();return new Response('Preview asset too large',{status:413});}chunks.push(part.value);}
+   const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
+   if(!total)continue;
+   return new Response(bytes,{status:200,headers:{'Content-Type':mime[extension],'Cache-Control':'public,max-age=3600,stale-while-revalidate=86400','X-Content-Type-Options':'nosniff','Cross-Origin-Resource-Policy':'cross-origin','Access-Control-Allow-Origin':'*'}});
+  }catch{ /* Try only the second fixed publisher endpoint. */ }
  }
+ return new Response('Preview asset unavailable',{status:502,headers:{'Cache-Control':'no-store','Cross-Origin-Resource-Policy':'cross-origin','Access-Control-Allow-Origin':'*'}});
 }
