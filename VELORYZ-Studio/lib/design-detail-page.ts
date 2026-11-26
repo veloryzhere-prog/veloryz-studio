@@ -40,7 +40,7 @@ const head=(name:string,description:string,mode:'detail'|'immersive')=>
   '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r5">'+
   '<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'+ 
   '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">':'')+
- '<script src="/veloryz-design-preview.js?v=20261126-layout-repair" defer></script></head>';
+ '<script src="/veloryz-design-preview.js?v=20261126-r43" defer></script></head>';
 const brand=()=>'<a class="vz-market-brand" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="128" height="46" alt="VELORYZ Studio" decoding="async"><span class="vz-market-brand-text">VELORYZ<small>CREATIVE & TECHNOLOGY STUDIO</small></span></a>';
 const projectUrl=(p:DesignPreviewRecord)=>'/create/?reference='+encodeURIComponent(p.id)+'&estimate='+Math.round(p.price||6000);
 const info=(p:DesignPreviewRecord)=>({

@@ -51,7 +51,7 @@ function loadSite(){
  const iframe=document.createElement('iframe');
  iframe.className='vz-market-live-iframe';
  iframe.title=escape(design.name)+' — original website, scroll to explore';
- iframe.src=design.localSource+'?v=20261126-r42';
+ iframe.src=design.localSource+'?v=20261126-r43';
  iframe.loading='eager';
  iframe.referrerPolicy='strict-origin-when-cross-origin';
  // Browser-enforced opaque origin isolates upstream source from Studio login/DOM.
@@ -59,7 +59,7 @@ function loadSite(){
  iframe.setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock');
  iframe.setAttribute('allow','fullscreen');
  iframe.addEventListener('load',()=>{
-  if(frame!==iframe)return;
+  if(frame!==iframe||stage.dataset.previewState==='ready')return;
   setStatus('Checking the original website assets…');
   command('report');
  },{once:true});
@@ -74,16 +74,16 @@ function command(name,delta=0){
  // No secrets or user data pass through the untrusted iframe boundary.
  frame.contentWindow.postMessage({type:'veloryz:preview-command',id,command:name,delta:Math.max(-1800,Math.min(1800,Math.round(delta)))},'*');
 }
-loadSite();
 window.addEventListener('message',event=>{
  if(!frame?.contentWindow||event.source!==frame.contentWindow)return;
  const msg=event.data;
  if(!msg||msg.id!==id)return;
- if(msg.type==='veloryz:preview-ready'){clearTimeout(readyTimer);if(msg.ok){stage.dataset.previewState='ready';setStatus('Interactive preview · scroll inside the website');}else imagePreview();return;}
+ if(msg.type==='veloryz:preview-ready'){if(msg.ok===true){clearTimeout(readyTimer);stage.dataset.previewState='ready';setStatus('Interactive preview · scroll inside the website');}return;}
  if(msg.type!=='veloryz:preview-progress')return;
  const percent=Number(msg.percent);
  if(Number.isFinite(percent)&&percent>=0&&percent<=100)updateProgress(percent);
 });
+loadSite();
 document.addEventListener('click',event=>{
  const control=event.target.closest('[data-vz-device],[data-vz-restart],[data-vz-reload],[data-vz-fullscreen],[data-vz-close],#vz-made-with');
  if(!control)return;
