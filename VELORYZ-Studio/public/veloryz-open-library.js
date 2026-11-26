@@ -39,7 +39,7 @@ function entries(){
 }
 const prettyStatus=p=>p.sourceType==='original-veloryz'?['VELORYZ Original','original']:
  p.importStatus==='real-upstream-html'?['Interactive','imported']:
- p.rights==='restricted'?['Creative Reference','restricted']:['Studio Collection','review'];
+ referenceOnly(p)?['Creative Reference','restricted']:['Studio Collection','review'];
 const screenshotKind=p=>p.sourceType==='original-veloryz'?'Original first-party cover':
  p.previewImageKind==='upstream-screenshot'?'Original screenshot':
  p.previewImageKind==='published-reference-image'?'Published reference image':
@@ -56,7 +56,7 @@ function art(p){
 function card(p,i){
  const [label,tone]=prettyStatus(p);
  const savedHere=saved.has(p.id),compared=compare.has(p.id);
- const trust=p.rights==='candidate'?'Source candidate · verification pending':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Confirm usage terms before delivery';
+ const trust=referenceOnly(p)?'Reference only':p.rights==='candidate'?'Source candidate · verification pending':p.rights==='review'?'Source review needed':'Confirm usage terms before delivery';
  return '<article class="vz-source-card" data-source-card data-price="'+Number(p.price||6000)+'" data-motion="'+motionLevel(p)+'" style="--source-order:'+(i%6)+'">'+art(p)+
  '<div class="vz-source-meta"><span>'+escape(p.category)+'</span><span class="vz-source-pill '+tone+'">'+escape(label)+'</span></div>'+
  '<div class="vz-source-card-body"><div class="vz-r9-card-title"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3></div><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
@@ -76,7 +76,7 @@ function filtered(items){
  const q=query.toLowerCase();
  const res=items.filter(p=>p.sourceType!=='original-veloryz'&&(category==='All'||p.category===category)&&
   (rights==='All'||(rights==='imported'?p.importStatus==='real-upstream-html':
-  rights==='original'?p.sourceType==='original-veloryz':p.rights===rights))&&
+  rights==='original'?p.sourceType==='original-veloryz':rights==='restricted'?referenceOnly(p):!referenceOnly(p)&&p.rights===rights))&&
   (motion==='All'||motionLevel(p)===motion)&&priceMatch(p)&&(!onlySaved||saved.has(p.id))&&(previewFilter==='All'||previewLabel(p)===previewFilter)&&
   (!q||[p.name,p.category,p.description,p.author,p.license,p.motion].join(' ').toLowerCase().includes(q)));
  if(sort==='name')res.sort((a,b)=>a.name.localeCompare(b.name));
@@ -89,7 +89,7 @@ function filtered(items){
 function stats(items){return{
  total:items.length,live:items.filter(p=>p.importStatus==='real-upstream-html').length,
  originals:items.filter(p=>p.sourceType==='original-veloryz').length,
- candidates:items.filter(p=>p.rights==='candidate').length
+ candidates:items.filter(p=>p.rights==='candidate'&&!referenceOnly(p)).length
 }}
 function showcase(){
  const picks=entries().filter(p=>p.importStatus==='real-upstream-html').slice(0,3);
@@ -99,7 +99,7 @@ function showcase(){
  ).join('')+'</div><p class="vz-source-home-note">Made for exploring ideas with VELORYZ Studio.</p>';
 }
 function curated(items,count=6){
- const pool=items.filter(p=>p.previewImage&&p.rights!=='restricted').slice().sort((a,b)=>
+ const pool=items.filter(p=>p.previewImage&&!referenceOnly(p)).slice().sort((a,b)=>
   score(b)-score(a)||
   Number(/very high|high/i.test(b.motion||''))-Number(/very high|high/i.test(a.motion||''))||
   (a.price||6000)-(b.price||6000));

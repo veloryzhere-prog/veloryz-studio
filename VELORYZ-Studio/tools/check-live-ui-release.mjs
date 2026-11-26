@@ -48,7 +48,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const r20Linked=[home,creator,designPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261126-r42'));
    const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-v2-workspaces')&&creator.body.includes('/creator-v4.js?v=20261126-r42');
    const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-r47')
-    &&designPage.body.includes('/veloryz-open-library.js?v=20261126-v2-workspaces')
+    &&designPage.body.includes('/veloryz-open-library.js?v=20261126-r47')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261126-r42');
    const [silkCss,uiCss,silkJs,editorial,menuCss,homeStageJs,homeStageCss,actualMarketJs,actualMarketCss,brandJs,brandCss,journeyCss,appJs,flowCss,flowJs,smoothJs,r20Css,r20Js,creatorJs,docsJs,knowledgeJs,knowledgeCss]=await Promise.all([

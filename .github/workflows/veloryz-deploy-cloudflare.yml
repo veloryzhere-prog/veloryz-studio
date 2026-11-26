@@ -64,6 +64,10 @@ jobs:
         working-directory: VELORYZ-Studio
         run: node tools/test-design-system-r45.mjs
 
+      - name: Validate R47 marketplace
+        working-directory: VELORYZ-Studio
+        run: node tools/test-marketplace-r47.mjs
+
       - name: Build current production Worker
         working-directory: VELORYZ-Studio
         run: corepack pnpm build

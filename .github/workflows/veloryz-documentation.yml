@@ -201,6 +201,9 @@ jobs:
       - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-design-market-r9.mjs
+      - name: Validate R47 marketplace filters and shortlist
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: node tools/test-marketplace-r47.mjs
       - name: Validate internal VELORYZ design library, sources and creator routes
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-expanded-design-library.mjs
