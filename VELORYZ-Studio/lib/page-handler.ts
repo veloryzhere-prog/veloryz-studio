@@ -26,6 +26,23 @@ const htmlDocumentPath=(p:string)=>{
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ const draftViews:Record<string,string>={home:'/',classic:'/',studio:'/studio/',services:'/services/',team:'/teamjob/',book:'/book/',developers:'/developers/',payments:'/payments/'};
+ const draftView=path==='/admin/preview'?(new URL(request.url).searchParams.get('view')||'home'):'';
+ let draftData:any=null;
+ if(draftView){
+  if(!Object.hasOwn(draftViews,draftView))return secureHtml('<!doctype html><title>Unknown preview</title><p>Choose a supported CMS page.</p>',404,true);
+  const result=await handleApi(new Request(new URL('/api/admin/state',request.url),{headers:request.headers} ),env,'password');
+  if(!result.ok)return secureHtml('<!doctype html><title>Owner sign-in required</title><p>Sign in to Studio Control before opening a saved draft.</p>',result.status===401||result.status===403?result.status:503,true);
+  draftData=await result.json();
+ }
+ const draftPreview=(html:string)=>{
+  const banner='<div role="status" style="position:fixed;bottom:0;left:0;right:0;z-index:2147483647;padding:7px 12px;background:#17191d;color:white;font:12px system-ui;text-align:center;pointer-events:none">SAVED DRAFT PREVIEW · Read-only canvas · Revision '+Number(draftData.draftVersion)+'</div>';
+  const guard='<script>window.VELORYZ_DRAFT_PREVIEW=true;document.addEventListener("submit",e=>{e.preventDefault();e.stopImmediatePropagation()},true);document.addEventListener("click",e=>{const a=e.target.closest?.("a[href]");if(a&&!a.getAttribute("href").startsWith("#")){e.preventDefault();e.stopImmediatePropagation()}},true);</script>';
+  const response=secureHtml(html.replace('</head>',guard+'</head>').replace(/<body[^>]*>/,tag=>tag+banner),200,false);
+  response.headers.set('X-Robots-Tag','noindex, nofollow');response.headers.set('Cache-Control','private, no-store');response.headers.set('Referrer-Policy','no-referrer');
+  const csp=response.headers.get('Content-Security-Policy');if(csp)response.headers.set('Content-Security-Policy',csp.replace("form-action 'self'","form-action 'none'")+"; sandbox allow-scripts");
+  return response;
+ };
  const assetResponse=await serveDesignAsset(request);
  if(assetResponse)return assetResponse;
  const designImage=await serveDesignImage(request);
@@ -34,8 +51,8 @@ export async function GET(request: Request) {
  // Owner-supplied editorial reference experience becomes the public homepage.
  // Keep the existing SPA available with ?classic=1 for account/project workflows.
  // All admin, documentation, client, pricing and creator endpoints retain their original handlers.
- if(path==='/'&&new URL(request.url).searchParams.get('classic')!=='1'){
-  const published=await getPublished(env,request.url);
+ if((path==='/'&&new URL(request.url).searchParams.get('classic')!=='1')||draftView==='home'){
+  const published=draftData||await getPublished(env,request.url);
   const site=published.state.site;
   const appearance={
    site:{name:site.name,email:site.email,phone:site.phone,location:site.location,description:site.description,showScarf:site.showScarf},
@@ -67,6 +84,7 @@ export async function GET(request: Request) {
   html=pageMetadata(html,{title:'VELORYZ Studio | Website Design, Development & Creative Technology',
    description:'VELORYZ Studio builds thoughtful websites, visual identities, digital products and creative motion experiences.',
    url:base+'/',image:base+'/assets/brand/official/Main-Transparent.webp',site});
+  if(draftView==='home')return draftPreview(html);
   const response=secureHtml(html,200);
   if(!import.meta.env.DEV&&base!==new URL(request.url).origin)response.headers.set('X-Robots-Tag','noindex, nofollow');
   return response;
@@ -119,12 +137,10 @@ export async function GET(request: Request) {
   return secureHtml(`<!doctype html><html><head><title>Responsive studio preview</title><style>body{margin:0;background:#ddd8cd;display:grid;place-items:center;padding:25px;font-family:system-ui}p{font-size:12px}iframe{width:${width}px;height:780px;border:1px solid #bbb3a4;background:#faf9f6;box-shadow:0 12px 50px #6b5d3833}</style></head><body><p>LOCAL RESPONSIVE QA / ${width}px / ${src}</p><iframe id="responsive-preview" title="Responsive site preview" src="${src}"></iframe></body></html>`,200,true);
  }
  if(import.meta.env.DEV&&path==='/_studio_preview/unlock')return secureHtml(adminShell.replace(/<script src="\/admin\.js(?:\?[^"]*)?" defer><\/script>/,'<script>window.ADMIN_UNLOCK_PREVIEW=true;</script><script src="/admin.js" defer></script>'),200,true);
- if(path==='/admin/preview'){
-  const apiRequest=new Request(new URL('/api/admin/state',request.url),{headers:request.headers});
-  const result=await handleApi(apiRequest,env,'password');
-  if(!result.ok)return secureHtml(adminShell,200,true);
-  const data=await result.json() as {state:unknown};
-  return secureHtml(siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({state:data.state,version:-1,preview:true})};</script>${match}`).replace(/<body[^>]*>/,match=>match+'<a href="/admin" class="draft-preview-note">DRAFT PREVIEW · Return to Studio Control ↗</a>'),200,true);
+ if(draftView){
+  const route=draftViews[draftView];
+  const html=siteShell.replace(/<script src="\/app\.js(?:\?[^"]*)?" defer><\/script>/,match=>`<script>window.STUDIO_STATE=${serialise({state:draftData.state,version:-1,preview:true})};window.STUDIO_PREVIEW_ROUTE=${serialise(route)};</script>${match}`);
+  return draftPreview(html);
  }
  if(path==='/admin'||path.startsWith('/admin/'))return secureHtml(adminShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/admin'){
