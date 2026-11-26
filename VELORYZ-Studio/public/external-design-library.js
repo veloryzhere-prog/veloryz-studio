@@ -10,7 +10,7 @@ const fmt=v=>'₹'+Number(v||0).toLocaleString('en-IN');
 const link=(p)=>p.demo||p.liveDemo||p.localSource||p.source;
 const motionBucket=p=>{const t=String(p?.motion||'').toLowerCase();return t.includes('high')?'high':t.includes('medium')?'medium':t.includes('low')?'low':'varies'};
 const motionWeight=p=>({high:4,medium:3,low:2,varies:1}[motionBucket(p)]||1);
-const reviewLabel=p=>p?.rights==='candidate'?'Studio reviewed':p?.rights==='review'?'Source review required':p?.rights==='restricted'?'Restricted source':'Rights check';
+const reviewLabel=p=>p?.rights==='candidate'?'Source candidate — verification pending':p?.rights==='review'?'Source review required':p?.rights==='restricted'?'Restricted source':'Rights check';
 const featured=()=>{
  const pool=entries().filter(p=>image(p)&&Number(p.price||0)>0&&p.rights!=='restricted').sort((a,b)=>
   Number(b.previewType==='real-upstream-site')-Number(a.previewType==='real-upstream-site')||
