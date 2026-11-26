@@ -199,6 +199,32 @@ export function checkoutLink(value){
  if(!value)return '';let u;try{u=new URL(value);}catch{fail('Enter a secure payment-provider URL.');}
  if(u.protocol!=='https:'||u.username||u.password||!['buy.stripe.com','checkout.stripe.com','rzp.io','rzp.pay','pages.razorpay.com','razorpay.me','www.paypal.com','paypal.me'].includes(u.hostname))fail('Use a hosted Stripe, Razorpay or PayPal payment link.');return u.href;
 }
+const financeQueries={"totals":"SELECT count(*) AS total,coalesce(sum(amount_paise) FILTER (WHERE status='verified'),0) AS verified_paise,coalesce(sum(amount_paise) FILTER (WHERE status='requested'),0) AS requested_paise,coalesce(sum(amount_paise) FILTER (WHERE status='cancelled'),0) AS cancelled_paise,count(*) FILTER (WHERE status='requested') AS pending FROM veloryz_studio.studio_payments","list":"SELECT id,reference,title,amount_paise,status,created_at,version,token,receipt_reference,reconciliation_note,verified_at,count(*) OVER () AS matches FROM veloryz_studio.studio_payments WHERE (?='all' OR status=?) AND position(lower(?) in lower(reference || ' ' || title || ' ' || coalesce(receipt_reference,'')))>0 ORDER BY created_at DESC,id DESC LIMIT 50 OFFSET ?","history":"SELECT previous_status,status,receipt_reference,reconciliation_note,recorded_at,version FROM veloryz_studio.studio_payment_events WHERE payment_id=? ORDER BY version DESC LIMIT 100","reconcile":"UPDATE veloryz_studio.studio_payments SET status=?,receipt_reference=?,reconciliation_note=?,verified_at=?,version=version+1 WHERE id=? AND version=? RETURNING id","budgets":"SELECT b.reference,b.agreed_paise,b.version,b.updated_at,e.budget AS proposed_budget,coalesce(p.verified,0) AS verified_paise,coalesce(p.pending,0) AS pending_paise FROM veloryz_studio.studio_finance_budgets b JOIN veloryz_studio.studio_enquiries e ON e.reference=b.reference LEFT JOIN (SELECT reference,sum(amount_paise) FILTER (WHERE status='verified') AS verified,sum(amount_paise) FILTER (WHERE status='requested') AS pending FROM veloryz_studio.studio_payments GROUP BY reference) p ON p.reference=b.reference ORDER BY b.updated_at DESC,b.reference LIMIT 200","budgetSave":"INSERT INTO veloryz_studio.studio_finance_budgets(reference,agreed_paise,version,updated_at) SELECT ?,?,1,? WHERE EXISTS (SELECT 1 FROM veloryz_studio.studio_enquiries WHERE reference=?) AND (?=0 OR EXISTS (SELECT 1 FROM veloryz_studio.studio_finance_budgets WHERE reference=? AND version=?)) ON CONFLICT(reference) DO UPDATE SET agreed_paise=EXCLUDED.agreed_paise,version=studio_finance_budgets.version+1,updated_at=EXCLUDED.updated_at WHERE studio_finance_budgets.version=? RETURNING reference"};
+async function financeRead(env,query){
+ if(!env.__studioSupabase)fail('Finance ledger requires the studio Supabase backend.',503);
+ if(query.get('view')==='history')return reply({events:(await env.DB.prepare(financeQueries.history).bind(plain(query.get('id'),36,true)).all()).results});
+ const status=query.get('status')||'all',search=plain(query.get('q')||'',120),page=Math.min(10000,Math.max(0,Number.parseInt(query.get('page')||'0',10)||0));
+ if(!['all','requested','verified','cancelled'].includes(status))fail('Choose a valid payment status.');
+ const [totals,items,budgets]=await Promise.all([env.DB.prepare(financeQueries.totals).first(),env.DB.prepare(financeQueries.list).bind(status,status,search,page*50).all(),env.DB.prepare(financeQueries.budgets).all()]);
+ return reply({totals,items:items.results,budgets:budgets.results,page,matches:Number(items.results[0]?.matches||0)});
+}
+async function financeWrite(env,data){
+ if(!env.__studioSupabase)fail('Finance ledger requires the studio Supabase backend.',503);
+ if(data.financeAction==='budget'){
+  const reference=plain(data.reference,30,true).toUpperCase(),amount=Number(data.amount),version=data.version;
+  if(!Number.isFinite(amount)||amount<1||amount>10000000||Math.abs(amount*100-Math.round(amount*100))>.001||!Number.isInteger(version)||version<0)fail('Enter a valid INR amount and revision.');
+  if(data.agreed!==true)fail('Confirm the amount was agreed with the client.');
+  const row=await env.DB.prepare(financeQueries.budgetSave).bind(reference,Math.round(amount*100),new Date().toISOString(),reference,version,reference,version,version).first();
+  if(!row)fail('Reference not found or budget changed. Refresh before saving.',409);return reply({ok:true});
+ }
+ if(data.financeAction!=='reconcile')fail('Unsupported finance operation.');
+ const status=data.status,receipt=plain(data.receipt_reference||'',160),note=plain(data.reconciliation_note||'',600);
+ if(!['requested','verified','cancelled'].includes(status)||!Number.isInteger(data.version)||data.version<0)fail('Choose a valid status and revision.');
+ if(status==='verified'&&(data.verified!==true||!receipt))fail('Confirm receipt and record the provider receipt reference.');
+ if(status!=='verified'&&!note)fail('Record why the payment status is changing.');
+ const row=await env.DB.prepare(financeQueries.reconcile).bind(status,receipt,note,status==='verified'?new Date().toISOString():'',plain(data.id,36,true),data.version).first();
+ if(!row)fail('This payment changed. Refresh before saving.',409);return reply({ok:true});
+}
 export async function paymentApi(request,env,path){
  const query=new URL(request.url).searchParams;
  if(path==='/api/payment-request'&&request.method==='GET'){
@@ -206,8 +232,10 @@ export async function paymentApi(request,env,path){
   const item=await env.DB.prepare('SELECT reference,title,amount_paise,status,checkout_url,created_at FROM studio_payments WHERE token=?').bind(token).first();if(!item)return reply({error:'This payment request could not be found.'},404);
   return reply({item:{...item,checkout_url:'https://wa.me/919955326740',mode:'studio-discussion'}});
  }
+ if(request.method==='GET'&&['finance','history'].includes(query.get('view')))return financeRead(env,query);
  if(request.method==='GET'){const items=await env.DB.prepare('SELECT id,reference,title,amount_paise,status,checkout_url,created_at,version,token FROM studio_payments ORDER BY created_at DESC LIMIT 100').all();return reply({items:items.results});}
  const data=await boundedBody(request,4000);
+ if(request.method==='PUT'&&data.financeAction)return financeWrite(env,data);
  if(request.method==='POST'){
   if(data.checkoutUrl)checkoutLink(data.checkoutUrl);
   const reference=plain(data.reference,30,true).toUpperCase(),title=plain(data.title,160,true),amount=Number(data.amount),url='https://wa.me/919955326740';
