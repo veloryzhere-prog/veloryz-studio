@@ -12,7 +12,8 @@ const shared=read('public/button-feedback.js');
 const menu=read('public/reference-site-upgrade.js');
 const silk=read('public/veloryz-silk-2026.js');
 const html=JSON.parse(shell.slice(shell.indexOf('export default ')+15).trim().replace(/;$/,''));
-assert.ok(handler.includes("if(path==='/'&&new URL(request.url).searchParams.get('classic')!=='1')"),'Live homepage is reference shell; classic is explicitly opt-in');
+assert.ok(handler.includes("if((path==='/'&&new URL(request.url).searchParams.get('classic')!=='1')||draftView==='home')"),'Live homepage uses reference shell; classic remains explicitly opt-in; owner draft home uses the same renderer');
+assert.ok(handler.indexOf("await handleApi(new Request(new URL('/api/admin/state'")<handler.indexOf("draftData||await getPublished"),'Owner draft must be authenticated before sharing the public renderer');
 assert.ok(handler.includes('let html=claudeReferenceShell.replace'), 'Active handler must use reference shell');
 for(const token of [
  'class="vz-reference-site"','id="tp"','vz-editorial-r5','id="bigV"',
