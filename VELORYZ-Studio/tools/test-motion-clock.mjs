@@ -22,7 +22,7 @@ const queue=new Map();
 let nextId=0;
 const handlers={};
 const document={hidden:false,documentElement:{dataset:{motion:'full'}},addEventListener:(type,fn)=>handlers[type]=fn};
-const window={addEventListener:()=>{}};
+const window={addEventListener:(type,fn)=>handlers[type]=fn};
 vm.runInNewContext(clockSource,{
  window,document,console,
  requestAnimationFrame(fn){const id=++nextId;queue.set(id,fn);return id;},
@@ -59,6 +59,16 @@ document.hidden=false;
 handlers.visibilitychange();
 assert.equal(queue.size,1,'Work should resume after the tab becomes visible');
 clock.cancel('hidden');
-flush();
-assert.equal(queue.size,0);
+assert.equal(queue.size,0,'Last cancelled task must release the pending frame');
+let cancelledRuns=0;
+clock.request('first',()=>clock.cancel('second'));
+clock.request('second',()=>cancelledRuns++);
+flush();assert.equal(cancelledRuns,0,'Cancellation applies to work in the same frame');
+let removed=0;const one={on(){return()=>removed++},raf(){}},two={on(){return()=>removed++},raf(){}};
+clock.attachLenis(one);clock.attachLenis(one);assert.equal(removed,0);clock.attachLenis(two);assert.equal(removed,1);clock.detachLenis(two);assert.equal(removed,2);
+clock.request('restore',()=>sceneRuns++);handlers.pagehide();assert.equal(queue.size,0);handlers.pageshow();assert.equal(queue.size,1);flush();assert.equal(queue.size,0);
+const home=JSON.parse(read('lib/claude-reference-shell.ts').trim().replace(/^export default /,'').replace(/;$/,''));
+assert(home.includes('/lenis-vendored.js')&&home.includes('/smooth-scroll.js')&&home.includes('/motion-clock.js'),'Homepage must use the shared Lenis engine');
+assert(home.indexOf('/motion-clock.js')<home.indexOf('/smooth-scroll.js'));
+assert(home.includes("VeloryzMotionClock.request('reference-home',tick)"));
 console.log('PASS: shared Lenis animation clock and visual scenes, zero scarf scroll frames, visibility, coalescing, teardown.');

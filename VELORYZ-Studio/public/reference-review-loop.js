@@ -4,17 +4,19 @@
 (()=>{
 'use strict';
 const selectors=['#vz-home-reviews-track','#vz-live-reviews-track'];
-const instances=new WeakMap();
+const instances=new Map();
 const motionFull=()=>window.StudioMotion?window.StudioMotion.level==='full':!matchMedia('(prefers-reduced-motion:reduce)').matches;
 const msPerPixel=1000/52; // constant travel speed on mobile and desktop
 function attach(track){
  if(!track||instances.has(track))return;
  const viewport=track.closest('.vz-live-reviews-viewport');
  if(!viewport)return;
- let group=null,resize=null,animation=null,measured=0,visible=false,frame=0,keyboardFocus=false;
+ let group=null,resize=null,animation=null,measured=0,visible=false,frame=0,keyboardFocus=false,disposed=false;
+ const controller=new AbortController(),signal=controller.signal;
+ const clock=window.VeloryzMotionClock,key=Symbol('review-marquee');
  const status=()=>motionFull()&&!document.hidden&&!track.classList.contains('is-paused')&&!keyboardFocus;
  const pauseButton=document.querySelector(track.id==='vz-home-reviews-track'?'#vz-home-reviews-pause':'#vz-reference-reviews-pause');
- const stop=()=>{if(animation)animation.pause();};
+ const stop=()=>{if(animation)animation.pause();else track.style.animationPlayState='paused';};
  const motionRefresh=()=>{
   const full=motionFull();
   viewport.classList.toggle('is-manual',!full);
@@ -24,13 +26,13 @@ function attach(track){
    if(pauseButton){pauseButton.disabled=true;pauseButton.textContent='Reduced motion';}
   }else{
    if(pauseButton){pauseButton.disabled=false;if(track.classList.contains('is-paused'))pauseButton.textContent='Resume motion ▶';else pauseButton.textContent='Pause motion ‖';}
-   if(animation&&status()&&visible)animation.play();
+   if(status()&&visible){if(animation)animation.play();else track.style.animationPlayState='running';}
    else stop();
   }
  };
  const rebuild=()=>{
   frame=0;
-  if(!track.isConnected)return;
+  if(disposed||!track.isConnected)return;
   const next=track.querySelector(':scope > .vz-live-review-group');
   if(!next){
    resize?.disconnect();group=null;animation?.cancel();animation=null;measured=0;
@@ -68,31 +70,38 @@ function attach(track){
   }
   motionRefresh();
  };
- const schedule=()=>{if(!frame)frame=requestAnimationFrame(rebuild);};
+ const schedule=()=>{if(!disposed&&!frame)frame=clock?clock.request(key,rebuild):requestAnimationFrame(rebuild);};
  const changes=new MutationObserver(records=>{
   if(records.some(x=>x.type==='childList'))schedule();
   else motionRefresh();
  });
  changes.observe(track,{childList:true,attributes:true,attributeFilter:['class']});
  const page=track.closest('.pg');
- if(page)new MutationObserver(()=>schedule()).observe(page,{attributes:true,attributeFilter:['class']});
+ const pageChanges=page?new MutationObserver(()=>schedule()):null;
+ pageChanges?.observe(page,{attributes:true,attributeFilter:['class']});
+ let intersection=null;
  if(typeof IntersectionObserver==='function'){
-  const intersection=new IntersectionObserver(entries=>{
+  intersection=new IntersectionObserver(entries=>{
    visible=entries.some(x=>x.isIntersecting);
    if(visible)schedule();
    motionRefresh();
   },{threshold:0.01});
   intersection.observe(viewport);
  }else visible=true;
- track.addEventListener('focusin',()=>{keyboardFocus=true;motionRefresh();});
- track.addEventListener('focusout',()=>{keyboardFocus=track.matches(':focus-within');motionRefresh();});
- document.addEventListener('visibilitychange',motionRefresh);
- window.addEventListener('pageshow',()=>{schedule();motionRefresh();});
- window.addEventListener('resize',schedule,{passive:true});
- window.StudioMotion?.addEventListener?.('change',()=>{schedule();motionRefresh();});
- instances.set(track,{refresh:schedule});
+ track.addEventListener('focusin',()=>{keyboardFocus=true;motionRefresh();},{signal});
+ track.addEventListener('focusout',()=>{queueMicrotask(()=>{if(!disposed){keyboardFocus=track.matches(':focus-within');motionRefresh();}});},{signal});
+ document.addEventListener('visibilitychange',motionRefresh,{signal});
+ window.addEventListener('pageshow',()=>{schedule();motionRefresh();},{signal});
+ window.addEventListener('pagehide',stop,{signal});
+ window.addEventListener('resize',schedule,{passive:true,signal});
+ const motionChanged=()=>{schedule();motionRefresh();};
+ window.StudioMotion?.addEventListener?.('change',motionChanged);
+ const dispose=()=>{disposed=true;controller.abort();window.StudioMotion?.removeEventListener?.('change',motionChanged);changes.disconnect();pageChanges?.disconnect();resize?.disconnect();intersection?.disconnect();if(frame){if(clock)clock.cancel(key);else cancelAnimationFrame(frame);}animation?.cancel();track.style.animation='';track.style.animationPlayState='';instances.delete(track);};
+ instances.set(track,{refresh:schedule,dispose});
  schedule();
 }
-function mount(){selectors.forEach(s=>attach(document.querySelector(s)));}
+function mount(){for(const [track,instance]of instances)if(!track.isConnected)instance.dispose();selectors.forEach(s=>attach(document.querySelector(s)));}
+ document.addEventListener('studio:route',mount);
+ window.addEventListener('pageshow',mount);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();

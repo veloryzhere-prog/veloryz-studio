@@ -109,6 +109,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&brandCss.body.includes('position:absolute;inset:0;z-index:-1')
     &&!brandCss.body.includes('>:not(.vz-brand-backdrop){position:relative');
    const brandFlowOK=flowCss.status===200&&flowJs.status===200&&smoothJs.status===200
+    &&home.body.includes('/motion-clock.js?v=20261126-r46')&&home.body.includes('/smooth-scroll.js?v=20261126-r46')&&home.body.includes('/lenis-vendored.js')
     &&flowCss.body.includes('--vz-brand-scroll-opacity')
     &&flowCss.body.includes('footer.vz-footer-in')
     &&flowJs.body.includes("addEventListener('scroll',requestSync,{passive:true})")

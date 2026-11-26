@@ -53,6 +53,7 @@ assert.equal(video.paused,false,'Scarf automatically plays on entry');
 observe([{target:scene,isIntersecting:false,intersectionRatio:0}]);
 assert.equal(video.paused,true,'Offscreen video must pause to save resources');
 await Promise.resolve();await Promise.resolve();
+assert.notEqual(scene.attrs.get('data-scarf-state'),'playing','Late play resolution must not report offscreen playback');
 document.hidden=true;
 observe([{target:scene,isIntersecting:true,intersectionRatio:.3}]);
 assert.equal(video.paused,true,'Hidden tabs must never autoplay');
