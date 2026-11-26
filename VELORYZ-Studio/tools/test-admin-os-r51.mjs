@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const core=read('public/admin.js'),shell=read('lib/admin-shell.ts'),css=read('public/admin-os-r51.css'),security=read('lib/response-security.ts');
+const nav=vm.runInNewContext(core.match(/const navigation=(\[[^\n]+\]);/)[1]);
+const ctx={window:{addEventListener(){}},document:{addEventListener(){}},localStorage:{getItem(){return null}}};
+vm.runInNewContext(read('public/admin-os-r51.js'),ctx);
+const os=ctx.window.VeloryzStudioOS;
+assert.equal(os.groups.length,7);
+assert.deepEqual([...os.groups.flatMap(g=>g.routes)].sort(),nav.map(n=>n[0]).sort());
+const escape=x=>String(x).replace(/[&<>"']/g,'_'),icon=()=>'<svg></svg>',workspace={publishedVersion:5,dirty:true,hasDraft:true};
+for(const [route]of nav){
+ const sidebar=os.sidebar(route,nav,workspace,icon,escape);
+ for(const [id]of nav)assert.equal((sidebar.match(new RegExp('href="#/'+id+'"','g'))||[]).length,id==='overview'||id==='history'?2:1);
+ assert.equal((sidebar.match(/aria-current="page"/g)||[]).length,1);
+ assert(sidebar.includes('Main-Dark-Ink-Transparent.webp'));
+ const bar=os.topbar(route,nav,workspace,icon,escape,'assistants');
+ assert.equal(bar.includes('data-action="publish"'),os.mode(route,'assistants')==='draft');
+ assert(bar.includes('aria-expanded="false"'));
+}
+assert.equal(os.mode('ai-control','personas'),'draft');
+assert.equal(os.mode('ai-control','provider'),'immediate');
+assert.equal(os.mode('client-portal'),'immediate');
+assert.equal(os.mode('documentation'),'immediate');
+assert.equal(os.mode('reviews'),'immediate');
+assert.equal(os.mode('media'),'immediate');
+assert(shell.includes('class="studio-os-r51"')&&shell.indexOf('/admin-os-r51.js')<shell.indexOf('/admin.js'));
+assert(security.includes("if(html.includes('class=\"studio-os-r51\"'))"));
+assert(core.includes('os.topbar(section,navigation,workspace,icon,E,tab)')&&core.includes('os.mount()'));
+assert(core.includes('safeRender();window.scrollTo'));
+assert(css.includes('@media(max-width:850px)')&&css.includes('@media(prefers-reduced-motion:reduce)'));
+assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
+console.log('PASS: Studio OS seven navigation groups, twenty preserved routes, contextual publish actions, owner-only assets and responsive/focus contracts.');

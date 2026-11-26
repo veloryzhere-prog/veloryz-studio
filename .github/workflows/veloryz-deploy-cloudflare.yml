@@ -76,6 +76,9 @@ jobs:
       - name: Validate R50 protected workspace
         working-directory: VELORYZ-Studio
         run: node tools/test-client-workspace-r50.mjs
+      - name: Validate R51.1 Studio OS shell
+        working-directory: VELORYZ-Studio
+        run: node tools/test-admin-os-r51.mjs
 
       - name: Build current production Worker
         working-directory: VELORYZ-Studio
