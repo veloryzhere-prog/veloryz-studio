@@ -136,7 +136,7 @@ async function forwardKnowledgeAi(request,env){
  // Respect all remote auth, per-agent rate limits, errors and independently configured provider replies.
  // Only when the remote agent explicitly returns reference mode can the site's own
  // model binding answer the same validated question with verified public evidence.
- if(chatCopy&&response.ok){
+ if(chatCopy&&response.ok&&!response.headers.get('content-type')?.includes('text/event-stream')){
   try{
    const upstream=await response.clone().json();
    if(upstream.mode==='guide'&&upstream.allowProviderFallback===true){
@@ -172,6 +172,7 @@ async function forwardKnowledgeAi(request,env){
  }
  const outgoing=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  const type=response.headers.get('content-type');if(type)outgoing.set('Content-Type',type);
+ if(type?.includes('text/event-stream'))outgoing.set('X-Accel-Buffering','no');
  return new Response(response.body,{status:response.status,headers:outgoing});
 }
 // Public reviews and owner-only moderation use the independently deployed, private-schema API.

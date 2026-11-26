@@ -11,9 +11,9 @@ const history={
  pushState(_state,_title,path){location.href='https://veloryz.online'+path;},
  replaceState(_state,_title,path){location.href='https://veloryz.online'+path;}
 };
-const root={set outerHTML(text){output=text},get outerHTML(){return output}};
+const root={querySelector(){return null},set outerHTML(text){output=text},get outerHTML(){return output}};
 const doc={
- addEventListener(type,handler){listeners[type]=handler;},
+ addEventListener(type,handler){if(!listeners[type])listeners[type]=handler;},
  querySelector(key){
   if(key==='.v4-root')return root;
   if(key==='#v4-question-title')return {focus(){}};

@@ -25,6 +25,7 @@ assert.ok(backend.includes('mode:\'guide\''),'Preserve clear non-AI fallback');
 assert.ok(backend.includes('veloryz_knowledge_ai_rate'),'Enforce distributed rate limiting');
 assert.ok(backend.includes('veloryz_knowledge_ai_usage'),'Maintain aggregate usage reporting');
 assert.ok(backend.includes("allowProviderFallback:a.provider!=='guide'")&&route.includes('upstream.allowProviderFallback===true'),'Explicit reference-only mode cannot invoke another model');
+assert.ok(backend.includes('streamGenerateContent?alt=sse')&&backend.includes('response.output_text.delta')&&backend.includes('streamedReply')&&route.includes("includes('text/event-stream')"),'Real provider SSE and proxy passthrough required');
 assert.ok(backend.includes('providerStatus')&&backend.includes('credential-rejected'),'Provider errors must be safely categorized');
 assert.ok(backend.includes('reader.cancel()')&&route.includes('boundedBody(request.clone(),16000)'),'Bound both proxy and edge request bodies');
 assert.ok(read('public/support-chat.js').includes('data-r49-stop'),'Support cancellation must be available');
