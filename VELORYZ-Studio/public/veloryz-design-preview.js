@@ -51,7 +51,7 @@ function loadSite(){
  const iframe=document.createElement('iframe');
  iframe.className='vz-market-live-iframe';
  iframe.title=escape(design.name)+' — original website, scroll to explore';
- iframe.src=design.localSource;
+ iframe.src=design.localSource+'?v=20261126-r42';
  iframe.loading='eager';
  iframe.referrerPolicy='strict-origin-when-cross-origin';
  // Browser-enforced opaque origin isolates upstream source from Studio login/DOM.
