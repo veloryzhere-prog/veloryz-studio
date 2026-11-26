@@ -27,6 +27,7 @@
   '.docs-sidebar','.studio-docs-sidebar','.studio-docs-toc',
   '.vz-chat-log','.vz-chat-side','.v4-ai-messages','.chat-scroll-area','.cp-conversation','.cp-chat-card',
   '.chat-log','.expert-chat','.chat-personas','.v4-steps','.v4-step-nav',
+  '#mn','.vz-shared-menu','.vz-live-reviews-viewport.is-manual','.k8-dirnav','.k8-tablewrap','.vz-market-immersive-canvas','.vz-3d-controls',
   '.booking-main','.campaign-design','[role="log"]',
   '[data-lenis-prevent]','[data-lenis-prevent-wheel]',
   'textarea','select','input','[contenteditable]','iframe'
@@ -62,7 +63,8 @@
   try{
    engine=new window.Lenis({
     autoRaf:!window.VeloryzMotionClock,
-    anchors:{offset:-82},
+    // Reference homepage owns its hash routing; avoid double handling.
+    anchors:document.body?.classList.contains('vz-reference-site')?false:{offset:-82},
     lerp:0.09,
     wheelMultiplier:0.9,
     smoothWheel:true,
@@ -94,7 +96,7 @@
  const jump=(target,options={})=>{
   const offset=options.offset??-82;
   if(engine)return engine.scrollTo(target,{offset,duration:1.0,...options});
-  const behavior=reduced.matches?'instant':'smooth';
+  const behavior=reduced.matches||!motionPermits()||lowPower()?'instant':'smooth';
   if(typeof target==='number'){
    window.scrollTo({top:target,behavior});
    return;

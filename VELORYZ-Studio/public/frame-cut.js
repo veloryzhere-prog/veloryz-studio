@@ -11,7 +11,7 @@ class VeloryzFrameCut extends HTMLElement {
   const listen=(el,name,fn)=>el?.addEventListener?.(name,fn,{signal});
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  let observer,visible=false,attempting=false,loaded=false,lastError='',retryTimer=0;
+  let observer,visible=false,attempting=false,loaded=false,lastError='',retryTimer=0,generation=0;
   video.defaultMuted=true;video.muted=true;video.loop=true;video.autoplay=true;video.playsInline=true;
   video.setAttribute('muted','');video.setAttribute('autoplay','');video.setAttribute('loop','');video.setAttribute('playsinline','');
   video.preload='auto';
@@ -19,18 +19,19 @@ class VeloryzFrameCut extends HTMLElement {
     !['paused','reduced'].includes(window.StudioMotion?.level)&&!window.StudioMotion?.onboardingActive;
   const clearRetry=()=>{if(retryTimer){clearTimeout(retryTimer);retryTimer=0;}};
   const load=()=>{if(loaded)return;loaded=true;video.src='/assets/frame-cut/scarf.mp4';video.load();};
-  const pause=()=>{clearRetry();attempting=false;if(!video.paused)video.pause();};
+  const pause=()=>{clearRetry();generation++;attempting=false;if(!video.paused)video.pause();};
   const sync=()=>{
    if(!visible||!allowed()){pause();return;}
    load();
    if(!video.paused||attempting)return;
-   attempting=true;
+   attempting=true;const attempt=++generation;
    try {
-    Promise.resolve(video.play()).then(()=>{lastError='';setState('playing');},error=>{
+    Promise.resolve(video.play()).then(()=>{if(attempt!==generation){if(!visible||!allowed())video.pause();return;}if(!visible||!allowed()){pause();return;}lastError='';setState('playing');},error=>{
+     if(attempt!==generation)return;
      lastError=error?.name||'PlaybackError';setState('blocked');
      // Browsers can deny autoplay. Retry once media is ready or after user interaction.
      // Do not spam play() from a timer if permissions forbid it.
-    }).finally(()=>{attempting=false;});
+    }).finally(()=>{if(attempt===generation)attempting=false;});
    }catch(error){attempting=false;lastError=error?.name||'PlaybackError';setState('blocked');}
   };
   const onUserGesture=()=>{if(lastError&&allowed()&&visible){lastError='';sync();}};
@@ -47,7 +48,7 @@ class VeloryzFrameCut extends HTMLElement {
   listen(video,'waiting',()=>{if(visible&&allowed()){clearRetry();retryTimer=setTimeout(sync,1500);}});
   listen(video,'ended',()=>{try{video.currentTime=0;}catch{}sync();});
   listen(video,'error',()=>{setState('unavailable');});
-  listen(video,'playing',()=>{setState('playing');});
+  listen(video,'playing',()=>{if(visible&&allowed())setState('playing');else pause();});
   listen(video,'pause',()=>{if(this.getAttribute?.('data-scarf-state')==='playing')setState('paused');});
   listen(document,'visibilitychange',sync);
   listen(window,'pageshow',sync);

@@ -1,48 +1,57 @@
 'use strict';
-/**
- * VELORYZ motion clock: one compositor-friendly requestAnimationFrame scheduler.
- * Lenis, the V4 scroll choreography and scarf use the same animation clock.
- * Existing page scroll, sticky layout, 3D models and accessibility controls are untouched.
+/** VELORYZ R46 — one keyed clock for Lenis and first-party render work.
+ * Continuous effects remain responsible for visibility and motion preferences.
+ * Cancellation applies even during a frame; replacing Lenis removes its listener.
  */
 (()=>{
  if(window.VeloryzMotionClock)return;
- const tasks=new Map();
- let lenis=null,frame=0,paused=false;
- const subscribers=new Set();
- const enabled=()=>!document.hidden&&document.documentElement.dataset.motion==='full';
+ const tasks=new Map(),subscribers=new Set();
+ let lenis=null,unsubscribeLenis=null,frame=0,paused=document.hidden,ticking=false,batch=null;
  function next(){
-  if(!frame&&!paused&&(lenis||tasks.size))frame=requestAnimationFrame(tick);
+  if(!frame&&!ticking&&!paused&&!document.hidden&&(lenis||tasks.size))frame=requestAnimationFrame(tick);
  }
  function tick(time){
   frame=0;
   if(paused||document.hidden)return;
-  try{lenis?.raf(time);}catch(error){console.warn('VELORYZ scroll fallback:',error);detachLenis(lenis);}
-  const batch=[...tasks];tasks.clear();
-  for(const [key,callback]of batch){
-   try{callback(time);}catch(error){console.error('VELORYZ motion frame failed:',key,error);}
-  }
-  if(lenis||tasks.size)next();
+  ticking=true;
+  try{
+   try{lenis?.raf(time);}catch(error){
+    console.warn('VELORYZ scroll fallback:',error);
+    const broken=lenis;detachLenis(broken);
+    if(window.VeloryzScroll?.engine===broken)window.VeloryzScroll.destroy();
+    else broken?.destroy?.();
+   }
+   batch=new Map(tasks);tasks.clear();
+   for(const [key,callback]of batch){
+    batch.delete(key);
+    if(paused||document.hidden){tasks.set(key,callback);for(const entry of batch)if(!tasks.has(entry[0]))tasks.set(...entry);break;}
+    try{callback(time);}catch(error){console.error('VELORYZ motion frame failed:',key,error);}
+   }
+  }finally{batch=null;ticking=false;next();}
  }
  function request(key,callback){tasks.set(key,callback);next();return 1;}
- function cancel(key){tasks.delete(key);}
+ function stopIfIdle(){if(!lenis&&!tasks.size&&frame){cancelAnimationFrame(frame);frame=0;}}
+ function cancel(key){tasks.delete(key);batch?.delete(key);stopIfIdle();}
  function detachLenis(instance){
-  if(!instance||instance===lenis){lenis=null;if(!tasks.size&&frame){cancelAnimationFrame(frame);frame=0;}}
+  if(!instance||instance===lenis){
+   const previous=lenis;lenis=null;
+   if(typeof unsubscribeLenis==='function')unsubscribeLenis();
+   else previous?.off?.('scroll',notifyScroll);
+   unsubscribeLenis=null;stopIfIdle();
+  }
  }
  function attachLenis(instance){
-  lenis=instance;
-  instance.on?.('scroll',notifyScroll);
+  if(!instance||instance===lenis)return;
+  detachLenis();lenis=instance;
+  unsubscribeLenis=instance.on?.('scroll',notifyScroll);
   next();
  }
- function notifyScroll(){
-  for(const callback of subscribers)try{callback();}catch(error){console.error('VELORYZ scroll subscriber failed',error);}
- }
+ function notifyScroll(){for(const callback of subscribers)try{callback();}catch(error){console.error('VELORYZ scroll subscriber failed',error);}}
  function subscribeScroll(fn){subscribers.add(fn);return()=>subscribers.delete(fn);}
- function sync(){
-  paused=document.hidden;
-  if(paused){if(frame)cancelAnimationFrame(frame);frame=0;}
-  else next();
- }
+ function suspend(){paused=true;if(frame)cancelAnimationFrame(frame);frame=0;}
+ function sync(){paused=document.hidden;if(paused)suspend();else next();}
  document.addEventListener('visibilitychange',sync);
+ window.addEventListener('pagehide',suspend);
  window.addEventListener('pageshow',sync);
- window.VeloryzMotionClock={request,cancel,attachLenis,detachLenis,subscribeScroll,notifyScroll,get running(){return!!frame;},get hasLenis(){return!!lenis;}};
+ window.VeloryzMotionClock={request,cancel,attachLenis,detachLenis,subscribeScroll,notifyScroll,get running(){return!!frame;},get hasLenis(){return!!lenis;},get pending(){return tasks.size;},version:'r46'};
 })();

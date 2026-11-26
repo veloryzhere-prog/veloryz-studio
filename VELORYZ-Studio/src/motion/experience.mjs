@@ -73,9 +73,12 @@ function mount(container,softwareOnly=false,previousPose=null) {
   }
   const entryEuler=new THREE.Euler(0,0,0,'YXZ');
   let visible=false, frame=0, last=0, elapsed=0, speed=1, view='front', mode='solid', explosion=0;
+  let renderRatio=Math.min(devicePixelRatio||1,economical?1:1.35),slowFrames=0,lastQualitySample=0;
   let manual=false, disposed=false, inspection;
   let rotationPaused=false,orbitStyle='gentle',autoResumeTimer=0,transitionPose=null,transitionStart=0;
-  function wake(){if(!frame && !disposed && visible && !document.hidden)frame=requestAnimationFrame(render);}
+  const clock=window.VeloryzMotionClock,frameKey=Symbol('veloryz-sculpture');
+  const cancelFrame=()=>{if(clock)clock.cancel(frameKey);else cancelAnimationFrame(frame);frame=0;};
+  function wake(){if(!frame && !disposed && visible && !document.hidden)frame=clock?clock.request(frameKey,render):requestAnimationFrame(render);}
   function controls(){
     if(!officialHero)return;
     const state=controlsRoot?.querySelector('[data-logo-state]');
@@ -183,10 +186,18 @@ function mount(container,softwareOnly=false,previousPose=null) {
       }
     });
     renderer.render(scene,camera);
+    // Adapt render resolution only after a sustained run of slow frames.
+    // Keep geometry, materials, lighting and the user's camera pose unchanged.
+    if(!software&&!manual&&active&&lastQualitySample){
+      const delta=time-lastQualitySample;
+      if(delta>75&&delta<250)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
+      if(slowFrames>=12&&renderRatio>0.85){renderRatio=Math.max(0.85,renderRatio-.15);renderer.setPixelRatio(renderRatio);renderer.setSize(container.clientWidth,container.clientHeight,false);slowFrames=0;}
+    }
+    lastQualitySample=time;
     container.dataset.webgl=software?'software':'ready';
     if(transitionPose||(active&&!story&&(!manual||Math.abs(wanted-explosion)>.002)))wake();
   }
-  function changed(){last=0;controls();wake();}
+  function changed(){last=0;lastQualitySample=0;slowFrames=0;controls();wake();}
   window.StudioMotion?.addEventListener('change',changed);
   on(document,'visibilitychange',changed);
   if(story)on(story,'studio:assembly',wake);
@@ -233,11 +244,11 @@ function mount(container,softwareOnly=false,previousPose=null) {
   on(target,'input',e=>{if(e.target.matches('[data-logo-speed]')){speed=Math.max(.25,Math.min(1.75,Number(e.target.value)||1));wake();}});
   const resize=new ResizeObserver(setSize);resize.observe(container);
   const visibility=new IntersectionObserver(([entry])=>{
-    visible=entry.isIntersecting;last=0;
-    if(visible)wake();else{cancelAnimationFrame(frame);frame=0;}
+    visible=entry.isIntersecting;last=0;lastQualitySample=0;slowFrames=0;
+    if(visible)wake();else cancelFrame();
   },{rootMargin:'40px'});visibility.observe(container);
   function dispose(){
-    disposed=true;clearResume();cancelAnimationFrame(frame);controller.abort();inspection?.dispose();
+    disposed=true;clearResume();cancelFrame();controller.abort();inspection?.dispose();
     resize.disconnect();visibility.disconnect();window.StudioMotion?.removeEventListener('change',changed);
     disposeModel(model);renderer.dispose();canvas.remove();container.removeAttribute('tabindex');
   }
