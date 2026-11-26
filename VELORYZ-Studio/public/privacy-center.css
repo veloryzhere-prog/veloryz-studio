@@ -59,3 +59,15 @@
 .vz-footer-privacy-control:hover{text-decoration:underline;text-underline-offset:4px}
 .vz-footer-privacy-control:focus-visible{outline:3px solid #739cd4;outline-offset:4px}
 #vz-privacy-fab{display:none!important}
+
+/* V2 first visit: essential functionality remains available without a consent decision. */
+.vz-privacy-layer.is-banner{inset:auto 12px calc(78px + env(safe-area-inset-bottom,0px)) 12px;background:none;backdrop-filter:none;display:flex;align-items:end;justify-content:center;padding:0;overflow:visible;pointer-events:none}
+.vz-privacy-layer.is-banner .vz-privacy-panel{pointer-events:auto;width:min(100%,960px);max-height:calc(100dvh - 110px);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px;border-radius:12px;padding:18px 20px;background:#fff;color:#211914;box-shadow:0 12px 48px #15120e26}
+.vz-privacy-layer.is-banner h2{font:650 1rem/1.3 system-ui,sans-serif;letter-spacing:0;color:#211914;margin:0 0 6px}
+.vz-privacy-layer.is-banner .vz-privacy-intro{font:400 .86rem/1.5 system-ui,sans-serif;color:#4e4540}
+.vz-privacy-layer.is-banner .vz-privacy-intro a{text-decoration:underline;text-underline-offset:3px}
+.vz-privacy-layer.is-banner .vz-privacy-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vz-privacy-layer.is-banner .vz-privacy-actions button{min-height:44px;padding:9px 12px;font:600 .78rem/1.2 system-ui,sans-serif;border-radius:7px}
+.vz-privacy-layer.is-banner .vz-choice-equal{background:#211914;border-color:#211914;color:#fff}
+.vz-privacy-layer.is-banner .vz-choice-save{color:#211914;border-color:#c8bfb5}
+@media(max-width:760px){.vz-privacy-layer.is-banner .vz-privacy-panel{grid-template-columns:1fr;gap:12px;padding:15px}.vz-privacy-layer.is-banner .vz-privacy-intro{font-size:.8rem}}

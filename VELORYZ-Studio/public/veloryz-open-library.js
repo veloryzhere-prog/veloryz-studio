@@ -6,7 +6,7 @@ const legacy=typeof previous.entries==='function'?previous.entries.bind(previous
 let imported=Array.isArray(window.VELORYZ_OPEN_DESIGNS)?window.VELORYZ_OPEN_DESIGNS:[],
 category='All',rights='All',motion='All',price='All',query='',sort='featured',page=1;
 const perPage=24;
-let observer=null,loadStarted=false;
+let observer=null,loadStarted=false,searchTimer=0;
 const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const path=p=>'/design/'+encodeURIComponent(p.id)+'/';
 const money=n=>'₹'+Math.max(6000,Math.min(50000,Math.round(Number(n)||6000))).toLocaleString('en-IN');
@@ -35,25 +35,25 @@ const prettyStatus=p=>p.sourceType==='original-veloryz'?['VELORYZ Original','ori
 const screenshotKind=p=>p.sourceType==='original-veloryz'?'Original first-party cover':
  p.previewImageKind==='upstream-screenshot'?'Original screenshot':
  p.previewImageKind==='published-reference-image'?'Published reference image':
- p.previewImageKind==='github-repository-cover'?'GitHub repository cover': 'Source image unavailable';
+ p.previewImageKind==='github-repository-cover'?'Repository cover — not a screenshot':p.previewImageKind==='upstream-preview-graphic'?'Source preview graphic':'Source image unavailable';
 function art(p){
  const screenshot=p.previewImage&&p.sourceType!=='original-veloryz'?'/studio-preview-images/'+encodeURIComponent(p.id):(p.previewImage||p.image||(p.originalTemplateId?'/template-covers/'+p.originalTemplateId+'.svg':''));
  const isTrueScreenshot=['upstream-screenshot','published-reference-image'].includes(p.previewImageKind);
  return '<a class="vz-source-shot" href="'+path(p)+'" aria-label="Explore '+escape(p.name)+' in the VELORYZ source viewer">'+
  (screenshot?'<img class="vz-source-image" src="'+escape(screenshot)+'" data-fallback-src="'+escape(p.previewImage||'')+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="'+escape(p.name)+' — '+escape(screenshotKind(p))+'">':
  '<span class="vz-source-noimage"><span>PREVIEW COMING SOON</span><strong>'+escape(p.name)+'</strong></span>')+
- '<span class="vz-source-image-top"><span>VELORYZ / DESIGN STUDIO</span><span>↗</span></span>'+
- '<span class="vz-source-image-label">EXPLORE WITH VELORYZ</span></a>';
+ '<span class="vz-source-image-top"><span>'+escape(screenshotKind(p))+'</span><span aria-hidden="true">↗</span></span>'+
+ '</a>';
 }
 function card(p,i){
  const [label,tone]=prettyStatus(p);
- const trust=p.rights==='candidate'?'Studio-reviewed source':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Usage terms reviewed in scope';
+ const trust=p.rights==='candidate'?'Source candidate · verification pending':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Confirm usage terms before delivery';
  return '<article class="vz-source-card" data-source-card data-price="'+Number(p.price||6000)+'" data-motion="'+motionLevel(p)+'" style="--source-order:'+(i%6)+'">'+art(p)+
  '<div class="vz-source-meta"><span>'+escape(p.category)+'</span><span class="vz-source-pill '+tone+'">'+escape(label)+'</span></div>'+
- '<div class="vz-source-card-body"><div class="vz-r9-card-title"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3><span>'+String(i+1).padStart(2,'0')+'</span></div><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
+ '<div class="vz-source-card-body"><div class="vz-r9-card-title"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3></div><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
  '<div class="vz-r9-card-signals"><span><img src="/assets/brand/veloryz-mark.svg" alt="">'+escape(trust)+'</span><span>'+escape(motionLevel(p))+' motion</span><span>'+escape(p.license||'Source terms')+'</span></div>'+
  '<div class="vz-source-price"><span>VELORYZ BUILD FROM</span><strong>'+money(p.price)+'</strong></div>'+
- '<div class="vz-source-card-actions"><a href="'+path(p)+'">Details ↗</a><a href="'+path(p)+'preview/">Full preview ↗</a><a href="'+createPath(p)+'">Use this direction ↗</a></div></div></article>';
+ '<div class="vz-source-card-actions"><a href="'+path(p)+'">Details ↗</a><a href="'+path(p)+'preview/">'+(p.previewType==='real-upstream-site'?'Interactive preview':'Concept preview')+' ↗</a><a href="'+createPath(p)+'">Use this direction ↗</a></div></div></article>';
 }
 function score(p){
  return p.importStatus==='real-upstream-html'?400:
@@ -121,27 +121,24 @@ function render(){
  const prices=items.map(p=>Number(p.price||0)).filter(Boolean),lowest=prices.length?Math.min(...prices):6000;
  return '<section class="vz-real-library container vz-r9-market" id="vz-real-library">'+
  '<section class="vz-r9-market-hero"><div class="vz-source-hero-text"><span class="vz-source-eyebrow">VELORYZ / CURATED DESIGN MARKET</span>'+
- '<h1>Find a direction.<br><em>Make it yours.</em></h1>'+
- '<p>Explore source-backed website directions, motion systems and interface structures. Compare starting build estimates, inspect the source, then let VELORYZ adapt the chosen direction around your brand and real requirements.</p>'+
- '<div class="vz-source-hero-actions"><a href="#vz-source-collection">Explore every design ↗</a><a href="/create/">Start from scratch ↗</a></div>'+
+ '<h1>Find a design.<br>Make it yours.</h1>'+
+ '<p>Browse curated website and product design references. Compare styles, starting build estimates and preview types, then choose a direction for your project.</p>'+
+ '<div class="vz-source-hero-actions"><a href="#vz-source-collection">Browse designs ↗</a><a href="/create/">Start from scratch ↗</a></div>'+
  '<dl class="vz-r9-market-stats"><div><dt>'+s.total+'</dt><dd>published directions</dd></div><div><dt>'+s.live+'</dt><dd>interactive previews</dd></div><div><dt>'+money(lowest)+'</dt><dd>lowest starting build</dd></div></dl></div>'+
- featured(items)+'</section>'+
- '<div class="vz-r9-market-strip"><span><img src="/assets/brand/veloryz-mark.svg" alt="">SOURCE-BACKED CURATION</span><span>VISIBLE STARTING PRICES</span><span>RIGHTS REVIEW BEFORE BUILD</span><span>REAL VISITOR REVIEWS</span></div>'+
- '<section class="vz-r9-market-principles" aria-label="How VELORYZ curates designs"><article><span>01</span><h2>Fit before fashion.</h2><p>Filter by industry, motion and budget so the direction supports the job—not just the screenshot.</p></article><article><span>02</span><h2>Price before proposal.</h2><p>Starting build estimates are visible while you browse. Final scope is confirmed before invoicing.</p></article><article><span>03</span><h2>Review before build.</h2><p>Source rights, dependencies and delivery risk are checked before a direction becomes a project.</p></article></section>'+
- '<section class="vz-r9-featured"><header><div><span class="vz-source-eyebrow">CURATED DROP / SIX DIRECTIONS</span><h2>Strong starting points.<br><em>Different kinds of work.</em></h2></div><p>A diverse set chosen for structure, motion or useful interaction patterns. These are references and starting directions—not VELORYZ claims of ownership.</p></header>'+featuredGrid(items)+'</section>'+
+ '</section>'+
  '<section class="vz-source-collection" id="vz-source-collection"><div class="vz-source-section-head"><span class="vz-source-eyebrow">FULL DESIGN MARKETPLACE</span>'+
- '<div><h2>Browse with<br><em>more signal.</em></h2><p>Search the complete collection, then narrow by category, motion intensity, rights status and starting budget.</p></div></div>'+
+ '<div><h2>All design references</h2><p>Filter by industry, motion, source status or starting budget.</p></div></div>'+
  '<div class="vz-source-toolbar vz-r9-toolbar"><label><span>Search</span><input type="search" data-source-search placeholder="SaaS, ecommerce, editorial, motion..." value="'+escape(query)+'" autocomplete="off"></label>'+
  '<label><span>Industry</span><select data-source-category>'+categories.map(c=>'<option value="'+escape(c)+'"'+(c===category?' selected':'')+'>'+escape(c)+'</option>').join('')+'</select></label>'+
  '<label><span>Motion level</span><select data-source-motion>'+['All','High','Medium','Low','Varies'].map(v=>'<option'+(v===motion?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Starting budget (INR)</span><select data-source-price>'+['All','Under ₹15k','₹15k–₹30k','₹30k+'].map(v=>'<option'+(v===price?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="price-asc"'+(sort==='price-asc'?' selected':'')+'>Price: low to high</option><option value="price-desc"'+(sort==='price-desc'?' selected':'')+'>Price: high to low</option><option value="name"'+(sort==='name'?' selected':'')+'>Name A–Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
  '<p class="vz-r20-price-note">Starting build estimates are shown in INR. Final scope, licensing and billing currency are confirmed before work begins.</p><div class="vz-source-filters" role="group" aria-label="Source availability and usage context">'+[
-  ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Studio-reviewed source'],['review','Source review needed'],['restricted','Reference only']
+  ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Source candidate · verification pending'],['review','Source review needed'],['restricted','Reference only']
  ].map(([value,label])=>'<button type="button" data-source-rights="'+value+'" aria-pressed="'+(rights===value)+'">'+label+'</button>').join('')+'</div>'+
- '<div class="vz-source-list-head"><span id="vz-source-result-count" aria-live="polite">'+list.length+' matching directions</span><span>STARTING VELORYZ BUILD ESTIMATES / INR</span></div>'+
+ '<div class="vz-source-list-head"><span id="vz-source-result-count" role="status" aria-live="polite">'+visible.length+' of '+list.length+' matching designs</span><button type="button" data-source-reset>Clear filters</button></div><p class="vz-filter-summary" id="vz-filter-summary"></p>'+
  '<div class="vz-source-grid" id="vz-source-grid">'+visible.map(card).join('')+'</div>'+
- (!list.length?'<div class="vz-source-empty">No matching designs. Try widening the category, motion or budget filters.</div>':'')+
+ '<div class="vz-source-empty"'+(list.length?' hidden':'')+'><strong>No matching designs.</strong><p>Try another search or remove filters.</p><button type="button" data-source-reset>Clear all filters</button></div>'+
  (visible.length<list.length?'<div class="vz-source-load"><button type="button" data-source-more>Load more designs ('+(list.length-visible.length)+' remaining) ↓</button></div>':'')+
  '</section>'+
  '<section class="vz-r9-review-trust"><div><span class="vz-source-eyebrow">REAL PROJECT FEEDBACK</span><h2>Trust belongs<br><em>beside the price.</em></h2><p>VELORYZ does not invent per-template ratings. This section uses the existing moderated review system and shows only approved visitor feedback.</p><a href="/reviews.html">Read or leave a review ↗</a></div><div class="vz-r9-review-data" data-source-review-trust><strong>Loading published review signal…</strong><p>Only approved, human-submitted reviews appear here.</p></div></section>'+
@@ -166,7 +163,8 @@ function refresh(){
  const all=entries(),list=filtered(all),visible=list.slice(0,page*perPage);
  const grid=root.querySelector('#vz-source-grid');if(!grid)return;
  grid.innerHTML=visible.map(card).join('');
- root.querySelector('#vz-source-result-count').textContent=list.length+' designs';
+ root.querySelector('#vz-source-result-count').textContent=visible.length+' of '+list.length+' matching designs';
+ const summary=root.querySelector('#vz-filter-summary');if(summary){const active=[query?'Search: '+query:'',category!=='All'?category:'',motion!=='All'?motion+' motion':'',price!=='All'?price:'',rights!=='All'?({imported:'Interactive source',candidate:'Source candidate',review:'Source review needed',restricted:'Reference only'}[rights]||rights):''].filter(Boolean);summary.textContent=active.length?'Active filters: '+active.join(' · '):'No filters applied';}
  let more=root.querySelector('.vz-source-load');
  if(visible.length<list.length){
   if(!more){more=document.createElement('div');more.className='vz-source-load';more.innerHTML='<button type="button" data-source-more></button>';grid.after(more)}
@@ -190,14 +188,15 @@ function bootstrap(){
  if(root){animateCards(root);loadReviewTrust();}
 }
 document.addEventListener('click',e=>{
- const b=e.target.closest('[data-source-rights],[data-source-more]');
+ const b=e.target.closest('[data-source-rights],[data-source-more],[data-source-reset]');
  if(!b||!b.closest('#vz-real-library'))return;
  e.preventDefault();
  if(b.dataset.sourceRights!==undefined){rights=b.dataset.sourceRights;page=1;document.querySelectorAll('[data-source-rights]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));refresh()}
- if(b.hasAttribute('data-source-more')){page++;refresh()}
+ if(b.hasAttribute('data-source-reset')){clearTimeout(searchTimer);category=rights=motion=price='All';query='';sort='featured';page=1;const root=b.closest('#vz-real-library');for(const key of ['category','motion','price'])root.querySelector('[data-source-'+key+']').value='All';root.querySelector('[data-source-search]').value='';root.querySelector('[data-source-sort]').value='featured';root.querySelectorAll('[data-source-rights]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.sourceRights==='All')));refresh();root.querySelector('[data-source-search]').focus({preventScroll:true});}
+ if(b.hasAttribute('data-source-more')){const oldCount=page*perPage;page++;refresh();const next=document.querySelectorAll('#vz-source-grid .vz-source-card')[oldCount];next?.querySelector('a')?.focus({preventScroll:true});}
 });
 document.addEventListener('input',e=>{
- if(e.target.matches('[data-source-search]')){query=e.target.value.trim();page=1;refresh()}
+ if(e.target.matches('[data-source-search]')){query=e.target.value.trim();page=1;clearTimeout(searchTimer);searchTimer=setTimeout(refresh,120)}
 });
 document.addEventListener('change',e=>{
  if(e.target.matches('[data-source-category]')){category=e.target.value;page=1;refresh()}

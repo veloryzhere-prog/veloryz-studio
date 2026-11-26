@@ -7,7 +7,7 @@
 const KEY='veloryz.privacy.choice.v1',VERSION='2026-11-22.1',MAX_AGE=180*864e5;
 const MEASURE='veloryz.measurement.optin.v1',DATA='veloryz.measurement.local.v1';
 const GPC=()=>navigator.globalPrivacyControl===true||navigator.doNotTrack==='1'||window.doNotTrack==='1';
-let current=null,open=false,lastFocus=null;
+let current=null,open=false,lastFocus=null,activeMode='',dismissedThisPage=false;
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const shortDate=s=>{try{return new Date(s).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}catch{return 'Not recorded'}};
 function valid(c){return c&&c.version===VERSION&&typeof c.at==='string'&&Date.now()-Date.parse(c.at)>=0&&Date.now()-Date.parse(c.at)<=MAX_AGE&&
@@ -31,14 +31,15 @@ function cleanStorage(){
 }
 cleanStorage();
 const htmlBox=(type,label,description,selected,locked=false)=>'<label class="vz-consent-toggle"><span class="vz-consent-toggle-text"><strong>'+label+'</strong><small>'+description+'</small></span><input type="checkbox" name="'+type+'" '+(selected?'checked ':'')+(locked?'disabled ':'')+' aria-label="'+label+'"></label>';
-function remove(){document.querySelector('#vz-privacy-layer')?.remove();document.documentElement.classList.remove('vz-consent-present');open=false;lastFocus?.focus?.({preventScroll:true})}
+function remove(){const layer=document.querySelector('#vz-privacy-layer'),hadFocus=layer?.contains(document.activeElement);layer?.remove();document.documentElement.classList.remove('vz-consent-present');open=false;activeMode='';if(hadFocus&&lastFocus?.isConnected)lastFocus.focus?.({preventScroll:true})}
 function ui(mode='banner'){
  if(open){remove();}
- lastFocus=document.activeElement;
+ lastFocus=document.activeElement;activeMode=mode;
  const state=choice(),settings=mode==='settings';
  const root=document.createElement('section');
  root.id='vz-privacy-layer';root.className='vz-privacy-layer '+(settings?'is-settings':'is-banner');
  root.setAttribute('aria-label',settings?'Privacy and cookie preferences':'Cookie and privacy choices');
+ if(!settings){root.innerHTML='<div class="vz-privacy-panel" role="region" aria-labelledby="vz-privacy-title"><div class="vz-privacy-banner-copy"><h2 id="vz-privacy-title">Your privacy choices</h2><p class="vz-privacy-intro">Essential storage keeps the site working. Optional preferences and local measurement stay off until you allow them. <a href="/privacy/">Privacy policy</a></p></div><div class="vz-privacy-actions"><button type="button" data-vz-privacy="reject" class="vz-choice-equal">Reject optional</button><button type="button" data-vz-privacy="accept" class="vz-choice-equal">Accept optional</button><button type="button" data-vz-privacy="settings" class="vz-choice-save">Customize</button><button type="button" data-vz-privacy="later" class="vz-choice-save">Decide later</button></div></div>';document.body.append(root);open=true;return;}
  root.innerHTML='<div class="vz-privacy-panel" role="dialog" aria-modal="true" aria-labelledby="vz-privacy-title">'+
  '<div class="vz-privacy-head"><span class="vz-privacy-brand">VELORYZ <i aria-hidden="true">✳</i></span><span class="vz-privacy-overline">PRIVACY / YOUR CHOICE</span></div>'+
  '<h2 id="vz-privacy-title">'+(settings?'Your privacy settings.':'A thoughtful experience. Your choice.')+'</h2>'+
@@ -82,7 +83,8 @@ function receiptId(){
 document.addEventListener('click',e=>{
  const action=e.target.closest('[data-vz-privacy]')?.dataset.vzPrivacy;
  if(!action)return;
- if(action==='close'){remove();return;}
+ if(action==='settings'){ui('settings');return;}
+ if(action==='later'||action==='close'){dismissedThisPage=true;remove();return;}
  if(action==='accept'||action==='reject'){choose(action);return;}
  if(action==='save'){
   const root=document.querySelector('#vz-privacy-layer');
@@ -91,7 +93,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{
  if(!open)return;
- if(e.key==='Tab'){
+ if(e.key==='Tab'&&activeMode==='settings'){
   const nodes=[...document.querySelectorAll('#vz-privacy-layer a,#vz-privacy-layer button,#vz-privacy-layer input:not([disabled])')]
    .filter(x=>x.getClientRects().length);
   if(nodes.length){const first=nodes[0],last=nodes[nodes.length-1];
@@ -99,7 +101,7 @@ document.addEventListener('keydown',e=>{
    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
   }
  }
- if(e.key==='Escape'){if(!current){e.preventDefault();return;}remove();}
+ if(e.key==='Escape'&&(activeMode==='settings'||document.querySelector('#vz-privacy-layer')?.contains(document.activeElement))){e.preventDefault();dismissedThisPage=true;remove();}
 });
 document.addEventListener('click',e=>{
  const policy=e.target.closest('#vz-privacy-layer .vz-consent-foot a[href^="/"]');
@@ -119,7 +121,7 @@ function removeObsoleteFloatingControls(){
 function mount(){
  // Persistent settings are available only in the footer and privacy policy.
  removeObsoleteFloatingControls();
- if(!current&&!open)ui('banner');
+ if(!current&&!open&&!dismissedThisPage&&!/^\/(?:privacy|cookies|terms)(?:\/|$)/.test(location.pathname))ui('banner');
 }
 document.addEventListener('studio:route',removeObsoleteFloatingControls);
 

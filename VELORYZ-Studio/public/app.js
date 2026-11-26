@@ -82,7 +82,8 @@ function knowledgeChatPage(agent){
  const requested=new URLSearchParams(location.search).get('agent');
  if(agent==='help'&&['help','support','client','creator'].includes(requested))agent=requested;
  const title=agent==='support'?'Contact Support':agent==='client'?'Client Portal Guide':agent==='creator'?'Project Planner':'Help Centre AI',back=agent==='support'?'/contact/':agent==='client'?'/client/':agent==='creator'?'/create/':'/help/studio/';
- return '<div class="vz-chat-page"><header class="vz-chat-page-head"><div><span class="kb-eyebrow">VELORYZ / ASSISTANTS</span><h1>'+title+'</h1></div><a href="'+back+'">← Back to '+(agent==='support'?'Contact':'Help Centre')+'</a></header>'+
+ return '<div class="vz-chat-page v2-support" data-v2-agent="'+agent+'"><header class="vz-chat-page-head"><div><span class="kb-eyebrow">VELORYZ / '+(agent==='support'?'SUPPORT':'KNOWLEDGE')+'</span><h1>'+title+'</h1></div><a href="'+back+'">← Back to '+(agent==='support'?'Contact':'Help Centre')+'</a></header>'+
+ '<nav class="v2-chat-mobile-nav" aria-label="Support destinations"><a href="/help/assistant/" '+(agent==='help'?'aria-current="page"':'')+'>Help AI</a><a href="/support/" '+(agent==='support'?'aria-current="page"':'')+'>Support</a><a href="/docs/">Guides</a><a href="/contact/">Contact team</a></nav>'+
  (window.VeloryzSupportChat?.render(agent)||'<p>The Studio assistant is loading. You can still <a href="/contact/">contact the team</a>.</p>')+
  '<div class="vz-need-help"><div><span class="kb-eyebrow">HUMAN SUPPORT WHEN YOU NEED IT</span><h2>Need help?</h2><p>For project-specific decisions, privacy questions or urgent requests, contact the Studio team directly.</p></div><div class="vz-need-help-actions"><a href="/contact/">Contact the team ↗</a><a href="/docs/">Browse all documentation ↗</a></div></div></div>';
 }
@@ -273,7 +274,7 @@ function renderRoute(route,scroll=true){
  if(currentRoute==='/create/'){
   document.getElementById('expert-launcher')?.remove();document.getElementById('offer-dock')?.remove();
   document.getElementById('site-pin')?.remove();document.getElementById('ad-slider')?.remove();
-}else{initMotion();renderOfferDock();platformMount();}
+}else{initMotion();if(!['/support/','/help/assistant/'].includes(currentRoute)){renderOfferDock();platformMount();}else{document.getElementById('expert-launcher')?.remove();document.getElementById('offer-dock')?.remove();}}
  document.dispatchEvent(new CustomEvent('studio:route'));
  if(scroll){if(!reduced.matches&&typeof $('#main').animate==='function')$('#main').animate([{opacity:.72,transform:'translateY(5px)'},{opacity:1,transform:'none'}],{duration:480,easing:'cubic-bezier(.22,1,.36,1)'});if(window.VeloryzScroll?.active)window.VeloryzScroll.scrollTo(0,{immediate:true,force:true});else window.scrollTo({top:0,behavior:'instant'});$('#main').focus({preventScroll:true});}
 }

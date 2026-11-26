@@ -120,3 +120,16 @@
  padding:11px 14px;font-size:.74rem;white-space:nowrap;
 }
 @media(max-width:450px){.vz-reference-site .vz-ai-name-form{grid-template-columns:1fr}.vz-reference-site .vz-ai-name-save{width:fit-content}}
+
+/* V2: usable conversation controls, including narrow phones and short landscape viewports. */
+.vz-reference-site .vz-ai-header>div{min-width:0;overflow-wrap:anywhere}
+.vz-reference-site .vz-ai-close{min-width:44px;min-height:44px}
+.vz-reference-site .vz-ai-personas button{min-height:44px;flex-shrink:0}
+.vz-reference-site .vz-ai-name-form{grid-template-columns:minmax(0,1fr) auto auto}
+.vz-reference-site .vz-ai-name-input,.vz-reference-site .vz-ai-name-save{min-height:44px}
+.vz-reference-site .vz-ai-name-save:last-child{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.vz-reference-site .vz-ai-drawer :is(button,input,textarea):focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.vz-reference-site .vz-ai-launch:after{background:var(--mut);box-shadow:none}
+.vz-reference-site .vz-ai-log{scroll-behavior:auto}
+@media(max-width:600px){.vz-reference-site .vz-ai-drawer{width:calc(100vw - 24px);max-height:calc(100dvh - 86px);overflow-y:auto;overscroll-behavior:contain}.vz-reference-site .vz-ai-input,.vz-reference-site .vz-ai-name-input{font-size:16px}.vz-reference-site .vz-ai-name-form{grid-template-columns:repeat(2,minmax(0,1fr))}.vz-reference-site .vz-ai-name-input{grid-column:1/-1}.vz-reference-site .vz-ai-name-save{width:100%;white-space:normal}.vz-reference-site .vz-ai-log{min-height:100px}.vz-reference-site .vz-ai-header{padding:12px}.vz-reference-site .vz-ai-name-capture{padding:12px;margin-inline:12px}}
+@media(max-height:540px){.vz-reference-site .vz-ai-drawer{overflow-y:auto}.vz-reference-site .vz-ai-log{min-height:100px}.vz-reference-site .vz-ai-header{padding:10px 14px}}
