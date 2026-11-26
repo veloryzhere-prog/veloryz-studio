@@ -179,18 +179,24 @@ jobs:
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Typecheck
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: corepack pnpm exec tsc --noEmit
       - name: Build production application
+        id: production_build
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: corepack pnpm build
       - name: Verify generated Cloudflare Worker output
+        if: ${{ !cancelled() && steps.production_build.outcome == 'success' }}
         run: node tools/test-generated-cloudflare-output.mjs
       - name: Dry-run nested Cloudflare deploy config used when project root is VELORYZ-Studio
+        if: ${{ !cancelled() && steps.production_build.outcome == 'success' }}
         run: corepack pnpm exec wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-nested-dryrun"
       - name: Dry-run the exact repository-root Cloudflare deploy config
+        if: ${{ !cancelled() && steps.production_build.outcome == 'success' }}
         working-directory: .
         run: VELORYZ-Studio/node_modules/.bin/wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-root-dryrun"
       - name: Verify bundled first-party Lenis runtime
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.production_build.outcome == 'success' }}
         run: node tools/test-lenis-bundle.mjs
       - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
@@ -199,5 +205,5 @@ jobs:
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-expanded-design-library.mjs
       - name: Validate original storefront, twelve live templates, and purchase requests
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.production_build.outcome == 'success' }}
         run: node tools/test-template-store.mjs

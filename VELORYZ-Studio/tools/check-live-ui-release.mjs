@@ -88,7 +88,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&!home.body.includes('id="vz-library-count"')
     &&!home.body.includes('id="vz-library-index"')
     &&!homeStageJs.body.includes("data-vz-library-go")
-    &&homeStageCss.body.includes('nav.vz-library-rail')
+    &&homeStageCss.body.includes('#vz-home-library .vz-library-rail')
     &&homeStageCss.body.includes('display:none!important');
    const r15SimpleScrollOK=homeStageJs.body.includes("addEventListener('scroll',requestLibraryUpdate")
     &&homeStageJs.body.includes("libraryFrame=requestAnimationFrame")
@@ -164,5 +164,5 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
  console.log('Live release attempt '+attempt+'/'+maxAttempts+': '+lastError);
  if(attempt<maxAttempts)await sleep(10000);
 }
-console.error('FAIL: source is merged but the PUBLIC DOMAIN did not serve the expected R9 build. Ensure hosting deploys current main from VELORYZ-Studio and invalidates public assets. '+lastError);
+console.error('FAIL: exact deployed revision or live functional release contract did not pass. '+lastError);
 process.exit(1);

@@ -100,7 +100,7 @@ assert.match(chrome,/a\.dataset\.vzQuickCreate='footer'/,'Footer Quick Create li
 assert.match(headerCSS,/data-vz-view="design"/,'Design hash route should also have CSS no-flash fallback');
 assert.match(headerCSS,/vz-reference-support-links \[data-vz-quick-create\]/,'Footer shortcut must be hidden on blocked routes');
 assert.ok(home.includes('reference-header-interactions.css?v=20261123-router-quick-create-v3'),'Updated header CSS must bypass old browser caches');
-assert.ok(home.includes('reference-restored-features.js?v=20261123-router-quick-create-v3'),'Updated footer JS must bypass old browser caches');
+assert.ok(home.includes('reference-restored-features.js?v=20261126-v2-alpha2-audit1'),'Updated footer JS must bypass old browser caches');
 
 
 /* Actual /create/ page contract: the shared "Quick Create" link must not be

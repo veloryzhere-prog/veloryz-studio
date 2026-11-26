@@ -39,7 +39,7 @@ for(const item of items){
   has(html,'/veloryz-preview-motion-bridge.js','The real site must report scroll position: '+item.id);
   if(item.assetMode==='upstream-hosted-assets'){
    assert.ok(!/<base\s+href=["']https?:\/\//i.test(html),'Internal hashes must stay local');
-   has(html,'/studio-preview-assets/'+item.id+'/','Assets must have a same-origin preview path');
+   has(html,'/studio-preview-assets-v2/'+item.id+'/','Assets must have a same-origin preview path');
   }
  }
 }
@@ -74,7 +74,7 @@ has(galleryCss,'.vz-source-price','Studio pricing visual design');
 
 has(detail,'export function renderDesignPreview','Project detail server renderer');
 has(detail,'export function renderDesignFullPreview','Dedicated full-site preview server renderer');
-has(detail,'/assets/brand/official/Main-Transparent.webp','Use original studio logo asset');
+has(detail,'/assets/brand/official/Main-Dark-Ink-Transparent.webp','Use original studio logo asset');
 has(detail,'vz-market-pricebox','Price card on every detail');
 has(detail,'vz-market-related-grid','Real related projects');
 has(detail,"'/design/'+p.id+'/preview/'",'Same-domain live preview');
@@ -130,7 +130,7 @@ has(quickActions,"document.querySelector('#vz-quick-actions-footer')?.remove?.()
 has(headerCss,'.pg[data-p="design"].act','Show no Quick Create header button on active hash-routed design page');
 has(headerCss,'.vz-header-create','Scope rule to the redundant header control, not normal per-design CTAs');
 has(referenceShell,'reference-header-interactions.css?v=20261123-router-quick-create-v3','Bust previous header CSS cache');
-has(referenceShell,'reference-restored-features.js?v=20261123-router-quick-create-v3','Bust previous footer quick-create script cache');
+has(referenceShell,'reference-restored-features.js?v=20261126-v2-alpha2-audit1','Bust previous footer quick-create script cache');
 has(appShell,'project-quick-actions.js?v=20261123-quick-cta-visibility-v2','Bust previous Quick Actions JS cache');
 has(quickActionsCss,'.vz-quick-actions--footer','Keep the Quick Actions presentation available for unaffected routes');
 
