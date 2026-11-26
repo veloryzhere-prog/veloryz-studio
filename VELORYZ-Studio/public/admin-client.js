@@ -145,9 +145,9 @@ function cpDetail(){
 function clientPortalAdmin(){
  return '<div class="cpm-shell">'+heading('Private workspace / Client management','Manage your clients','Find a client, make an update and send an invitation—everything in one organized place. Changes here save directly to the private portal.','<div class="cpm-heading-actions"><a href="#/enquiries" class="admin-button secondary">Project requests ↗</a><button type="button" class="admin-button" data-cpm="new">+ New client</button></div>')+
  (cpError?'<section class="cpm-error" role="alert"><strong>Client directory connection failed — project count not verified.</strong><p>'+cpE(cpError)+'</p><p>Your existing client workspaces are not deleted. Reload after the backend has recovered.</p><button class="admin-button secondary" data-cpm="reload">Retry loading clients ↻</button><a class="admin-button secondary" href="#/enquiries">Open project requests ↗</a></section>':!cpLoaded?'<div class="cpm-loading" role="status">Opening your client directory…</div>':
- cpSummaryNumbers()+cpDeliveryPill()+
+ cpSummaryNumbers()+(window.VeloryzCRM?.clientSwitcher(cpProjects)||'')+cpDeliveryPill()+
  '<details class="cpm-how-it-works"><summary>How client invitations work <span>3 easy steps</span></summary><div><p><strong>1.</strong> Create a project or import a project request from the enquiry inbox.</p><p><strong>2.</strong> Add milestones and deliverables, then select <em>Issue invitation</em>.</p><p><strong>3.</strong> The unique code is valid once, expires in 14 days and opens only that client workspace.</p></div></details>'+
- '<div class="cpm-layout"><aside class="cpm-directory"><div class="cpm-directory-head"><div><strong>Client directory</strong><small id="cpm-directory-count">'+cpMatches().length+' projects</small></div><button data-cpm="reload" class="cpm-refresh" title="Refresh clients" aria-label="Refresh clients">↻</button></div>'+
+ '<div class="cpm-layout '+(window.VeloryzCRM?.clientMode()==='board'?'os-crm-directory-hidden':'')+'"><aside class="cpm-directory"><div class="cpm-directory-head"><div><strong>Client directory</strong><small id="cpm-directory-count">'+cpMatches().length+' projects</small></div><button data-cpm="reload" class="cpm-refresh" title="Refresh clients" aria-label="Refresh clients">↻</button></div>'+
  '<label class="cpm-search"><span class="sr-only">Search clients</span><input id="cpm-search" type="search" placeholder="Search clients or projects…" value="'+cpE(cpSearch)+'" autocomplete="off"></label>'+
  '<label class="cpm-filter"><span>Status</span>'+cpSelect('filter',[['all','All projects'],...cpStatuses],cpFilter,'id="cpm-status-filter"')+'</label>'+
  '<div id="cpm-directory-results" class="cpm-client-list">'+cpDirectoryCards()+'</div><button class="cpm-new-client" data-cpm="new">+ Add another client</button></aside>'+
@@ -165,9 +165,10 @@ async function cpLoad(selected=null){
   if(emailResult.ok){cpDelivery=emailResult.data;cpDeliveryLoaded=true;cpDeliveryError='';}else{cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'};cpDeliveryError=String(emailResult.error?.message||'Connection unavailable');cpDeliveryLoaded=false;}
   cpProjects=result.projects||[];
    if(desired){cpReq('/mail-events?project_id='+encodeURIComponent(desired)).then(data=>{if(cpSelected===desired&&seq===cpSequence){cpEmailEvents=data.events||[];const box=document.querySelector('[data-cpm-email-audit]');if(box)box.innerHTML=cpEmailAudit();}}).catch(()=>{});}
-  const available=cpProjects.some(p=>p.id===desired);
+  const available=cpProjects.some(p=>p.id===desired)||!!(desired&&result.workspace?.project?.id===desired);
   cpSelected=available?desired:(cpProjects[0]?.id||'');
   cpWorkspace=available&&result.workspace?result.workspace:null;
+  if(available&&cpWorkspace?.project&&!cpProjects.some(p=>p.id===desired))cpProjects=[cpWorkspace.project,...cpProjects];
   if(cpSelected&&!cpWorkspace){
    const detail=await cpReq('/projects?id='+encodeURIComponent(cpSelected));
    if(seq!==cpSequence)return;
@@ -276,7 +277,7 @@ document.addEventListener('click',async e=>{
  if(section!=='client-portal')return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
- if(action==='new'){cpNewProject=true;cpNewDraft=null;cpEditMode='project';cpEditingItem='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();else {cpLoaded=true;render();}return;}
+ if(action==='new'){window.VeloryzCRM?.openDirectory();cpNewProject=true;cpNewDraft=null;cpEditMode='project';cpEditingItem='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();else {cpLoaded=true;render();}return;}
  if(action==='cancel'){cpNewProject=false;cpNewDraft=null;cpEditingItem='';cpEditMode='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();return;}
  if(action==='edit-project'){cpNewProject=false;cpEditMode='project';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();return;}
  if(action==='add-item'){cpEditItem(b.dataset.type||'milestone');return;}
