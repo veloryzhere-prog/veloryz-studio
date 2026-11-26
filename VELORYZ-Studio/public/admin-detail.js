@@ -4,12 +4,13 @@
 (()=>{
 'use strict';
 const GROUPS=[
- {title:'Operations',caption:'01 / KEEP THE STUDIO MOVING',items:['overview','reviews','command','enquiries','client-portal','payments']},
+ {title:'Operations',caption:'01 / KEEP THE STUDIO MOVING',items:['overview','action-inbox','reviews','command','enquiries','client-portal','payments']},
  {title:'Creative production',caption:'02 / MAKE & PUBLISH',items:['projects','catalogue','content','branding','media','offers']},
  {title:'Studio intelligence',caption:'03 / AI & KNOWLEDGE',items:['ai-control','ai-mindset','knowledge-ai','platform','documentation']},
  {title:'Governance',caption:'04 / SYSTEMS & HISTORY',items:['history','health','settings']}
 ];
 const META={
+ 'action-inbox':{group:'OPERATIONS',eyebrow:'ACTION INBOX',description:'Prioritized outstanding enquiries, client actions, reviews and payments.',steps:['Review coverage.','Open the source console to act.'],related:[['enquiries','Enquiries'],['client-portal','Clients']]},
  reviews:{group:'OPERATIONS',eyebrow:'COMMUNITY MODERATION',description:'See genuine visitor feedback in one place, review incoming submissions, and approve or hide individual reviews without leaving Studio Control.',steps:['Open Needs review to see pending feedback.','Approve to make a genuine review visible publicly, or reject spam and sensitive data.','Use View public reviews to verify only approved content appears; these actions are immediate and separate from CMS publishing.'],related:[['ai-control','AI Control Centre'],['content','Site content']]},
  'ai-control':{group:'INTELLIGENCE',eyebrow:'UNIFIED AI OPERATIONS',description:'Manage independent help agents, the five public adviser specialties, and global provider configuration in one connected interface.',steps:['Choose the Assistants, Advisers or Provider tab.','Save agent settings securely, or save and publish adviser CMS briefs as directed.','Run the live provider test to verify actual model responses.'],related:[['knowledge-ai','Separate agents'],['ai-mindset','Adviser briefs']]},
  overview:{group:'OPERATIONS',eyebrow:'STUDIO PULSE',description:'Monitor the published content and current creative workload, then jump into the relevant editor.',steps:['Review the current published revision and outstanding draft work.','Check which projects and campaigns are ready for visitors.','Open the relevant console, make changes and publish deliberately.'],related:[['command','Command center'],['enquiries','New requests']]},

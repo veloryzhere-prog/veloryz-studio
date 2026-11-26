@@ -13,7 +13,7 @@ if (command === "build") {
   try { sha = execFileSync("git", ["rev-parse", "HEAD"], {cwd:fileURLToPath(new URL("..",import.meta.url)),encoding:"utf8",stdio:["ignore","pipe","ignore"]}).trim(); } catch {}
   if (!/^[a-f0-9]{40}$/.test(sha)) sha = process.env.CF_PAGES_COMMIT_SHA || process.env.WORKERS_CI_COMMIT_SHA || process.env.GITHUB_SHA || "";
   if (!/^[a-f0-9]{40}$/.test(sha)) sha = "unknown";
-  writeFileSync(new URL("../lib/release-build.json",import.meta.url), JSON.stringify({release:"R51.1",commit:sha})+"\n");
+  writeFileSync(new URL("../lib/release-build.json",import.meta.url), JSON.stringify({release:"R51.2",commit:sha})+"\n");
 }
 
 if (managedLinux && command === "build") {

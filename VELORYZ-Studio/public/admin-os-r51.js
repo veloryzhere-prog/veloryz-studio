@@ -2,7 +2,7 @@
 (()=>{
 'use strict';
 const groups=[
- {id:'home',label:'Home',routes:['overview','command']},
+ {id:'home',label:'Home',routes:['overview','action-inbox','command']},
  {id:'business',label:'Business',routes:['enquiries','client-portal','payments']},
  {id:'creative',label:'Creative',routes:['projects','content','catalogue','media','branding','platform']},
  {id:'growth',label:'Growth',routes:['offers','reviews']},
