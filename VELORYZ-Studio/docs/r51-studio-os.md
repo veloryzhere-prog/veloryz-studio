@@ -11,3 +11,7 @@ Owner-only Overview and new Action Inbox share a read-only, separately loaded da
 ## R51.3 — CRM and delivery pipeline
 
 Enquiry table/pipeline, local page search/sort and follow-up ordering retain the real status/version and acceptance editors. Server pagination remains 25 records. Client delivery pipeline is grouped by actual workspace status; opening a card uses the existing private client console. A database-wide owner-only summary replaces the twelve-project dashboard sampling when available; first 200 client action records are shown with full count, and fallback coverage is explicit. No automatic email, payment, invitation or status changes. Authenticated UI acceptance remains separate.
+
+## R51.4 — Finance desk
+
+Owner-only full-database payment totals, server search and status filters with 50-row pages, CSV export of current page (formula protection and no token), receipt-reference reconciliation and versioned private audit trail, explicit agreed-budget records linked to existing enquiry references. Existing payment request links are retained. No automatic collection, gateway-confirmed receipts, bank balance or tax invoice. Older records have no invented evidence. Budget list returns up to 200 recent records; budget less verified is a planning difference. Legacy API status updates remain compatible; new finance form requires receipt evidence. Authenticated write tests use synthetic fixtures only; no real payment records changed during implementation.
