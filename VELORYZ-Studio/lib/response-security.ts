@@ -27,7 +27,7 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
    +'<meta name="veloryz-experience-release" content="'+experienceRelease+'">'
    +'<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'
    +'<script src="/veloryz-brand-motion-r9.js?v=20261123-brand-motion-r9" defer></script>'
-   +'<script src="/veloryz-experience-r20.js?v=20261125-motion-restore-r33" defer></script>'
+   +'<script src="/veloryz-experience-r20.js?v=20261126-r42" defer></script>'
   : '';
  const editorialAssets=!privatePage&&status===200
   ? '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">'
@@ -47,12 +47,12 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  if(referenceMenu){
   headers['X-VELORYZ-Menu-Release']='reference-menu-20261123-r6';
   headers['X-VELORYZ-QC-Release']='visual-layout-20261123-r7';
-  headers['X-VELORYZ-Homepage-Release']='v2-alpha2-benchmark-20261126';
+  headers['X-VELORYZ-Homepage-Release']='v2-layout-repair-20261126-r42';
  }
  const v2Assets=!privatePage&&status===200?(referenceMenu?'<link rel="stylesheet" href="/v2-home-warm.css?v=20261126-v2"><script defer src="/v2-home-warm.js?v=20261126-v2"></script>':'<link rel="stylesheet" href="/v2-workspaces.css?v=20261126-v2">'):'';
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+v2Assets+'</head>');
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+v2Assets+'<link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r42"></head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
- html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
+ html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-layout-20261126-r42"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
 }
 export function pageMetadata(html:string,{title,description,url,image,site}:{title:string;description:string;url:string;image:string;site:any}){
