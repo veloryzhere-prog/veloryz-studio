@@ -40,6 +40,11 @@ on:
       - "VELORYZ-Studio/lib/design-detail-page.ts"
       - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
       - "VELORYZ-Studio/tools/check-live-intelligence-r49.mjs"
+      - "VELORYZ-Studio/public/admin*.js"
+      - "VELORYZ-Studio/public/admin*.css"
+      - "VELORYZ-Studio/lib/admin-shell.ts"
+      - "VELORYZ-Studio/tools/test-admin-os-r51.mjs"
+      - "VELORYZ-Studio/tools/check-live-admin-os-r51.mjs"
       - ".github/workflows/veloryz-live-ui-release.yml"
 permissions:
   contents: read
@@ -86,3 +91,5 @@ jobs:
         run: node tools/check-live-intelligence-r49.mjs
       - name: Verify R50 private download denial
         run: node tools/check-live-workspace-r50.mjs
+      - name: Verify deployed R51 owner shell and access boundary
+        run: node tools/check-live-admin-os-r51.mjs

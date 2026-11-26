@@ -118,7 +118,7 @@ export async function GET(request: Request) {
   const src=pages[params.get('page')||'design']||pages.design;
   return secureHtml(`<!doctype html><html><head><title>Responsive studio preview</title><style>body{margin:0;background:#ddd8cd;display:grid;place-items:center;padding:25px;font-family:system-ui}p{font-size:12px}iframe{width:${width}px;height:780px;border:1px solid #bbb3a4;background:#faf9f6;box-shadow:0 12px 50px #6b5d3833}</style></head><body><p>LOCAL RESPONSIVE QA / ${width}px / ${src}</p><iframe id="responsive-preview" title="Responsive site preview" src="${src}"></iframe></body></html>`,200,true);
  }
- if(import.meta.env.DEV&&path==='/_studio_preview/unlock')return secureHtml(adminShell.replace('<script src="/admin.js" defer></script>','<script>window.ADMIN_UNLOCK_PREVIEW=true;</script><script src="/admin.js" defer></script>'),200,true);
+ if(import.meta.env.DEV&&path==='/_studio_preview/unlock')return secureHtml(adminShell.replace(/<script src="\/admin\.js(?:\?[^"]*)?" defer><\/script>/,'<script>window.ADMIN_UNLOCK_PREVIEW=true;</script><script src="/admin.js" defer></script>'),200,true);
  if(path==='/admin/preview'){
   const apiRequest=new Request(new URL('/api/admin/state',request.url),{headers:request.headers});
   const result=await handleApi(apiRequest,env,'password');
@@ -129,7 +129,7 @@ export async function GET(request: Request) {
  if(path==='/admin'||path.startsWith('/admin/'))return secureHtml(adminShell,200,true);
  if(import.meta.env.DEV&&path==='/_studio_preview/admin'){
   const data=await getPublished(env);
-  return secureHtml(adminShell.replace('<script src="/admin.js" defer></script>',()=>`<script>window.ADMIN_VISUAL_PREVIEW=true;window.ADMIN_INITIAL_STATE=${serialise({state:data.state,draftVersion:0,publishedVersion:0,user:{name:'Aryan Raj Singh'},hasDraft:false})};</script><script src="/admin.js" defer></script>`),200,true);
+  return secureHtml(adminShell.replace(/<script src="\/admin\.js(?:\?[^"]*)?" defer><\/script>/,()=>`<script>window.ADMIN_VISUAL_PREVIEW=true;window.ADMIN_INITIAL_STATE=${serialise({state:data.state,draftVersion:0,publishedVersion:0,user:{name:'Aryan Raj Singh'},hasDraft:false})};</script><script src="/admin.js" defer></script>`),200,true);
  }
  if(import.meta.env.DEV&&path==='/_studio_preview/campaign'){
   const data=await getPublished(env);

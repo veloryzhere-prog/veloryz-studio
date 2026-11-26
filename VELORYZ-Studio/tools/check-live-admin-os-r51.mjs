@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+const base='https://veloryz.online';
+const get=path=>fetch(base+path,{cache:'no-store',signal:AbortSignal.timeout(25000)});
+const page=await get('/admin/');assert(page.ok);
+assert.equal(page.headers.get('x-veloryz-commit'),process.env.GITHUB_SHA);
+assert.match(page.headers.get('x-robots-tag')||'',/noindex/i);
+assert.match(page.headers.get('cache-control')||'',/no-store/i);
+const html=await page.text();
+assert(html.includes('class="studio-os-r51"'));
+assert(html.includes('/admin-os-r51.js?v=20261126-r51-1'));
+assert(html.includes('/admin-os-r51.css?v=20261126-r51-1'));
+for(const p of ['/admin-os-r51.js?v=20261126-r51-1','/admin-os-r51.css?v=20261126-r51-1'])assert((await get(p)).ok,'Missing admin asset '+p);
+const denied=await get('/api/admin/state');assert([401,403].includes(denied.status),'Owner state must remain protected');
+const home=await get('/');assert(!(await home.text()).includes('/admin-os-r51.css'),'Owner styling must not leak onto public site');
+console.log('PASS: deployed Studio OS shell, exact revision, owner-only assets and protected state. Authenticated visual QA is separate.');
