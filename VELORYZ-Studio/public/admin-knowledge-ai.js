@@ -11,7 +11,7 @@ async function loadKnowledgeAi(){
 function knowledgeAiAdmin(){
  const profiles=knowledgeAiProfiles,chosen=profiles?.find(a=>a.id===knowledgeAiSelected)||profiles?.[0],totals=knowledgeAiUsage||[];
  const usage=id=>totals.filter(t=>t.agent===id).reduce((acc,x)=>acc+Number(x.total||0),0);
- const cards=['help','support','client','creator'].map(id=>{const x=profiles?.find(p=>p.id===id),name=knowledgeAiNames[id];return '<button type="button" class="ka-agent-card '+(knowledgeAiSelected===id?'is-active':'')+'" data-ka-select="'+id+'"><span class="ka-agent-symbol">✳</span><strong>'+E(name)+'</strong><small>'+(x?E(x.provider)+' · '+(x.configured?'Credential ready':'Provider not connected'):'Loading connection…')+'</small><span class="ka-agent-card-meta">'+usage(id)+' requests (30 days) ↗</span></button>'}).join('');
+ const cards=['help','support','client','creator'].map(id=>{const x=profiles?.find(p=>p.id===id),name=knowledgeAiNames[id];return '<button type="button" class="ka-agent-card '+(knowledgeAiSelected===id?'is-active':'')+'" data-ka-select="'+id+'"><span class="ka-agent-symbol">✳</span><strong>'+E(name)+'</strong><small>'+(x?E(x.provider)+' · '+(x.provider==='guide'?'Reference-only mode':x.configured?'Credential configured · test required':'Provider not connected'):'Loading connection…')+'</small><span class="ka-agent-card-meta">'+usage(id)+' requests (30 days) ↗</span></button>'}).join('');
  const edit=chosen?'<form id="ka-form" data-ka-agent="'+E(chosen.id)+'" class="ka-form" autocomplete="off"><div class="ka-status-bar"><span class="'+(chosen.enabled?'is-enabled':'')+'"></span><strong>'+E(knowledgeAiNames[chosen.id])+'</strong><small>Independent agent settings · version '+Number(chosen.version)+'</small></div>'+
  '<div class="ka-form-grid">'+
  '<label class="ka-field"><span>Assistant display name</span><input name="name" maxlength="80" required value="'+E(chosen.name)+'"></label>'+
@@ -30,11 +30,11 @@ function knowledgeAiAdmin(){
  '<div class="ka-info"><div><h3>How routing works</h3><p><strong>Help AI:</strong> documentation support. <strong>Contact AI:</strong> customer support and escalation. <strong>Client AI:</strong> portal navigation only, no private project data. <strong>Creator AI:</strong> project planning and scope.</p></div><div><h3>Other Studio personalities</h3><p>Existing character AI connections remain in <a href="#/platform">Platform pages</a>. Their API settings are managed separately to avoid unintentionally changing public support or project agents.</p></div><div><h3>Security and cost controls</h3><p>Owner-only configuration, AES-GCM encrypted keys, per-agent rate limits, 30-day aggregate usage counters, request timeouts and explicit non-AI fallback. No transcripts are kept by this backend.</p></div></div></section>';
 }
 document.addEventListener('click',event=>{
- const pick=event.target.closest('[data-ka-select]');if(pick){knowledgeAiSelected=pick.dataset.kaSelect;if(section==='knowledge-ai')render();return}
+ const pick=event.target.closest('[data-ka-select]');if(pick){knowledgeAiSelected=pick.dataset.kaSelect;if(section==='knowledge-ai'||section==='ai-control'&&aiHubTab==='assistants')render();return}
  if(event.target.closest('[data-ka-refresh]')){knowledgeAiProfiles=null;loadKnowledgeAi();return}
  const test=event.target.closest('[data-ka-test]');if(!test||knowledgeAiTesting)return;
  knowledgeAiTesting=true;const target=document.getElementById('ka-test-result');test.disabled=true;if(target)target.textContent='Requesting a real response from the selected provider…';
- (async()=>{try{const data=await api('/api/admin/knowledge-ai/agents/'+test.dataset.kaTest,{method:'POST',body:'{}'});if(target)target.textContent=(data.mode==='ai'?'Verified live AI reply:\n':'Documentation fallback (AI provider unavailable):\n')+(data.answer||'No response')+(data.sources?.length?'\nReferences: '+data.sources.map(x=>x.path).join(', '):'')}
+ (async()=>{try{const data=await api('/api/admin/knowledge-ai/agents/'+test.dataset.kaTest,{method:'POST',body:'{}'});if(target)target.textContent=(data.mode==='ai'?'Verified live AI reply:\n':'Reference guidance (no live model reply):\n')+(data.providerStatus?'Provider status: '+data.providerStatus+'\n':'')+(data.answer||'No response')+(data.sources?.length?'\nReferences: '+data.sources.map(x=>x.path).join(', '):'')}
  catch(e){if(target)target.textContent='Test failed: '+e.message}
  finally{knowledgeAiTesting=false;test.disabled=false}})();
 });

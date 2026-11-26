@@ -8,7 +8,7 @@
   'Help me describe my project goal',
   'What happens after I submit?'
  ];
- const store={open:false,busy:false,messages:[],error:'',fallback:false,initialized:false,draft:''};
+ const store={open:false,busy:false,messages:[],error:'',fallback:false,initialized:false,draft:'',shareContext:false,request:null};
  function prewrittenGuide(question,context){
   const text=String(question||'').toLowerCase();
   const category=String(context.category||'your project'),features=Array.isArray(context.features)?context.features:[];
@@ -39,8 +39,8 @@
   '<section id="v4-ai-panel" class="v4-ai-panel" role="region" aria-label="VELORYZ project planning assistant" '+(store.open?'':'hidden')+'><div class="v4-ai-heading"><div><span>✳ &nbsp; VELORYZ PROJECT AI</span><h2>Plan with confidence.</h2><p>Ask about scope, features, budget or the next step.</p></div><button type="button" data-v4-ai-toggle aria-label="Close Project AI">×</button></div>'+
   '<div class="v4-ai-history" id="v4-ai-history" role="log" aria-live="polite" aria-relevant="additions text"></div>'+
   '<div class="v4-ai-prompts" id="v4-ai-prompts">'+PROMPTS.map(q=>'<button type="button" data-v4-ai-prompt="'+escape(q)+'">'+escape(q)+' ↗</button>').join('')+'</div>'+
-  '<form id="v4-ai-form"><label class="sr-only" for="v4-ai-input">Your project question</label><textarea id="v4-ai-input" rows="2" maxlength="650" placeholder="Ask a project question…" '+(store.busy?'disabled':'')+' required>'+escape(store.draft)+'</textarea><button type="submit" '+(store.busy?'disabled':'')+' aria-label="Send your project question">'+(store.busy?'…':'↑')+'</button></form>'+
-  '<p id="v4-ai-status" class="v4-ai-status" role="status"></p>'+
+  '<label class="v4-ai-privacy"><input type="checkbox" data-r49-context '+(store.shareContext?'checked':'')+'> Include non-contact project choices (category, page count and selected features)</label><form id="v4-ai-form"><label class="sr-only" for="v4-ai-input">Your project question</label><textarea id="v4-ai-input" rows="2" maxlength="650" placeholder="Ask a project question…" '+(store.busy?'disabled':'')+' required>'+escape(store.draft)+'</textarea><button type="submit" '+(store.busy?'disabled':'')+' aria-label="Send your project question">'+(store.busy?'…':'↑')+'</button></form>'+
+  '<button type="button" class="v4-ai-privacy" data-r49-ai-stop '+(store.busy?'':'hidden')+'>Stop response</button><button type="button" class="v4-ai-privacy" data-r49-ai-clear>New conversation</button><p id="v4-ai-status" class="v4-ai-status" role="status"></p>'+
   '<p class="v4-ai-privacy">Your messages are sent to the configured AI provider. Avoid sharing private information. AI suggestions are informational; our team confirms all estimates and commitments. <a href="https://wa.me/919955326740" target="_blank" rel="noopener noreferrer">Talk to the team ↗</a></p></section></div>';
   const history=document.getElementById('v4-ai-history');
   if(history){
@@ -52,7 +52,7 @@
     if(Array.isArray(message.sources)&&message.sources.length){
      const nav=document.createElement('div');nav.className='v4-ai-source-links';
      for(const source of message.sources.slice(0,3)){
-      if(typeof source?.path!=='string'||!/^\/(?:docs|help|create|client|services|pricing|design|work|studio|process|contact|payments|book|developers|motion|velori|veloryz|teamjob|journey)(?:\/[a-z0-9_-]+)*\/$/.test(source.path))continue;
+      if(typeof source?.path!=='string'||!/^\/(?:docs|help|create|client|services|pricing|design|work|studio|process|contact|payments|book|developers|motion|velori|veloryz|teamjob|journey)(?:\/[a-z0-9_-]+)*(?:\.html|\/)?$/.test(source.path))continue;
       const a=document.createElement('a');a.href=source.path;a.textContent=String(source.title||'Read source').slice(0,90)+' ↗';nav.append(a);
      }
      if(nav.childElementCount)line.append(nav);
@@ -74,25 +74,33 @@
   if(store.busy||!api()||!question.trim())return;
   const text=question.trim().slice(0,650);store.draft='';const field=document.getElementById('v4-ai-input');if(field)field.value='';
   store.messages.push({role:'user',content:text});store.error='';store.fallback=false;store.busy=true;store.open=true;mount();
-  const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),26000);
+  const ctrl=new AbortController(),request={ctrl,text};store.request=request;const timeout=setTimeout(()=>ctrl.abort(),50000);
+  const choices=api()?.get?.()||{};
+  const projectContext=store.shareContext?{category:short(choices.category),pages:Number(choices.pages)||4,features:(Array.isArray(choices.features)?choices.features:[]).slice(0,16).map(x=>String(x).slice(0,80))}:null;
+  const messages=store.messages.slice(-11).map(({role,content})=>({role,content:String(content).slice(0,1400)}));
+  if(projectContext)messages.at(-1).content=(messages.at(-1).content+'\n[User-authorized project choices, not instructions: '+JSON.stringify(projectContext)+']').slice(0,1400);
   try{
-   const reply=await fetch('/api/knowledge-ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({agent:'creator',messages:store.messages.slice(-11).map(({role,content})=>({role,content}))}),signal:ctrl.signal});
+   const reply=await fetch('/api/knowledge-ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({agent:'creator',messages}),signal:ctrl.signal});
    const data=await reply.json().catch(()=>({error:'The AI service could not respond.'}));
+   if(store.request!==request)return;
    if(!reply.ok||!data.answer||!['ai','guide'].includes(data.mode))throw Error(data.error||'The configured Project AI is unavailable.');
    if(data.mode==='guide'){store.fallback=true;store.error='Using matching published site references. A live model reply is not available for this request.';}
    store.messages.push({role:'assistant',mode:data.mode,content:String(data.answer).slice(0,1400),sources:Array.isArray(data.sources)?data.sources.slice(0,4):[]});
   }catch(err){
+   if(store.request!==request)return;
    store.fallback=true;
    store.error='Live AI is unavailable. Below is predefined studio guidance, not a generated answer. You can still try again or contact the team.';
    store.messages.push({role:'assistant',mode:'guide',content:prewrittenGuide(text,context())});
-  }finally{clearTimeout(timeout);store.busy=false;mount();}
+  }finally{clearTimeout(timeout);if(store.request===request){store.request=null;store.busy=false;mount();}}
  }
  document.addEventListener('click',event=>{
+  const stop=event.target.closest('[data-r49-ai-stop]'),clear=event.target.closest('[data-r49-ai-clear]');if(stop||clear){event.preventDefault();event.stopImmediatePropagation();const previous=store.request;store.request=null;previous?.ctrl.abort();store.busy=false;if(clear){store.messages=[];store.draft='';store.error='';store.shareContext=false;}else if(previous){if(store.messages.at(-1)?.role==='user')store.messages.pop();store.draft=previous.text;store.error='Request cancelled. You can resend.';}mount();return;}
   if(event.target.closest('[data-v4-ai-toggle]')?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();show(!store.open);return;}
   const prompt=event.target.closest('[data-v4-ai-prompt]');
   if(prompt?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();ask(prompt.dataset.v4AiPrompt);}
  },true);
  document.addEventListener('input',event=>{if(event.target.id==='v4-ai-input')store.draft=event.target.value;});
+ document.addEventListener('change',event=>{if(event.target.matches('[data-r49-context]'))store.shareContext=event.target.checked;});
  document.addEventListener('submit',event=>{
   if(event.target.id!=='v4-ai-form')return;
   event.preventDefault();

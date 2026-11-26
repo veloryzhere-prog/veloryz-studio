@@ -33,7 +33,7 @@ const sessionStorage={
 };
 const ctx=vm.createContext({
  console,window:win,document:doc,sessionStorage,location,history,URL,
- TextEncoder,TextDecoder,setTimeout,clearTimeout,
+ TextEncoder,TextDecoder,setTimeout,clearTimeout,queueMicrotask,
  crypto:{randomUUID:()=> 'c162bb72-2d79-44da-bc7f-7bf073b62933'},
  navigator:{clipboard:{writeText:async()=>{}}},
  AbortController,

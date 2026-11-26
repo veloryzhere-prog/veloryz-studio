@@ -33,7 +33,7 @@ const sessionStorage={
 };
 const ctx=vm.createContext({
  console,window:win,document:doc,sessionStorage,location,history,URL,
- TextEncoder,TextDecoder,setTimeout,clearTimeout,
+ TextEncoder,TextDecoder,setTimeout,clearTimeout,queueMicrotask,
  crypto:{randomUUID:()=> 'c162bb72-2d79-44da-bc7f-7bf073b62933'},
  navigator:{clipboard:{writeText:async()=>{}}},
  AbortController,
@@ -113,7 +113,7 @@ assert.equal(fetchCount,1);
 assert.equal(request.kind,'project');
 assert.equal(request.email,'client@example.com');
 assert.equal(request.requestId,'c162bb72-2d79-44da-bc7f-7bf073b62933');
-assert(request.message.startsWith('PROJECT CREATOR V4'));
+assert(request.message.startsWith('PROJECT CREATOR V5'));
 assert(request.message.includes('Member accounts'));
 assert(request.message.length<=2000);
 assert.equal(request.consent,true);
