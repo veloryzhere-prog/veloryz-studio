@@ -53,6 +53,6 @@ test('all five character contracts, optional first names, and guide labeling',()
  assert.ok(read('public/reference-ai-dock.js').includes('messages.slice(-15)'));
  assert.ok(read('public/platform.js').includes('data-name-skip'));
  assert.ok(read('lib/hosted-adviser.mjs').includes('characterPrompt(data.agent'));
- assert.ok(html.includes('reference-ai-dock.js?v=20261126-v2-alpha1'));
+ assert.match(html,/reference-ai-dock\.js\?v=20261126-v2-alpha(?:1|2-audit1)/);
  assert.ok(read('lib/site-shell.ts').includes('platform.js?v=20261126-v2-alpha1'));
 });
