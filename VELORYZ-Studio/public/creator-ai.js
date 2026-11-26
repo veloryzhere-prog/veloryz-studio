@@ -92,6 +92,7 @@
   const prompt=event.target.closest('[data-v4-ai-prompt]');
   if(prompt?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();ask(prompt.dataset.v4AiPrompt);}
  },true);
+ document.addEventListener('input',event=>{if(event.target.id==='v4-ai-input')store.draft=event.target.value;});
  document.addEventListener('submit',event=>{
   if(event.target.id!=='v4-ai-form')return;
   event.preventDefault();
