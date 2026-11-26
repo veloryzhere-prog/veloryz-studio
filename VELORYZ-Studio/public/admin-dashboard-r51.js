@@ -4,7 +4,7 @@
 const paths={enquiries:'/api/admin/enquiries?status=new&page=0',clients:'/api/client-portal/admin/projects',reviews:'/api/reviews/admin',payments:'/api/admin/payments',backend:'/api/health',provider:'/api/admin/ai/settings',mail:'/api/client-portal/admin/delivery'};
 const titles={enquiries:'New enquiries',clients:'Client projects',reviews:'Review moderation',payments:'Payment requests',backend:'Website backend',provider:'AI configuration',mail:'Email configuration',detail:'Client actions'};
 const limit=12;
-let records={},details=[],checked=0,expected=0,loadedAt=0,busy=false,sequence=0,filter='all',query='',lastOwner=null;
+let records={},details=[],checked=0,expected=0,aggregate=null,loadedAt=0,busy=false,sequence=0,filter='all',query='',lastOwner=null;
 const E=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
 const arr=v=>Array.isArray(v)?v:[];
 const date=v=>{const t=Date.parse(v||'');return Number.isFinite(t)?t:0;};
@@ -13,7 +13,7 @@ const money=v=>Number.isSafeInteger(Number(v))&&Number(v)>=0?new Intl.NumberForm
 const istDay=v=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(v);
 const active=p=>['planning','in-progress','in-review','on-hold'].includes(p.status);
 const data=(r,k)=>r[k]?.state==='ready'?r[k].data:null;
-function derive(r,workspaces,now=Date.now()){
+function derive(r,workspaces,now=Date.now(),summary=null){
  const enquiries=data(r,'enquiries'),clients=data(r,'clients'),reviews=data(r,'reviews'),payments=data(r,'payments');
  const projects=arr(clients?.projects),newItems=arr(enquiries?.items).filter(x=>x.status==='new'),pendingReviews=arr(reviews?.reviews).filter(x=>x.status==='pending'),requests=arr(payments?.items).filter(x=>x.status==='requested');
  const rows=[],activity=[];
@@ -34,10 +34,11 @@ function derive(r,workspaces,now=Date.now()){
   const unread=arr(w.messages).filter(x=>x.sender==='client'&&!x.read_at);
   if(unread.length)add('clients',p.title||'Client project',unread.length+' unread client message'+(unread.length===1?'':'s'),unread.at(-1)?.created_at,'Reply','client-portal',p.id);
  }
+ if(summary)for(const x of arr(summary.actions))if(['Overdue','Changes requested','Awaiting client','Reply'].includes(x.priority))add('clients',x.title,x.subtitle,x.event_time,x.priority,'client-portal',x.project_id);
  const rank={Overdue:0,'Changes requested':1,'Follow up':2,Reply:3,New:4,Moderate:5,'Verify receipt':6,'Awaiting client':7};
  rows.sort((a,b)=>(rank[a.priority]??9)-(rank[b.priority]??9)||date(b.time)-date(a.time));
  activity.sort((a,b)=>date(b.time)-date(a.time));
- return {projects,rows,activity,counts:{enquiries:enquiries&&Number.isFinite(Number(enquiries.total))?Number(enquiries.total):null,clients:clients?projects.filter(active).length:null,reviews:reviews?pendingReviews.length:null,payments:payments?requests.length:null}};
+ return {projects,rows,activity,counts:{enquiries:enquiries&&Number.isFinite(Number(enquiries.total))?Number(enquiries.total):null,clients:summary?summary.active:clients?projects.filter(active).length:null,reviews:reviews?pendingReviews.length:null,payments:payments?requests.length:null}};
 }
 function stateText(k){const r=records[k];return !r?'Not checked':r.state==='loading'?'Loading…':r.state==='error'?'Unavailable':r.state==='preview'?'Owner sign-in required':'Loaded';}
 const countText=(k,n)=>n===null?stateText(k):String(n);
@@ -50,35 +51,35 @@ function renderRows(model,all){
  let list=model.rows;
  if(all){const q=query.trim().toLowerCase();list=list.filter(x=>(filter==='all'||x.category===filter)&&(!q||[x.title,x.subtitle,x.priority].join(' ').toLowerCase().includes(q)));}
  else list=list.slice(0,7);
- const coverage='Enquiries: first 25 new records. Client detail: '+checked+' of '+expected+' returned projects checked (maximum '+limit+'; directory capped at 200, items and messages capped at 150 per project). Reviews and payments reflect returned records (payments capped at 100).';
- const incomplete=['enquiries','clients','reviews','payments'].some(k=>records[k]?.state!=='ready')||checked<expected||expected>=200||model.counts.enquiries>25||arr(data(records,'payments')?.items).length>=100||details.some(w=>w.items.length>=150||w.messages.length>=150);
+ const coverage='Enquiries: first 25 new records. '+(aggregate?'Client actions calculated across all '+aggregate.projects+' projects; showing '+aggregate.actions.length+' of '+aggregate.totalActions+' actions. ':'Client aggregate unavailable; fallback checked '+checked+' of '+expected+' returned projects (maximum '+limit+'). ')+'Reviews and payments reflect returned records (payments capped at 100).';
+ const incomplete=['enquiries','clients','reviews','payments'].some(k=>records[k]?.state!=='ready')||(!aggregate&&(checked<expected||expected>=200))||(aggregate&&aggregate.totalActions>aggregate.actions.length)||model.counts.enquiries>25||arr(data(records,'payments')?.items).length>=100||details.some(w=>w.items.length>=150||w.messages.length>=150);
  return '<section class="os-panel os-queue"><div class="os-panel-head"><div><h2>'+(all?'Action inbox':'Needs your attention')+'</h2><p>Read-only queue · open the source console to act</p></div>'+(all?'':link('action-inbox','','View inbox'))+'</div>'+
  (all?'<div class="os-queue-toolbar"><label>Filter <select data-os-filter>'+[['all','All categories'],['enquiries','Enquiries'],['clients','Client work'],['reviews','Community'],['payments','Payments']].map(([k,n])=>'<option value="'+k+'" '+(filter===k?'selected':'')+'>'+n+'</option>').join('')+'</select></label><label>Search <input data-os-query type="search" value="'+E(query)+'" placeholder="Find an action"></label><span>'+list.length+' displayed</span></div>':'')+
  '<div class="os-queue-list">'+(list.length?list.map(x=>'<article class="os-task"><div class="os-task-marker '+(x.priority==='Overdue'||x.priority==='Follow up'||x.priority==='Changes requested'?'is-urgent':'')+'"></div><div class="os-task-copy"><strong>'+E(x.title)+'</strong><small>'+E(x.subtitle)+'</small></div><span class="os-task-status">'+E(x.priority)+'</span><time>'+E(day(x.time))+'</time>'+link(x.route,x.project,'Open')+'</article>').join(''):'<p class="os-empty">'+(incomplete?'No actions available from the loaded records yet. Some data is incomplete.':'No matching actions in the loaded records.')+'</p>')+'</div><p class="os-coverage">'+E(coverage)+(incomplete?' Coverage incomplete; do not treat this as an all-clear.':'')+'</p></section>';
 }
 function markup(workspace,all){
- const model=derive(records,details),c=model.counts;
+ const model=derive(records,details,Date.now(),aggregate),c=model.counts;
  const summary=[['enquiries','New enquiries',c.enquiries,'enquiries'],['clients','Active client projects',c.clients,'client-portal'],['reviews','Pending reviews',c.reviews,'reviews'],['payments','Payment requests',c.payments,'payments']];
  const problems=Object.keys(paths).filter(k=>records[k]?.state==='error');
  const healthRows=['backend','provider','mail'].map(k=>{const x=health(k);return '<div class="os-health-row"><span>'+E(titles[k])+'</span><span class="os-health-value '+x.tone+'">'+E(x.label)+'</span></div>';}).join('');
  return (problems.length?'<div class="os-alert" role="status">Some sources are unavailable: '+E(problems.map(k=>titles[k]).join(', '))+'. Retry to refresh. Existing records are not affected.</div>':'')+
  '<div class="os-dash-header"><div><p class="os-dash-date">'+E(new Intl.DateTimeFormat('en-IN',{dateStyle:'full',timeZone:'Asia/Kolkata'}).format(new Date()))+'</p><h1>'+(all?'Action inbox':'Studio overview')+'</h1><p>'+(all?'Prioritized actions from current studio records.':'Your business operations, creative work and system connections.')+'</p></div><div><button class="admin-button secondary" type="button" data-os-refresh '+(busy?'disabled':'')+'>'+(busy?'Refreshing…':'Refresh data')+'</button><small role="status">'+(loadedAt?'Checked '+E(new Intl.DateTimeFormat('en-IN',{timeStyle:'short',timeZone:'Asia/Kolkata'}).format(loadedAt))+' IST':'Not refreshed yet')+'</small></div></div>'+
- (!all?'<div class="os-metrics">'+summary.map(([k,n,v,route])=>'<a class="os-metric" href="#/'+route+'"><span>'+n+'</span><strong>'+E(countText(k,v))+'</strong><small>'+(k==='enquiries'?'Server total':k==='clients'?'Active among returned projects':'Returned records')+' <b aria-hidden="true">↗</b></small></a>').join('')+'</div>':'')+
+ (!all?'<div class="os-metrics">'+summary.map(([k,n,v,route])=>'<a class="os-metric" href="#/'+route+'"><span>'+n+'</span><strong>'+E(countText(k,v))+'</strong><small>'+(k==='enquiries'?'Server total':k==='clients'?(aggregate?'Full database total':'Active among returned projects'):'Returned records')+' <b aria-hidden="true">↗</b></small></a>').join('')+'</div>':'')+
  '<div class="'+(all?'os-inbox-grid':'os-dashboard-grid')+'">'+renderRows(model,all)+(!all?'<section class="os-panel os-health"><div class="os-panel-head"><div><h2>Service connections</h2><p>Configuration and read-only checks</p></div>'+link('health','','Details')+'</div>'+healthRows+'<div class="os-health-row"><span>Private client API</span><span class="os-health-value '+(records.clients?.state==='ready'?'good':'unknown')+'">'+E(records.clients?.state==='ready'?'Responding':stateText('clients'))+'</span></div><p class="os-coverage">No live inference, mail delivery or storage write test performed here.</p></section>':'')+'</div>'+
  (!all?'<div class="os-dashboard-grid os-bottom-grid"><section class="os-panel"><div class="os-panel-head"><div><h2>Client projects</h2><p>Recorded completion, not estimated progress</p></div>'+link('client-portal','','Manage')+'</div>'+(model.projects.length?model.projects.slice().sort((a,b)=>date(b.updated_at)-date(a.updated_at)).slice(0,6).map(p=>{const progress=Math.max(0,Math.min(100,Number(p.progress)||0));return '<article class="os-project-row"><div><strong>'+E(p.title||'Client project')+'</strong><small>'+E(p.status||'Unknown status')+'</small></div><div class="os-progress"><progress max="100" value="'+progress+'" aria-label="'+E((p.title||'Project')+' recorded completion')+'"></progress><span>'+progress+'%</span></div>'+link('client-portal',p.id,'Open')+'</article>';}).join(''):'<p class="os-empty">'+E(stateText('clients')==='Loaded'?'No client projects returned.':stateText('clients'))+'</p>')+'</section><section class="os-panel"><div class="os-panel-head"><div><h2>Recent records</h2><p>Latest recorded events, not a full audit trail</p></div></div>'+(model.activity.length?model.activity.slice(0,6).map(x=>'<article class="os-activity"><div><strong>'+E(x.title)+'</strong><small>'+E(x.category)+' · '+E(day(x.time))+'</small></div>'+link(x.route,x.project,'View')+'</article>').join(''):'<p class="os-empty">No dated records loaded.</p>')+'</section></div><section class="os-panel os-publication"><div><h2>Website publication</h2><p>Public revision v'+E(workspace.publishedVersion??'—')+' · '+(workspace.dirty?'Unsaved website changes':workspace.hasDraft?'Saved draft pending':'No pending website draft')+'</p></div>'+link('history','','Review releases')+'</section>':'');
 }
 function draw(){const host=document.querySelector('[data-os-dashboard]');if(!host||!lastOwner)return;const input=host.querySelector('[data-os-query]'),focused=input===document.activeElement,selection=focused?[input.selectionStart,input.selectionEnd]:null;host.innerHTML=markup(lastOwner,host.dataset.osDashboard==='inbox');if(selection){const next=host.querySelector('[data-os-query]');next?.focus({preventScroll:true});next?.setSelectionRange(...selection);}}
 async function refresh(owner,request,preview){
- if(busy||!owner)return;lastOwner=owner;const seq=++sequence;busy=true;records={};details=[];checked=0;expected=0;
+ if(busy||!owner)return;lastOwner=owner;const seq=++sequence;busy=true;records={};details=[];checked=0;expected=0;aggregate=null;
  for(const k of Object.keys(paths))records[k]={state:preview?'preview':'loading'};
  draw();
  if(preview){busy=false;draw();return;}
  const get=async(k,path)=>{try{const v=await request(path,{signal:AbortSignal.timeout(15000)});if(!v||typeof v!=='object'||(['enquiries','payments'].includes(k)&&!Array.isArray(v.items))||(k==='clients'&&!Array.isArray(v.projects))||(k==='reviews'&&!Array.isArray(v.reviews)))throw Error('Invalid response');if(seq===sequence){const fields=(list,keys)=>arr(list).map(x=>Object.fromEntries(keys.map(key=>[key,x[key]])));const minimal=k==='enquiries'?{total:v.total,items:fields(v.items,['reference','service','status','created_at'])}:k==='clients'?{projects:fields(v.projects,['id','title','status','progress','created_at','updated_at'])}:k==='reviews'?{reviews:fields(v.reviews,['display_name','rating','status','created_at'])}:k==='payments'?{items:fields(v.items,['reference','title','amount_paise','status','created_at'])}:k==='backend'?{ok:v.ok}:{configured:v.configured};records[k]={state:'ready',data:minimal};}}catch{if(seq===sequence)records[k]={state:'error'};}};
- await Promise.all(Object.entries(paths).map(([k,p])=>get(k,p)));
+ await Promise.all([...Object.entries(paths).map(([k,p])=>get(k,p)),request('/api/client-portal/admin/operations-summary',{signal:AbortSignal.timeout(15000)}).then(v=>{if(seq===sequence&&Array.isArray(v?.actions)&&Number.isSafeInteger(v.projects)&&v.projects>=0&&Number.isSafeInteger(v.active)&&Number.isSafeInteger(v.totalActions)&&v.totalActions>=v.actions.length)aggregate={projects:v.projects,active:v.active,totalActions:v.totalActions,actions:v.actions.map(x=>({project_id:x.project_id,title:x.title,subtitle:x.subtitle,event_time:x.event_time,priority:x.priority}))};}).catch(()=>{})]);
  if(seq!==sequence)return;
  const projects=arr(data(records,'clients')?.projects).slice().sort((a,b)=>Number(active(b))-Number(active(a))||date(b.updated_at)-date(a.updated_at));
  expected=projects.length;draw();
- const chosen=projects.slice(0,limit);
+ const chosen=aggregate?[]:projects.slice(0,limit);
  for(let i=0;i<chosen.length;i+=3){
   await Promise.all(chosen.slice(i,i+3).map(async p=>{try{const v=await request(paths.clients+'?id='+encodeURIComponent(p.id),{signal:AbortSignal.timeout(15000)});if(seq===sequence&&v.workspace?.project?.id===p.id&&Array.isArray(v.workspace.items)&&Array.isArray(v.workspace.messages)){const w=v.workspace;details.push({project:{id:w.project.id,title:w.project.title},items:w.items.map(x=>({type:x.type,state:x.state,title:x.title,due_date:x.due_date,updated_at:x.updated_at})),messages:w.messages.map(x=>({sender:x.sender,read_at:x.read_at,created_at:x.created_at}))});checked++;}}catch{}}));
   if(seq!==sequence)return;draw();
@@ -86,7 +87,7 @@ async function refresh(owner,request,preview){
  busy=false;loadedAt=Date.now();draw();
 }
 function mount(owner,request,preview){
- if(lastOwner!==owner){sequence++;busy=false;records={};details=[];checked=expected=loadedAt=0;filter='all';query='';}
+ if(lastOwner!==owner){sequence++;busy=false;records={};details=[];checked=expected=loadedAt=0;aggregate=null;filter='all';query='';}
  lastOwner=owner;draw();
  if(!busy&&(!loadedAt||Date.now()-loadedAt>60000)&&!preview)refresh(owner,request,false);
  else if(preview&&!Object.keys(records).length)refresh(owner,request,true);
