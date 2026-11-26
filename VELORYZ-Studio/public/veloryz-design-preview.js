@@ -10,7 +10,7 @@ if(!data||!content||!stage)return;
 let design;
 try{design=JSON.parse(data.textContent||'{}')}catch{return}
 const live=design.mode==='immersive',id=design.id;
-let frame=null,currentPercent=0;
+let frame=null,currentPercent=0,readyTimer=0;
 const setStatus=message=>{if(caption)caption.textContent=message};
 const escape=s=>String(s||'');
 function updateProgress(value){
@@ -30,7 +30,7 @@ function placeholder(title,message){
  box.append(mark,h,p,a);content.replaceChildren(box);setStatus(message);
 }
 function imagePreview(){
- frame=null;
+ clearTimeout(readyTimer);frame=null;stage.dataset.previewState='visual';updateProgress(0);
  if(!design.image)return placeholder('Preview under preparation','A full interactive website has not been installed for this project. You can use the visual direction in your VELORYZ project brief.');
  const img=document.createElement('img');
  img.className='vz-market-screenshot';img.src=design.image;
@@ -43,10 +43,10 @@ function imagePreview(){
   placeholder('Preview temporarily unavailable','The original media host cannot supply this preview right now. You can still request a tailored design from the Studio.');
  });
  content.replaceChildren(img);
- setStatus('Visual reference · website source not locally installed');
+ setStatus('Visual reference · interactive rendering unavailable or not installed');
 }
 function loadSite(){
- updateProgress(0);
+ clearTimeout(readyTimer);stage.dataset.previewState='loading';updateProgress(0);
  if(!design.isRunnable||!design.localSource){imagePreview();return}
  const iframe=document.createElement('iframe');
  iframe.className='vz-market-live-iframe';
@@ -59,12 +59,13 @@ function loadSite(){
  iframe.setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock');
  iframe.setAttribute('allow','fullscreen');
  iframe.addEventListener('load',()=>{
-  setStatus('Live website ready · scroll inside the experience to trigger original motion');
+  setStatus('Checking the original website assets…');
   command('report');
  },{once:true});
  iframe.addEventListener('error',()=>{if(design.image)imagePreview();else placeholder('Website temporarily unavailable','The preview could not load. The Studio can still help you scope this direction.')},{once:true});
  frame=iframe;
  content.replaceChildren(iframe);
+ readyTimer=setTimeout(()=>{if(frame===iframe&&stage.dataset.previewState!=='ready')imagePreview()},18000);
  setStatus('Loading the real website...');
 }
 function command(name,delta=0){
@@ -76,7 +77,9 @@ loadSite();
 window.addEventListener('message',event=>{
  if(!frame?.contentWindow||event.source!==frame.contentWindow)return;
  const msg=event.data;
- if(!msg||msg.type!=='veloryz:preview-progress'||msg.id!==id)return;
+ if(!msg||msg.id!==id)return;
+ if(msg.type==='veloryz:preview-ready'){clearTimeout(readyTimer);if(msg.ok){stage.dataset.previewState='ready';setStatus('Interactive preview · scroll inside the website');}else imagePreview();return;}
+ if(msg.type!=='veloryz:preview-progress')return;
  const percent=Number(msg.percent);
  if(Number.isFinite(percent)&&percent>=0&&percent<=100)updateProgress(percent);
 });
@@ -88,11 +91,11 @@ document.addEventListener('click',event=>{
   if(!['desktop','tablet','mobile'].includes(width))return;
   stage.dataset.vzDevice=width;
   document.querySelectorAll('[data-vz-device]').forEach(button=>button.setAttribute('aria-pressed',String(button===control)));
-  setStatus('Viewport: '+width+'. Scroll inside the site for its original motion.');
+  setStatus('Viewport: '+width+(stage.dataset.previewState==='ready'?' · interactive website':' · visual reference'));
   command('report');
   return;
  }
- if(control.matches('[data-vz-restart]')){command('top');setStatus('Returning to the beginning of the site');return}
+ if(control.matches('[data-vz-restart]')){if(frame)command('top');else content.scrollTop=0;setStatus('Returned to the beginning of the preview');return}
  if(control.matches('[data-vz-reload]')){loadSite();return}
  if(control.matches('[data-vz-fullscreen]')){
   if(document.fullscreenElement){document.exitFullscreen?.().catch(()=>{});return}
