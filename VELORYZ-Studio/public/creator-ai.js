@@ -8,7 +8,7 @@
   'Help me describe my project goal',
   'What happens after I submit?'
  ];
- const store={open:false,busy:false,messages:[],error:'',fallback:false};
+ const store={open:false,busy:false,messages:[],error:'',fallback:false,initialized:false,draft:''};
  function prewrittenGuide(question,context){
   const text=String(question||'').toLowerCase();
   const category=String(context.category||'your project'),features=Array.isArray(context.features)?context.features:[];
@@ -32,14 +32,16 @@
  const api=()=>window.VeloryzCreatorV4;
  function mount(){
   const slot=document.getElementById('v4-ai-slot');if(!slot)return;
+  if(!store.initialized&&!slot.classList.contains('v2-ai-landing-slot')){store.initialized=true;store.open=matchMedia('(min-width:1180px)').matches;}
+  const old=slot.querySelector('#v4-ai-input');if(old&&!store.busy)store.draft=old.value;
   // The planner is available from the welcome screen, not only after the first choice.
-  slot.innerHTML='<div class="v4-ai-dock"><button type="button" class="v4-ai-toggle" data-v4-ai-toggle aria-expanded="'+store.open+'" aria-controls="v4-ai-panel"><span class="v4-ai-sparkle" aria-hidden="true">✳</span><span>Ask VELORYZ Project AI</span><b aria-hidden="true">'+(store.open?'×':'↗')+'</b></button>'+
-  '<section id="v4-ai-panel" class="v4-ai-panel" role="region" aria-label="VELORYZ project planning assistant" '+(store.open?'':'hidden')+'><div class="v4-ai-heading"><div><span>✳ &nbsp; VELORYZ PROJECT AI</span><h2>Build with clarity.</h2><p>Ask about scope, features, budget or the next step.</p></div><button type="button" data-v4-ai-toggle aria-label="Close Project AI">×</button></div>'+
+  slot.innerHTML='<div class="v4-ai-dock"><button type="button" class="v4-ai-toggle" data-v4-ai-toggle aria-expanded="'+store.open+'" aria-controls="v4-ai-panel"><span class="v4-ai-sparkle" aria-hidden="true">✳</span><span>Project AI</span><b aria-hidden="true">'+(store.open?'×':'↗')+'</b></button>'+
+  '<section id="v4-ai-panel" class="v4-ai-panel" role="region" aria-label="VELORYZ project planning assistant" '+(store.open?'':'hidden')+'><div class="v4-ai-heading"><div><span>✳ &nbsp; VELORYZ PROJECT AI</span><h2>Plan with confidence.</h2><p>Ask about scope, features, budget or the next step.</p></div><button type="button" data-v4-ai-toggle aria-label="Close Project AI">×</button></div>'+
   '<div class="v4-ai-history" id="v4-ai-history" role="log" aria-live="polite" aria-relevant="additions text"></div>'+
   '<div class="v4-ai-prompts" id="v4-ai-prompts">'+PROMPTS.map(q=>'<button type="button" data-v4-ai-prompt="'+escape(q)+'">'+escape(q)+' ↗</button>').join('')+'</div>'+
-  '<form id="v4-ai-form"><label class="sr-only" for="v4-ai-input">Your project question</label><textarea id="v4-ai-input" rows="2" maxlength="650" placeholder="Ask a project question…" '+(store.busy?'disabled':'')+' required></textarea><button type="submit" '+(store.busy?'disabled':'')+' aria-label="Send your project question">'+(store.busy?'…':'↑')+'</button></form>'+
+  '<form id="v4-ai-form"><label class="sr-only" for="v4-ai-input">Your project question</label><textarea id="v4-ai-input" rows="2" maxlength="650" placeholder="Ask a project question…" '+(store.busy?'disabled':'')+' required>'+escape(store.draft)+'</textarea><button type="submit" '+(store.busy?'disabled':'')+' aria-label="Send your project question">'+(store.busy?'…':'↑')+'</button></form>'+
   '<p id="v4-ai-status" class="v4-ai-status" role="status"></p>'+
-  '<p class="v4-ai-privacy">Project details (not your email) are shared with the configured AI provider. AI suggestions are informational; our team confirms all estimates and commitments. <a href="https://wa.me/919955326740" target="_blank" rel="noopener noreferrer">Talk to the team ↗</a></p></section></div>';
+  '<p class="v4-ai-privacy">Your messages are sent to the configured AI provider. Avoid sharing private information. AI suggestions are informational; our team confirms all estimates and commitments. <a href="https://wa.me/919955326740" target="_blank" rel="noopener noreferrer">Talk to the team ↗</a></p></section></div>';
   const history=document.getElementById('v4-ai-history');
   if(history){
    store.messages.forEach(message=>{
@@ -67,10 +69,10 @@
   const v=api()?.get?.()||{},e=api()?.estimate?.();
   return {category:short(v.category),style:short(v.style),budget:String(v.budget||''),goal:short(v.goal).slice(0,350),features:Array.isArray(v.features)?v.features.slice(0,16):[],stage:short(api()?.stage?.())};
  }
- function show(open){store.open=open;mount();if(open)document.getElementById('v4-ai-input')?.focus();}
+ function show(open){store.open=open;mount();if(open)document.getElementById('v4-ai-input')?.focus({preventScroll:true});}
  async function ask(question){
   if(store.busy||!api()||!question.trim())return;
-  const text=question.trim().slice(0,650);
+  const text=question.trim().slice(0,650);store.draft='';const field=document.getElementById('v4-ai-input');if(field)field.value='';
   store.messages.push({role:'user',content:text});store.error='';store.fallback=false;store.busy=true;store.open=true;mount();
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),26000);
   try{
