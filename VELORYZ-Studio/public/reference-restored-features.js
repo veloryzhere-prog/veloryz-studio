@@ -163,33 +163,13 @@ function createHomeReviews(){
 function allDocumentation(){
  const holder=$('#vz-complete-doc-groups'),summary=$('#vz-total-docs');
  if(!holder)return;
- const docs=(Array.isArray(live.documentation)?live.documentation:[])
-   .filter(x=>x&&typeof x.title==='string'&&typeof x.url==='string'&&x.url.startsWith('/'));
- if(!docs.length){holder.append(el('p','', 'Open the documentation home to browse the current published articles.'));return;}
- const map=new Map();
- for(const d of docs){
-  const parts=d.url.split('/').filter(Boolean);
-  const cat=parts[0]==='help'?'Help Centre · '+(parts[2]||'Getting started'):parts[0]==='docs'?'Studio documentation · '+(parts[2]||'Foundations'):'Other resources';
-  if(!map.has(cat))map.set(cat,[]);
-  map.get(cat).push(d);
+ const docs=(Array.isArray(live.documentation)?live.documentation:[]).filter(x=>x&&typeof x.title==='string'&&typeof x.url==='string'&&x.url.startsWith('/')&&!x.url.startsWith('//'));
+ if(summary)summary.textContent=docs.length?docs.length+' published guides · search in Knowledge':'Browse published guides in Knowledge';
+ const grid=el('div','vz-full-doc-grid');
+ for(const [title,url] of [['Browse all documentation','/docs/'],['Help Centre','/help/studio/'],['Studio guides','/docs/studio/'],['Trust & policies','/trust/'],['Ask Help AI','/help/assistant/'],['Full site map','/sitemap/']]){
+  const a=el('a','vz-full-doc-link');a.href=url;a.append(el('span','',title),el('i','', '↗'));grid.append(a);
  }
- const index=el('nav','vz-doc-category-index');index.setAttribute('aria-label','Documentation categories');
- const sections=el('div','vz-doc-group-list');
- for(const [name,pages]of map){
-  const section=el('section','vz-full-doc-group');
-  const title=el('h3','serif',name);
-  const indicator=el('span','tag',String(pages.length)+' guides');
-  const head=el('div','vz-full-doc-heading');head.append(title,indicator);
-  const grid=el('div','vz-full-doc-grid');
-  pages.forEach(({title,url})=>{
-   const anchor=el('a','vz-full-doc-link');anchor.href=url;
-   anchor.append(el('span','',title),el('i','', '↗'));grid.append(anchor);
-  });
-  section.append(head,grid);sections.append(section);
-  const quick=el('a','',name+' ('+pages.length+')');quick.href='#'+slug(name);section.id=slug(name);index.append(quick);
- }
- holder.append(index,sections);summary.textContent=docs.length+' published guides in '+map.size+' categories';
- function slug(s){return 'vz-docs-'+s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+ holder.replaceChildren(grid);
 }
 function journey(){
  const steps=$$('.vz-journey-stage');if(!steps.length)return;
