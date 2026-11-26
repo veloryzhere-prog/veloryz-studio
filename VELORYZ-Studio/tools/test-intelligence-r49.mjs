@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const src=read('public/support-chat.js'),transport=src.slice(0,src.indexOf('/* VELORYZ Support Rooms'));
+const encoder=new TextEncoder(),events=[{type:'meta',mode:'ai'},{type:'delta',text:'Hello '},{type:'delta',text:'studio'},{type:'done',ok:true,mode:'ai',answer:'Hello studio',sources:[]}];
+const bytes=encoder.encode(events.map(x=>'data: '+JSON.stringify(x)+'\n\n').join(''));
+let scenario='live',payload;
+const ctx={window:{},TextEncoder,TextDecoder,fetch:async(_url,opts)=>{
+ payload=JSON.parse(opts.body);
+ if(scenario==='guide')return new Response(JSON.stringify({mode:'guide',answer:'Public references'}),{headers:{'Content-Type':'application/json'}});
+ if(scenario==='broken')return new Response('data: {"type":"delta","text":"Partial"}\n\n',{headers:{'Content-Type':'text/event-stream'}});
+ return new Response(new ReadableStream({start(c){for(let i=0;i<bytes.length;i+=7)c.enqueue(bytes.slice(i,i+7));c.close();}}),{headers:{'Content-Type':'text/event-stream'}});
+}};
+vm.runInNewContext(transport,ctx);
+const messages=[{role:'user',content:'What does the studio do?'}],seen=[];
+const send=ctx.window.VeloryzAiTransport.send;
+const result=await send('help',messages,null,x=>seen.push(x));
+assert.equal(result.answer,'Hello studio');assert.deepEqual(seen,['Hello ','Hello studio']);assert.equal(payload.stream,true);
+scenario='guide';assert.equal((await send('creator',messages)).mode,'guide');
+scenario='broken';await assert.rejects(()=>send('support',messages),/incomplete/i);
+scenario='guide';const big=Array.from({length:17},(_,i)=>({role:i%2?'assistant':'user',content:'界'.repeat(1400)}));await send('help',big);assert(new TextEncoder().encode(JSON.stringify(payload)).length<=15500);assert.equal(payload.messages[0].role,'user');
+assert(src.includes('data-r49-file')&&src.includes('agent!==\'client\''));
+console.log('PASS: real SSE transport, split chunks, guide fallback, interrupted response, bounded multilingual input and text-reference control.');

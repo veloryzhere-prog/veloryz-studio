@@ -70,6 +70,9 @@ jobs:
       - name: Validate R48 Creator flow and submission safety
         working-directory: VELORYZ-Studio
         run: node tools/test-creator-r48.mjs
+      - name: Validate R49 streamed intelligence transport
+        working-directory: VELORYZ-Studio
+        run: node tools/test-intelligence-r49.mjs
 
       - name: Build current production Worker
         working-directory: VELORYZ-Studio

@@ -42,7 +42,7 @@ has('lib/client-portal-shell.ts','support-chat.js?v=20261126-r42');
 has('lib/admin-shell.ts','admin-knowledge-ai.js?v=20261121-multi-agent-v1');
 has('public/admin.js',"'knowledge-ai':typeof knowledgeAiAdmin==='function'?knowledgeAiAdmin:null");
 has('public/client-portal.js','["ai","AI Guide","chat"]');
-has('public/creator-ai.js',"agent:'creator'");
+has('public/creator-ai.js',"VeloryzAiTransport.send('creator'");
 has('public/knowledge-v4.js','/help/assistant/');
 has('public/knowledge-v4.js','/support/');
 assert.ok(app.includes('vz-footer-help'),'Need Help card must be available sitewide');

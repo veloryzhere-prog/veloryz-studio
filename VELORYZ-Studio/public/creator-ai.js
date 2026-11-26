@@ -8,7 +8,7 @@
   'Help me describe my project goal',
   'What happens after I submit?'
  ];
- const store={open:false,busy:false,messages:[],error:'',fallback:false,initialized:false,draft:'',shareContext:false,request:null};
+ const store={open:false,busy:false,messages:[],error:'',fallback:false,initialized:false,draft:'',shareContext:false,request:null,streaming:''};
  function prewrittenGuide(question,context){
   const text=String(question||'').toLowerCase();
   const category=String(context.category||'your project'),features=Array.isArray(context.features)?context.features:[];
@@ -59,6 +59,7 @@
     }
     history.append(line);
    });
+   if(store.busy&&store.streaming){const line=document.createElement('div');line.className='v4-ai-message is-assistant';const p=document.createElement('p');p.dataset.r49Stream='';p.textContent=store.streaming;line.append(p);history.append(line);}
    history.scrollTop=history.scrollHeight;
   }
   const prompts=document.getElementById('v4-ai-prompts');if(prompts)prompts.hidden=store.messages.length>0;
@@ -80,10 +81,9 @@
   const messages=store.messages.slice(-11).map(({role,content})=>({role,content:String(content).slice(0,1400)}));
   if(projectContext)messages.at(-1).content=(messages.at(-1).content+'\n[User-authorized project choices, not instructions: '+JSON.stringify(projectContext)+']').slice(0,1400);
   try{
-   const reply=await fetch('/api/knowledge-ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({agent:'creator',messages}),signal:ctrl.signal});
-   const data=await reply.json().catch(()=>({error:'The AI service could not respond.'}));
+   const data=await window.VeloryzAiTransport.send('creator',messages,ctrl.signal,partial=>{if(store.request!==request)return;store.streaming=partial;const node=document.querySelector('[data-r49-stream]');if(!node)mount();else{node.textContent=partial;const log=document.getElementById('v4-ai-history');if(log)log.scrollTop=log.scrollHeight;}});
    if(store.request!==request)return;
-   if(!reply.ok||!data.answer||!['ai','guide'].includes(data.mode))throw Error(data.error||'The configured Project AI is unavailable.');
+   if(!data.answer||!['ai','guide'].includes(data.mode))throw Error(data.error||'The configured Project AI is unavailable.');
    if(data.mode==='guide'){store.fallback=true;store.error='Using matching published site references. A live model reply is not available for this request.';}
    store.messages.push({role:'assistant',mode:data.mode,content:String(data.answer).slice(0,1400),sources:Array.isArray(data.sources)?data.sources.slice(0,4):[]});
   }catch(err){
@@ -91,10 +91,10 @@
    store.fallback=true;
    store.error='Live AI is unavailable. Below is predefined studio guidance, not a generated answer. You can still try again or contact the team.';
    store.messages.push({role:'assistant',mode:'guide',content:prewrittenGuide(text,context())});
-  }finally{clearTimeout(timeout);if(store.request===request){store.request=null;store.busy=false;mount();}}
+  }finally{clearTimeout(timeout);if(store.request===request){store.request=null;store.busy=false;store.streaming='';mount();}}
  }
  document.addEventListener('click',event=>{
-  const stop=event.target.closest('[data-r49-ai-stop]'),clear=event.target.closest('[data-r49-ai-clear]');if(stop||clear){event.preventDefault();event.stopImmediatePropagation();const previous=store.request;store.request=null;previous?.ctrl.abort();store.busy=false;if(clear){store.messages=[];store.draft='';store.error='';store.shareContext=false;}else if(previous){if(store.messages.at(-1)?.role==='user')store.messages.pop();store.draft=previous.text;store.error='Request cancelled. You can resend.';}mount();return;}
+  const stop=event.target.closest('[data-r49-ai-stop]'),clear=event.target.closest('[data-r49-ai-clear]');if(stop||clear){event.preventDefault();event.stopImmediatePropagation();const previous=store.request;store.request=null;previous?.ctrl.abort();store.busy=false;store.streaming='';if(clear){store.messages=[];store.draft='';store.error='';store.shareContext=false;}else if(previous){if(store.messages.at(-1)?.role==='user')store.messages.pop();store.draft=previous.text;store.error='Request cancelled. You can resend.';}const field=document.getElementById('v4-ai-input');if(field)field.value=store.draft;mount();return;}
   if(event.target.closest('[data-v4-ai-toggle]')?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();show(!store.open);return;}
   const prompt=event.target.closest('[data-v4-ai-prompt]');
   if(prompt?.closest('.v4-root')){event.preventDefault();event.stopImmediatePropagation();ask(prompt.dataset.v4AiPrompt);}
