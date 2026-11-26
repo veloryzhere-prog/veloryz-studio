@@ -27,7 +27,7 @@ function placeholder(title,message){
  const p=document.createElement('p');p.textContent=message;
  const a=document.createElement('a');a.href='/create/?reference='+encodeURIComponent(id);
  a.textContent='Customize with VELORYZ ↗';
- box.append(mark,h,p,a);content.replaceChildren(box);setStatus(message);
+ box.append(mark,h,p,a);if(design.demo&&/^https:\/\//.test(design.demo)){const source=document.createElement('a');source.href=design.demo;source.target='_blank';source.rel='noopener noreferrer';source.textContent='Open publisher demo ↗';box.append(source);}content.replaceChildren(box);setStatus(message);
 }
 function imagePreview(){
  clearTimeout(readyTimer);frame=null;stage.dataset.previewState='visual';updateProgress(0);
@@ -43,7 +43,7 @@ function imagePreview(){
   placeholder('Preview temporarily unavailable','The original media host cannot supply this preview right now. You can still request a tailored design from the Studio.');
  });
  content.replaceChildren(img);
- setStatus('Visual reference · interactive rendering unavailable or not installed');
+ setStatus((design.previewKind==='upstream-screenshot'?'Source screenshot':design.previewKind==='github-repository-cover'?'Repository cover':'Source reference')+' · interactive preview unavailable');
 }
 function loadSite(){
  clearTimeout(readyTimer);stage.dataset.previewState='loading';updateProgress(0);
@@ -59,10 +59,11 @@ function loadSite(){
  iframe.setAttribute('sandbox','allow-scripts allow-forms allow-modals allow-pointer-lock');
  iframe.setAttribute('allow','fullscreen');
  iframe.addEventListener('load',()=>{
+  if(frame!==iframe)return;
   setStatus('Checking the original website assets…');
   command('report');
  },{once:true});
- iframe.addEventListener('error',()=>{if(design.image)imagePreview();else placeholder('Website temporarily unavailable','The preview could not load. The Studio can still help you scope this direction.')},{once:true});
+ iframe.addEventListener('error',()=>{if(frame!==iframe)return;if(design.image)imagePreview();else placeholder('Website temporarily unavailable','The preview could not load. The Studio can still help you scope this direction.')},{once:true});
  frame=iframe;
  content.replaceChildren(iframe);
  readyTimer=setTimeout(()=>{if(frame===iframe&&stage.dataset.previewState!=='ready')imagePreview()},18000);
