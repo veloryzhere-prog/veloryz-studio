@@ -12,7 +12,7 @@ const icon=(n)=>({spark:'✳',send:'➤',link:'↗',back:'←',clear:'↺',chat:
 const norm=t=>String(t||'').slice(0,4000);
 const storageKey=k=>'veloryz.knowledge.chat.v1.'+k;
 const state=new Map();
-function restore(k){if(state.has(k))return state.get(k);let messages=[];try{const v=JSON.parse(sessionStorage.getItem(storageKey(k))||'[]');if(Array.isArray(v))messages=v.filter(x=>['user','assistant'].includes(x.role)&&typeof x.content==='string').slice(-18)}catch{}const s={messages,busy:false,error:'',mode:'',selected:true,abort:null,ready:false,draft:'',request:null};state.set(k,s);return s}
+function restore(k){if(state.has(k))return state.get(k);let messages=[];try{const v=JSON.parse(sessionStorage.getItem(storageKey(k))||'[]');if(Array.isArray(v)){messages=v.filter(x=>x&&['user','assistant'].includes(x.role)&&typeof x.content==='string').slice(-18);while(messages[0]?.role==='assistant')messages.shift();if(messages.at(-1)?.role==='user')messages.pop();messages=messages.filter((x,i)=>x.role===(i%2?'assistant':'user'));if(messages.at(-1)?.role==='user')messages.pop()}}catch{}const s={messages,busy:false,error:'',mode:'',selected:true,abort:null,ready:false,draft:'',request:null};state.set(k,s);return s}
 function save(k){const s=restore(k);try{sessionStorage.setItem(storageKey(k),JSON.stringify(s.messages.filter((_,i)=>!s.busy||i!==s.messages.length-1).slice(-16).map(({role,content,mode,sources})=>({role,content,mode,sources}))))}catch{}}
 function getAgent(){let x=new URLSearchParams(location.search).get('agent');if(x&&identity[x])return x;return location.pathname.startsWith('/support')?'support':'help'}
 function render(agent='help',options={}){
@@ -29,7 +29,7 @@ function render(agent='help',options={}){
  '<p class="v2-chat-status" role="status"></p><p class="vz-chat-privacy">Your messages are sent to the selected AI provider if configured. Do not share passwords, card details, or private client records. Chat history stays in this browser tab. <a href="/contact/">Human support ↗</a></p></div></div></section>';
 }
 function bubble(m){
- const role=m.role==='user'?'is-user':'is-assistant',label=m.role==='user'?'YOU':m.mode==='guide'?'STUDIO REFERENCES · OFFLINE':'VELORYZ AI';
+ const role=m.role==='user'?'is-user':'is-assistant',label=m.role==='user'?'YOU':m.mode==='guide'?'STUDIO REFERENCES · GUIDE':m.mode==='ai'?'VELORYZ AI':'STUDIO RESPONSE';
  const text=escape(norm(m.content)).replace(/\n/g,'<br>');
  const links=Array.isArray(m.sources)?m.sources.filter(x=>/^\/(?:docs|help|contact|create|client|book|support|pricing|design|trust)(?:\/[a-z0-9_-]+)*(?:\.html|\/)?$/i.test(x.path||'')).slice(0,5):[];
  return '<article class="vz-chat-message '+role+'"><span class="vz-chat-message-avatar">'+(m.role==='user'?'YOU':'✳')+'</span><div class="vz-chat-bubble-wrap"><span class="vz-chat-message-label">'+label+'</span><div class="vz-chat-bubble">'+text+'</div>'+
