@@ -8,7 +8,7 @@ const ctx={window:{addEventListener(){}},document:{addEventListener(){}},localSt
 vm.runInNewContext(read('public/admin-os-r51.js'),ctx);
 const os=ctx.window.VeloryzStudioOS;
 assert.equal(os.groups.length,7);
-assert.deepEqual([...os.groups.flatMap(g=>g.routes)].sort(),nav.map(n=>n[0]).sort());
+assert.deepEqual([...os.groups.flatMap(g=>g.routes)].sort(),[...nav.map(n=>n[0])].sort());
 const escape=x=>String(x).replace(/[&<>"']/g,'_'),icon=()=>'<svg></svg>',workspace={publishedVersion:5,dirty:true,hasDraft:true};
 for(const [route]of nav){
  const sidebar=os.sidebar(route,nav,workspace,icon,escape);
