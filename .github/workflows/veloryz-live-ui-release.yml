@@ -84,3 +84,5 @@ jobs:
         run: node tools/check-live-ui-release.mjs
       - name: Verify R49 public assistant inference and private archive denial
         run: node tools/check-live-intelligence-r49.mjs
+      - name: Verify R50 private download denial
+        run: node tools/check-live-workspace-r50.mjs
