@@ -3,13 +3,13 @@
 body.vz-reference-site main[data-p="home"]{--home-gutter:clamp(22px,7vw,112px);--home-space:clamp(80px,11vw,168px)}
 body.vz-reference-site main[data-p="home"] .vz-material-hero{background:var(--bg)!important;min-height:max(100svh,760px);padding-bottom:clamp(46px,7vh,95px)!important}
 body.vz-reference-site main[data-p="home"] .vz-material-hero::before{background:none!important;opacity:0}
-body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt{padding-left:var(--home-gutter);padding-bottom:30px}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt{box-sizing:border-box;width:100%;max-width:none;min-width:0;padding-left:var(--home-gutter);padding-bottom:30px}
 body.vz-reference-site main[data-p="home"] .vz-hero-eyebrow{border:0!important;padding-left:0!important;margin-bottom:28px!important;gap:12px}
 body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{letter-spacing:-.055em;line-height:1}
-body.vz-reference-site main[data-p="home"] .vz-material-hero #h1 .ln{min-height:1.07em;padding-bottom:.08em}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #h1 .ln{min-height:1.12em;padding-bottom:.12em;max-width:100%;overflow-wrap:anywhere}
 body.vz-reference-site main[data-p="home"] .vz-material-hero #h1 .ln:last-child{padding-left:0}
 body.vz-reference-site main[data-p="home"] .vz-material-hero #h1 .ln:last-child em{text-decoration:none}
-body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt .lead{max-width:37ch;font-size:clamp(1.06rem,1.45vw,1.32rem);line-height:1.55;margin:25px 0 32px;text-wrap:pretty}
+body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt .lead{max-width:min(37ch,100%);font-size:clamp(1.06rem,1.45vw,1.32rem);line-height:1.55;margin:25px 0 32px;text-wrap:pretty}
 body.vz-reference-site main[data-p="home"] .vz-material-hero .btns{display:flex!important;flex-wrap:wrap;align-items:center;gap:14px 28px;max-width:100%}
 body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .vz-hero-cta-main{width:auto!important;min-height:54px;border-radius:100px;background:var(--fg)!important;color:var(--bg)!important;border-color:var(--fg);padding:15px 25px}
 body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .vz-hero-cta-alt{width:auto!important;min-height:48px;border:0;border-radius:0;background:transparent!important;padding:12px 0;border-bottom:1px solid var(--line);color:var(--fg)!important}
@@ -51,9 +51,15 @@ body.vz-reference-site main[data-p="home"] .dc span{gap:8px}
 body.vz-reference-site main[data-p="home"] #cta1{min-height:110svh}
 body.vz-reference-site main[data-p="home"] #cta1 .big{font-size:clamp(3rem,9vw,9rem)}
 body.vz-reference-site :is(.vz-r32-text-link,.vz-r32-controls-summary,.vz-r32-directory a,.vz-r32-directory-more summary):focus-visible{outline:2px solid var(--acc);outline-offset:4px}
-@media(min-width:921px){body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{font-size:clamp(4rem,6.7vw,9rem);max-width:100%}}
+@media(min-width:921px){body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{font-size:clamp(3.5rem,6.7vw,9rem);max-width:100%}}
 @media(max-width:920px){body.vz-reference-site main[data-p="home"] .vz-material-hero{min-height:100svh}body.vz-reference-site main[data-p="home"] .vz-material-hero #heroTxt{padding-inline:var(--home-gutter)}body.vz-reference-site main[data-p="home"] .vz-3d-controls{margin-inline:var(--home-gutter)!important;width:auto!important;max-width:100%}}
-@media(max-width:680px){body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{font-size:clamp(2.75rem,10.5vw,5rem)}body.vz-reference-site main[data-p="home"] .vz-hero-eyebrow .vz-hero-location{display:none}body.vz-reference-site main[data-p="home"] .vz-material-hero .btns{gap:10px 22px}body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .vz-hero-cta-alt{min-height:44px}body.vz-reference-site main[data-p="home"] .vz-r32-motion{grid-template-columns:1fr;gap:22px}body.vz-reference-site .vz-r32-directory,body.vz-reference-site main[data-p="home"] .dg{grid-template-columns:1fr}body.vz-reference-site .vz-r32-directory a{font-size:1.55rem}}
+@media(max-width:680px){body.vz-reference-site main[data-p="home"] .vz-material-hero #h1{font-size:clamp(1.9rem,10.5vw,5rem)}body.vz-reference-site main[data-p="home"] .vz-hero-eyebrow .vz-hero-location{display:none}body.vz-reference-site main[data-p="home"] .vz-material-hero .btns{gap:10px 22px}body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .vz-hero-cta-alt{min-height:44px}body.vz-reference-site main[data-p="home"] .vz-r32-motion{grid-template-columns:1fr;gap:22px}body.vz-reference-site .vz-r32-directory,body.vz-reference-site main[data-p="home"] .dg{grid-template-columns:1fr}body.vz-reference-site .vz-r32-directory a{font-size:clamp(1.2rem,5.6vw,1.55rem)}}
 
 /* Remove the fixed numbered chapter rail shown in the screenshot. */
 body.vz-reference-site .vz-r27-chapter-rail{display:none!important}
+
+/* V2 audit: the earlier 62vw max-width included the reserved model column twice. Keep the original model and text reveal, but give the text its actual available column. */
+@media(min-width:921px) and (max-height:680px){body.vz-reference-site main[data-p="home"] .vz-material-hero{min-height:760px}}
+body.vz-reference-site .vz-r32-directory a{min-width:0;overflow-wrap:anywhere}
+body.vz-reference-site .vz-r32-directory a span{flex:none}
+body.vz-reference-site main[data-p="home"] .vz-material-hero .btns .btn{min-width:0;max-width:100%;white-space:normal}
