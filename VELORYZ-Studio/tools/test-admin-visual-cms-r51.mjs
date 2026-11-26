@@ -13,6 +13,7 @@ const handler=read('lib/page-handler.ts'),core=read('public/admin.js'),source=re
 assert(handler.includes("!Object.hasOwn(draftViews,draftView)"));
 assert(handler.indexOf("await handleApi(new Request(new URL('/api/admin/state'")<handler.indexOf("draftData||await getPublished"));
 assert(handler.includes("if(draftView==='home')return draftPreview(html)"));
+assert(handler.includes("Number(revision)!==Number(draftData.draftVersion)"));
 assert(handler.includes("sandbox allow-scripts")&&handler.includes("private, no-store"));
 assert(source.includes('sandbox="allow-scripts"')&&!source.includes('allow-same-origin'));
 assert(source.includes('data-bind="site.showScarf"')&&source.includes('code-controlled'));

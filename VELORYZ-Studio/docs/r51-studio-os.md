@@ -23,3 +23,5 @@ Six operational views: four saved assistant profiles, five published adviser bri
 ## R51.6 — Visual Website CMS
 
 Page-oriented editor for ten existing CMS areas, with device-width read-only saved draft preview, explicit legacy versus current homepage support, related editor links and whole-draft publication disclosure. The current editorial home preview uses the same server renderer as the public homepage, not the legacy SPA. Draft preview requests require owner authorization, use an allowlisted view, no-store/noindex and a script-only sandbox without forms or same-origin privilege. Dynamic media/services may be unavailable in the isolated canvas. No drag-and-drop layout builder or unsaved live DOM sync; code-controlled visual assets remain unchanged. Saving and publishing preserve newer unsaved edits that arrive during the network request. No actual site content was published by this implementation.
+
+The preview URL is pinned to the selected saved draft revision; if the server revision changes, it returns HTTP 409 and requires a reload. Preview framing is restricted to the same site. This is not a historical revision browser.

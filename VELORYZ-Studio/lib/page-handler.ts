@@ -27,20 +27,22 @@ const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u00
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
  const draftViews:Record<string,string>={home:'/',classic:'/',studio:'/studio/',services:'/services/',team:'/teamjob/',book:'/book/',developers:'/developers/',payments:'/payments/'};
- const draftView=path==='/admin/preview'?(new URL(request.url).searchParams.get('view')||'home'):'';
+ const draftView=(path==='/admin/preview'||path==='/admin/preview/')?(new URL(request.url).searchParams.get('view')||'home'):'';
  let draftData:any=null;
  if(draftView){
   if(!Object.hasOwn(draftViews,draftView))return secureHtml('<!doctype html><title>Unknown preview</title><p>Choose a supported CMS page.</p>',404,true);
   const result=await handleApi(new Request(new URL('/api/admin/state',request.url),{headers:request.headers} ),env,'password');
   if(!result.ok)return secureHtml('<!doctype html><title>Owner sign-in required</title><p>Sign in to Studio Control before opening a saved draft.</p>',result.status===401||result.status===403?result.status:503,true);
   draftData=await result.json();
+  const revision=new URL(request.url).searchParams.get('revision');
+  if(revision!==null&&(!/^\d{1,15}$/.test(revision)||Number(revision)!==Number(draftData.draftVersion)))return secureHtml('<!doctype html><title>Draft revision changed</title><p>The saved draft has changed. Return to the editor and load its latest revision.</p>',409,true);
  }
  const draftPreview=(html:string)=>{
   const banner='<div role="status" style="position:fixed;bottom:0;left:0;right:0;z-index:2147483647;padding:7px 12px;background:#17191d;color:white;font:12px system-ui;text-align:center;pointer-events:none">SAVED DRAFT PREVIEW · Read-only canvas · Revision '+Number(draftData.draftVersion)+'</div>';
   const guard='<script>window.VELORYZ_DRAFT_PREVIEW=true;document.addEventListener("submit",e=>{e.preventDefault();e.stopImmediatePropagation()},true);document.addEventListener("click",e=>{const a=e.target.closest?.("a[href]");if(a&&!a.getAttribute("href").startsWith("#")){e.preventDefault();e.stopImmediatePropagation()}},true);</script>';
   const response=secureHtml(html.replace('</head>',guard+'</head>').replace(/<body[^>]*>/,tag=>tag+banner),200,false);
   response.headers.set('X-Robots-Tag','noindex, nofollow');response.headers.set('Cache-Control','private, no-store');response.headers.set('Referrer-Policy','no-referrer');
-  const csp=response.headers.get('Content-Security-Policy');if(csp)response.headers.set('Content-Security-Policy',csp.replace("form-action 'self'","form-action 'none'")+"; sandbox allow-scripts");
+  const csp=response.headers.get('Content-Security-Policy');if(csp)response.headers.set('Content-Security-Policy',csp.replace("form-action 'self'","form-action 'none'").replace("frame-ancestors 'self' https://chatgpt.com","frame-ancestors 'self'")+"; sandbox allow-scripts");
   return response;
  };
  const assetResponse=await serveDesignAsset(request);
