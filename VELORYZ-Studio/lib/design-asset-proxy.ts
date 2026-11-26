@@ -27,8 +27,8 @@ const mime:Record<string,string>={
 };
 export async function serveDesignAsset(request:Request):Promise<Response|null>{
  const {pathname,search}=new URL(request.url);
- if(!pathname.startsWith('/studio-preview-assets/'))return null;
- const match=pathname.match(/^\/studio-preview-assets\/([a-z0-9-]+)\/([a-zA-Z0-9_./-]+)$/);
+ if(!/^\/studio-preview-assets(?:-v2)?\//.test(pathname))return null;
+ const match=pathname.match(/^\/studio-preview-assets(?:-v2)?\/([a-z0-9-]+)\/([a-zA-Z0-9_./-]+)$/);
  if(!match)return new Response('Not found',{status:404});
  const src=sources[match[1]],file=match[2];
  if(!src||file.length>250||file.split('/').some(part=>!part||part==='.'||part==='..'))return new Response('Not found',{status:404});
