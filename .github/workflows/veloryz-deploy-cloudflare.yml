@@ -82,6 +82,9 @@ jobs:
       - name: Validate R51.2 executive dashboard and action inbox
         working-directory: VELORYZ-Studio
         run: node tools/test-admin-dashboard-r51.mjs
+      - name: Validate R51.3 CRM and operations summary
+        working-directory: VELORYZ-Studio
+        run: node tools/test-admin-crm-r51.mjs
 
       - name: Build current production Worker
         working-directory: VELORYZ-Studio

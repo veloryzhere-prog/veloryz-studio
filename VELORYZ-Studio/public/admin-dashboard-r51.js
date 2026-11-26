@@ -95,7 +95,7 @@ function mount(owner,request,preview){
 function page(owner,all){return '<div data-os-dashboard="'+(all?'inbox':'overview')+'">'+markup(owner,all)+'</div>';}
 document.addEventListener('click',e=>{
  const b=e.target.closest?.('[data-os-refresh]');if(b){e.preventDefault();if(typeof workspace!=='undefined'&&workspace)refresh(workspace,api,preview);return;}
- const p=e.target.closest?.('[data-os-project]');if(p&&typeof cpLoad==='function'&&typeof cpSelected!=='undefined'){if(cpBusy){e.preventDefault();return;}e.preventDefault();cpSelected=p.dataset.osProject;cpTab='overview';cpNewProject=false;cpWorkspace=null;cpLoaded=false;location.hash='#/client-portal';}
+ const p=e.target.closest?.('[data-os-project]');if(p&&typeof cpLoad==='function'&&typeof cpSelected!=='undefined'){if(cpBusy||cpLoading){e.preventDefault();return;}e.preventDefault();window.VeloryzCRM?.openDirectory();cpSearch='';cpFilter='all';cpEditMode='';cpSelected=p.dataset.osProject;cpTab='overview';cpNewProject=false;cpWorkspace=null;cpLoaded=false;location.hash='#/client-portal';}
 });
 document.addEventListener('input',e=>{if(e.target.matches?.('[data-os-query]')){query=e.target.value;draw();}});
 document.addEventListener('change',e=>{if(e.target.matches?.('[data-os-filter]')){filter=e.target.value;draw();document.querySelector('[data-os-filter]')?.focus({preventScroll:true});}});

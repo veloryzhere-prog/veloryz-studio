@@ -10,7 +10,7 @@ assert(html.includes('class="studio-os-r51"'));
 assert(html.includes('/admin-os-r51.js?v=20261126-r51-2'));
 assert(html.includes('/admin-os-r51.css?v=20261126-r51-1'));
 assert(html.includes('/admin-dashboard-r51.js?v=20261126-r51-3')&&html.includes('/admin-dashboard-r51.css?v=20261126-r51-2'));
-for(const p of ['/admin-os-r51.js?v=20261126-r51-2','/admin-os-r51.css?v=20261126-r51-1','/admin-dashboard-r51.js?v=20261126-r51-3','/admin-dashboard-r51.css?v=20261126-r51-2'])assert((await get(p)).ok,'Missing admin asset '+p);
+for(const p of ['/admin-os-r51.js?v=20261126-r51-2','/admin-os-r51.css?v=20261126-r51-1','/admin-dashboard-r51.js?v=20261126-r51-3','/admin-dashboard-r51.css?v=20261126-r51-2','/admin-crm-r51.js?v=20261126-r51-3','/admin-crm-r51.css?v=20261126-r51-3'])assert((await get(p)).ok,'Missing admin asset '+p);
 assert(html.includes('/admin-crm-r51.js?v=20261126-r51-3')&&html.includes('/admin-crm-r51.css?v=20261126-r51-3'));
 assert([401,403].includes((await get('/api/client-portal/admin/operations-summary')).status));
 const denied=await get('/api/admin/state');assert([401,403].includes(denied.status),'Owner state must remain protected');
