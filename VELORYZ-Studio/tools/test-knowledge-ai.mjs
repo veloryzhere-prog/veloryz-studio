@@ -24,6 +24,11 @@ assert.ok(backend.includes('deeperEvidence('),'Use public article excerpts as gr
 assert.ok(backend.includes('mode:\'guide\''),'Preserve clear non-AI fallback');
 assert.ok(backend.includes('veloryz_knowledge_ai_rate'),'Enforce distributed rate limiting');
 assert.ok(backend.includes('veloryz_knowledge_ai_usage'),'Maintain aggregate usage reporting');
+assert.ok(backend.includes("allowProviderFallback:a.provider!=='guide'")&&route.includes('upstream.allowProviderFallback===true'),'Explicit reference-only mode cannot invoke another model');
+assert.ok(backend.includes('providerStatus')&&backend.includes('credential-rejected'),'Provider errors must be safely categorized');
+assert.ok(backend.includes('reader.cancel()')&&route.includes('boundedBody(request.clone(),16000)'),'Bound both proxy and edge request bodies');
+assert.ok(read('public/support-chat.js').includes('data-r49-stop'),'Support cancellation must be available');
+assert.ok(read('public/creator-ai.js').includes('data-r49-context')&&read('public/creator-ai.js').includes('User-authorized project choices'),'Creator context must be opt-in');
 assert.ok(backend.includes("provider!==a.provider"),'Prevent previous provider keys being reused for a different API');
 assert.ok(migration.includes('enable row level security'),'Private profile RLS must exist');
 assert.ok(migration.includes('revoke all')&&migration.includes('from public,anon,authenticated'),'Public roles must not access assistant profiles');
