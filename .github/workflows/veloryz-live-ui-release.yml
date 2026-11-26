@@ -55,18 +55,25 @@ jobs:
         with:
           node-version: '22'
       - name: Regression test actual homepage and Silk interactions
+        if: ${{ !cancelled() }}
         run: node tools/test-silk-ui-2026.mjs
       - name: Verify active R5 homepage, original logo and menu controls
+        if: ${{ !cancelled() }}
         run: node tools/test-reference-elegance-r5.mjs
       - name: Verify reference Menu/Close morph and keyboard access
+        if: ${{ !cancelled() }}
         run: node tools/test-reference-menu-r6.mjs
       - name: Verify R9 finite design stage, actual market renderer and brand feedback
+        if: ${{ !cancelled() }}
         run: node tools/test-design-market-r9.mjs
       - name: Verify R17 header fade, footer brand frame and smooth-motion profile
+        if: ${{ !cancelled() }}
         run: node tools/test-brand-flow-r17.mjs
       - name: Verify R20 navigation, conversion, docs, marketplace and accessibility
+        if: ${{ !cancelled() }}
         run: node tools/test-public-experience-r20.mjs
       - name: Validate Cloudflare Worker identity before probing production
+        if: ${{ !cancelled() }}
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Confirm actual live deployment version, rendered markup and motion assets
         env:

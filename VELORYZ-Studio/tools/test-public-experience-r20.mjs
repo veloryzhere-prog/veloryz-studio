@@ -89,8 +89,13 @@ assert(app.includes("duration:480,easing:'cubic-bezier(.22,1,.36,1)'"),'SPA fall
 for(const group of ['Explore','Build with us','Help & knowledge','Policies & reference'])assert(app.includes("label:'"+group+"'"),'Simplified footer group missing: '+group);
 assert(!app.includes("title:'The Studio, Aryan & Our Team"),'Public Studio title must remain team-first');
 
-for(const stage of ['01 Discover','02 Inspiration','03 Capabilities','04 Investment','05 Send brief'])assert(creator.includes(stage),'Creator roadmap stage missing: '+stage);
-assert(creator.includes('Your brief stays available for this browser session'),'Creator session persistence copy must remain truthful');
+const roadmap=creator.match(/const groups=\[([^\n]+)\];/);
+assert(roadmap,'Creator overview roadmap must exist');
+const stages=[...roadmap[1].matchAll(/\['([^']+)','([^']+)'\]/g)].map(m=>m[1]);
+assert.deepEqual(stages,['Discover','Design','Scope','Plan','Review'],'Creator overview must explain the complete project journey');
+assert(creator.includes('String(i+1).padStart(2,\'0\')'),'Roadmap must render consecutive step numbers');
+assert(creator.includes("const steps=['Discover','Business','Design','Features','Scope','Investment','Send']"),'Actual Creator workflow must retain all seven stages');
+assert(creator.includes('Your draft stays in this browser session until you submit.'),'Creator session persistence copy must remain truthful');
 
 assert(docs.includes('Choose the outcome, not the entire library.'),'Docs outcome-first start layer missing');
 assert(knowledge.includes('Start with the outcome.'),'Authoritative Knowledge V4 Docs start heading missing');

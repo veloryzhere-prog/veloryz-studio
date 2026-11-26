@@ -75,7 +75,7 @@ async function waitForR9Deployment(){
     &&creatorHtmlText.includes('/creator-v4.css?v=20261126-v2-workspaces')
     &&creatorHtmlText.includes('/creator-v4.js?v=20261126-r42');
    if(ready){result.deployment={release:'R45',commit:expected,attempt};return}
-   last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
+   last='expected commit '+expected+', observed home '+homeHtml.headers.get('x-veloryz-commit')+', observed Creator '+creatorHtml.headers.get('x-veloryz-commit')+', observed design '+designHtml.headers.get('x-veloryz-commit')+', market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);
  }

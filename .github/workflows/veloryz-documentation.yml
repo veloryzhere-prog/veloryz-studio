@@ -41,76 +41,142 @@ jobs:
       - name: Enable package manager
         run: corepack enable
       - name: Install dependencies
+        id: dependencies
         run: corepack pnpm install --frozen-lockfile
       - name: Validate shared R45 design system and contrast
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-design-system-r45.mjs
       - name: Validate all public guides, routes and links
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-documentation.mjs
       - name: Validate AI agents, provider security and support UI
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-knowledge-ai.mjs
       - name: Verify official-logo cinematic intro and existing motion onboarding
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-brand-intro.mjs
       - name: Validate supplied full-site reference motion, menu and CMS integration
-        run: node tools/test-claude-reference.mjs && node tools/test-reference-site-upgrade.mjs && node tools/test-reference-heritage.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-claude-reference.mjs || status=1
+          node tools/test-reference-site-upgrade.mjs || status=1
+          node tools/test-reference-heritage.mjs || status=1
+          exit "$status"
       - name: Verify immersive cursor-responsive homepage, official WebGL model, and five real AI portraits
-        run: node tools/test-reference-immersive.mjs && node tools/test-logo-model.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-reference-immersive.mjs || status=1
+          node tools/test-logo-model.mjs || status=1
+          exit "$status"
       - name: Verify user-controlled V rotation, calibrated original colors, and performant hero-only particles
-        run: node tools/test-hero-logo-control-fix.mjs && node tools/test-hero-screenshot-overlap.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-hero-logo-control-fix.mjs || status=1
+          node tools/test-hero-screenshot-overlap.mjs || status=1
+          exit "$status"
       - name: Verify clickable Motion/Menu/Quick Create and stored bug reports
-        run: node tools/test-header-bug-report.mjs && node tools/test-bug-report-api.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-header-bug-report.mjs || status=1
+          node tools/test-bug-report-api.mjs || status=1
+          exit "$status"
       - name: Verify universal accessible hover, border, sliding fill and click feedback
-        run: node tools/test-button-feedback.mjs && node tools/test-contextual-button-effects.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-button-feedback.mjs || status=1
+          node tools/test-contextual-button-effects.mjs || status=1
+          exit "$status"
       - name: Verify all six AI personalities and visible motion recovery
-        run: node tools/test-ai-conversation-quality.mjs && node tools/test-motion-chat-regressions.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-ai-conversation-quality.mjs || status=1
+          node tools/test-motion-chat-regressions.mjs || status=1
+          exit "$status"
       - name: Verify smooth closing brand film and 60 FPS opening integration
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-brand-film.mjs
       - name: Verify project creation and client portal quick action routes
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-project-shortcuts.mjs
       - name: Verify grounded site knowledge across all nine AI roles and real logo film fallback
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-public-ai-knowledge.mjs
       - name: Validate kinetic headline typography and no extra scroll loops
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-kinetic-type-2026.mjs
       - name: Verify responsive visual system and animation performance
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-studio-fluid.mjs
       - name: Verify mandatory motion welcome and native-friendly Lenis scrolling
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-smooth-motion.mjs
       - name: Check shared scroll clock, reversible scarf and scroll scenes
-        run: node tools/test-motion-clock.mjs && node tools/test-frame-cut.mjs && node tools/test-visual-motion-v4.mjs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          status=0
+          node tools/test-motion-clock.mjs || status=1
+          node tools/test-frame-cut.mjs || status=1
+          node tools/test-visual-motion-v4.mjs || status=1
+          exit "$status"
       - name: Verify visual-only interactions, mobile behavior, accessibility and true submission outcomes
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-micro-interactions.mjs
       - name: Verify Motion and Lottie lazy-loading and smooth-scroll isolation
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-animation-providers.mjs
       - name: Verify visible kinetic animations across all pages
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-site-kinetics.mjs
       - name: Verify admin sessions, archived media and invitation abuse controls
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-security-hardening.mjs
       - name: Verify public reviews, owner moderation, HTML docs and India branding
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-public-reviews.mjs
       - name: Verify immersive reviews, server-only AI, continuous motion and 120-second invitation
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-review-experience.mjs
       - name: Verify simple Community Feedback UI and working owner Reviews / AI Control Centre
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-community-admin-v3.mjs
       - name: Verify detailed Studio Control console, AI Mindset and owner actions
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-admin-detail.mjs
       - name: Verify private client acceptance, Gmail SMTP, PDF and portal lifecycle
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-client-lifecycle.mjs
       - name: Verify cookie consent, policies and crash-safe admin runtime
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-privacy-compliance.mjs
       - name: Verify client portal Edge boots and Gmail status is truthful
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-client-portal-boot.mjs
       - name: Verify one-page industrial order PDF and manual Gmail delivery actions
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-premium-mail-handoff.mjs
       - name: Verify exact Google Search Console HTML ownership token
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-google-verification.mjs
       - name: Verify indexable HTML, brand schema and canonical sitemap URLs
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-search-indexability.mjs
       - name: Verify uploaded VELORYZ Silk motion and UI 2026 integration
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-silk-ui-2026.mjs
       - name: Verify R17 brand flow, logo fade and smoother shared scrolling
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-brand-flow-r17.mjs
       - name: Verify R20 complete public experience upgrade
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-public-experience-r20.mjs
       - name: Validate Cloudflare Worker identity and build runtime
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-cloudflare-deploy-config.mjs
       - name: Typecheck
         run: corepack pnpm exec tsc --noEmit
@@ -124,10 +190,14 @@ jobs:
         working-directory: .
         run: VELORYZ-Studio/node_modules/.bin/wrangler deploy --config wrangler.jsonc --dry-run --outdir "$RUNNER_TEMP/veloryz-root-dryrun"
       - name: Verify bundled first-party Lenis runtime
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-lenis-bundle.mjs
       - name: Validate R9 finite design scroll, marketplace, journey routes and branded motion
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-design-market-r9.mjs
       - name: Validate internal VELORYZ design library, sources and creator routes
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-expanded-design-library.mjs
       - name: Validate original storefront, twelve live templates, and purchase requests
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-template-store.mjs
