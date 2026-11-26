@@ -26,7 +26,9 @@ const routes=[
  {name:'client-login',path:'/client/'}
 ];
 const screens=[
+ {name:'wide-desktop',width:1920,height:1080},
  {name:'desktop',width:1440,height:900},
+ {name:'small-desktop',width:1024,height:768},
  {name:'tablet',width:768,height:1024},
  {name:'mobile',width:390,height:844},
  {name:'small-mobile',width:320,height:700}
@@ -58,7 +60,7 @@ async function waitForR9Deployment(){
    const [marketText,homeText,brandText,designText,r20CssText,r20JsText,homeHtmlText,creatorHtmlText]=await Promise.all([market.text(),homeStage.text(),brand.text(),designHtml.text(),r20Css.text(),r20Js.text(),homeHtml.text(),creatorHtml.text()]);
    const expected=process.env.VELORYZ_EXPECTED_COMMIT||process.env.GITHUB_SHA;
    const exact=/^[a-f0-9]{40}$/.test(expected||'')&&[homeHtml,creatorHtml,designHtml].every(r=>r.headers.get('x-veloryz-commit')===expected);
-   const ready=exact&&market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok&&creatorHtml.ok
+   const ready=exact&&[homeHtmlText,creatorHtmlText,designText].every(html=>html.includes('/veloryz-design-system-r45.css?v=20261126-r45'))&&market.ok&&homeStage.ok&&brand.ok&&designHtml.ok&&r20Css.ok&&r20Js.ok&&homeHtml.ok&&creatorHtml.ok
     &&marketText.includes('VELORYZ / CURATED DESIGN MARKET')
     &&marketText.includes('data-source-motion')
     &&marketText.includes('Starting budget (INR)')
@@ -72,7 +74,7 @@ async function waitForR9Deployment(){
     &&designText.includes('/veloryz-experience-r20.js?v=20261126-r42')
     &&creatorHtmlText.includes('/creator-v4.css?v=20261126-v2-workspaces')
     &&creatorHtmlText.includes('/creator-v4.js?v=20261126-r42');
-   if(ready){result.deployment={release:'R44',commit:expected,attempt};return}
+   if(ready){result.deployment={release:'R45',commit:expected,attempt};return}
    last='market '+market.status+', home stage '+homeStage.status+', brand '+brand.status+', R20 CSS '+r20Css.status+', R20 JS '+r20Js.status+', design HTML '+designHtml.status+', R20 markers '+ready;
   }catch(error){last=String(error)}
   if(attempt<20)await sleep(10000);

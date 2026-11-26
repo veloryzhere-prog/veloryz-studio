@@ -60,6 +60,10 @@ jobs:
         working-directory: VELORYZ-Studio
         run: corepack pnpm install --frozen-lockfile
 
+      - name: Validate shared R45 design system
+        working-directory: VELORYZ-Studio
+        run: node tools/test-design-system-r45.mjs
+
       - name: Build current production Worker
         working-directory: VELORYZ-Studio
         run: corepack pnpm build

@@ -58,7 +58,7 @@ for(const token of ['data-source-search','data-source-category','data-source-mot
  assert(actualMarket.includes(token),'Actual marketplace filter missing: '+token);
 assert(actualMarket.includes("fetch('/api/reviews'"),'Design marketplace trust must use real moderated reviews');
 assert(actualMarket.includes('VELORYZ does not invent per-template ratings'),'Marketplace must explicitly reject fabricated template ratings');
-assert(actualMarket.includes('RIGHTS REVIEW BEFORE BUILD'),'Rights review must be visible before purchase handoff');
+assert(actualMarket.includes('Scope, licenses and dependencies are reviewed before delivery.')&&actualMarket.includes('Final scope, licensing and billing currency are confirmed before work begins.'),'Rights review must be visible before purchase handoff');
 assert(actualMarket.includes('VELORYZ BUILD FROM'),'Starting build pricing must be explicit');
 assert(actualMarketCss.includes('ACTUAL DESIGN LIBRARY R9'),'Actual marketplace R9 CSS missing');
 assert(actualMarketCss.includes('.vz-r9-toolbar')&&actualMarketCss.includes('.vz-r9-review-trust'),'Filters/review surfaces must be styled');
@@ -72,8 +72,8 @@ assert(compatibilityCss.includes('DESIGN MARKET R9'),'Compatibility marketplace 
 /* Exact journey destinations requested by product owner. */
 const journeyBlock=home.slice(home.indexOf('id="vz-reference-journey"'),home.indexOf('id="vz-home-reviews"',home.indexOf('id="vz-reference-journey"')));
 for(const [stage,href] of [['Sketch','/design/'],['Structure','/design/'],['Design','/design/'],['Build','/create/'],['Review','/reviews.html']]){
- assert(journeyBlock.includes('>'+stage+'<'),'Journey stage missing: '+stage);
- assert(journeyBlock.includes('href="'+href+'"'),'Journey route missing for '+stage+': '+href);
+ const stages=[...journeyBlock.matchAll(/<a\b[^>]*class="vz-journey-stage"[^>]*href="([^"]+)"[^>]*>[\s\S]*?<h3[^>]*>([^<]+)[\s\S]*?<\/a>/g)];
+ assert(stages.some(match=>match[2]===stage&&match[1]===href),'Journey stage or destination missing: '+stage+' → '+href);
 }
 assert(!journeyBlock.includes('✳'),'Generic journey star marker must be removed');
 assert(journeyBlock.includes('class="vz-stage-mark" src="/assets/brand/veloryz-mark.svg"'),'Journey stage uses official V mark');

@@ -84,3 +84,6 @@
 @media(forced-colors:active){
  :is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.vz-market-body,.cp-body,#admin-root) :is(button,a,input,textarea,select,summary):focus-visible{outline:2px solid Highlight!important}
 }
+
+/* Keep focus visible on the admin's existing dark sidebar. */
+#admin-root .sidebar :is(a,button):focus-visible{outline-color:#fff!important}

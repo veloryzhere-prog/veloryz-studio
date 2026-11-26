@@ -103,8 +103,8 @@ assert(market.includes('Motion level'),'Marketplace motion filter needs plain la
 assert(market.includes('Starting budget (INR)'),'Marketplace budget must identify INR');
 assert(market.includes('Starting build estimates are shown in INR.'),'Marketplace currency context missing');
 assert(market.includes('Source availability and usage context'),'Marketplace rights filter needs plain-language context');
-assert(market.includes('Studio-reviewed source')&&market.includes('Source review needed')&&market.includes('Reference only'),'Marketplace source labels are incomplete');
-assert(market.includes('STARTING VELORYZ BUILD ESTIMATES / INR'),'Marketplace result heading must identify INR');
+assert(market.includes('Source candidate · verification pending')&&market.includes('Source review needed')&&market.includes('Reference only'),'Marketplace source labels are incomplete');
+assert(market.includes('Starting budget (INR)')&&market.includes('Starting build estimates are shown in INR.'),'Marketplace result heading must identify INR');
 
 assert(!siteShell.includes('\\\"founder\\\"'),'Public Organization schema should stay studio-first rather than single-owner-first');
 

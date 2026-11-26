@@ -23,7 +23,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   const [home,creator,designPage,designDetail,docsPage]=await Promise.all([
    load('/'),load('/create/'),load('/design/'),load('/design/os-portfolio-and-agencies-8b-creative-agency/'),load('/docs/')
   ]);
-  const exact=[home,creator,designPage,docsPage,designDetail].every(p=>p.status===200&&p.commit===expectedCommit);
+  const exact=[home,creator,designPage,docsPage,designDetail].every(p=>p.status===200&&p.commit===expectedCommit&&p.body.includes('/veloryz-design-system-r45.css?v=20261126-r45'));
   const publicOK=exact&&[home,creator,designPage].every(p=>p.header===release&&p.body.includes('name="veloryz-ui-release"'));
   const detailOK=designDetail.body.includes('/veloryz-design-preview.js?v=20261126-r43')&&docsPage.body.includes('<main');
   if(publicOK&&detailOK){
@@ -47,7 +47,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19');
    const r20Linked=[home,creator,designPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261126-r42'));
    const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-v2-workspaces')&&creator.body.includes('/creator-v4.js?v=20261126-r42');
-   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-v2-workspaces')
+   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-r45')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261126-v2-workspaces')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261126-r42');
@@ -93,8 +93,9 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const r15SimpleScrollOK=homeStageJs.body.includes("addEventListener('scroll',requestLibraryUpdate")
     &&homeStageJs.body.includes("libraryFrame=requestAnimationFrame")
     &&!homeStageJs.body.includes('motionIsFull');
-   const r14ChromeGone=!home.body.includes('vz-library-rail')
-    &&!home.body.includes('vz-library-index')
+   const markup=home.body.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
+   const r14ChromeGone=!markup.includes('vz-library-rail')
+    &&!markup.includes('vz-library-index')
     &&!home.body.includes('Featured design positions')
     &&!home.body.includes('01 / 07');
    const r9MarketOK=actualMarketJs.status===200&&actualMarketCss.status===200

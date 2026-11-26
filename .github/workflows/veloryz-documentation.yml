@@ -42,6 +42,8 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: corepack pnpm install --frozen-lockfile
+      - name: Validate shared R45 design system and contrast
+        run: node tools/test-design-system-r45.mjs
       - name: Validate all public guides, routes and links
         run: node tools/test-documentation.mjs
       - name: Validate AI agents, provider security and support UI
