@@ -730,7 +730,7 @@ function update(){
  const percent=idx<0?0:Math.max(0,Math.min(100,Math.round(((idx+1)/Math.max(1,flow.length))*100)));
  const estimate=api.estimate();
  const progress=panel.querySelector('#vz-live-ring-progress');
- if(progress)progress.style.strokeDashoffset=String(289-(289*percent/100));
+ if(progress)progress.style.width=percent+'%';
  const percentNode=panel.querySelector('#vz-live-percent');
  if(percentNode)percentNode.textContent=percent+'%';
  const stageNode=panel.querySelector('#vz-live-step');
@@ -763,13 +763,13 @@ function mount(){
  const title=el('h3','', 'Live brief');
  const toggle=el('button','vz-live-toggle','Show ↑');toggle.type='button';toggle.setAttribute('aria-label','Expand or collapse live brief');toggle.setAttribute('aria-expanded','false');
  header.append(title,toggle);
- const info=el('div','vz-live-ring');
- info.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" class="vz-live-track"/><circle cx="50" cy="50" r="46" id="vz-live-ring-progress" class="vz-live-progress"/></svg>';
- const ringText=el('div','vz-live-ring-text');
+ const info=el('div','vz-live-progress-summary');
+ info.innerHTML='<div class="vz-live-linear" aria-hidden="true"><div id="vz-live-ring-progress"></div></div>';
+ const ringText=el('div','vz-live-linear-text');
  ringText.append(el('strong','', '0%'),el('span','', 'PROJECT / OVERVIEW'));
  ringText.querySelector('strong').id='vz-live-percent';
  ringText.querySelector('span').id='vz-live-step';
- info.append(ringText);
+ info.prepend(ringText);
  const rows=el('dl','vz-live-brief-rows');rows.id='vz-live-brief-rows';
  const estimateLabel=el('p','vz-live-estimate-label','Indicative estimate / not a final quote');
  const estimate=el('strong','vz-live-estimate','—');estimate.id='vz-live-estimate';
