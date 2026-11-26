@@ -58,6 +58,9 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-layout-20261126-r42"`);
  // Only refresh assets changed by R45; keep other release-specific cache contracts.
  html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
+ // Studio OS is loaded last and only in the owner shell.
+ if(html.includes('class="studio-os-r51"'))html=html.replace('</head>','<link rel="stylesheet" href="/admin-os-r51.css?v=20261126-r51-1"></head>');
+ html=html.replace(/(src="\/admin\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r51-1"');
  // R50 authenticated workspace and owner deliverables.
  html=html.replace(/((?:src|href)="\/(?:client-portal|admin-client)\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r50"');
  // R49 intelligence controllers.
