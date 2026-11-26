@@ -16,6 +16,10 @@ assert([401,403].includes((await get('/api/client-portal/admin/operations-summar
 assert(html.includes('/admin-finance-r51.js?v=20261126-r51-4')&&html.includes('/admin-finance-r51.css?v=20261126-r51-4'));
 for(const path of ['/admin-finance-r51.js?v=20261126-r51-4','/admin-finance-r51.css?v=20261126-r51-4'])assert((await get(path)).ok);
 for(const path of ['/api/admin/payments?view=finance','/api/admin/payments?view=history&id=00000000-0000-4000-8000-000000000001'])assert([401,403].includes((await get(path)).status));
+assert(html.includes('/admin-intelligence-r51.css?v=20261126-r51-5')&&html.includes('/admin-ai-control.js?v=20261126-r51-5'));
+assert((await get('/admin-intelligence-r51.css?v=20261126-r51-5')).ok);
+assert((await get('/api/admin/knowledge-ai/agents')).status===401);
+const aiDenied=await fetch(base+'/api/admin/knowledge-ai/agents/help',{method:'POST',headers:{'Content-Type':'application/json',Origin:base},body:JSON.stringify({action:'sources',question:'Studio documentation'}),signal:AbortSignal.timeout(25000)});assert([401,403].includes(aiDenied.status));
 const denied=await get('/api/admin/state');assert([401,403].includes(denied.status),'Owner state must remain protected');
 const home=await get('/');assert(!(await home.text()).includes('/admin-os-r51.css'),'Owner styling must not leak onto public site');
 console.log('PASS: deployed Studio OS shell, exact revision, owner-only assets and protected state. Authenticated visual QA is separate.');

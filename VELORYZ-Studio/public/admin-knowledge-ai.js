@@ -6,7 +6,7 @@ async function loadKnowledgeAi(){
  if(knowledgeAiLoading)return;knowledgeAiLoading=true;knowledgeAiError='';
  try{const data=preview?{profiles:[],usage:[]}:await api('/api/admin/knowledge-ai/agents');knowledgeAiProfiles=data.profiles||[];knowledgeAiUsage=data.usage||[]}
  catch(e){knowledgeAiProfiles=[];knowledgeAiError=e.message||'Unable to load the assistant service.'}
- finally{knowledgeAiLoading=false;if(section==='knowledge-ai'||section==='ai-control'&&['assistants','usage','playground','sources'].includes(aiHubTab))render();}
+ finally{knowledgeAiLoading=false;if(section==='knowledge-ai'||section==='ai-control'&&['assistants','usage','playground','sources'].includes(aiHubTab)){if(!window.VeloryzAiDraft?.dirty)render();}}
 }
 function knowledgeAiAdmin(){
  const profiles=knowledgeAiProfiles,chosen=profiles?.find(a=>a.id===knowledgeAiSelected)||profiles?.[0],totals=knowledgeAiUsage||[];

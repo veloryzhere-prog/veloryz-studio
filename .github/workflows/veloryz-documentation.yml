@@ -225,6 +225,9 @@ jobs:
       - name: Validate R51.4 finance and reconciliation
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-admin-finance-r51.mjs
+      - name: Validate R51.5 intelligence center
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: node tools/test-admin-intelligence-r51.mjs
       - name: Validate internal VELORYZ design library, sources and creator routes
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: node tools/test-expanded-design-library.mjs
