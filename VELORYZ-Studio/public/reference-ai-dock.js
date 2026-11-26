@@ -25,7 +25,7 @@ headerPortrait.alt='';headerPortrait.width=52;headerPortrait.height=52;headerPor
 const close=document.createElement('button');close.type='button';close.className='vz-ai-close';close.setAttribute('aria-label','Close AI conversation');close.textContent='×';
 header.append(headerPortrait,heading,close);
 const tabs=document.createElement('div');tabs.className='vz-ai-personas';tabs.setAttribute('role','group');tabs.setAttribute('aria-label','Choose studio AI personality');
-const log=document.createElement('div');log.className='vz-ai-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-relevant','additions');
+const log=document.createElement('div');log.className='vz-ai-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-relevant','additions text');
 const disclaimer=document.createElement('p');disclaimer.className='vz-ai-disclaimer';
 disclaimer.textContent='AI assistant · Not human staff. Messages and any supplied name are sent to the studio AI service. Do not share passwords or payment details.';
 const form=document.createElement('form');form.className='vz-ai-form';
@@ -116,7 +116,7 @@ form.addEventListener('submit',async e=>{
  const thisAgent=active;const messages=histories.get(thisAgent);
  const turn={role:'user',content:question};messages.push(turn);addMessage('user',question);input.value='';drafts.delete(thisAgent);
  busy=true;send.disabled=true;status.textContent='Connecting to '+findAgent().name+'…';
- const thinking=addMessage('assistant','Thinking…');
+ const thinking=addMessage('assistant','Thinking…');thinking.setAttribute('aria-busy','true');
  const requestController=new AbortController();controller=requestController;const request={controller:requestController,agent:thisAgent,messages,turn,question};pending=request;const timeout=setTimeout(()=>requestController.abort(),36000);
  try{
   const response=await fetch('/api/adviser',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -125,7 +125,7 @@ form.addEventListener('submit',async e=>{
   const result=await response.json().catch(()=>({error:'Unable to read assistant response'}));
   if(pending!==request)return;
   if(!response.ok||!result.answer||!['ai','guide'].includes(result.mode))throw Error(result.error||'Live AI is temporarily unavailable.');
-  messages.push({role:'assistant',content:String(result.answer)});thinking.textContent=result.answer;
+  messages.push({role:'assistant',content:String(result.answer)});thinking.textContent=result.answer;thinking.removeAttribute('aria-busy');
   if(visitorFirstName)introducedTo.add(thisAgent);
   if(!visitorFirstName&&root.dataset.open==='true')askVisitorName();
   status.textContent=result.mode==='guide'?'Using the studio guidance system':'Connected · Live AI reply';
@@ -133,11 +133,11 @@ form.addEventListener('submit',async e=>{
   // A failed request must not be mistaken for an AI-generated answer.
   if(pending!==request)return;
   const i=messages.indexOf(turn);if(i>=0)messages.splice(i,1);if(!input.value.trim())input.value=question;saveDraft();thinking.textContent=error.name==='AbortError'?'Request timed out. Please try again.':String(error.message||'AI unavailable');
-  thinking.dataset.error='true';status.textContent='No AI reply was generated';
+  thinking.dataset.error='true';thinking.removeAttribute('aria-busy');status.textContent='No AI reply was generated';
  }finally{
   clearTimeout(timeout);if(pending===request){pending=null;controller=null;busy=false;send.disabled=false;if(root.dataset.open==='true'&&active===thisAgent)log.scrollTop=log.scrollHeight;}
  }
 });
-window.VeloryzReferenceAI={open(agentId='happy'){if(agents.some(x=>x.id===agentId)&&active!==agentId){saveDraft();cancelPending();active=agentId;if(root.dataset.open==='true')renderHistory();}open(true);},close(){open(false);}};
+window.VeloryzReferenceAI={open(agentId='happy'){if(agents.some(x=>x.id===agentId)&&active!==agentId){if(root.dataset.open==='true')saveDraft();cancelPending();active=agentId;if(root.dataset.open==='true')renderHistory();}open(true);},close(){open(false);}};
 renderHistory();
 })();
