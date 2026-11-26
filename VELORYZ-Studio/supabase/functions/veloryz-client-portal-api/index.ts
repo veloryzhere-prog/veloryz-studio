@@ -4,7 +4,7 @@ import {acceptClientProject,sendAcceptanceSummary} from './client-lifecycle.ts';
 const BASE=(Deno.env.get("SUPABASE_URL")||"").replace(/\/$/,"");
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
 const OWNER=BASE+"/functions/v1/veloryz-studio-api/api/admin/state";
-const QUERIES={"archiveGet":"SELECT payload,version,updated_at FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? AND expires_at>?","archivePut":"INSERT INTO veloryz_studio.studio_ai_client_archive (project_id,principal,payload,version,updated_at,expires_at) SELECT ?,?,?,1,?,? WHERE ?=0 OR EXISTS (SELECT 1 FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? AND version=?) ON CONFLICT(project_id,principal) DO UPDATE SET payload=EXCLUDED.payload,version=studio_ai_client_archive.version+1,updated_at=EXCLUDED.updated_at,expires_at=EXCLUDED.expires_at WHERE studio_ai_client_archive.version=? RETURNING version","archiveDelete":"DELETE FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? RETURNING version","listProjects":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100","getProject":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?","addProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id","editProject":"UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id","listItems":"SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150","addItem":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id","editItem":"UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id","deleteItem":"DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id","listMessages":"SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100","addMessage":"INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id","revokeInvites":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''","revokeSessionsByProject":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''","addInvite":"INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","consumeInvite":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE token_hash=? AND revoked_at='' AND expires_at>? RETURNING project_id","verifyInvite":"SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?","addSession":"INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifySession":"SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?","revokeSession":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?","clientDecision":"UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id","getEnquiry":"SELECT id,reference,name,email,phone,service,budget,preferred_date,preferred_time,company,message,status,acceptance_status,accepted_project_id,accepted_at,created_at FROM veloryz_studio.studio_enquiries WHERE id=?","findAccepted":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?","acceptProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT (enquiry_id) WHERE enquiry_id IS NOT NULL DO NOTHING RETURNING id","linkEnquiry":"UPDATE veloryz_studio.studio_enquiries SET acceptance_status='accepted',accepted_project_id=(SELECT id FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?),accepted_at=CASE WHEN accepted_at='' THEN ? ELSE accepted_at END,status=CASE WHEN status='new' THEN 'contacted' ELSE status END,updated_at=? WHERE id=? RETURNING id,accepted_project_id","addMilestoneOnce":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT (id) DO NOTHING RETURNING id","logEmail":"INSERT INTO veloryz_studio.studio_client_email_events (id,project_id,kind,recipient,sender,transport,state,provider_message_id,error_label,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?) RETURNING id","listEmailEvents":"SELECT id,kind,recipient,sender,transport,state,error_label,created_at FROM veloryz_studio.studio_client_email_events WHERE project_id=? ORDER BY created_at DESC LIMIT 35","markRead":"UPDATE veloryz_studio.studio_client_messages SET read_at=? WHERE project_id=? AND sender=? AND read_at='' RETURNING id","listProjectsFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,accepted_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 200","getProjectFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE id=?","listMessagesFull":"SELECT id,project_id,sender,body,read_at,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 150","recalcProgress":"UPDATE veloryz_studio.studio_client_projects AS p SET progress=COALESCE((SELECT ROUND(100.0*COUNT(*) FILTER (WHERE state='done')/NULLIF(COUNT(*),0))::integer FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone'),p.progress),next_step=COALESCE((SELECT title FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone' AND state<>'done' ORDER BY created_at ASC,title ASC LIMIT 1),p.next_step),updated_at=? WHERE p.id=? RETURNING id,progress,next_step","rateLimit":"INSERT INTO veloryz_studio.studio_limits (id,count,expires_at) VALUES (?,1,?) ON CONFLICT(id) DO UPDATE SET count=studio_limits.count+1 RETURNING count"};
+const QUERIES={"secureFileAdd":"INSERT INTO veloryz_studio.studio_client_files (id,project_id,filename,mime,size,object_key,created_at) VALUES (?,?,?,?,?,?,?) RETURNING id","secureFileGet":"SELECT id,project_id,filename,mime,size,object_key,created_at FROM veloryz_studio.studio_client_files WHERE id=? AND project_id=?","secureFileCount":"SELECT count(*) AS count FROM veloryz_studio.studio_client_files WHERE project_id=?","decisionAtomic":"SELECT veloryz_studio.r50_record_decision(?,?,?,?,?,?) AS accepted","archiveGet":"SELECT payload,version,updated_at FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? AND expires_at>?","archivePut":"INSERT INTO veloryz_studio.studio_ai_client_archive (project_id,principal,payload,version,updated_at,expires_at) SELECT ?,?,?,1,?,? WHERE ?=0 OR EXISTS (SELECT 1 FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? AND version=?) ON CONFLICT(project_id,principal) DO UPDATE SET payload=EXCLUDED.payload,version=studio_ai_client_archive.version+1,updated_at=EXCLUDED.updated_at,expires_at=EXCLUDED.expires_at WHERE studio_ai_client_archive.version=? RETURNING version","archiveDelete":"DELETE FROM veloryz_studio.studio_ai_client_archive WHERE project_id=? AND principal=? RETURNING version","listProjects":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 100","getProject":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at FROM veloryz_studio.studio_client_projects WHERE id=?","addProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) RETURNING id","editProject":"UPDATE veloryz_studio.studio_client_projects SET client_name=?,client_email=?,title=?,summary=?,status=?,phase=?,progress=?,due_date=?,next_step=?,updated_at=? WHERE id=? RETURNING id","listItems":"SELECT id,project_id,type,title,details,state,due_date,url,created_at,updated_at FROM veloryz_studio.studio_client_items WHERE project_id=? ORDER BY created_at ASC LIMIT 150","addItem":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING id","editItem":"UPDATE veloryz_studio.studio_client_items SET title=?,details=?,state=?,due_date=?,url=?,updated_at=? WHERE id=? AND project_id=? RETURNING id","deleteItem":"DELETE FROM veloryz_studio.studio_client_items WHERE id=? AND project_id=? RETURNING id","listMessages":"SELECT id,project_id,sender,body,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 100","addMessage":"INSERT INTO veloryz_studio.studio_client_messages (id,project_id,sender,body,created_at) VALUES (?,?,?,?,?) RETURNING id","revokeInvites":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE project_id=? AND revoked_at=''","revokeSessionsByProject":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE project_id=? AND revoked_at=''","addInvite":"INSERT INTO veloryz_studio.studio_client_invites (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","consumeInvite":"UPDATE veloryz_studio.studio_client_invites SET revoked_at=? WHERE token_hash=? AND revoked_at='' AND expires_at>? RETURNING project_id","verifyInvite":"SELECT project_id FROM veloryz_studio.studio_client_invites WHERE token_hash=? AND revoked_at='' AND expires_at>?","addSession":"INSERT INTO veloryz_studio.studio_client_sessions (id,project_id,token_hash,expires_at,revoked_at,created_at) VALUES (?,?,?,?,?,?) RETURNING id","verifySession":"SELECT project_id FROM veloryz_studio.studio_client_sessions WHERE token_hash=? AND revoked_at='' AND expires_at>?","revokeSession":"UPDATE veloryz_studio.studio_client_sessions SET revoked_at=? WHERE token_hash=?","clientDecision":"UPDATE veloryz_studio.studio_client_items SET state=?,updated_at=? WHERE id=? AND project_id=? AND type='approval' AND state='waiting' RETURNING id","getEnquiry":"SELECT id,reference,name,email,phone,service,budget,preferred_date,preferred_time,company,message,status,acceptance_status,accepted_project_id,accepted_at,created_at FROM veloryz_studio.studio_enquiries WHERE id=?","findAccepted":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?","acceptProject":"INSERT INTO veloryz_studio.studio_client_projects (id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT (enquiry_id) WHERE enquiry_id IS NOT NULL DO NOTHING RETURNING id","linkEnquiry":"UPDATE veloryz_studio.studio_enquiries SET acceptance_status='accepted',accepted_project_id=(SELECT id FROM veloryz_studio.studio_client_projects WHERE enquiry_id=?),accepted_at=CASE WHEN accepted_at='' THEN ? ELSE accepted_at END,status=CASE WHEN status='new' THEN 'contacted' ELSE status END,updated_at=? WHERE id=? RETURNING id,accepted_project_id","addMilestoneOnce":"INSERT INTO veloryz_studio.studio_client_items (id,project_id,type,title,details,state,due_date,url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT (id) DO NOTHING RETURNING id","logEmail":"INSERT INTO veloryz_studio.studio_client_email_events (id,project_id,kind,recipient,sender,transport,state,provider_message_id,error_label,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?) RETURNING id","listEmailEvents":"SELECT id,kind,recipient,sender,transport,state,error_label,created_at FROM veloryz_studio.studio_client_email_events WHERE project_id=? ORDER BY created_at DESC LIMIT 35","markRead":"UPDATE veloryz_studio.studio_client_messages SET read_at=? WHERE project_id=? AND sender=? AND read_at='' RETURNING id","listProjectsFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,accepted_at FROM veloryz_studio.studio_client_projects ORDER BY updated_at DESC LIMIT 200","getProjectFull":"SELECT id,client_name,client_email,title,summary,status,phase,progress,due_date,next_step,created_at,updated_at,enquiry_id,request_reference,brief_details,accepted_at FROM veloryz_studio.studio_client_projects WHERE id=?","listMessagesFull":"SELECT id,project_id,sender,body,read_at,created_at FROM veloryz_studio.studio_client_messages WHERE project_id=? ORDER BY created_at DESC LIMIT 150","recalcProgress":"UPDATE veloryz_studio.studio_client_projects AS p SET progress=COALESCE((SELECT ROUND(100.0*COUNT(*) FILTER (WHERE state='done')/NULLIF(COUNT(*),0))::integer FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone'),p.progress),next_step=COALESCE((SELECT title FROM veloryz_studio.studio_client_items WHERE project_id=p.id AND type='milestone' AND state<>'done' ORDER BY created_at ASC,title ASC LIMIT 1),p.next_step),updated_at=? WHERE p.id=? RETURNING id,progress,next_step","rateLimit":"INSERT INTO veloryz_studio.studio_limits (id,count,expires_at) VALUES (?,1,?) ON CONFLICT(id) DO UPDATE SET count=studio_limits.count+1 RETURNING count"};
 const enc=new TextEncoder(),common={"Cache-Control":"no-store","X-Content-Type-Options":"nosniff","Referrer-Policy":"no-referrer"};
 function send(data,status=200,extra={}){return Response.json(data,{status,headers:{...common,...extra}})}
 function fail(msg,status=400){throw Object.assign(new Error(msg),{status})}
@@ -170,6 +170,54 @@ async function clientArchive(req,pid,now){
  return send({ok:true,version:Number(saved[0].version)});
 }
 
+// Private delivery bucket: file bytes never pass through public CMS or model requests.
+const FILE_BUCKET='veloryz-client-deliverables',FILE_MAX=2097152;
+const storageHeaders=()=>({apikey:KEY,Authorization:'Bearer '+KEY});
+const fileObject=key=>BASE+'/storage/v1/object/'+FILE_BUCKET+'/'+key.split('/').map(encodeURIComponent).join('/');
+async function filePayload(req){
+ if(!req.headers.get('content-type')?.includes('application/json'))fail('Use JSON.',415);
+ if(Number(req.headers.get('content-length')||0)>2850000)fail('File exceeds 2 MB.',413);
+ const reader=req.body?.getReader();if(!reader)fail('File required.');
+ let size=0,text='',decoder=new TextDecoder();
+ try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>2850000){await reader.cancel();fail('File exceeds 2 MB.',413);}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}
+ try{return JSON.parse(text);}catch{fail('Invalid file request.');}
+}
+function checkedFile(v){
+ const filename=trim(v.filename,160,true);
+ if(/[\\/]/.test(filename)||/[\u0000-\u001f\u007f]/.test(filename))fail('Invalid filename.');
+ const ext=filename.toLowerCase().split('.').at(-1),mime=({pdf:'application/pdf',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',txt:'text/plain'})[ext];
+ if(!mime||typeof v.content!=='string'||v.content.length>2796204||!/^[A-Za-z0-9+/]+={0,2}$/.test(v.content))fail('Choose a PDF, PNG, JPEG or TXT file up to 2 MB.');
+ let bytes;try{bytes=Uint8Array.from(atob(v.content),x=>x.charCodeAt(0));}catch{fail('Invalid file encoding.');}
+ if(!bytes.length||bytes.length>FILE_MAX)fail('Choose a file up to 2 MB.',413);
+ const prefix=new TextDecoder().decode(bytes.slice(0,5));
+ if(mime==='application/pdf'&&prefix!=='%PDF-')fail('Invalid PDF signature.');
+ if(mime==='image/png'&&![137,80,78,71,13,10,26,10].every((b,i)=>bytes[i]===b))fail('Invalid PNG signature.');
+ if(mime==='image/jpeg'&&(bytes[0]!==255||bytes[1]!==216||bytes[2]!==255))fail('Invalid JPEG signature.');
+ if(mime==='text/plain'){try{const s=new TextDecoder('utf-8',{fatal:true}).decode(bytes);if(s.includes('\x00'))throw Error('Binary');}catch{fail('Use valid UTF-8 text.');}}
+ return {filename,mime,bytes};
+}
+async function deleteStoredFile(row){try{const r=await fetch(fileObject(row.object_key),{method:'DELETE',headers:storageHeaders(),signal:AbortSignal.timeout(12000)});return r.ok||r.status===404;}catch{return false;}}
+async function uploadDeliverable(req,now){
+ const v=await filePayload(req),pid=id(v.project_id);
+ if(!(await db('getProject',pid)).length)fail('Project not found.',404);
+ await throttle(req,'private-file-upload:'+pid,12,3600);
+ if(Number((await db('secureFileCount',pid))[0]?.count||0)>=20)fail('Maximum 20 hosted deliverables per project.',409);
+ const {filename,mime,bytes}=checkedFile(v),fid=crypto.randomUUID(),object=pid+'/'+fid;
+ const title=trim(v.title,160,true),details=trim(v.details,1400),url='https://veloryz.online/api/client-portal/files/'+fid;
+ const result=await fetch(fileObject(object),{method:'POST',headers:{...storageHeaders(),'Content-Type':mime,'x-upsert':'false'},body:bytes,signal:AbortSignal.timeout(25000)});
+ if(!result.ok)fail('Private storage upload failed.',503);
+ try{await dbBatch([['addItem',fid,pid,'file',title,details,'done','',url,now,now],['secureFileAdd',fid,pid,filename,mime,bytes.length,object,now]]);}
+ catch(e){await deleteStoredFile({object_key:object});throw e;}
+ return send({ok:true,id:fid},201);
+}
+async function deliverFile(pid,fid){
+ const row=(await db('secureFileGet',fid,pid))[0];if(!row||row.object_key!==pid+'/'+fid)fail('File not found.',404);
+ const result=await fetch(BASE+'/storage/v1/object/authenticated/'+FILE_BUCKET+'/'+row.object_key.split('/').map(encodeURIComponent).join('/'),{headers:storageHeaders(),signal:AbortSignal.timeout(25000)});
+ if(!result.ok)fail('Private file unavailable.',503);
+ // Always download instead of rendering user-supplied content on the trusted site origin.
+ return new Response(result.body,{headers:{...common,'Content-Type':'application/octet-stream','Content-Disposition':"attachment; filename*=UTF-8''"+encodeURIComponent(row.filename).replace(/['()*]/g,c=>'%'+c.charCodeAt(0).toString(16).toUpperCase()),'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"}});
+}
+
 async function main(req){
  const u=new URL(req.url),path=u.pathname.replace(/^.*?\/veloryz-client-portal-api(?=\/)/,"").replace(/\/$/,"");
  if(!path.startsWith("/api/client-portal"))return send({error:"Not found."},404);
@@ -193,6 +241,8 @@ async function main(req){
  }
  if(action.startsWith("/admin/")){
   if(!await admin(req))return send({error:"Studio owner login required."},401);
+  if(action==="/admin/files"&&req.method==="POST")return uploadDeliverable(req,now);
+  if(action.startsWith("/admin/files/")&&req.method==="GET")return deliverFile(id(u.searchParams.get("project_id")),id(action.split("/").pop()));
   if(action==="/admin/delivery"&&req.method==="GET")return send(mailStatus());
   if(action==="/admin/projects"&&req.method==="GET"){
    const projects=await db("listProjectsFull"),pid=u.searchParams.get("id");
@@ -263,8 +313,9 @@ async function main(req){
    if(!(await db("getProject",pid)).length)fail("Project not found.",404);
    const [type,title,details,state,due,fileUrl]=itemFields(v);
    if(v.id){
-    const item=id(v.id);
-    if(!(await db("editItem",title,details,state,due,fileUrl,now,item,pid)).length)fail("Item not found.",404);
+    const item=id(v.id),hosted=(await db("secureFileGet",item,pid))[0];
+    const targetURL=hosted?"https://veloryz.online/api/client-portal/files/"+item:fileUrl;
+    if(!(await db("editItem",title,details,state,due,targetURL,now,item,pid)).length)fail("Item not found.",404);
     if(type==="milestone")await db("recalcProgress",now,pid);
     return send({ok:true,id:item});
    }
@@ -275,9 +326,11 @@ async function main(req){
   }
   if(action.startsWith("/admin/items/")&&req.method==="DELETE"){
    const item=id(action.split("/").pop()),pid=id(u.searchParams.get("project_id"));
+   const hosted=(await db("secureFileGet",item,pid))[0];
    if(!(await db("deleteItem",item,pid)).length)fail("Item not found.",404);
+   const cleanup=hosted?await deleteStoredFile(hosted):true;
    await db("recalcProgress",now,pid);
-   return send({ok:true});
+   return send({ok:true,storage_cleanup:cleanup});
   }
   if(action==="/admin/messages"&&req.method==="POST"){
    const v=await payload(req),pid=id(v.project_id),message=trim(v.body,2000,true);
@@ -300,6 +353,7 @@ async function main(req){
  if(!pid)return send({error:"Use your private invitation to open this workspace.",signedOut:true},401);
  if(action==="/session"&&req.method==="GET")return send(await view(pid));
  if(action==="/ai-archive")return clientArchive(req,pid,now);
+ if(action.startsWith("/files/")&&req.method==="GET")return deliverFile(pid,id(action.split("/").pop()));
  if(action==="/summary"&&req.method==="GET"){
   const project=(await db("getProjectFull",pid))[0];
   if(!project)fail("Client project not found.",404);
@@ -324,9 +378,9 @@ async function main(req){
  if(action==="/decisions"&&req.method==="POST"){
   const v=await payload(req),item=id(v.id),status=choice(v.state,["approved","changes"],"");
   if(!status)fail("Select approve or request changes.");
-  if(!(await db("clientDecision",status,now,item,pid)).length)fail("This review is no longer pending.",409);
-  const note=trim(v.note,1000);
-  await db("addMessage",crypto.randomUUID(),pid,"client",status==="approved"?"Approved a review. "+note:"Requested changes. "+note,now);
+  const note=trim(v.note,1000);if(status==="changes"&&!note)fail("Describe the changes you would like.");
+  const message=(status==="approved"?"Approved a review. ":"Requested changes. ")+note;
+  if((await db("decisionAtomic",pid,item,status,crypto.randomUUID(),message,now))[0]?.accepted!==true)fail("This review is no longer pending.",409);
   return send({ok:true});
  }
  return send({error:"Not found."},404);

@@ -225,6 +225,8 @@ async function forwardClientPortal(request){
  });
  const outgoing=new Headers({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  const contentType=response.headers.get('content-type');if(contentType)outgoing.set('Content-Type',contentType);
+ const disposition=response.headers.get('Content-Disposition');if(disposition)outgoing.set('Content-Disposition',disposition);
+ const csp=response.headers.get('Content-Security-Policy');if(csp)outgoing.set('Content-Security-Policy',csp);
  for(const cookie of response.headers.getSetCookie())if(cookie.startsWith('vz_portal='))outgoing.append('Set-Cookie',cookie);
  return new Response(response.body,{status:response.status,headers:outgoing});
 }
