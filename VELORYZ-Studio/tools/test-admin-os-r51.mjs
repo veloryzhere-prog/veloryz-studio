@@ -31,4 +31,4 @@ assert(core.includes('os.topbar(section,navigation,workspace,icon,E,tab)')&&core
 assert(core.includes('safeRender();window.scrollTo'));
 assert(css.includes('@media(max-width:850px)')&&css.includes('@media(prefers-reduced-motion:reduce)'));
 assert.equal((css.match(/\{/g)||[]).length,(css.match(/\}/g)||[]).length);
-console.log('PASS: Studio OS seven navigation groups, twenty preserved routes, contextual publish actions, owner-only assets and responsive/focus contracts.');
+console.log('PASS: Studio OS seven navigation groups, all preserved routes plus action inbox, contextual publish actions, owner-only assets and responsive/focus contracts.');

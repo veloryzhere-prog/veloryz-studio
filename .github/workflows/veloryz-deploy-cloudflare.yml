@@ -79,6 +79,9 @@ jobs:
       - name: Validate R51.1 Studio OS shell
         working-directory: VELORYZ-Studio
         run: node tools/test-admin-os-r51.mjs
+      - name: Validate R51.2 executive dashboard and action inbox
+        working-directory: VELORYZ-Studio
+        run: node tools/test-admin-dashboard-r51.mjs
 
       - name: Build current production Worker
         working-directory: VELORYZ-Studio
