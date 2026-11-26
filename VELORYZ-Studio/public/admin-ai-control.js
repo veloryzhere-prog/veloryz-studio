@@ -23,7 +23,7 @@ function aiControlPage(){
  return heading('STUDIO INTELLIGENCE / CENTRAL CONTROL','AI Control Centre',description,
   '<a class="admin-button secondary" href="#/documentation">Knowledge sources ↗</a> <a class="admin-button" href="#/health">System diagnostics ↗</a>')+
   '<section class="ad-ai-control" aria-label="AI management">'+
-  '<div class="ad-ai-hub-overview"><div><strong>9</strong><span>Configured AI roles</span><small>Five adviser briefs + four independent agents</small></div><div><strong>3</strong><span>Management workspaces</span><small>Each retains its real save and test actions</small></div><div><strong>0</strong><span>Automatic training jobs</span><small>Changing instructions is not model retraining</small></div></div>'+
+  '<div class="ad-ai-hub-overview"><div><strong>9</strong><span>Configured AI roles</span><small>Five adviser briefs + four independent agents</small></div><div><strong>3</strong><span>Management workspaces</span><small>Independent profiles, shared provider, adviser briefs</small></div><div><strong>0</strong><span>Automatic training jobs</span><small>Changing instructions is not model retraining</small></div></div>'+
   '<div class="ad-ai-hub-tabs" role="tablist" aria-label="AI configuration sections">'+groups.map(([key,name,desc,action])=>
    '<button type="button" role="tab" id="ad-ai-tab-'+key+'" data-ai-hub-tab="'+key+'" aria-controls="ad-ai-hub-panel" aria-selected="'+(key===aiHubTab)+'" class="ad-ai-hub-tab '+(key===aiHubTab?'is-active':'')+'"><strong>'+E(name)+'</strong><span>'+E(desc)+'</span><small>'+E(action)+'</small></button>'
   ).join('')+'</div>'+

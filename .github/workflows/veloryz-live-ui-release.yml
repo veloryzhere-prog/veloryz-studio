@@ -39,6 +39,7 @@ on:
       - "VELORYZ-Studio/tools/test-reference-elegance-r5.mjs"
       - "VELORYZ-Studio/lib/design-detail-page.ts"
       - "VELORYZ-Studio/tools/check-live-ui-release.mjs"
+      - "VELORYZ-Studio/tools/check-live-intelligence-r49.mjs"
       - ".github/workflows/veloryz-live-ui-release.yml"
 permissions:
   contents: read
@@ -81,3 +82,5 @@ jobs:
           VELORYZ_UI_RELEASE: silk-ui-20261123-r5
           VELORYZ_PROBE_ATTEMPTS: 20
         run: node tools/check-live-ui-release.mjs
+      - name: Verify R49 public assistant inference and private archive denial
+        run: node tools/check-live-intelligence-r49.mjs

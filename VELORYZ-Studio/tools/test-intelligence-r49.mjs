@@ -22,3 +22,11 @@ scenario='broken';await assert.rejects(()=>send('support',messages),/incomplete/
 scenario='guide';const big=Array.from({length:17},(_,i)=>({role:i%2?'assistant':'user',content:'界'.repeat(1400)}));await send('help',big);assert(new TextEncoder().encode(JSON.stringify(payload)).length<=15500);assert.equal(payload.messages[0].role,'user');
 assert(src.includes('data-r49-file')&&src.includes('agent!==\'client\''));
 console.log('PASS: real SSE transport, split chunks, guide fallback, interrupted response, bounded multilingual input and text-reference control.');
+
+const portal=read('supabase/functions/veloryz-client-portal-api/index.ts'),archive=read('public/client-portal.js');
+assert(portal.indexOf('if(!pid)return send')<portal.indexOf('if(action==="/ai-archive")return clientArchive'));
+assert(portal.includes("AES-GCM")&&portal.includes("String(project.client_email)")&&portal.includes("await db('archiveGet',pid,principal"));
+assert(portal.includes("v.consent!==true")&&portal.includes("await db('archiveDelete',pid,principal)"));
+assert(archive.includes("clearArchiveSession()")&&archive.includes("data-cp-archive-file")&&archive.includes("archiveVersion===null"));
+assert(src.includes("if(k==='client')return")&&src.includes("state.delete('client')"));
+console.log('PASS: private archive authentication, encrypted scope, opt-in controls, and client memory isolation.');

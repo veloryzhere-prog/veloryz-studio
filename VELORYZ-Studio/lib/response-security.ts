@@ -60,7 +60,7 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
  // R49 private workspace archive and intelligence controllers.
  html=html.replace(/(src="\/client-portal\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r49-archive');
- html=html.replace(/((?:src|href)="\/(?:support-chat\.(?:js|css)|creator-ai\.js|admin-knowledge-ai\.js))(?:\?[^"]*)?"/g,'$1?v=20261126-r49-stream"');
+ html=html.replace(/((?:src|href)="\/(?:support-chat\.(?:js|css)|creator-ai\.js|admin-knowledge-ai\.js|admin-ai-control\.js))(?:\?[^"]*)?"/g,'$1?v=20261126-r49-stream"');
  // R48 Creator assets; keep the existing compatibility API.
  html=html.replace(/((?:src|href)="\/creator-v4\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r48"');
  // R47 marketplace assets are versioned separately from shared design tokens.
