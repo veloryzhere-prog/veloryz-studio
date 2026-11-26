@@ -30,3 +30,9 @@ assert(portal.includes("v.consent!==true")&&portal.includes("await db('archiveDe
 assert(archive.includes("clearArchiveSession()")&&archive.includes("data-cp-archive-file")&&archive.includes("archiveVersion===null"));
 assert(src.includes("if(k==='client')return")&&src.includes("state.delete('client')"));
 console.log('PASS: private archive authentication, encrypted scope, opt-in controls, and client memory isolation.');
+
+const provider=read('supabase/functions/veloryz-knowledge-ai/index.ts');
+assert(provider.includes("m==='gemini-2.5-flash'?'gemini-3.5-flash-lite':m"));
+assert(provider.includes("x.id==='help'&&x.enabled&&x.provider===a.provider"));
+assert(provider.includes("if(a.provider==='guide')return {answer:null,status:'reference-only'}"));
+assert(archive.includes('generation!==archiveGeneration'));

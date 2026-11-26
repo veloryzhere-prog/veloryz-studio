@@ -11,3 +11,7 @@ The configured Gemini/OpenAI providers can emit actual server-sent text deltas. 
 ## Private client archive
 
 Opt-in storage through the existing invitation-authenticated portal, scoped to the server-derived project and hashed current recipient identity. AES-GCM encryption, service-only table, explicit save/load/delete, optimistic version checks, maximum eight completed conversation messages and two 2,000-character text notes. Text notes are never injected into model prompts. Public and demo chat cannot access the archive. Client AI session memory is cleared when leaving the workspace. Archives are hidden after 30 days; automatic physical purge is not implemented. Arbitrary PDFs, images and executables are not accepted.
+
+## Provider recovery
+
+Production inference reported model-unavailable for Help/Support and credential-unavailable for Client/Creator. Replace the legacy Gemini 2.5 Flash route with Gemini 3.5 Flash-Lite. On model-not-found, retry at most one advertised stable Flash-Lite model. Agents without a key may use the enabled Help agent's existing same-provider credential in server memory; no key copying or exposure. Explicit guide mode and independently configured keys retain priority. Actual provider route/model are reported with live answers. Client archive rejects late responses after a session change.
