@@ -49,7 +49,7 @@ function render(){
  }
  if(section==='platform'&&!aiSettings&&!aiSettingsLoading)loadAiSettings();
  if(['command','reviews'].includes(section)&&!ownerReviewError&&(!ownerReviews||Date.now()-ownerReviewFetched>45000)&&!ownerReviewLoading)loadOwnerReviews();
- if(section==='ai-control'&&aiHubTab==='assistants'&&!knowledgeAiProfiles&&!knowledgeAiLoading)loadKnowledgeAi();
+ if(section==='ai-control'&&!knowledgeAiProfiles&&!knowledgeAiLoading)loadKnowledgeAi();
  if(section==='ai-control'&&aiHubTab==='provider'&&!aiSettings&&!aiSettingsLoading)loadAiSettings();
  if(section==='knowledge-ai'&&!knowledgeAiProfiles&&!knowledgeAiLoading)loadKnowledgeAi();
  if(section==='payments'&&!paymentsLoaded&&!paymentsLoading&&!paymentsError)loadPayments();

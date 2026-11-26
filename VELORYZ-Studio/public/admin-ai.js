@@ -19,7 +19,7 @@ document.addEventListener('change',event=>{
  if(event.target.id!=='ai-provider')return;
  const model=$('#ai-model'),key=$('#gemini-key');model.value=event.target.value==='openai'?'gpt-4.1-mini':event.target.value==='guide'?'':'gemini-3.5-flash-lite';model.disabled=event.target.value==='guide';key.disabled=event.target.value!=='gemini';key.value='';
 });
-document.addEventListener('click',event=>{if(event.target.closest('[data-ai-reload]')){aiSettings=null;loadAiSettings();}});
+document.addEventListener('click',event=>{if(event.target.closest('[data-ai-reload]')){if(window.VeloryzAiDraft?.dirty&&!confirm('Discard unsaved provider changes?'))return;if(window.VeloryzAiDraft)window.VeloryzAiDraft.dirty=false;aiSettings=null;loadAiSettings();}});
 document.addEventListener('submit',async event=>{
  const form=event.target;if(form.id!=='ai-provider-form')return;event.preventDefault();if(!form.reportValidity())return;
  const button=event.submitter,error=$('#ai-save-error'),key=$('#gemini-key');error.textContent='';button.disabled=true;
@@ -28,7 +28,7 @@ document.addEventListener('submit',async event=>{
   if(aiSettings.loadError)throw Error('Reload the connection settings before saving.');
   const fields=Object.fromEntries(new FormData(form));
   const result=await api('/api/admin/ai/settings',{method:'PUT',body:JSON.stringify({...fields,version:aiSettings.version})});
-  key.value='';aiSettings=result;key.placeholder=result.source==='encrypted-owner-setting'?'A key is saved · leave blank to keep it':'Enter your Gemini API key here';const status=$('.ai-provider-status>span:last-child',form);if(status)status.textContent=(result.configured?'Provider key configured':'Studio guide selected')+' · '+(result.source==='encrypted-owner-setting'?'Encrypted owner setting':result.source==='runtime-secret'?'Server runtime secret':'No saved key');$('.provider-status-dot',form)?.classList.toggle('ready',result.configured);const box=$('#platform-connections');box.textContent='Connection saved securely. Testing a real reply…';
+  key.value='';if(window.VeloryzAiDraft)window.VeloryzAiDraft.dirty=false;aiSettings=result;key.placeholder=result.source==='encrypted-owner-setting'?'A key is saved · leave blank to keep it':'Enter your Gemini API key here';const status=$('.ai-provider-status>span:last-child',form);if(status)status.textContent=(result.configured?'Provider key configured':'Studio guide selected')+' · '+(result.source==='encrypted-owner-setting'?'Encrypted owner setting':result.source==='runtime-secret'?'Server runtime secret':'No saved key');$('.provider-status-dot',form)?.classList.toggle('ready',result.configured);const box=$('#platform-connections');box.textContent='Connection saved securely. Testing a real reply…';
   const check=await api('/api/admin/ai/check',{method:'POST',body:'{}'});showAiConnectionResult(box,check);toast(check.status==='live'?'Live '+check.providerLabel+' reply verified.':'Provider saved. Review the connection result below.');
  }catch(e){error.textContent=e.message;}finally{key.value='';button.disabled=false;}
 });

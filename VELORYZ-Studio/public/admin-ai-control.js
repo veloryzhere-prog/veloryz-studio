@@ -1,40 +1,56 @@
-/* VELORYZ Studio Control / Unified AI Command Centre
- * Reuses existing authenticated persistence for independent agents, persona
- * CMS briefs and the global Gemini/OpenAI provider; no synthetic settings.
- */
+/* R51.5 — Studio Intelligence Lab. Existing authorized profile and CMS writers retained. */
 'use strict';
 let aiHubTab='assistants';
-function aiControlPage(){
- const groups=[
-  ['assistants','4 Assistants','Help, Contact, Client and Project Creator','Live settings / encrypted keys'],
-  ['personas','5 AI Advisers','Specialty briefs for the public advisers','CMS draft and publish'],
-  ['provider','Provider Connection','Global Gemini / OpenAI configuration','Protected server settings']
- ];
- const sectionMarkup=aiHubTab==='assistants'
-  ?(typeof knowledgeAiAdmin==='function'?knowledgeAiAdmin():'<p>Independent agent tools are unavailable. Reload the admin scripts.</p>')
-  :aiHubTab==='personas'
-  ?(typeof aiMindsetPage==='function'?aiMindsetPage():'<p>Adviser tools could not be loaded.</p>')
-  :'<section class="ad-ai-provider-panel">'+
-    '<header class="ad-ai-provider-head"><div class="admin-eyebrow">SECURE SERVICE / MODEL SETTINGS</div><h2>Global AI provider</h2><p>Manage the site-wide provider and model. Provider changes are saved to protected server settings immediately and are separate from published CMS drafts.</p></header>'+
-    (typeof aiSettingsForm==='function'?aiSettingsForm():'<p>Provider module unavailable.</p>')+
-    '<div class="ai-check-result" id="platform-connections" role="status"></div>'+
-    '</section>';
- const description='Configure real AI assistants, edit adviser specialties and test provider connections from one place. Changes in separate tabs follow their own save workflow.';
- return heading('STUDIO INTELLIGENCE / CENTRAL CONTROL','AI Control Centre',description,
-  '<a class="admin-button secondary" href="#/documentation">Knowledge sources ↗</a> <a class="admin-button" href="#/health">System diagnostics ↗</a>')+
-  '<section class="ad-ai-control" aria-label="AI management">'+
-  '<div class="ad-ai-hub-overview"><div><strong>9</strong><span>Configured AI roles</span><small>Five adviser briefs + four independent agents</small></div><div><strong>3</strong><span>Management workspaces</span><small>Independent profiles, shared provider, adviser briefs</small></div><div><strong>0</strong><span>Automatic training jobs</span><small>Changing instructions is not model retraining</small></div></div>'+
-  '<div class="ad-ai-hub-tabs" role="tablist" aria-label="AI configuration sections">'+groups.map(([key,name,desc,action])=>
-   '<button type="button" role="tab" id="ad-ai-tab-'+key+'" data-ai-hub-tab="'+key+'" aria-controls="ad-ai-hub-panel" aria-selected="'+(key===aiHubTab)+'" class="ad-ai-hub-tab '+(key===aiHubTab?'is-active':'')+'"><strong>'+E(name)+'</strong><span>'+E(desc)+'</span><small>'+E(action)+'</small></button>'
-  ).join('')+'</div>'+
-  '<section id="ad-ai-hub-panel" role="tabpanel" aria-labelledby="ad-ai-tab-'+E(aiHubTab)+'" class="ad-ai-hub-panel">'+sectionMarkup+'</section>'+
-  '<p class="ad-ai-hub-note">Security note: API keys stay server-side. Independent agents save immediately; character adviser briefs require Save draft → Publish site. Use “Test actual reply” to verify a provider before announcing it as working.</p>'+
-  '</section>';
+const aiHubTabs=[['assistants','Assistants','Independent profiles'],['personas','Advisers','Public personality briefs'],['provider','Providers','Shared model connection'],['playground','Playground','Test saved profiles'],['sources','Knowledge','Inspect source retrieval'],['usage','Usage','Recorded request outcomes']];
+const aiLabNames={help:'Help Centre',support:'Contact Support',client:'Client Guide',creator:'Project Creator'};
+let aiLabAgent='help',aiLabQuestion='How can I contact the Studio team?',aiLabBusy=false,aiLabResult=null,aiLabGeneration=0,aiLabOwner=null;
+const aiLabEscape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function aiLabStats(rows,days=30,now=Date.now()){
+ const end=new Date(now);end.setUTCHours(0,0,0,0);const start=new Date(end);start.setUTCDate(start.getUTCDate()-days+1);
+ const daily=Array.from({length:days},(_,i)=>{const d=new Date(start);d.setUTCDate(d.getUTCDate()+i);return {day:d.toISOString().slice(0,10),success:0,unavailable:0,error:0,limited:0};});
+ const byDay=new Map(daily.map(x=>[x.day,x])),agents=Object.fromEntries(Object.keys(aiLabNames).map(id=>[id,{success:0,unavailable:0,error:0,limited:0}]));
+ for(const r of Array.isArray(rows)?rows:[]){const day=byDay.get(r.day),a=agents[r.agent],v=Number(r.total);if(!day||!a||!Object.hasOwn(a,r.result)||!Number.isSafeInteger(v)||v<0)continue;day[r.result]+=v;a[r.result]+=v;}
+ const totals={success:0,unavailable:0,error:0,limited:0};for(const a of Object.values(agents))for(const k of Object.keys(totals))totals[k]+=a[k];return {daily,agents,totals,total:Object.values(totals).reduce((a,b)=>a+b,0)};
 }
-document.addEventListener('click',event=>{
+function aiLabUsage(){
+ if(knowledgeAiLoading||knowledgeAiProfiles===null)return '<p class="os-ai-empty" role="status">Loading recorded usage…</p>';
+ if(knowledgeAiError)return '<p class="os-ai-empty" role="alert">'+E(knowledgeAiError)+'</p>';
+ const s=aiLabStats(knowledgeAiUsage),max=Math.max(1,...s.daily.map(d=>d.success+d.unavailable+d.error+d.limited));
+ const bars=s.daily.map(d=>{const count=d.success+d.unavailable+d.error+d.limited;return '<div class="os-ai-bar" title="'+E(d.day+' · '+count+' recorded outcomes')+'" aria-label="'+E(d.day+' '+count)+'"><span style="height:'+(100*count/max)+'%"></span></div>';}).join('');
+ return '<section class="os-ai-surface"><div class="os-ai-panel-head"><div><h2>Usage and outcomes</h2><p>Last 30 UTC calendar days · independent assistants only</p></div><button class="admin-button secondary" data-ka-refresh>Refresh data</button></div><div class="os-ai-usage-metrics">'+[['Recorded outcomes',s.total],['Live replies',s.totals.success],['Unavailable / guide',s.totals.unavailable+s.totals.error],['Rate-limited',s.totals.limited]].map(([n,v])=>'<div><span>'+n+'</span><strong>'+v+'</strong></div>').join('')+'</div><div class="os-ai-chart"><h3>Recorded request outcomes by day</h3><div class="os-ai-bars" role="img" aria-label="Daily recorded outcomes; exact figures in table below">'+bars+'</div><div class="os-ai-axis"><span>'+s.daily[0].day+'</span><span>'+s.daily.at(-1).day+'</span></div></div><div class="os-ai-scroll"><table class="os-ai-table"><thead><tr><th>Assistant</th><th>Live</th><th>Unavailable</th><th>Errors</th><th>Limited</th></tr></thead><tbody>'+Object.entries(s.agents).map(([id,a])=>'<tr><td>'+E(aiLabNames[id])+'</td><td>'+a.success+'</td><td>'+a.unavailable+'</td><td>'+a.error+'</td><td>'+a.limited+'</td></tr>').join('')+'</tbody></table></div><details class="os-ai-daily"><summary>Daily breakdown</summary><div class="os-ai-scroll"><table class="os-ai-table"><thead><tr><th>Date (UTC)</th><th>Live</th><th>Unavailable</th><th>Errors</th><th>Limited</th></tr></thead><tbody>'+s.daily.slice().reverse().map(d=>'<tr><td>'+d.day+'</td><td>'+d.success+'</td><td>'+d.unavailable+'</td><td>'+d.error+'</td><td>'+d.limited+'</td></tr>').join('')+'</tbody></table></div></details><p class="os-ai-note">Counts are recorded outcomes, not unique users, billing, token usage or complete request logs. Owner test requests use the same counters. Reference mode may be counted as unavailable; interrupted requests may not be counted.</p></section>';
+}
+function aiLabOutput(result){
+ if(!result)return '<p class="os-ai-empty">No test run in this view. Choose a saved profile and enter a public-information question.</p>';
+ if(result.error)return '<p class="os-ai-empty" role="alert">'+E(result.error)+'</p>';
+ const sources=(Array.isArray(result.sources)?result.sources:[]).filter(x=>typeof x.path==='string'&&/^\/(?:docs|help|create|client|services|design|pricing|contact|book)\/[a-z0-9/_-]*$/.test(x.path));
+ const refs=sources.length?'<ul class="os-ai-sources">'+sources.map(x=>'<li><a href="'+E(x.path)+'" target="_blank" rel="noopener">'+E(x.title||x.path)+' ↗</a><small>'+E(x.path)+'</small>'+(x.summary?'<p>'+E(x.summary)+'</p>':'')+'</li>').join('')+'</ul>':'<p class="os-ai-note">No matching source returned.</p>';
+ if(result.mode==='sources')return '<div class="os-ai-result"><strong>Source retrieval · no inference</strong><p>'+E(result.indexed)+' indexed entries. '+sources.length+' matching references.</p>'+refs+'</div>';
+ return '<div class="os-ai-result"><div class="os-ai-result-heading"><strong>'+E(result.mode==='ai'?'Live model response':'Reference guidance — no live model reply')+'</strong><span>'+E(result.providerStatus||'Not reported')+'</span></div><dl class="os-ai-details">'+[['Configured model',result.configuredModel],['Actual model',result.providerModel],['Credential route',result.providerRoute],['Saved profile version',result.profileVersion],['Server elapsed',Number.isFinite(result.elapsedMs)?result.elapsedMs+' ms':null]].map(([k,v])=>'<div><dt>'+k+'</dt><dd>'+E(v??'Not reported')+'</dd></div>').join('')+'</dl><pre class="os-ai-answer">'+E(result.answer||'No answer returned')+'</pre><h3>Public references</h3>'+refs+'</div>';
+}
+function aiLabPlayground(sourceMode){
+ const chosen=knowledgeAiProfiles?.find(x=>x.id===aiLabAgent),ready=!!chosen&&!knowledgeAiError&&!knowledgeAiLoading;
+ return '<div class="os-ai-lab-grid"><section class="os-ai-surface"><div class="os-ai-panel-head"><div><h2>'+(sourceMode?'Knowledge retrieval':'Saved-profile playground')+'</h2><p>'+(sourceMode?'Inspect what the public source matcher returns.':'Run a real request using the saved model, instructions and credential route.')+'</p></div></div><form id="os-ai-lab-form" class="os-ai-lab-form"><label>Assistant<select name="agent" '+(!ready||aiLabBusy?'disabled':'')+'>'+Object.entries(aiLabNames).map(([id,n])=>'<option value="'+id+'" '+(aiLabAgent===id?'selected':'')+'>'+E(n)+'</option>').join('')+'</select></label><p class="os-ai-note">'+E(chosen?chosen.provider+' · '+(chosen.model||'Reference-only')+' · revision '+chosen.version:'Profile unavailable')+'</p><label>Test question<textarea name="question" maxlength="1000" rows="5" required '+(aiLabBusy?'disabled':'')+'>'+E(aiLabQuestion)+'</textarea></label><p class="os-ai-note">Use public-information questions only. Do not include secrets or client records. '+(sourceMode?'No provider call or AI charge is made.':'A real model call can consume quota; the saved configuration is used, not unsaved edits.')+'</p><button class="admin-button" type="submit" '+(!ready||aiLabBusy||(!sourceMode&&!chosen?.enabled)?'disabled':'')+'>'+(aiLabBusy?'Running…':sourceMode?'Find matching sources':'Run actual reply')+'</button>'+(sourceMode?'<a class="admin-button secondary" href="#/documentation">Manage published documents ↗</a>':'')+'</form></section><section class="os-ai-surface"><div class="os-ai-panel-head"><div><h2>'+(sourceMode?'Retrieval results':'Response diagnostics')+'</h2><p>Results are kept only in this page session.</p></div></div><div id="os-ai-lab-output" role="status" aria-live="polite">'+aiLabOutput(aiLabResult)+'</div></section></div>';
+}
+function aiControlPage(){
+ if(aiLabOwner!==workspace){aiLabOwner=workspace;aiLabGeneration++;aiLabBusy=false;aiLabResult=null;aiLabQuestion='How can I contact the Studio team?';}
+ const profiles=knowledgeAiProfiles,valid=Array.isArray(profiles)&&!knowledgeAiError;
+ const summary=[['Independent assistants',valid?profiles.length:'—'],['Enabled assistants',valid?profiles.filter(x=>x.enabled).length:'—'],['Credential routes ready',valid?profiles.filter(x=>x.configured&&x.provider!=='guide').length:'—'],['Adviser specialties',5]];
+ const content=aiHubTab==='assistants'?knowledgeAiAdmin():aiHubTab==='personas'?aiMindsetPage():aiHubTab==='provider'?'<section class="os-ai-surface os-ai-provider"><div class="os-ai-panel-head"><div><h2>Shared provider connection</h2><p>Separate from the independent assistant profiles. Saves immediately.</p></div><button class="admin-button secondary" data-ai-test-existing>Test saved connection</button></div>'+aiSettingsForm()+'<div class="ai-check-result" id="platform-connections" role="status"></div></section>':aiHubTab==='usage'?aiLabUsage():aiLabPlayground(aiHubTab==='sources');
+ return '<div class="os-intelligence"><header class="os-ai-heading"><div><span>INTELLIGENCE / CONTROL</span><h1>AI Intelligence Center</h1><p>Manage assistants, model connections, adviser specialties and published knowledge.</p></div><a class="admin-button secondary" href="#/health">System diagnostics ↗</a></header><div class="os-ai-summary">'+summary.map(([n,v])=>'<div><span>'+n+'</span><strong>'+E(v)+'</strong></div>').join('')+'</div><nav class="os-ai-tabs" aria-label="AI management views">'+aiHubTabs.map(([key,name,desc])=>'<button type="button" data-ai-hub-tab="'+key+'" aria-pressed="'+(aiHubTab===key)+'"><strong>'+name+'</strong><small>'+desc+'</small></button>').join('')+'</nav><div class="os-ai-content">'+content+'</div><p class="os-ai-note">Independent assistant and provider settings save immediately. Adviser briefs are website drafts and require publication. API keys are never displayed in reports.</p></div>';
+}
+document.addEventListener('click',async event=>{
  const trigger=event.target.closest('[data-ai-hub-tab]');
- if(!trigger)return;
- aiHubTab=trigger.dataset.aiHubTab;
- if(!['assistants','personas','provider'].includes(aiHubTab))aiHubTab='assistants';
- if(section==='ai-control')render();
+ if(trigger){const target=trigger.dataset.aiHubTab;if(!aiHubTabs.some(x=>x[0]===target))return;if(window.VeloryzAiDraft?.dirty&&!confirm('Discard unsaved assistant or provider edits?')){event.preventDefault();return;}if(window.VeloryzAiDraft)window.VeloryzAiDraft.dirty=false;aiHubTab=target;aiLabGeneration++;aiLabBusy=false;aiLabResult=null;if(section==='ai-control')render();return;}
+ const test=event.target.closest('[data-ai-test-existing]');if(!test||preview)return;
+ const box=document.getElementById('platform-connections');if(!box)return;test.disabled=true;box.textContent='Testing saved provider settings…';try{const result=await api('/api/admin/ai/check',{method:'POST',body:'{}'});if(box.isConnected)showAiConnectionResult(box,result);}catch(e){if(box.isConnected)box.textContent=e.message;}finally{test.disabled=false;}
 });
+document.addEventListener('input',e=>{if(e.target.closest?.('#os-ai-lab-form')&&e.target.name==='question')aiLabQuestion=e.target.value;});
+document.addEventListener('change',e=>{if(e.target.closest?.('#os-ai-lab-form')&&e.target.name==='agent'){aiLabAgent=e.target.value;aiLabResult=null;render();}});
+document.addEventListener('submit',async e=>{const form=e.target;if(form.id!=='os-ai-lab-form')return;e.preventDefault();if(preview||aiLabBusy||!form.reportValidity())return;const values=new FormData(form),agent=String(values.get('agent')),question=String(values.get('question')).trim();if(!Object.hasOwn(aiLabNames,agent)||!question)return;
+ aiLabQuestion=question;aiLabAgent=agent;const generation=++aiLabGeneration,owner=workspace,tab=aiHubTab;aiLabBusy=true;aiLabResult=null;render();
+ try{const out=await api('/api/admin/knowledge-ai/agents/'+agent,{method:'POST',body:JSON.stringify({action:tab==='sources'?'sources':'test',question})});if(generation===aiLabGeneration&&workspace===owner)aiLabResult=out;}
+ catch(error){if(generation===aiLabGeneration&&workspace===owner)aiLabResult={error:error.message};}
+ finally{if(generation===aiLabGeneration&&workspace===owner){aiLabBusy=false;if(section==='ai-control'&&aiHubTab===tab)render();}}
+});
+window.VeloryzAiDraft={dirty:false};document.addEventListener('input',e=>{if(e.target.closest?.('#ka-form,#ai-provider-form'))window.VeloryzAiDraft.dirty=true;});document.addEventListener('change',e=>{if(e.target.closest?.('#ka-form,#ai-provider-form'))window.VeloryzAiDraft.dirty=true;});window.addEventListener('beforeunload',e=>{if(window.VeloryzAiDraft.dirty){e.preventDefault();e.returnValue='';}});
+window.VeloryzAiLab={stats:aiLabStats,output:aiLabOutput};
