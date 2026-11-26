@@ -47,7 +47,7 @@ function art(p){
 }
 function card(p,i){
  const [label,tone]=prettyStatus(p);
- const trust=p.rights==='candidate'?'Studio-reviewed source':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Usage terms reviewed in scope';
+ const trust=p.rights==='candidate'?'Source candidate · verification pending':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Confirm usage terms before delivery';
  return '<article class="vz-source-card" data-source-card data-price="'+Number(p.price||6000)+'" data-motion="'+motionLevel(p)+'" style="--source-order:'+(i%6)+'">'+art(p)+
  '<div class="vz-source-meta"><span>'+escape(p.category)+'</span><span class="vz-source-pill '+tone+'">'+escape(label)+'</span></div>'+
  '<div class="vz-source-card-body"><div class="vz-r9-card-title"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3><span>'+String(i+1).padStart(2,'0')+'</span></div><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
@@ -137,7 +137,7 @@ function render(){
  '<label><span>Starting budget (INR)</span><select data-source-price>'+['All','Under ₹15k','₹15k–₹30k','₹30k+'].map(v=>'<option'+(v===price?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="price-asc"'+(sort==='price-asc'?' selected':'')+'>Price: low to high</option><option value="price-desc"'+(sort==='price-desc'?' selected':'')+'>Price: high to low</option><option value="name"'+(sort==='name'?' selected':'')+'>Name A–Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
  '<p class="vz-r20-price-note">Starting build estimates are shown in INR. Final scope, licensing and billing currency are confirmed before work begins.</p><div class="vz-source-filters" role="group" aria-label="Source availability and usage context">'+[
-  ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Studio-reviewed source'],['review','Source review needed'],['restricted','Reference only']
+  ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Source candidate · verification pending'],['review','Source review needed'],['restricted','Reference only']
  ].map(([value,label])=>'<button type="button" data-source-rights="'+value+'" aria-pressed="'+(rights===value)+'">'+label+'</button>').join('')+'</div>'+
  '<div class="vz-source-list-head"><span id="vz-source-result-count" aria-live="polite">'+list.length+' matching directions</span><span>STARTING VELORYZ BUILD ESTIMATES / INR</span></div>'+
  '<div class="vz-source-grid" id="vz-source-grid">'+visible.map(card).join('')+'</div>'+
