@@ -97,7 +97,7 @@
  'Admin dashboard':['Management users',['Team admin only','Small team','Multiple roles','Not sure']],
  'Multilingual support':['Languages',['Two','Three or four','Five+','Not sure']]
  };
- const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,pageNames:['Home','About','Services','Contact'],features:['Content management','SEO foundations'],answers:{},assets:[],technologies:[],motion:'02 · Refined',timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',businessName:'',industry:'',businessStage:'',businessDescription:'',audience:'',name:'',email:'',phone:'',company:'',preferredContact:'Email',notes:'',consent:false,reference:'',referenceLikes:[],external:'',requestId:'',promoRequested:false});
+ const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,pageNames:['Home','About','Services','Contact'],features:['Content management','SEO foundations'],answers:{},assets:[],technologies:[],motion:'02 · Refined',timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',businessName:'',industry:'',businessStage:'',businessDescription:'',audience:'',name:'',email:'',phone:'',company:'',preferredContact:'Email',notes:'',consent:false,reference:'',referenceLikes:[],external:'',requestId:'',promoRequested:false,briefMode:'detailed',referenceId:'',referenceRights:'',extraReferences:'',materialLink:''});
  const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const clean=s=>String(s??'').replace(/[<>\x00-\x1f]/g,' ').trim();
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
@@ -142,7 +142,11 @@
  const str=s=>String(s??'');
  let state;try{state=JSON.parse(sessionStorage.getItem(KEY));}catch{}
  if(!state){try{state=JSON.parse(sessionStorage.getItem(oldKey));}catch{}}
- const data={...initial(),...(state&&typeof state==='object'&&!Array.isArray(state)?state:{})};
+ const data={...initial(),...(state&&typeof state==='object'&&!Array.isArray(state)?Object.fromEntries(Object.keys(initial()).filter(k=>Object.hasOwn(state,k)).map(k=>[k,state[k]]).concat(typeof state.lastQuestion==='string'?[['lastQuestion',state.lastQuestion]]:[])):{} )};
+ data.briefMode=data.briefMode==='quick'?'quick':'detailed';
+ const safeURL=value=>{try{const u=new URL(String(value).trim());return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password&&u.href.length<=350?u.href:'';}catch{return '';}};
+ const extraLinks=value=>[...new Set(String(value||'').split(/\r?\n/).map(safeURL).filter(Boolean))].slice(0,3);
+ data.extraReferences=extraLinks(data.extraReferences).join('\n');data.materialLink=safeURL(data.materialLink);
  data.features=Array.isArray(data.features)?[...new Set(data.features.filter(n=>info[n]))]:[];
  data.answers=data.answers&&typeof data.answers==='object'&&!Array.isArray(data.answers)?data.answers:{};
  data.assets=Array.isArray(data.assets)?data.assets.filter(a=>VeloryzPlanner.assets.includes(a)):[];
@@ -172,12 +176,16 @@
  function estimate(){
   sync();
   const pricing=typeof studioCMS!=='undefined'?studioCMS?.site?.creatorPricing:undefined;
-  return VeloryzPlanner.estimate(projectBrief,null,[],pricing);
+  const selected=externalDesigns().find(p=>p.id===data.referenceId);
+  // Marketplace amounts are reference-specific starting service estimates, never URL prices.
+  const trusted=selected&&data.referenceRights!=='independent'&&categoryForExternal(selected)===data.category?selected:null;
+  return VeloryzPlanner.estimate(projectBrief,trusted,[],pricing);
  }
  function preset(){return presets.find(p=>p.id===data.template)||null;}
  function isApp(){return ['SaaS / platform','Custom App','Community','Education'].includes(data.category);}
  function flow(){
   const base=['discover','template','style','palette','reference','pages','goal'];
+  if(data.briefMode==='quick')return ['discover','template','pages','goal','features-content','budget','timeline','name','email','review'];
   for(const group of Object.keys(groupCopy)){
    if(featureGroups[group].includes(data.category))base.push('features-'+group.toLowerCase().replace(/[^a-z]+/g,'-'));
   }
@@ -226,7 +234,7 @@
  function change(key,value){
   if(key==='category'){
    categoryFilter=value;galleryTab='studio';
-   if(data.category!==value){data.category=value;data.template='';data.external='';data.features=[];data.answers={};data.budget=Math.min(data.budget,maxBudget());}
+   if(data.category!==value){data.category=value;data.template='';data.external='';data.referenceId='';data.referenceRights='';data.features=[];data.answers={};data.budget=Math.min(data.budget,maxBudget());}
   }else data[key]=value;
   data.requestId='';sync();
  }
@@ -236,9 +244,12 @@
  }
  function validateStep(id){
   const show=message=>{error=message;const el=document.querySelector('#v4-error');if(el){el.hidden=false;el.textContent=message;}emit('veloryz:creator-state',{state:'error'});return false;};
+  if(id==='reference'&&((data.reference&&!safeURL(data.reference))||str(data.extraReferences).split(/\r?\n/).filter(x=>x.trim()).length>3||str(data.extraReferences).split(/\r?\n/).some(x=>x.trim()&&!safeURL(x))))return show('Use valid HTTP or HTTPS links, up to three additional references.');
+  if(id==='assets'&&data.materialLink&&!safeURL(data.materialLink))return show('Enter a valid HTTP or HTTPS link to materials, or leave it empty.');
   if(id==='goal'&&str(data.goal).trim().length<10)return show('Write at least 10 characters about what you want to achieve.');
   if(id==='name'&&str(data.name).trim().length<2)return show('Enter your name so we know who to contact.');
   if(id==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str(data.email).trim()))return show('Enter a valid email address for your project updates.');
+  if(id==='email'&&data.phone&&(!/^\+?[0-9 ()-]{8,20}$/.test(str(data.phone).trim())||!/^\d{8,15}$/.test(str(data.phone).replace(/\D/g,''))))return show('Use a valid phone number with country code, or leave it blank.');
   if(id==='review'&&!data.consent)return show('Please confirm consent before sending this project request.');
   return true;
  }
@@ -272,8 +283,9 @@
  function chooseExternal(p){
   data.template='';
   data.external='VELORYZ Studio design: '+p.name+' ('+p.id+')';
+  data.referenceId=p.id;data.referenceRights=p.rights==='restricted'||/NO LICENSE|CC BY-NC|RESTRICTED|PROPRIETARY|COMMONS CLAUSE/i.test(p.license||'')?'independent':'review';
   data.reference=new URL('/design/'+p.id+'/',location.origin).href;
-  data.budget=Math.min(50000,Math.max(6000,Math.round(Number(p.price||6000)/1000)*1000));
+  if(!str(data.goal).trim())data.budget=Math.min(50000,Math.max(6000,Math.round(Number(p.price||6000)/1000)*1000));
   data.category=categoryForExternal(p);
   data.style=/motion|agency|portfolio/i.test(p.category)?'Immersive':/ecommerce|editorial/i.test(p.category)?'Editorial':/social|community|gaming/i.test(p.category)?'Bold':'Minimal';
   // Preserve the user's requested features, but clear template-specific source assumptions.
@@ -315,7 +327,7 @@
   return sectionTitle('02 / YOUR INSPIRATION','Show us what inspires you.','Share a link and tell us what caught your attention. References guide the conversation; VELORYZ always creates an original solution.','OPTIONAL')+
    '<label class="v4-simple-field"><span>INSPIRATION LINK</span><input id="v4-entry" type="url" data-v4-field="reference" maxlength="200" value="'+escape(data.reference)+'" placeholder="https://example.com"></label>'+
    '<div class="v4-reference-likes" aria-label="What do you like about this reference?">'+likes.map(item=>'<label class="'+(data.referenceLikes.includes(item)?'is-selected':'')+'"><input type="checkbox" data-v4-list="referenceLikes" value="'+escape(item)+'" '+(data.referenceLikes.includes(item)?'checked':'')+'><span>'+escape(item)+'</span></label>').join('')+'</div>'+
-   '<p class="v4-small-note">Inspiration only. Third-party rights remain with their creators and no design or asset will be copied.</p>';
+   '<label class="v4-simple-field"><span>ADDITIONAL REFERENCES (UP TO THREE)</span><textarea data-v4-field="extraReferences" maxlength="1050" rows="3" placeholder="One public HTTP or HTTPS link per line">'+escape(data.extraReferences)+'</textarea></label><p class="v4-small-note">Inspiration only. Third-party rights remain with their creators and no design or asset will be copied.</p>';
  }
  function pagesScreen(){
   return sectionTitle('03 / THE SCOPE','How many pages or major screens?','Think homepage, about, services, contact—or app screens. We’ll clarify the final count together.')+
@@ -346,7 +358,7 @@
  function assetsScreen(){
   return sectionTitle('04 / PROJECT MATERIALS','What do you already have?','Select any materials you can share. It’s fine to start from zero.','OPTIONAL')+
   '<div class="v4-feature-choices">'+VeloryzPlanner.assets.map(a=>'<label class="v4-feature-card '+(data.assets.includes(a)?'is-selected':'')+'"><input type="checkbox" data-v4-asset="'+escape(a)+'" '+(data.assets.includes(a)?'checked':'')+'><span class="v4-feature-check">'+(data.assets.includes(a)?'✓':'+')+'</span><span><strong>'+escape(a)+'</strong><small>'+(a==='Brand identity'?'Logos, typography or style guides':a==='Written content'?'Drafted copy, articles or service descriptions':a==='Images & media'?'Photos, graphics, video or other visuals':'An existing site or product to improve')+'</small></span></label>').join('')+'</div>'+
-  '<p class="v4-small-note">Materials can also be provided later during studio discovery.</p>';
+  '<label class="v4-simple-field"><span>OPTIONAL MATERIALS LINK</span><input type="url" data-v4-field="materialLink" maxlength="350" value="'+escape(data.materialLink)+'" placeholder="https://…"></label><p class="v4-small-note">Share a link only if you have permission. Do not share passwords, private keys or confidential files here. Private uploads are arranged during studio discovery.</p>';
  }
  function businessScreen(){
   const stages=['Idea stage','Starting now','Recently launched','Growing business','Established business','Rebranding','Expanding digitally'];
@@ -402,7 +414,7 @@
   return sectionTitle('05 / THE INVESTMENT','What budget are you comfortable with?','This helps us recommend a realistic first release—not change the price to fit a number.')+
    '<div class="v4-money-panel"><div class="v4-money-top"><span>YOUR PREFERRED BUDGET</span><output id="v4-budget-output">'+money(data.budget)+'</output></div><input type="range" data-v4-budget min="'+minBudget()+'" max="'+maxBudget()+'" step="1000" value="'+data.budget+'" aria-label="Preferred budget"><div class="v4-budget-scale"><span>'+money(minBudget())+'</span><span>'+money(maxBudget())+'+</span></div><div class="v4-budget-chips">'+budgetOptions().map(n=>'<button type="button" data-v4-budget-set="'+n+'" class="'+(data.budget===n?'active':'')+'">'+money(n)+'</button>').join('')+'</div></div>'+
    '<div class="v4-budget-context"><div><span>EARLY PLANNING RANGE</span><strong>'+money(e.low)+' – '+money(e.high)+'</strong></div><p id="v4-budget-guidance">'+(below?'Your target is below the preliminary scope. Our team can discuss phasing, fewer screens or a leaner first release.':'Our team reviews the scope and provides an individual quote. Pricing may change with requirements, availability and delivery complexity.')+'</p></div>'+
-  '<div class="v4-budget-disclaimer">✳ The estimate is not a final price. The team can consult on scope, package options and applicable active offers. Taxes, hosting and external service fees may be additional.</div>'+marketingInfo();
+  '<dl class="v48-estimate-breakdown"><div><dt>Starting scope</dt><dd>'+money(e.base)+'</dd></div><div><dt>Additional pages</dt><dd>'+money(e.additionalPages)+'</dd></div><div><dt>Selected capabilities</dt><dd>'+money(e.featureAllowance)+'</dd></div><div><dt>Planning contingency</dt><dd>'+money(e.contingency)+'</dd></div></dl><div class="v4-budget-disclaimer">✳ The estimate is not a final price. The team can consult on scope, package options and applicable active offers. Taxes, hosting and external service fees may be additional.</div>'+marketingInfo();
  }
  function timelineScreen(){
   return sectionTitle('05 / THE TIMELINE','When would you like to launch?','Choose your preferred window. We’ll confirm actual availability and dates after reviewing the project.')+
@@ -423,6 +435,8 @@
   const e=estimate(),rows=[
    ['Project',data.category,'discover'],
    ['Starting point',preset()?.name||data.external||'From scratch','template'],
+   ...(data.referenceId?[['Source rights',data.referenceRights==='independent'?'Independent design only; reuse not offered':'Source and asset rights pending review','template']]:[]),
+   ['Brief mode',data.briefMode==='quick'?'Quick brief · remaining details scoped with team':'Detailed brief','welcome'],
    ['Visual direction',data.style+' · '+data.palette,'style'],
    ['Pages or screens',String(data.pages)+(data.pageNames.length?' · '+data.pageNames.join(', '):''),'pages'],
    ['Selected features',data.features.join(', ')||'Core experience','features-content'],
@@ -441,7 +455,7 @@
   return sectionTitle('07 / YOUR PROJECT PLAN','Everything looks good?','Review your project, save the planning proposal, or send your brief to the VELORYZ team for a personal quotation.')+
    '<div class="v4-review-layout"><div class="v4-review-sheet"><div class="v4-review-brand"><span>VELORYZ / STUDIO</span><b>YOUR PROJECT OUTLINE</b></div><div class="v4-review-title">An idea with<br><em>direction.</em></div>'+brief()+
    '<div class="v4-review-goal"><span>YOUR MAIN GOAL</span><p>'+escape(data.goal)+'</p></div></div>'+
-   '<div class="v4-review-side"><div class="v4-review-cost"><span>INDICATIVE PLANNING RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>Our team can discuss scope, pricing, relevant packages and qualified promotions. This is not a binding quote.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><a class="v4-review-team-link" href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Discuss this price with the team ↗</a><p>We will confirm final pricing and any offers after reviewing your request.</p></div></div>'+
+   '<div class="v4-review-side"><div class="v48-draft-actions"><button type="button" data-v4-action="export-draft">Save editable brief file ↓</button><small>Excludes contact fields and consent. Project text may still contain information you entered.</small></div><div class="v4-review-cost"><span>INDICATIVE PLANNING RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>Our team can discuss scope, pricing, relevant packages and qualified promotions. This is not a binding quote.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><a class="v4-review-team-link" href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Discuss this price with the team ↗</a><p>We will confirm final pricing and any offers after reviewing your request.</p></div></div>'+
    '<aside class="v4-acceptance-journey" aria-label="Your next steps after submitting a VELORYZ project request"><span>THE HANDOFF / WHAT HAPPENS NEXT</span><div><article><strong>01</strong><p><b>Project brief received</b>The full request and your reference appear in the private admin inbox.</p></article><article><strong>02</strong><p><b>Team review and acceptance</b>The VELORYZ team checks scope and decides whether to accept the work.</p></article><article><strong>03</strong><p><b>Detailed project PDF</b>Once accepted, your one-page order summary is prepared. The team separately sends its detailed acceptance email and PDF.</p></article><article><strong>04</strong><p><b>Private portal invitation</b>The team separately sends a secure, one-time activation code from Client Management after your project has been accepted.</p></article><article><strong>05</strong><p><b>Track every milestone</b>Use the Client Portal for progress, approvals, deliverables and messages.</p></article></div></aside>'+ 
     '<label class="v4-consent"><input id="v4-consent" type="checkbox" data-v4-consent '+(data.consent?'checked':'')+'><span>I agree to share this project brief and my contact details with VELORYZ Studio for review. I understand that submitting does not create a client account or accept a quotation.</span></label>';
  }
@@ -469,7 +483,7 @@
  function welcomeScreen(){
   const groups=[['Discover','Choose a project type and starting direction.'],['Design','Define the look, palette and references.'],['Scope','Select pages, features and technical requirements.'],['Plan','Set a budget, timeline and priorities.'],['Review','Share your completed brief with the studio.']];
   let saved=false;try{saved=!!sessionStorage.getItem(KEY)}catch{}
-  return '<section class="v4-welcome v2-create-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag">VELORYZ / CREATE</span><h1>Make your next<br>idea real.</h1><p>Build a clear project brief, explore design directions and understand your investment before speaking with our team.</p><div class="v2-create-start-actions"><button type="button" class="v4-primary v4-start" data-v4-action="start">Start your project <span aria-hidden="true">→</span></button>'+(saved?'<button type="button" class="v4-resume" data-v4-action="resume">Resume your draft ↗</button>':'')+'</div><p class="v4-r20-session-note">No account required. Your draft stays in this browser session until you submit.</p><div class="v2-create-return"><h2>Already working with us?</h2><a href="/client/">Open your client workspace ↗</a><a href="/support/">Get support ↗</a></div></div><aside class="v2-create-overview"><span class="v4-kicker">THE PROCESS</span><h2>From idea to brief.</h2><ol>'+groups.map(([title,desc],i)=>'<li><span>'+String(i+1).padStart(2,'0')+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></li>').join('')+'</ol><div class="v2-create-note">Your estimate is indicative. Our team confirms final scope and pricing in writing.</div></aside></section>';
+  return '<section class="v4-welcome v2-create-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag">VELORYZ / CREATE</span><h1>Make your next<br>idea real.</h1><p>Build a clear project brief, explore design directions and understand your investment before speaking with our team.</p><div class="v2-create-start-actions"><button type="button" class="v4-primary v4-start" data-v4-action="start">Start your project <span aria-hidden="true">→</span></button><button type="button" class="v4-secondary" data-v4-action="quick-start">Quick brief ↗</button>'+(saved?'<button type="button" class="v4-resume" data-v4-action="resume">Resume your draft ↗</button>':'')+'</div><div class="v48-draft-actions"><label>Import saved brief <input type="file" data-v48-import accept="application/json,.json"></label><small>Ten essential questions in quick mode. Detailed mode includes visual and technical choices.</small></div><p class="v4-r20-session-note">No account required. Your draft stays in this browser session until you submit.</p><div class="v2-create-return"><h2>Already working with us?</h2><a href="/client/">Open your client workspace ↗</a><a href="/support/">Get support ↗</a></div></div><aside class="v2-create-overview"><span class="v4-kicker">THE PROCESS</span><h2>From idea to brief.</h2><ol>'+groups.map(([title,desc],i)=>'<li><span>'+String(i+1).padStart(2,'0')+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></li>').join('')+'</ol><div class="v2-create-note">Your estimate is indicative. Our team confirms final scope and pricing in writing.</div></aside></section>';
  }
  function successScreen(){
   const code=escape(finished?.reference||'—'),email=escape(data.email||'your email');
@@ -526,12 +540,17 @@
  function payloadText(){
   const e=estimate();
   const content=[
-   'PROJECT CREATOR V4',
+   'PROJECT CREATOR V5',
+   'Brief mode: '+data.briefMode,
+   'Goal: '+clean(data.goal),
+   data.referenceRights?'Source rights: '+(data.referenceRights==='independent'?'Independent design only; reuse not offered':'Verification pending'):'',
    'Project: '+clean(data.category),
    'Template: '+clean(preset()?.name||'Custom'),
    data.external?'External inspiration: '+clean(data.external):'',
    'Visual style: '+clean(data.style)+' / '+clean(data.palette),
-   data.reference?'Reference URL: '+clean(data.reference):'',
+   data.reference?'Reference URL: '+clean(safeURL(data.reference)):'',
+   ...extraLinks(data.extraReferences).map(url=>'Additional reference: '+clean(url)),
+   data.materialLink?'Materials link: '+clean(safeURL(data.materialLink)):'',
    data.referenceLikes.length?'Reference qualities: '+data.referenceLikes.join(', '):'',
    'Business: '+clean(data.businessName||data.company||'To be discussed'),
    data.industry?'Industry: '+clean(data.industry):'',
@@ -548,13 +567,40 @@
    'Budget preference: '+money(data.budget),
    'Indicative range: '+money(e.low)+' - '+money(e.high),
    'Timeline: '+clean(data.timeline),'Priority: '+clean(data.priority),
-   'Goal: '+clean(data.goal),
    'Review: '+(data.features.filter(n=>info[n]?.[2]).length?'Complex capabilities need technical scoping':'Studio review required'),
    'Pricing: Team consultation and eligible promotions may be discussed; no offer applied automatically.',
    data.promoRequested&&activeCreatorOffer()?'Promotion to review: '+clean(activeCreatorOffer().title)+' ('+clean(activeCreatorOffer().code||'no code')+') - eligibility pending team approval.':'',
    'Draft only. Official price and timeline subject to written approval.'
   ].filter(Boolean).join('\n');
   return content.slice(0,2000);
+ }
+ const portableKeys=['category','template','style','palette','pages','pageNames','features','answers','assets','technologies','motion','timeline','budget','priority','goal','reference','referenceLikes','referenceId','extraReferences','materialLink','briefMode'];
+ function exportDraft(){
+  const draft=Object.fromEntries(portableKeys.map(k=>[k,data[k]]));
+  const blob=new Blob([JSON.stringify({format:'veloryz-project-brief',version:1,draft},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='veloryz-project-brief.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ }
+ async function importDraft(file){
+  try{
+   if(file.size>32768)throw Error('Choose a brief file smaller than 32 KB.');
+   const obj=JSON.parse(await file.text()),raw=obj.draft;
+   if(obj.format!=='veloryz-project-brief'||obj.version!==1||!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Choose a VELORYZ editable brief file.');
+   const fresh=initial(),allowed={...fresh};
+   for(const k of portableKeys){if(typeof fresh[k]==='string'&&typeof raw[k]==='string')allowed[k]=raw[k].slice(0,k==='extraReferences'?1050:k==='goal'?1000:350);}
+   allowed.category=categories.includes(allowed.category)?allowed.category:fresh.category;
+   allowed.style=styles.some(([s])=>s===allowed.style)?allowed.style:fresh.style;
+   allowed.template=presets.some(p=>p.id===allowed.template)?allowed.template:'';
+   allowed.pages=VeloryzPlanner.pages.includes(Number(raw.pages))?Number(raw.pages):4;
+   allowed.budget=Math.max(6000,Math.min(1500000,Math.round(Number(raw.budget)||55000)));
+   for(const [k,list]of Object.entries({features:Object.keys(info),pageNames:pageOptions,assets:VeloryzPlanner.assets,technologies:technologyOptions,referenceLikes:['Layout','Typography','Motion','Colours','Navigation','3D','Images','Simplicity','Interaction','Overall feeling']}))allowed[k]=Array.isArray(raw[k])?[...new Set(raw[k].filter(v=>list.includes(v)))]:[];
+   allowed.answers=Object.fromEntries(Object.entries(raw.answers&&typeof raw.answers==='object'?raw.answers:{}).filter(([k,v])=>allowed.features.includes(k)&&questions[k]?.[1].includes(v)));
+   allowed.reference=safeURL(allowed.reference);allowed.extraReferences=extraLinks(allowed.extraReferences).join('\n');allowed.materialLink=safeURL(allowed.materialLink);
+   allowed.briefMode=allowed.briefMode==='quick'?'quick':'detailed';
+   const ref=externalDesigns().find(x=>x.id===allowed.referenceId);
+   allowed.referenceId=ref?.id||'';allowed.referenceRights=ref?(ref.rights==='restricted'||/NO LICENSE|CC BY-NC|RESTRICTED|PROPRIETARY|COMMONS CLAUSE/i.test(ref.license||'')?'independent':'review'):'';
+   allowed.external=ref?'VELORYZ Studio design: '+ref.name+' ('+ref.id+')':'';
+   Object.assign(data,allowed,{consent:false,requestId:'',lastQuestion:'goal'});finished=null;reviewVisited=false;sync();route('goal');toast('Brief imported. Review your contact details and consent before sending.');
+  }catch(err){toast(err.message||'Could not import the brief.');const host=document.querySelector('.v48-draft-actions small');if(host)host.textContent=err.message;}
  }
  function proposal(){
   try{
@@ -565,7 +611,7 @@
  }
  async function submit(){
   if(busy||finished)return;
-  for(const step of ['goal','name','email','review']){
+  for(const step of ['goal','name','email','review',...(data.briefMode==='detailed'?['reference','assets']:[])]){
    if(!validateStep(step)){if(step!==active){const message=error;route(step);error=message;render();}return;}
   }
   busy=true;error='';render();
@@ -576,7 +622,7 @@
   try{
    const response=await fetch('/api/enquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal});
    const out=await response.json().catch(()=>({error:'The studio could not respond. Please try again.'}));
-   if(!response.ok)throw Error(out.error||'Could not submit your project.');
+   if(!response.ok||out.ok!==true||typeof out.reference!=='string'||!/^VZ-[A-Z0-9-]{6,40}$/i.test(out.reference))throw Error(out.error||'The Studio did not confirm a project reference. Please retry safely.');
    finished={reference:out.reference};data.requestId='';busy=false;
    try{sessionStorage.removeItem(KEY);sessionStorage.removeItem(oldKey);sessionStorage.removeItem('veloryz.planner.v1');}catch{}
    route('success');
@@ -593,12 +639,13 @@
   pick(key,val);
  }
  function handleAction(action){
-  if(action==='start')return route('discover');
+  if(action==='start'||action==='quick-start'){data.briefMode=action==='quick-start'?'quick':'detailed';data.requestId='';return route('discover');}
+  if(action==='export-draft')return exportDraft();
   if(action==='resume')return route(flow().includes(data.lastQuestion)?data.lastQuestion:'discover');
   if(action==='back')return move(-1);
   if(action==='next')return move(1);
   if(action==='review')return route('review');
-  if(action==='blank'){change('template','');change('external','');return move(1);}
+  if(action==='blank'){change('template','');change('external','');change('referenceId','');change('referenceRights','');return move(1);}
   if(action==='palette-open')return pick('palette','Studio decides');
   if(action==='skip-detail')return move(1);
   if(action==='pdf')return proposal();
@@ -620,7 +667,7 @@
   if(b.hasAttribute('data-v4-template')){
    const selected=presets.find(p=>p.id===b.dataset.v4Template);
    if(!selected)return;
-   data.template=selected.id;data.external='';data.category=selected.category;data.style=selected.style;data.pages=selected.pages;data.features=selected.features.slice();data.requestId='';sync();return move(1);
+   data.template=selected.id;data.external='';data.referenceId='';data.referenceRights='';data.category=selected.category;data.style=selected.style;data.pages=selected.pages;data.features=selected.features.slice();data.requestId='';sync();return move(1);
   }
   if(b.hasAttribute('data-v4-external')){
    const ref=externalDesigns().find(r=>r.id===b.dataset.v4External);if(!ref)return;
@@ -644,7 +691,7 @@
   if(b.hasAttribute('data-v4-search')){search=b.value;refreshLibrary();return;}
   if(b.hasAttribute('data-v4-field')){
    const field=b.dataset.v4Field;
-   const limits={goal:1000,businessDescription:700,technicalNotes:500,notes:500,audience:240};
+   const limits={goal:1000,businessDescription:700,technicalNotes:500,notes:500,audience:240,extraReferences:1050,materialLink:350,phone:20};
    data[field]=b.value.slice(0,limits[field]||200);
    data.requestId='';sync();error='';
    if(field==='goal'){const el=document.getElementById('v4-goal-length');if(el)el.textContent=b.value.length+' / 1000';}
@@ -654,6 +701,7 @@
  });
  document.addEventListener('change',event=>{
   const b=event.target;if(!b.closest('.v4-root'))return;
+  if(b.hasAttribute('data-v48-import')){const file=b.files?.[0];if(file)importDraft(file);return;}
   if(b.hasAttribute('data-v4-feature')){
    const name=b.dataset.v4Feature,has=b.checked;
    data.features=has?[...new Set([...data.features,name])]:data.features.filter(n=>n!==name);
@@ -709,7 +757,7 @@
  }
  window.createPage=creatorPage;
  try{createPage=creatorPage;}catch{}
- window.VeloryzCreatorV4={get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active,renderPage:creatorPage};
+ window.VeloryzCreatorV5=window.VeloryzCreatorV4={version:5,get:()=>JSON.parse(JSON.stringify(data)),flow,templateCount:presets.length,referenceCount:refs.length,estimate,payloadText,go:route,stage:()=>active,renderPage:creatorPage};
 })();
 
 /* R28 — Reference-style live brief panel for the real V4 project wizard.

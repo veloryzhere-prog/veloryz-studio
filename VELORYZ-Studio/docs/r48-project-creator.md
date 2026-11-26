@@ -1,0 +1,3 @@
+# R48 Project Creator 5.0
+
+Detailed and quick (10-question) flows use the existing wizard and V4 compatibility API. Editable JSON import/export is local and excludes explicit contact fields, consent and request identifiers. Free text may still contain user-entered personal information. A materials URL is not a file-upload service. Marketplace reference IDs resolve against the published catalogue; restricted references permit independent design only. Estimates are client-side planning ranges, not signed quotations. Existing backend validation and idempotency remain. The user must explicitly consent and the service must return a confirmed reference. Real submission and final pricing still require integration verification.

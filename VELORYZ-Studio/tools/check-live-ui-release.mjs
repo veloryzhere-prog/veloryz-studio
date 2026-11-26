@@ -46,7 +46,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const brandFlowLinked=home.body.includes('/reference-brand-flow-r17.css?v=20261123-header-footer-r19')
     &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19');
    const r20Linked=[home,creator,designPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261126-r42'));
-   const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-v2-workspaces')&&creator.body.includes('/creator-v4.js?v=20261126-r42');
+   const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-r48')&&creator.body.includes('/creator-v4.js?v=20261126-r48');
    const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-r47')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261126-r47')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
