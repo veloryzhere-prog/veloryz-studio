@@ -2,8 +2,8 @@
 (()=>{
 'use strict';
 const identity={
- help:{label:'Help Assistant',title:'How can we help?',description:'Answers from VELORYZ Studio documentation.',short:'Help Centre AI',back:'/help/studio/',backLabel:'Help Centre'},
- support:{label:'Contact Support',title:'Talk to support.',description:'Find the right next step, troubleshoot an issue or contact the Studio team.',short:'Support AI',back:'/contact/',backLabel:'Contact Studio'},
+ help:{label:'Help Assistant',title:'How can we help?',description:'Find clear answers and relevant studio guides.',short:'Help Centre AI',back:'/help/studio/',backLabel:'Help Centre'},
+ support:{label:'Contact Support',title:'Talk to support.',description:'Tell us what went wrong. Find a solution or contact the studio team.',short:'Support AI',back:'/contact/',backLabel:'Contact Studio'},
  client:{label:'Client Guide',title:'Your project guide.',description:'Help with your private workspace, messages, milestones and reviews. No private project records are shared.',short:'Client AI',back:'/client/',backLabel:'Client portal'},
  creator:{label:'Project Planner',title:'Shape your next idea.',description:'Project scope, features, estimates and what happens next.',short:'Project AI',back:'/create/',backLabel:'Create project'}
 };
@@ -18,10 +18,10 @@ function getAgent(){let x=new URLSearchParams(location.search).get('agent');if(x
 function render(agent='help',options={}){
  agent=identity[agent]?agent:'help';const p=identity[agent],embed=options.embed===true,s=restore(agent);
  return '<section class="vz-chat '+(embed?'is-embedded':'')+'" data-vz-chat="'+agent+'" aria-label="'+escape(p.label)+' conversation">'+
- '<aside class="vz-chat-side"><div class="vz-chat-side-head"><a href="/" class="vz-chat-brand"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" alt="VELORYZ Studio"></a><span>STUDIO / AI ASSISTANTS</span></div>'+
- '<div class="vz-chat-side-title">YOUR SUPPORT</div><nav aria-label="Assistant navigation">'+
+ '<aside class="vz-chat-side"><div class="vz-chat-side-head"><span>YOUR WORKSPACE</span></div>'+
+ '<div class="vz-chat-side-title">ASSISTANTS</div><nav aria-label="Assistant navigation">'+
  Object.entries(identity).map(([id,info])=>'<a href="'+(id==='support'?'/support/':'/help/assistant/?agent='+id)+'" class="'+(agent===id?'is-active':'')+'" '+(agent===id?'aria-current="page"':'')+'><span class="vz-chat-nav-icon">'+icon('spark')+'</span><span>'+escape(info.label)+'</span><small>↗</small></a>').join('')+'</nav>'+
- '<div class="vz-chat-side-divider"></div><div class="vz-chat-side-title">QUICK LINKS</div><div class="vz-chat-quick"><a href="/docs/">All documentation ↗</a><a href="/help/studio/">Help Centre ↗</a><a href="/contact/">Contact team ↗</a><a href="/sitemap/">Site map ↗</a></div>'+
+ '<div class="vz-chat-side-divider"></div><div class="vz-chat-side-title">QUICK LINKS</div><div class="vz-chat-quick"><a href="/docs/">All documentation ↗</a><a href="/help/studio/">Help Centre ↗</a><a href="/contact/">Contact team ↗</a><a href="/report-bug/">Report an issue ↗</a><a href="/privacy/">Privacy & data ↗</a></div>'+
  '<div class="vz-chat-side-bottom"><div class="vz-chat-side-info"><b>AI, not a team member.</b><p>AI may make mistakes. For private or urgent issues, contact the Studio directly.</p></div><a href="'+p.back+'">'+icon('back')+' Back to '+escape(p.backLabel)+'</a></div></aside>'+
  '<div class="vz-chat-main"><header class="vz-chat-header"><div class="vz-chat-avatar">'+icon('spark')+'</div><div class="vz-chat-header-name"><b>VELORYZ '+escape(p.label)+'</b><span><i aria-hidden="true"></i> AI assistant · private records not connected</span></div><button type="button" class="vz-chat-reset" data-vz-reset aria-label="Clear this conversation" title="New conversation">'+icon('clear')+' <span>New chat</span></button></header>'+
  '<div class="vz-chat-log" id="vz-chat-log-'+agent+'" role="log" aria-label="Conversation" aria-live="polite"><div class="vz-chat-messages"></div></div>'+
@@ -36,7 +36,7 @@ function bubble(m){
  (links.length?'<div class="vz-chat-sources"><strong>Useful references</strong>'+links.map(x=>'<a href="'+escape(x.path)+'">'+escape(x.title||'Open guide')+' ↗</a>').join('')+'</div>':'')+'</div></article>';
 }
 async function config(agent,root){const s=restore(agent);if(s.ready)return;try{const r=await fetch('/api/knowledge-ai/agents',{credentials:'same-origin',cache:'no-store'}),j=await r.json();if(r.ok){s.config=j.profiles?.find(p=>p.id===agent);s.ready=true}}catch{}if(root?.isConnected)draw(root)}
-function draw(root){if(!root?.isConnected)return;const agent=root.dataset.vzChat,s=restore(agent),p=identity[agent];root.querySelector('.vz-chat-messages').innerHTML=s.messages.length?s.messages.map(bubble).join(''):'<div class="vz-chat-welcome"><span class="vz-chat-welcome-art"><img src="/assets/future-assets/help/help-beacon.svg" alt=""></span><span class="vz-chat-eyebrow">VELORYZ / SUPPORT INTELLIGENCE</span><h2>'+escape(s.config?.welcome||p.title)+'</h2><p>'+escape(p.description)+'</p></div>';
+function draw(root){if(!root?.isConnected)return;const agent=root.dataset.vzChat,s=restore(agent),p=identity[agent];root.querySelector('.vz-chat-messages').innerHTML=s.messages.length?s.messages.map(bubble).join(''):'<div class="vz-chat-welcome"><span class="vz-chat-welcome-art"><img src="/assets/future-assets/help/help-beacon.svg" alt=""></span><span class="vz-chat-eyebrow">VELORYZ / SUPPORT INTELLIGENCE</span><h2>'+escape(p.title)+'</h2><p>'+escape(p.description)+'</p></div>';
  const suggestions=root.querySelector('.vz-chat-suggestions'),prompts=(s.config?.suggestions?.length?s.config.suggestions:(agent==='support'?['My project reference is not working','I need help with a website issue','How can I contact the team?']:['How do I start a new project?','How does pricing work?','Where can I find documentation?']));suggestions.innerHTML=s.messages.length?'':prompts.map(t=>'<button type="button" data-vz-suggest="'+escape(t)+'">'+escape(t)+' ↗</button>').join('');
  const submit=root.querySelector('.vz-chat-send'),input=root.querySelector('textarea');if(submit)submit.disabled=s.busy;if(input)input.disabled=s.busy;root.classList.toggle('is-busy',s.busy);const status=root.querySelector('.v2-chat-status');if(status)status.textContent=s.busy?'Preparing a response…':s.error?'Response unavailable':s.mode==='ai'?'Last response · live AI':s.mode==='guide'?'Last response · studio guide (not live AI)':'Ready for your question';
  const errors=root.querySelector('.vz-chat-error');if(errors){errors.hidden=!s.error;errors.textContent=s.error;}
