@@ -1,0 +1,86 @@
+/* VELORYZ Design System 3.0 / R45. First-party UI only.
+ * Shared semantic values and workspace component contracts.
+ * No global animation, positioning or third-party iframe resets. */
+:root{
+ --vz-ds-font:'Manrope','Segoe UI',Arial,sans-serif;
+ --vz-ds-paper:#faf9f6;
+ --vz-ds-surface:#ffffff;
+ --vz-ds-soft:#f8f7f4;
+ --vz-ds-subtle:#f0eeea;
+ --vz-ds-ink:#211e1b;
+ --vz-ds-text:#39332d;
+ --vz-ds-muted:#655f58;
+ --vz-ds-line:#e3dfd9;
+ --vz-ds-control-line:#8b8177;
+ --vz-ds-accent:#9e432d;
+ --vz-ds-accent-soft:#f4e8e1;
+ --vz-ds-success:#17633f;
+ --vz-ds-success-soft:#e8f3ec;
+ --vz-ds-danger:#a52924;
+ --vz-ds-danger-soft:#fff0ed;
+ --vz-ds-focus:#9e432d;
+ --vz-ds-radius-sm:8px;
+ --vz-ds-radius:12px;
+ --vz-ds-radius-lg:16px;
+ --vz-ds-space-1:4px;
+ --vz-ds-space-2:8px;
+ --vz-ds-space-3:12px;
+ --vz-ds-space-4:16px;
+ --vz-ds-space-6:24px;
+ --vz-ds-space-8:32px;
+ --vz-ds-touch:44px;
+ --vz-ds-shadow:0 2px 10px #211e1b0a;
+ --vz-ds-gutter:clamp(16px,4vw,64px);
+ --vz-ds-ease:cubic-bezier(.22,1,.36,1);
+}
+/* Keep the existing component structures and focus/hidden states. */
+:is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.vz-market-body,.cp-body,#admin-root) :is(button,a,input,textarea,select,summary):focus-visible{
+ outline:2px solid var(--vz-ds-focus)!important;
+ outline-offset:3px!important;
+}
+:is(.v2-support,.cp-body) :is(textarea,input,select):focus-visible{outline-offset:-2px!important}
+:is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.cp-body,#admin-root) :is(button,input,select,textarea)[aria-invalid="true"]{border-color:var(--vz-ds-danger)!important}
+:is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.cp-body,#admin-root) button:disabled{cursor:not-allowed}
+:is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.cp-body,#admin-root) [role="alert"]{overflow-wrap:anywhere}
+.v2-create .v4-primary,.cp-body .cp-button,.k8-shell .k8-button:not(.light),.k8-shell .k8-search button{border-radius:var(--vz-ds-radius-sm);min-height:var(--vz-ds-touch)}
+.k8-shell .k8-task,.k8-shell .k8-support{border-radius:var(--vz-ds-radius);min-width:0}
+.k8-shell .k8-search{border-radius:var(--vz-ds-radius-sm);min-width:0}
+.k8-shell .k8-lang,.k8-shell .k8-filter select,.k8-shell .k8-pills :is(a,button){border-radius:var(--vz-ds-radius-sm)}
+.k8-shell .k8-result :is(strong,p),.k8-shell .k7-article :is(p,li,a){overflow-wrap:anywhere}
+.k8-shell .k7-article{min-width:0}
+.k8-shell .k8-tablewrap{max-width:100%;overflow-x:auto}
+.vz-real-library .vz-source-card-actions a{min-height:var(--vz-ds-touch);align-items:center;white-space:normal}
+.vz-real-library .vz-source-filters button{min-height:var(--vz-ds-touch)}
+.vz-real-library .vz-source-card-body{min-width:0;overflow-wrap:anywhere}
+.v2-support .vz-chat :is(.vz-chat-reset,.vz-chat-send){min-height:var(--vz-ds-touch);min-width:var(--vz-ds-touch)}
+.v2-support .vz-chat-header-name{min-width:0}
+.v2-support .vz-chat-header-name b{overflow-wrap:anywhere}
+.cp-body .cp-auth-form input{min-height:var(--vz-ds-touch);border-color:var(--vz-ds-control-line)}
+.cp-body .cp-secondary-button{min-height:var(--vz-ds-touch);border-color:var(--vz-ds-control-line)}
+.cp-body .cp-error{background:var(--vz-ds-danger-soft);color:var(--vz-ds-danger)}
+#admin-root .admin-field>label{font-size:12px;font-weight:650;color:var(--vz-ds-muted)}
+#admin-root .admin-page-heading p{font-size:13px;line-height:1.65}
+#admin-root .admin-button{min-height:40px;font-size:12px;border-radius:var(--vz-ds-radius-sm)}
+#admin-root .admin-panel{border-radius:var(--vz-ds-radius)}
+#admin-root .admin-page-heading{flex-wrap:wrap}
+#admin-root .admin-field :is(input,select,textarea){min-width:0;max-width:100%}
+@media(pointer:coarse){
+ #admin-root .admin-button,.v2-support .vz-chat-suggestions button{min-height:var(--vz-ds-touch)}
+ .vz-market-body .vz-market-actions button,.vz-market-body .vz-market-devices button{min-height:var(--vz-ds-touch)!important}
+}
+@media(max-width:780px){
+ .v2-create :is(.v4-question-inner,.v4-question-wrap),.v2-support .vz-chat-main,.cp-body .cp-main{min-width:0}
+ .v2-create :is(input,textarea,select),.v2-support .vz-chat textarea,.cp-body .cp-auth-form input{font-size:16px!important}
+ .k8-shell .k8-search{flex-wrap:wrap}
+ .k8-shell .k8-search input{flex:1 1 160px;font-size:16px}
+ .k8-shell .k8-search button{flex:1 0 auto}
+ .k8-shell .k8-top,.k8-shell .k8-links{min-width:0}
+}
+@media(max-width:390px){
+ .vz-real-library .vz-source-card-actions a{flex:1 1 100%}
+ .v2-support .vz-chat-header-name span{white-space:normal}
+ .k8-shell .k8-search button{flex-basis:100%}
+}
+@media(forced-colors:active){
+ :is(.v2-create,.v2-support,.k8-shell,.vz-real-library,.vz-market-body,.cp-body,#admin-root) :is(button,a,input,textarea,select,summary):focus-visible{outline:2px solid Highlight!important}
+}

@@ -53,9 +53,11 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
   headers['X-VELORYZ-Homepage-Release']='v2-layout-repair-20261126-r42';
  }
  const v2Assets=!privatePage&&status===200?(referenceMenu?'<link rel="stylesheet" href="/v2-home-warm.css?v=20261126-v2"><script defer src="/v2-home-warm.js?v=20261126-v2"></script>':'<link rel="stylesheet" href="/v2-workspaces.css?v=20261126-v2">'):'';
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+v2Assets+'<link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r42"></head>');
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+v2Assets+'<link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r42"><link rel="stylesheet" href="/veloryz-design-system-r45.css?v=20261126-r45"></head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-layout-20261126-r42"`);
+ // Only refresh assets changed by R45; keep other release-specific cache contracts.
+ html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
 }
 export function pageMetadata(html:string,{title,description,url,image,site}:{title:string;description:string;url:string;image:string;site:any}){

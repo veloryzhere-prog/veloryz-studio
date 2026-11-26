@@ -19,5 +19,5 @@ export function GET() {
     headers['Content-Security-Policy'] = CSP;
     headers['Strict-Transport-Security'] = 'max-age=31536000';
   }
-  return new Response(motionHubHtml.replace('</head>','<link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r42"></head>'), { status: 200, headers });
+  return new Response(motionHubHtml.replace('</head>','<link rel="stylesheet" href="/v2-layout-repair.css?v=20261126-r45"><link rel="stylesheet" href="/veloryz-design-system-r45.css?v=20261126-r45"></head>'), { status: 200, headers });
 }
