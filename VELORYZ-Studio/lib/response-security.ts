@@ -58,8 +58,9 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-layout-20261126-r42"`);
  // Only refresh assets changed by R45; keep other release-specific cache contracts.
  html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
- // R49 private workspace archive and intelligence controllers.
- html=html.replace(/(src="\/client-portal\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r49-recovery');
+ // R50 authenticated workspace and owner deliverables.
+ html=html.replace(/((?:src|href)="\/(?:client-portal|admin-client)\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r50"');
+ // R49 intelligence controllers.
  html=html.replace(/((?:src|href)="\/(?:support-chat\.(?:js|css)|creator-ai\.js|admin-knowledge-ai\.js|admin-ai-control\.js))(?:\?[^"]*)?"/g,'$1?v=20261126-r49-recovery"');
  // R48 Creator assets; keep the existing compatibility API.
  html=html.replace(/((?:src|href)="\/creator-v4\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r48"');

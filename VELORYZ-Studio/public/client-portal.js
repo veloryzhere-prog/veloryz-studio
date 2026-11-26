@@ -4,7 +4,9 @@ const root=document.getElementById('cp-main');
 const $=(s,r=document)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const date=v=>v?new Date(v.length===10?v+"T12:00:00":v).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):"To be agreed";
-const safeLink=s=>{try{const u=new URL(s);return u.protocol==="https:"?u.href:""}catch{return ""}};
+const safeLink=s=>{try{const u=new URL(s);return u.protocol==="https:"&&!u.username&&!u.password?u.href:""}catch{return ""}};
+const hostedFile=s=>{try{const u=new URL(s);return u.origin==="https://veloryz.online"&&/^\/api\/client-portal\/files\/[0-9a-f-]{36}$/i.test(u.pathname)&&!u.search&&!u.hash;}catch{return false;}};
+const moneyPaise=v=>Number.isSafeInteger(Number(v))&&Number(v)>=0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR"}).format(Number(v)/100):"Not available";
 const api=async(path,options={})=>{
  const res=await fetch("/api/client-portal"+path,{...options,credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json",...(options.headers||{})}});
  const data=await res.json().catch(()=>({error:"The studio service is unavailable."}));
@@ -53,7 +55,7 @@ async function signIn(code){
  try{await api("/access",{method:"POST",body:JSON.stringify({invite:code})});history.replaceState(null,"",location.pathname);await refresh();}
  catch(e){entry(e.message)}finally{busy=false;}
 }
-const nav=[["overview","Dashboard","grid"],["timeline","Project Plan","map"],["reviews","Action Items","check"],["files","Deliverables","file"],["messages","Messages","chat"],["ai","AI Guide","chat"]];
+const nav=[["overview","Dashboard","grid"],["timeline","Project Plan","map"],["reviews","Action Items","check"],["files","Deliverables","file"],["billing","Payments","file"],["handover","Handover","check"],["messages","Messages","chat"],["ai","AI Guide","chat"]];
 function navIcon(name){
  const shapes={
  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -74,7 +76,7 @@ function shell(){
  '<div class="cp-app-client"><div class="cp-app-client-icon">'+esc(initials)+'</div><span><strong>'+esc(p.client_name)+'</strong><small>'+esc(p.title)+'</small></span></div>'+
  '<nav class="cp-app-nav" aria-label="Client workspace navigation">'+nav.map(([id,label,icon])=>'<button type="button" data-cp-tab="'+id+'" class="'+(tab===id?'is-active':'')+'" '+(tab===id?'aria-current="page"':'')+'>'+navIcon(icon)+'<span>'+label+'</span>'+(id==="reviews"&&actionCount?'<b class="cp-nav-count">'+actionCount+'</b>':id==="messages"&&unreadCount?'<b class="cp-nav-count">'+unreadCount+'</b>':'')+'</button>').join('')+'</nav>'+
  '<div class="cp-app-sidebar-footer"><div class="cp-security"><span>◉</span><p>Private & secure<br><small>Shared by VELORYZ Studio</small></p></div><button class="cp-exit" data-cp-exit>'+(isDemo?'Exit preview':'Sign out')+' <span>↗</span></button></div></aside>'+
- '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><button class="cp-refresh-button" type="button" data-cp-refresh title="Refresh project updates" aria-label="Refresh project updates">↻ <span>Refresh</span></button><span class="cp-app-live"><i></i> YOUR WORKSPACE</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
+ '<div class="cp-app-main"><header class="cp-app-topbar"><div><span class="cp-app-breadcrumb">YOUR PROJECT</span><span class="cp-app-divider">/</span><strong>'+esc(nav.find(n=>n[0]===tab)?.[1]||"Dashboard")+'</strong></div><div class="cp-app-top-right"><button class="cp-refresh-button" type="button" data-cp-refresh title="Refresh project updates" aria-label="Refresh project updates">↻ <span>Refresh</span></button><span class="cp-app-live"><i></i> '+(isDemo?"DEMO":"PRIVATE WORKSPACE")+'</span><span class="cp-app-avatar">'+esc(initials)+'</span></div></header>'+
  '<section class="cp-app-content" id="cp-view">'+
  (isDemo?'<div class="cp-demo-alert"><strong>ILLUSTRATIVE DEMO</strong><span>Example content only. No project changes or client messages are sent from this preview.</span></div>':'')+
  views[tab](p)+'</section><footer class="cp-app-bottom"><span>VELORYZ STUDIO · CLIENT COLLABORATION</span><a href="mailto:veloryz.here@gmail.com">Need help? Contact us ↗</a></footer></div></div>';
@@ -95,7 +97,7 @@ function overview(p){
  '<div class="cp-progress-caption"><span>Current phase: <strong>'+esc(p.phase)+'</strong></span><span>Expected finish: '+esc(date(p.due_date))+'</span></div><p class="cp-progress-explainer">Completion reflects milestones marked as finished by the studio. Target dates remain estimates until separately confirmed.</p></section>'+
  '<div class="cp-stats"><div class="cp-stat"><strong class="cp-stat-green">'+done+'<small> / '+steps.length+'</small></strong><span>MILESTONES</span></div><div class="cp-stat"><strong class="cp-stat-blue">'+delivered+'<small> / '+files.length+'</small></strong><span>DELIVERABLES</span></div><div class="cp-stat"><strong class="cp-stat-orange">'+approvals.length+'</strong><span>ACTION ITEMS</span></div></div>'+
  '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-green">◇</span><div><h2>Deliverables</h2><p>Files and links shared for your review.</p></div></div><button data-cp-tab="files">View all ↗</button></div>'+
- (files.length?files.slice(0,5).map(item=>'<div class="cp-doc-group"><div class="cp-doc-title"><strong>'+esc(item.title)+'</strong>'+badge(item.state)+'</div><div class="cp-doc-file"><span class="cp-doc-icon">▤</span><div><strong>'+esc(item.title)+'</strong><small>'+esc(item.details||"Shared by VELORYZ Studio")+'</small></div>'+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ &nbsp; Open file</a>':'<span class="cp-doc-pending">Awaiting file</span>')+'</div></div>').join(''):'<div class="cp-empty-small">No deliverables have been shared yet. Your studio will add them here as the project progresses.</div>')+'</section>'+
+ (files.length?files.slice(0,5).map(item=>'<div class="cp-doc-group"><div class="cp-doc-title"><strong>'+esc(item.title)+'</strong>'+badge(item.state)+'</div><div class="cp-doc-file"><span class="cp-doc-icon">▤</span><div><strong>'+esc(item.title)+'</strong><small>'+esc(item.details||"Shared by VELORYZ Studio")+'</small></div>'+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ &nbsp; '+(hostedFile(item.url)?"Download private file":"Open shared link")+'</a>':'<span class="cp-doc-pending">Awaiting file</span>')+'</div></div>').join(''):'<div class="cp-empty-small">No deliverables have been shared yet. Your studio will add them here as the project progresses.</div>')+'</section>'+
  '<div class="cp-dashboard-duo"><section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-lime">✓</span><div><h2>Waiting on you</h2><p>Approvals requiring your decision.</p></div></div></div>'+
  (approvals.length?approvals.slice(0,3).map(item=>'<button class="cp-action-row" data-cp-tab="reviews"><span class="cp-alert-circle">!</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(item.details||"Please review this direction.")+'</small></span><b>Review ↗</b></button>').join(''):'<div class="cp-empty-small">You’re all caught up. No approvals waiting.</div>')+'</section>'+
  '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-blue">↗</span><div><h2>What’s next</h2><p>The next step in our collaboration.</p></div></div></div>'+
@@ -111,7 +113,7 @@ function files(){
  const list=state.items.filter(i=>i.type==="file");
  return '<div class="cp-page-heading"><span class="cp-page-eyebrow">SHARED FILES & LINKS</span><h1>Deliverables</h1><p>Everything shared with you, organized by project. No lost files or scattered email threads.</p></div>'+
  '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-green">◇</span><div><h2>Project files</h2><p>'+list.length+' deliverable'+(list.length===1?'':'s')+' in your workspace.</p></div></div></div>'+
- (list.length?list.map((item,i)=>'<div class="cp-file-list-row"><span class="cp-file-type">▤</span><div class="cp-file-meta"><strong>'+esc(item.title)+'</strong><p>'+esc(item.details||"File supplied by VELORYZ Studio")+'</p><small>'+esc(item.due_date?date(item.due_date):"No due date")+'</small></div>'+badge(item.state)+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ Open file</a>':'<span class="cp-doc-pending">Not shared yet</span>')+'</div>').join(''):'<div class="cp-empty-small">There are no shared files yet. We will add deliverables here as they are ready.</div>')+'</section><p class="cp-file-caution">Linked deliverables open on the original file provider. Their own access permissions apply.</p>';
+ (list.length?list.map((item,i)=>'<div class="cp-file-list-row"><span class="cp-file-type">▤</span><div class="cp-file-meta"><strong>'+esc(item.title)+'</strong><p>'+esc(item.details||"File supplied by VELORYZ Studio")+'</p><small>'+esc(item.due_date?date(item.due_date):"No due date")+'</small></div>'+badge(item.state)+(safeLink(item.url)?'<a href="'+esc(safeLink(item.url))+'" target="_blank" rel="noopener noreferrer" class="cp-dark-button">↧ '+(hostedFile(item.url)?"Download private file":"Open shared link")+'</a>':'<span class="cp-doc-pending">Not shared yet</span>')+'</div>').join(''):'<div class="cp-empty-small">There are no shared files yet. We will add deliverables here as they are ready.</div>')+'</section><p class="cp-file-caution">VELORYZ-hosted files require your active invitation session and download as attachments. External links open on their original provider and follow that provider’s access permissions.</p>';
 }
 function reviews(){
  const list=state.items.filter(i=>i.type==="approval"),waiting=list.filter(i=>i.state==="waiting");
@@ -119,7 +121,7 @@ function reviews(){
  '<div class="cp-action-count"><span>'+waiting.length+'</span> item'+(waiting.length===1?'':'s')+' waiting on you</div>'+
  '<section class="cp-surface cp-dashboard-section"><div class="cp-section-label"><div class="cp-section-left"><span class="cp-section-dot cp-dot-lime">✓</span><div><h2>Approvals</h2><p>Decisions needing your sign-off.</p></div></div></div>'+
  (list.length?list.map(item=>'<article class="cp-approval"><div class="cp-approval-heading"><div><span class="cp-file-type">▤</span><strong>'+esc(item.title)+'</strong></div>'+badge(item.state)+'</div><p>'+esc(item.details||"Please review the proposed direction.")+'</p>'+
- (item.state==="waiting"?'<form data-cp-review="'+esc(item.id)+'" class="cp-review-form"><label for="cp-note-'+esc(item.id)+'">Feedback or change request (optional)</label><textarea id="cp-note-'+esc(item.id)+'" name="note" rows="3" maxlength="1000" placeholder="Share your thoughts…"></textarea><div class="cp-approval-actions"><button class="cp-approve-button" type="submit" name="decision" value="approved" '+(isDemo?'disabled':'')+'>✓ &nbsp; Approve</button><button class="cp-secondary-button" type="submit" name="decision" value="changes" '+(isDemo?'disabled':'')+'>Request changes</button></div></form>':'<div class="cp-approval-recorded">✓ Decision recorded for this review.</div>')+'</article>').join(''):'<div class="cp-empty-small">There are no action items right now. You are all caught up.</div>')+'</section>';
+ (item.state==="waiting"?'<form data-cp-review="'+esc(item.id)+'" class="cp-review-form"><label for="cp-note-'+esc(item.id)+'">Feedback (required when requesting changes)</label><textarea id="cp-note-'+esc(item.id)+'" name="note" rows="3" maxlength="1000" placeholder="Share your thoughts…"></textarea><div class="cp-approval-actions"><button class="cp-approve-button" type="submit" name="decision" value="approved" '+(isDemo?'disabled':'')+'>✓ &nbsp; Approve</button><button class="cp-secondary-button" type="submit" name="decision" value="changes" '+(isDemo?'disabled':'')+'>Request changes</button></div></form>':'<div class="cp-approval-recorded">✓ Decision recorded for this review.</div>')+'</article>').join(''):'<div class="cp-empty-small">There are no action items right now. You are all caught up.</div>')+'</section>';
 }
 function messages(){
  const list=state.messages;
@@ -135,7 +137,20 @@ function aiGuide(){
  (window.VeloryzSupportChat?.render('client',{embed:true})||'<p>AI Guide is loading. You can still <a href="/support/">contact support</a>.</p>')+archivePanel()+
  '<div class="cp-ai-disclaimer">This assistant does not access your private client records. For a project-specific decision or update, use <button type="button" data-cp-tab="messages">Messages</button> to contact the team.</div>';
 }
-const views={overview,timeline,files,reviews,messages,ai:aiGuide};
+function billing(){
+ const payments=state.payments;
+ const list=Array.isArray(payments)?payments:[];
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">PROJECT FINANCES</span><h1>Payment requests</h1><p>Review actual payment requests linked to your accepted project. Payments are confirmed by the Studio team, not by this screen.</p></div>'+
+ (isDemo?'<p class="cp-empty-small cp-surface">No real payment records are displayed in the demonstration.</p>':payments===null?'<p class="cp-empty-small cp-surface">Payment records could not be loaded. Refresh or contact the Studio team.</p>':
+ '<section class="cp-surface cp-dashboard-section"><h2>Payment history</h2>'+(list.length?list.map(x=>'<div class="cp-file-list-row"><div class="cp-file-meta"><strong>'+esc(x.title)+'</strong><small>'+esc(x.reference)+' · '+esc(date(x.created_at))+'</small></div><strong>'+esc(moneyPaise(x.amount_paise))+'</strong><span class="cp-badge">'+esc(({requested:"Awaiting confirmation",verified:"Receipt verified by studio",cancelled:"Cancelled"})[x.status]||"Status unavailable")+'</span></div>').join(""):'<p class="cp-empty-small">No payment requests linked to this workspace yet.</p>')+'</section>')+
+ '<section class="cp-surface cp-dashboard-section"><h2>Need help with payment?</h2><p>No card or bank details are collected here. Ask your Studio team for the agreed payment instructions and receipt.</p><button class="cp-button" data-cp-tab="messages">Ask the Studio ↗</button></section>';
+}
+function handover(){
+ const steps=state.items.filter(i=>i.type==="milestone"),files=state.items.filter(i=>i.type==="file"),reviews=state.items.filter(i=>i.type==="approval");
+ const rows=[["Agreed milestones",steps.filter(x=>x.state==="done").length,steps.length,"timeline"],["Shared deliverables",files.filter(x=>x.state==="done"&&safeLink(x.url)).length,files.length,"files"],["Recorded approvals",reviews.filter(x=>x.state==="approved").length,reviews.length,"reviews"]];
+ return '<div class="cp-page-heading"><span class="cp-page-eyebrow">DELIVERY & HANDOVER</span><h1>Handover readiness</h1><p>Review recorded project progress before the Studio confirms final handover. This checklist is not a launch or acceptance certificate.</p></div><section class="cp-surface cp-dashboard-section">'+rows.map(([title,done,total,route])=>'<div class="cp-r50-check"><span><strong>'+esc(title)+'</strong><small>'+done+' of '+total+' recorded'+(total===0?" · Not yet planned":"")+'</small></span><button type="button" data-cp-tab="'+route+'">View ↗</button></div>').join("")+'</section><section class="cp-surface cp-dashboard-section"><h2>Project summary</h2><p>Download the current Studio-generated PDF or ask the team to confirm outstanding work.</p>'+(isDemo?"":'<a class="cp-dark-button" href="/api/client-portal/summary" target="_blank" rel="noopener">Download project summary ↓</a>')+' <button class="cp-secondary-button" data-cp-tab="messages">Contact the team</button></section>';
+}
+const views={overview,timeline,files,reviews,billing,handover,messages,ai:aiGuide};
 function render(){document.body.classList.toggle('cp-logged',!!state);if(!state)return entry(notice);const scope=String(state.project.id)+":"+String(state.project.client_email||"").toLowerCase();if(archiveScope!==scope){clearArchiveSession();archiveScope=scope;}root.innerHTML=shell();if(tab==='ai'){window.VeloryzSupportChat?.mount(root);archiveDraw();}document.title=(isDemo?"Preview":"Your project")+" — VELORYZ Client Workspace";}
 async function refresh(){
  try{state=await api("/session");isDemo=false;render();}
@@ -187,13 +202,14 @@ document.addEventListener("keydown",e=>{
 /* Background read-only refresh; never reset an unfinished client reply. */
 setInterval(async()=>{
  if(!state||isDemo||busy||document.visibilityState==="hidden")return;
- if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+ if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||tab==="ai"||archiveBusy)return;
+ if($("#cp-message")?.value.trim()||[...document.querySelectorAll(".cp-review-form textarea")].some(el=>el.value.trim()))return;
  try{
   const current=state,newState=await api("/session");
   if(state!==current||isDemo)return;
   const previousId=current.messages.at(-1)?.id||"",newId=newState.messages.at(-1)?.id||"";
   const changed=previousId!==newId||newState.project.updated_at!==current.project.updated_at||
-   JSON.stringify(newState.items.map(i=>[i.id,i.state,i.updated_at]))!==JSON.stringify(current.items.map(i=>[i.id,i.state,i.updated_at]));
+   JSON.stringify(newState.items.map(i=>[i.id,i.state,i.updated_at]))!==JSON.stringify(current.items.map(i=>[i.id,i.state,i.updated_at]))||JSON.stringify(newState.payments)!==JSON.stringify(current.payments);
   if(!changed)return;
   state=newState;render();
   if(newId&&previousId!==newId)toast("A new project message is available.");
@@ -212,6 +228,8 @@ document.addEventListener("submit",async e=>{
  if(f.matches("[data-cp-review]")){
   e.preventDefault();if(busy||isDemo)return;
   const clicked=e.submitter||f.querySelector('[type="submit"]');
+  if(clicked.value==="changes"&&!f.elements.note.value.trim()){toast("Please describe the changes you want.");f.elements.note.focus();return;}
+  if(clicked.value==="approved"&&!window.confirm("Record your approval of this direction?"))return;
   busy=true;clicked.disabled=true;
   try{await api("/decisions",{method:"POST",body:JSON.stringify({id:f.dataset.cpReview,state:clicked.value,note:f.elements.note.value})});state=await api("/session");render();toast("Your decision has been recorded.");}
   catch(err){toast(err.message);clicked.disabled=false;}finally{busy=false}

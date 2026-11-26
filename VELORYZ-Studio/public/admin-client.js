@@ -111,8 +111,9 @@ function cpOverview(p){
 function cpItems(type){
  const items=(cpWorkspace?.items||[]).filter(x=>x.type===type);
  const name=type==='milestone'?'milestone':type==='file'?'deliverable':'approval request';
- return '<section class="cpm-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">'+cpE(name.toUpperCase())+'S</span><h3>'+cpE(type==='milestone'?'Project milestones':type==='file'?'Shared deliverables':'Review requests')+'</h3><p>'+cpE(type==='milestone'?'Plan the work in clear stages.':type==='file'?'Add private handover links and update their status.':'Give your client one clear decision at a time.')+'</p></div><div class="cpm-item-head-actions"><button type="button" class="admin-button" data-cpm="add-item" data-type="'+type+'">+ Add '+cpE(name)+'</button>'+(type==='milestone'?'<button type="button" class="admin-button secondary" data-cpm="starter-plan">Use starter plan</button>':'')+'</div></div>'+
- (items.length?'<div class="cpm-item-list">'+items.map(i=>'<article class="cpm-item"><span class="cpm-item-mark '+(i.state==='done'||i.state==='approved'?'done':'')+'">'+(i.state==='done'||i.state==='approved'?'✓':type==='file'?'↗':type==='approval'?'◇':'◌')+'</span><div class="cpm-item-main"><div><strong>'+cpE(i.title)+'</strong><span class="cpm-item-state cpm-item-'+cpE(i.state)+'">'+cpE(cpStates.find(s=>s[0]===i.state)?.[1]||i.state)+'</span></div><p>'+cpE(i.details||'No notes added.')+'</p><small>'+(i.due_date?'Date: '+cpDate(i.due_date):'Date not set')+'</small>'+(type==='file'&&i.url?'<a href="'+cpE(i.url)+'" target="_blank" rel="noopener noreferrer">Open shared file ↗</a>':'')+'</div><div class="cpm-item-actions">'+(type==='milestone'&&i.state!=='done'?'<button type="button" class="cpm-advance" data-cpm="advance-item" data-id="'+cpE(i.id)+'">'+(i.state==='upcoming'?'Start':'✓ Complete')+'</button>':'')+'<button type="button" data-cpm="edit-item" data-id="'+cpE(i.id)+'">Edit</button><button type="button" class="is-danger" data-cpm="remove-item" data-id="'+cpE(i.id)+'">Remove</button></div></article>').join('')+'</div>':
+ return '<section class="cpm-card"><div class="cpm-card-head"><div><span class="cpm-eyebrow">'+cpE(name.toUpperCase())+'S</span><h3>'+cpE(type==='milestone'?'Project milestones':type==='file'?'Shared deliverables':'Review requests')+'</h3><p>'+cpE(type==='milestone'?'Plan the work in clear stages.':type==='file'?'Upload protected project files or add external handover links.':'Give your client one clear decision at a time.')+'</p></div><div class="cpm-item-head-actions"><button type="button" class="admin-button" data-cpm="add-item" data-type="'+type+'">+ Add '+cpE(name)+'</button>'+(type==='milestone'?'<button type="button" class="admin-button secondary" data-cpm="starter-plan">Use starter plan</button>':'')+'</div></div>'+
+ (type==='file'?'<form class="cpm-r50-upload" data-cpm-form="private-file"><h4>Upload a private deliverable</h4><p>PDF, PNG, JPEG or TXT · up to 2 MB. Only this project’s signed-in client and the owner can download it.</p><label>Title <input name="title" required maxlength="160"></label><label>Description <input name="details" maxlength="1400"></label><label>File <input name="file" type="file" required accept=".pdf,.png,.jpg,.jpeg,.txt"></label><button type="submit" class="admin-button">Upload privately ↗</button></form>':'')+
+ (items.length?'<div class="cpm-item-list">'+items.map(i=>'<article class="cpm-item"><span class="cpm-item-mark '+(i.state==='done'||i.state==='approved'?'done':'')+'">'+(i.state==='done'||i.state==='approved'?'✓':type==='file'?'↗':type==='approval'?'◇':'◌')+'</span><div class="cpm-item-main"><div><strong>'+cpE(i.title)+'</strong><span class="cpm-item-state cpm-item-'+cpE(i.state)+'">'+cpE(cpStates.find(s=>s[0]===i.state)?.[1]||i.state)+'</span></div><p>'+cpE(i.details||'No notes added.')+'</p><small>'+(i.due_date?'Date: '+cpDate(i.due_date):'Date not set')+'</small>'+(type==='file'&&i.url?'<a href="'+cpE(/^https:\/\/veloryz\.online\/api\/client-portal\/files\/[0-9a-f-]{36}$/i.test(i.url)?'/api/client-portal/admin/files/'+encodeURIComponent(i.id)+'?project_id='+encodeURIComponent(cpSelected):i.url)+'" target="_blank" rel="noopener noreferrer">Open shared file ↗</a>':'')+'</div><div class="cpm-item-actions">'+(type==='milestone'&&i.state!=='done'?'<button type="button" class="cpm-advance" data-cpm="advance-item" data-id="'+cpE(i.id)+'">'+(i.state==='upcoming'?'Start':'✓ Complete')+'</button>':'')+'<button type="button" data-cpm="edit-item" data-id="'+cpE(i.id)+'">Edit</button><button type="button" class="is-danger" data-cpm="remove-item" data-id="'+cpE(i.id)+'">Remove</button></div></article>').join('')+'</div>':
  '<div class="cpm-tab-empty"><span>✳</span><h4>No '+cpE(name)+'s yet.</h4><p>Start by adding your first '+cpE(name)+'. Your client will see it in their portal.</p><button class="admin-button secondary" type="button" data-cpm="add-item" data-type="'+type+'">+ Add now</button></div>')+'</section>';
 }
 
@@ -341,8 +342,8 @@ document.addEventListener('click',async e=>{
    const item=(cpWorkspace?.items||[]).find(x=>x.id===b.dataset.id);
    if(!item)return;
    if(!window.confirm('Remove "'+item.title+'" from this client workspace?\n\nThis cannot be undone.'))return;
-   await cpReq('/items/'+encodeURIComponent(item.id)+'?project_id='+encodeURIComponent(cpSelected),{method:'DELETE'});
-   toast('Project item removed.');
+   const removed=await cpReq('/items/'+encodeURIComponent(item.id)+'?project_id='+encodeURIComponent(cpSelected),{method:'DELETE'});
+   toast(removed.storage_cleanup===false?'Item removed; private storage cleanup requires operator attention.':'Project item removed.');
    await cpLoad(cpSelected);
   }
  }catch(error){toast(error.message);}finally{cpBusy=false;b.disabled=false;}
@@ -353,6 +354,13 @@ document.addEventListener('submit',async e=>{
  const button=e.submitter||form.querySelector('[type="submit"]');cpBusy=true;if(button)button.disabled=true;
  try{
   const v=Object.fromEntries(new FormData(form));
+  if(form.dataset.cpmForm==='private-file'){
+   const projectId=cpSelected,file=v.file;if(!projectId||!file||!file.size||file.size>2097152||!/\.(pdf|png|jpe?g|txt)$/i.test(file.name))throw Error('Choose a supported file up to 2 MB.');
+   const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+   if(cpSelected!==projectId)throw Error('Project changed. Select it again before uploading.');
+   await cpReq('/files',{method:'POST',body:JSON.stringify({project_id:projectId,title:v.title,details:v.details,filename:file.name,content:btoa(binary)})});
+   toast('Private deliverable uploaded.');if(cpSelected===projectId){cpTab='file';await cpLoad(projectId);}return;
+  }
   if(form.dataset.cpmForm==='project'){
    const edit=!cpNewProject&&!!cpWorkspace?.project;
    const result=await cpReq(edit?'/projects/'+encodeURIComponent(cpSelected):'/projects',{method:edit?'PUT':'POST',body:JSON.stringify(v)});
