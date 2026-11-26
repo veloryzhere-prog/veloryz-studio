@@ -174,7 +174,73 @@ async function runAdminDiagnostics(){
  if(action){action.disabled=false;action.textContent='Run checks again ↻';}
 }
 
-function mediaPage(){return `${heading('Your studio assets','A home for the details.','Images, project films, logos and campaign visuals. Uploaded files can be reused across your website.')}<section class="upload-zone">${icon('upload')}<h3>Bring something new into the studio.</h3><p>PNG, JPG, WebP, GIF or AVIF up to 8 MB.<br>MP4 or WebM videos up to 25 MB.</p><button class="admin-button" data-action="upload">${icon('plus')}Upload media</button></section><div id="upload-state"></div>${window.VeloryzAdminDetail?.mediaHeader(mediaItems,mediaLoaded,E)||''}${!mediaLoaded?'<div class="empty-state"><p>Opening your media library…</p></div>':mediaItems.length?`<div class="media-grid">${mediaItems.map(m=>mediaCard(m)).join('')}</div>`:`<section class="admin-panel">${empty('media','Your asset library is ready.','Upload a logo, cover image or short film to get started.','upload','Upload your first file')}</section>`}`;}
+/* R51.7 — Media & Brand Asset Manager */
+let mediaR51Query='',mediaR51Type='all',mediaR51Sort='recent',mediaR51Error='',mediaR51Loading=false,mediaR51Uploading=false;
+const mediaR51Originals=[['Main transparent wordmark','/assets/brand/official/Main-Transparent.webp'],['Dark ink wordmark','/assets/brand/official/Main-Dark-Ink-Transparent.webp'],['Website favicon','/assets/favicon.svg'],['Original logo reveal','/assets/frame-cut/reveal.mp4']];
+function mediaR51Refs(state,url,origin){
+ const results=[];
+ if(!url)return results;
+ const normalize=v=>{try{const parsed=new URL(v,origin);return parsed.origin+parsed.pathname;}catch{return null;}};
+ const target=normalize(url);
+ function scan(v,p){
+  if(typeof v==='string'){if(v===url||(target&&normalize(v)===target))results.push(p.join(' › '));}
+  else if(v&&typeof v==='object')Object.entries(v).forEach(([k,x])=>scan(x,[...p,k]));
+ }
+ scan(state,[]);return results;
+}
+function mediaR51Select(items,query,type,sort,state,origin){
+ const q=query.trim().toLowerCase();
+ return items.filter(m=>{
+  const refs=mediaR51Refs(state,m.url,origin);
+  return (!q||[m.filename,m.mime,m.id,...refs].some(v=>String(v||'').toLowerCase().includes(q)))&&
+  (type==='all'||type==='image'&&m.mime?.startsWith('image/')||type==='video'&&m.mime?.startsWith('video/')||type==='used'&&refs.length||type==='unused'&&!refs.length);
+ }).sort((a,b)=>sort==='name'?String(a.filename).localeCompare(String(b.filename)):sort==='size'?Number(b.size)-Number(a.size):String(b.created_at||'').localeCompare(String(a.created_at||'')));
+}
+function mediaR51Size(n){n=Number(n)||0;return n>=1048576?(n/1048576).toFixed(2)+' MB':(n/1024).toFixed(1)+' KB';}
+function mediaR51SafeUrl(m){return /^\/media\/[a-z0-9-]+$/i.test(m.url||'')?m.url:'';}
+function mediaR51Grid(){
+ if(mediaR51Error)return '<div class="empty-state" role="alert"><h3>Media library unavailable</h3><p>'+E(mediaR51Error)+'</p><button class="admin-button secondary" data-action="reload-media">Retry library</button></div>';
+ if(!mediaLoaded)return '<div class="empty-state" role="status"><p>Opening your media library…</p></div>';
+ const items=mediaR51Select(mediaItems,mediaR51Query,mediaR51Type,mediaR51Sort,workspace.state,location.origin);
+ return '<p role="status">'+items.length+' of '+mediaItems.length+' returned assets</p>'+(items.length?'<div class="media-grid">'+items.map(m=>{
+  const refs=mediaR51Refs(workspace.state,m.url,location.origin),image=m.mime?.startsWith('image/'),url=mediaR51SafeUrl(m);
+  return '<article class="media-card"><div class="media-thumb">'+(image&&url?'<img src="'+E(url)+'" alt="" loading="lazy">':icon('film'))+'</div><div class="media-card-info"><strong>'+E(m.filename)+'</strong><small>'+E(m.mime)+' · '+E(mediaR51Size(m.size))+'</small><small>'+E(refs.length?refs.length+' current draft reference(s)':'No current draft reference found')+'</small><div class="media-card-actions"><button type="button" data-r51-media-inspect="'+E(m.id)+'">Inspect</button>'+(url?'<button type="button" data-action="copy-media" data-id="'+E(m.id)+'">Copy link</button><a href="'+E(url)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>':'')+'</div></div></article>';
+ }).join('')+'</div>':'<div class="empty-state"><h3>No matching assets</h3><p>Change the filters or upload a file.</p></div>');
+}
+function mediaPage(){
+ const images=mediaItems.filter(m=>m.mime?.startsWith('image/')).length,videos=mediaItems.filter(m=>m.mime?.startsWith('video/')).length,total=mediaItems.reduce((n,m)=>n+(Number(m.size)||0),0);
+ const options=(values,selected)=>values.map(([v,l])=>'<option value="'+v+'" '+(v===selected?'selected':'')+'>'+l+'</option>').join('');
+ return heading('Creative operations','Media & brand assets','Inspect reusable website files, monitor uploads and keep original studio assets separate.','<button type="button" class="admin-button secondary" data-action="reload-media">Refresh library ↻</button>')+
+ '<section class="form-card"><div class="form-card-header"><div><h2>Protected studio originals</h2><p>Code-controlled assets. This workspace cannot replace or archive these files, or the original 3D V and scarf motion.</p></div><a class="admin-button secondary" href="#/branding">Brand placement settings ↗</a></div><div class="media-grid">'+mediaR51Originals.map(([name,url])=>'<article class="media-card"><div class="media-thumb">'+(url.endsWith('.mp4')?icon('film'):'<img src="'+E(url)+'" alt="'+E(name)+'" loading="lazy">')+'</div><div class="media-card-info"><strong>'+E(name)+'</strong><small>Source-controlled · read only</small><div class="media-card-actions"><a href="'+E(url)+'" target="_blank" rel="noopener noreferrer">Open original ↗</a></div></div></article>').join('')+'</div></section>'+
+ '<section class="form-card"><div class="form-card-header"><div><h2>Uploaded media</h2><p>'+(mediaLoaded&&!mediaR51Error?images+' images · '+videos+' videos · '+mediaR51Size(total)+' in returned records':'Inventory not yet available')+'. Existing API returns up to 200 active assets, not total storage usage.</p></div></div><section class="upload-zone" data-r51-media-drop aria-label="Upload a website asset">'+icon('upload')+'<h3>Drop a file or browse</h3><p>PNG, JPG, WebP, GIF, AVIF up to 8 MB. MP4 or WebM up to 25 MB.<br>Uploaded website files have public links. Do not upload confidential files.</p><button type="button" class="admin-button" data-action="upload" '+(preview||mediaR51Uploading?'disabled':'')+'>'+icon('plus')+'Choose file</button></section><div id="upload-state" aria-live="polite"></div><div class="admin-form-grid"><div class="admin-field full"><label for="media-r51-search">Search filename, type or current draft reference</label><input id="media-r51-search" type="search" value="'+E(mediaR51Query)+'" placeholder="Search assets…"></div><div class="admin-field"><label for="media-r51-type">Asset type or usage</label><select id="media-r51-type">'+options([['all','All assets'],['image','Images'],['video','Videos'],['used','Referenced in current draft'],['unused','No current draft reference found']],mediaR51Type)+'</select></div><div class="admin-field"><label for="media-r51-sort">Sort by</label><select id="media-r51-sort">'+options([['recent','Newest first'],['name','Filename A–Z'],['size','Largest first']],mediaR51Sort)+'</select></div></div><div id="media-r51-grid">'+mediaR51Grid()+'</div><p>Usage covers the loaded CMS draft, including unsaved edits, not published-only content, historical versions, external links or source-controlled pages. Archiving is disabled here because public links may stop working.</p></section>';
+}
+function mediaR51Inspect(id){
+ const m=mediaItems.find(x=>x.id===id);if(!m)return;
+ const refs=mediaR51Refs(workspace.state,m.url,location.origin),url=mediaR51SafeUrl(m);
+ const visual=url?(m.mime?.startsWith('image/')?'<img data-r51-media-dim src="'+E(url)+'" alt="'+E(m.filename)+'" style="max-width:100%;max-height:360px;object-fit:contain">':'<video data-r51-media-dim src="'+E(url)+'" controls playsinline preload="metadata" style="max-width:100%;max-height:360px"></video>'):'';
+ showModal('Asset inspector','File metadata and current draft usage.',visual+'<dl><dt>Filename</dt><dd>'+E(m.filename)+'</dd><dt>Type</dt><dd>'+E(m.mime)+'</dd><dt>Size</dt><dd>'+E(mediaR51Size(m.size))+'</dd><dt>Uploaded</dt><dd>'+E(m.created_at?friendlyDate(m.created_at):'Refresh to load date')+'</dd><dt>Dimensions / duration</dt><dd id="media-r51-dimensions">Reading media metadata…</dd></dl><h3>Current draft references</h3>'+(refs.length?'<ul>'+refs.map(p=>'<li>'+E(p)+'</li>').join('')+'</ul>':'<p>No exact URL reference found in the loaded draft.</p>')+'<p>Not a complete published or historical usage audit. Archiving is unavailable in this workspace.</p>','<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>');
+ const node=document.querySelector('[data-r51-media-dim]'),label=document.getElementById('media-r51-dimensions');
+ if(!node||!label){if(label)label.textContent='Unavailable';return;}
+ const report=()=>{if(node.tagName==='IMG'&&node.naturalWidth)label.textContent=node.naturalWidth+' × '+node.naturalHeight+' px';else if(node.videoWidth)label.textContent=node.videoWidth+' × '+node.videoHeight+' px'+(Number.isFinite(node.duration)?' · '+node.duration.toFixed(1)+' s':'');};
+ node.addEventListener('load',report);node.addEventListener('loadedmetadata',report);node.addEventListener('error',()=>{label.textContent='Media could not be loaded';});report();
+}
+function mediaR51Refresh(){const el=document.getElementById('media-r51-grid');if(el)el.innerHTML=mediaR51Grid();}
+document.addEventListener('input',e=>{if(e.target.id==='media-r51-search'){mediaR51Query=e.target.value;mediaR51Refresh();}});
+document.addEventListener('change',e=>{if(e.target.id==='media-r51-type'){mediaR51Type=e.target.value;mediaR51Refresh();}if(e.target.id==='media-r51-sort'){mediaR51Sort=e.target.value;mediaR51Refresh();}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-r51-media-inspect]');if(b)mediaR51Inspect(b.dataset.r51MediaInspect);});
+document.addEventListener('dragover',e=>{if(e.target.closest('[data-r51-media-drop]')){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect=preview||mediaR51Uploading?'none':'copy';}});
+document.addEventListener('drop',e=>{if(!e.target.closest('[data-r51-media-drop]'))return;e.preventDefault();if(preview||mediaR51Uploading)return;const files=e.dataTransfer?.files;if(files?.length!==1){toast('Choose one asset at a time.');return;}uploadFile(files[0]);});
+function mediaR51Transfer(body,progress){
+ return new Promise((resolve,reject)=>{
+  const xhr=new XMLHttpRequest();xhr.open('POST','/api/admin/media');xhr.timeout=90000;xhr.responseType='json';
+  xhr.upload.onprogress=e=>{if(e.lengthComputable)progress(Math.min(100,Math.round(e.loaded/e.total*100)));};
+  xhr.onload=()=>{const data=xhr.response;if(xhr.status>=200&&xhr.status<300&&data)resolve(data);else reject(Object.assign(new Error(data?.error||'Invalid media response. Refresh before retrying.'),{status:xhr.status}));};
+  xhr.onerror=()=>reject(new Error('Network interrupted. Refresh library before retrying.'));
+  xhr.ontimeout=()=>reject(Object.assign(new Error('Upload timed out. Refresh before retrying.'),{name:'TimeoutError'}));
+  xhr.onabort=()=>reject(new Error('Upload interrupted. Refresh before retrying.'));
+  xhr.send(body);
+ });
+}
 function mediaCard(m,picker=false){return `${picker?`<button class="media-picker-button" data-action="pick-media" data-id="${E(m.id)}">`:''}<article class="media-card"><div class="media-thumb">${m.mime.startsWith('image/')?`<img src="${E(m.url)}" alt="${E(m.filename)}" loading="lazy">`:picker?icon('film'):`<video src="${E(m.url)}" controls playsinline preload="none" muted aria-label="Preview ${E(m.filename)}"></video>`}</div><div class="media-card-info"><strong>${E(m.filename)}</strong><small>${m.mime.startsWith('image/')?'Image':'Video'} · ${(m.size/1024/1024).toFixed(2)} MB</small>${picker?'':`<div class="media-card-actions"><button data-action="copy-media" data-id="${E(m.id)}">Copy link</button><a href="${E(m.url)}" target="_blank" rel="noopener">Open ↗</a><button data-action="archive-media" data-id="${E(m.id)}">Archive</button></div>`}</div></article>${picker?'</button>':''}`;}
 function historyPage(){return `${heading('Room to evolve','A history worth keeping.','Each publication is saved. Restore a previous version to a draft, review it, then publish when ready.')}<section class="admin-panel">${!historyLoaded?'<div class="empty-state"><p>Opening the version history…</p></div>':historyItems.length?historyItems.map(h=>`<div class="history-item"><span class="history-version">v${h.revision}</span><div class="history-copy"><h3>${E(h.summary)}</h3><p>${friendlyDate(h.created_at)}</p></div>${h.revision===workspace.publishedVersion?'<span class="pill">Current</span>':''}<button class="admin-button secondary" data-action="restore" data-id="${E(h.id)}">Restore draft ${icon('history')}</button></div>`).join(''):empty('history','Your next chapter starts here.','Version history will appear after your first publication.','','')}</section>`;}
 function documentationPage(){
@@ -253,7 +319,7 @@ function openOfferEditor(id,kind='offer',placement='popup'){
 }
 
 function updateMediaPreview(path,value,type){const input=$(`[data-media-input="${path}"]`);if(input)input.value=value;const el=$(`[data-media-preview="${path}"]`);if(el)el.innerHTML=value?type==='video'?`<video src="${E(value)}" controls preload="metadata"></video>`:`<img src="${E(value)}" alt="Selected media preview">`:icon(type==='video'?'film':'media');}
-async function loadMedia(){if(preview){mediaLoaded=true;mediaItems=[];if(section==='media')render();return;}try{const data=await api('/api/admin/media');mediaItems=data.items;mediaLoaded=true;if(section==='media')render();}catch(error){toast(error.message);}}
+async function loadMedia(){if(mediaR51Loading)return;mediaR51Error='';if(preview){mediaLoaded=true;mediaItems=[];if(section==='media')render();return;}mediaR51Loading=true;try{const data=await api('/api/admin/media');if(!Array.isArray(data.items))throw Error('Invalid media inventory response.');mediaItems=data.items;mediaLoaded=true;}catch(error){mediaR51Error=error.message;mediaItems=[];mediaLoaded=true;toast(error.message);}finally{mediaR51Loading=false;if(section==='media')render();}}
 async function loadHistory(){if(preview){historyLoaded=true;historyItems=[];if(section==='history')render();return;}try{const data=await api('/api/admin/history');historyItems=data.items;historyLoaded=true;if(section==='history')render();}catch(error){toast(error.message);}}
 let mediaCallback=null,mediaFilter='image';
 async function chooseMedia(callback,type='image'){
@@ -272,6 +338,7 @@ function filePrompt(accept,callback){
  input.click();
 }
 async function uploadFile(file,select=false){
+ if(mediaR51Uploading){toast('An upload is already in progress.');return;}
  if(preview){toast('Uploads require the live signed-in owner workspace, not a preview.');return;}
  const extension=String(file.name.split('.').pop()||'').toLowerCase();
  const types={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',gif:'image/gif',avif:'image/avif',mp4:'video/mp4',webm:'video/webm'};
@@ -279,6 +346,7 @@ async function uploadFile(file,select=false){
  if(!Object.values(types).includes(type)){toast('Choose PNG, JPG, WebP, GIF, AVIF, MP4 or WebM.');return;}
  const isVideo=type.startsWith('video/'),limit=(isVideo?25:8)*1024*1024;
  if(!file.size||file.size>limit){toast(isVideo?'Video exceeds 25 MB. Compress the video and try again.':'Image exceeds 8 MB. Resize or compress it and try again.');return;}
+ mediaR51Uploading=true;
  const progress=document.createElement('div');
  progress.className='upload-progress';
  progress.setAttribute('role','status');progress.setAttribute('aria-live','polite');
@@ -288,9 +356,9 @@ async function uploadFile(file,select=false){
   const body=new FormData();
   const upload=file.type===type?file:new File([file],file.name,{type,lastModified:file.lastModified});
   body.append('file',upload,upload.name);
-  const item=await api('/api/admin/media',{method:'POST',body,signal:AbortSignal.timeout(90000)});
+  const item=await mediaR51Transfer(body,percent=>{progress.textContent=percent===100?'Transfer complete — waiting for storage confirmation…':'Uploading '+file.name+' · '+percent+'%';});
   if(!item?.id||!/^\/media\/[a-z0-9-]+$/i.test(item.url||''))throw new Error('Upload response was incomplete. Refresh Media Library before retrying, to avoid a duplicate.');
-  mediaItems.unshift(item);mediaLoaded=true;
+  mediaItems.unshift(item);mediaLoaded=true;mediaR51Error='';
   if(select&&mediaCallback){const callback=mediaCallback;mediaCallback=null;closeModal();callback(item.url);}
   else if(section==='media')render();
   toast('Upload saved. '+(select?'Image or video selected — save and publish your changes.':'Choose this asset on a project, campaign, or showcase.'));
@@ -300,7 +368,7 @@ async function uploadFile(file,select=false){
   progress.textContent=message;
   progress.setAttribute('role','alert');
   toast(message);
- }finally{if(progress.getAttribute('role')!=='alert')progress.remove();}
+ }finally{mediaR51Uploading=false;if(progress.getAttribute('role')!=='alert')progress.remove();if(section==='media'&&!select&&progress.getAttribute('role')!=='alert')render();}
 }
 function applyProjectFilter(){const query=($('#project-search')?.value||'').toLowerCase(),filter=$('#project-filter')?.value||'all';$$('[data-project-row]').forEach(row=>{const p=workspace.state.projects.find(p=>p.id===row.dataset.projectRow);row.hidden=!p.name.toLowerCase().includes(query)||(filter==='featured'&&!p.featured)||(filter==='visible'&&!p.published)||(filter==='hidden'&&p.published);});}
 document.addEventListener('input',event=>{
@@ -397,7 +465,7 @@ document.addEventListener('click',async event=>{
   if(action==='pick-media'){const item=mediaItems.find(m=>m.id===id),callback=mediaCallback;closeModal();callback?.(item.url);return;}
   if(action==='upload'||action==='picker-upload'){filePrompt(action==='picker-upload'?mediaFilter==='image'?'image/png,image/jpeg,image/webp,image/gif,image/avif':'video/mp4,video/webm':'image/png,image/jpeg,image/webp,image/gif,image/avif,video/mp4,video/webm',file=>uploadFile(file,action==='picker-upload'));return;}
   if(action==='copy-media'){const item=mediaItems.find(m=>m.id===id);try{await navigator.clipboard.writeText(location.origin+item.url);toast('Media link copied.');}catch{showModal('Your media link.','Copy this link to reuse the file.',`<input style="width:100%;padding:12px;border:1px solid #dce5d1" readonly value="${E(location.origin+item.url)}">`,'','small');}return;}
-  if(action==='archive-media'){confirmAction('Archive this asset?','It will leave the media library. Existing website references and saved versions will keep working.',async()=>{await api('/api/admin/media/'+id,{method:'DELETE'});mediaItems=mediaItems.filter(m=>m.id!==id);render();toast('Asset archived.');},'Archive asset');return;}
+  if(action==='archive-media'){toast('Archiving is disabled because existing website links may stop working.');return;}
   if(action==='restore'){confirmAction('Return to this chapter?','This version will replace your draft. The current live site stays in place until you publish.',async()=>{const data=await api('/api/admin/restore',{method:'POST',body:JSON.stringify({id,draftVersion:workspace.draftVersion})});workspace={...data,dirty:false};safeRender();toast('Version restored to draft. Preview, then publish when ready.');},'Restore to draft');return;}
   if(action==='discard'){confirmAction('Discard your draft changes?','Your draft will return to the current published version.',async()=>{const data=await api('/api/admin/discard',{method:'POST',body:JSON.stringify({draftVersion:workspace.draftVersion})});workspace={...data,dirty:false};safeRender();toast('Draft reset to the published version.');},'Discard draft');return;}
   if(action==='export'){const blob=new Blob([JSON.stringify({format:'veloryz-studio-v1',state:workspace.state},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='veloryz-studio-content.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return;}
