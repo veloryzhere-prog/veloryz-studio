@@ -252,7 +252,7 @@
   return '<div class="v4-question-heading"><div class="v4-kicker">'+kicker+(optional?'<span> · OPTIONAL</span>':'')+'</div><h1 id="v4-question-title" tabindex="-1">'+title+'</h1><p>'+description+'</p></div>';
  }
  function categoriesScreen(){
-  return sectionTitle('LET’S BEGIN','What are you thinking of creating?','Choose the type of project that feels closest. You can change it later.')+
+  return sectionTitle('LET’S BEGIN','What would you like to build?','Choose the closest match to your idea. You can change it later.')+
   '<div class="v4-category-grid">'+categories.map((name,i)=>cardSelect(name,categorySummary[name],'category',name,data.category===name,String(i+1).padStart(2,'0'))).join('')+'</div>';
  }
  function externalDesigns(){
@@ -441,7 +441,7 @@
   return sectionTitle('07 / YOUR PROJECT PLAN','Everything looks good?','Review your project, save the planning proposal, or send your brief to the VELORYZ team for a personal quotation.')+
    '<div class="v4-review-layout"><div class="v4-review-sheet"><div class="v4-review-brand"><span>VELORYZ / STUDIO</span><b>YOUR PROJECT OUTLINE</b></div><div class="v4-review-title">An idea with<br><em>direction.</em></div>'+brief()+
    '<div class="v4-review-goal"><span>YOUR MAIN GOAL</span><p>'+escape(data.goal)+'</p></div></div>'+
-   '<div class="v4-review-side"><div class="v4-review-cost"><span>TEAM-REVIEWED PLANNING RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>Our team can discuss scope, pricing, relevant packages and qualified promotions. This is not a binding quote.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><a class="v4-review-team-link" href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Discuss this price with the team ↗</a><p>We will confirm final pricing and any offers after reviewing your request.</p></div></div>'+
+   '<div class="v4-review-side"><div class="v4-review-cost"><span>INDICATIVE PLANNING RANGE</span><strong>'+money(estimate().low)+' – '+money(estimate().high)+'</strong><p>Our team can discuss scope, pricing, relevant packages and qualified promotions. This is not a binding quote.</p></div><button type="button" class="v4-export" data-v4-action="pdf">↓ Download your proposal PDF</button><a class="v4-review-team-link" href="'+escape(teamMessage())+'" target="_blank" rel="noopener noreferrer">Discuss this price with the team ↗</a><p>We will confirm final pricing and any offers after reviewing your request.</p></div></div>'+
    '<aside class="v4-acceptance-journey" aria-label="Your next steps after submitting a VELORYZ project request"><span>THE HANDOFF / WHAT HAPPENS NEXT</span><div><article><strong>01</strong><p><b>Project brief received</b>The full request and your reference appear in the private admin inbox.</p></article><article><strong>02</strong><p><b>Team review and acceptance</b>The VELORYZ team checks scope and decides whether to accept the work.</p></article><article><strong>03</strong><p><b>Detailed project PDF</b>Once accepted, your one-page order summary is prepared. The team separately sends its detailed acceptance email and PDF.</p></article><article><strong>04</strong><p><b>Private portal invitation</b>The team separately sends a secure, one-time activation code from Client Management after your project has been accepted.</p></article><article><strong>05</strong><p><b>Track every milestone</b>Use the Client Portal for progress, approvals, deliverables and messages.</p></article></div></aside>'+ 
     '<label class="v4-consent"><input id="v4-consent" type="checkbox" data-v4-consent '+(data.consent?'checked':'')+'><span>I agree to share this project brief and my contact details with VELORYZ Studio for review. I understand that submitting does not create a client account or accept a quotation.</span></label>';
  }
@@ -467,11 +467,9 @@
   return '';
  }
  function welcomeScreen(){
-  return '<div class="v4-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag"><i></i> VELORYZ STUDIO / PROJECT CREATOR</span><h1>Let’s shape what<br><em>you’re building.</em></h1><p>VELORYZ Project Creator turns your ideas, requirements and references into a clear project brief for the Studio.</p><div class="v4-r20-roadmap" aria-label="Project creator stages"><span><b>01 Discover</b>What you are building</span><span><b>02 Business</b>Context & audience</span><span><b>03 Design</b>Direction & references</span><span><b>04 Scope</b>Pages & features</span><span><b>05 Investment</b>Budget & timing</span><span><b>06 Send</b>Review & submit</span></div><p class="v4-r20-session-note">Your progress is saved during this session.</p><button type="button" class="v4-primary v4-start" data-v4-action="start" aria-label="Start a project">Start creating <span>→</span><span class="sr-only">Start a project</span></button>'+
-  (sessionStorage.getItem(KEY)?'<button class="v4-resume" type="button" data-v4-action="resume">Continue your saved brief ↗</button>':'')+
-  '<aside class="v4-existing-project" aria-label="Returning client and project tracking shortcuts"><span class="v4-existing-label">ALREADY HAVE A PROJECT?</span><p>Have a private VELORYZ project workspace? Open it to check updates and continue with the team.</p><div class="v4-existing-actions"><a href="/client/" class="v4-existing-primary">Open Client Portal <span aria-hidden="true">↗</span></a><a href="/client/" class="v4-existing-secondary">Track your project <span aria-hidden="true">→</span></a></div><small>A team-issued invitation is required for new portal access.</small></aside>'+ 
-   '<div class="v4-welcome-meta"><span>NO SIGN-UP REQUIRED</span><span>PROJECT PLAN & ESTIMATE</span><span>TEAM-REVIEWED REQUEST</span></div></div>'+
-  '<div class="v4-welcome-art" aria-hidden="true"><span class="vz-editorial-orbit vz-orbit-a"></span><span class="vz-editorial-orbit vz-orbit-b"></span><span class="vz-editorial-orbit vz-orbit-c"></span><img class="vz-editorial-v" src="/assets/brand/veloryz-mark.svg" width="340" height="340" alt="" fetchpriority="high"><div class="vz-editorial-caption"><span>VELORYZ / YOUR IDEA</span><span>01 · DISCOVER</span></div></div>';
+  const groups=[['Discover','Choose a project type and starting direction.'],['Design','Define the look, palette and references.'],['Scope','Select pages, features and technical requirements.'],['Plan','Set a budget, timeline and priorities.'],['Review','Share your completed brief with the studio.']];
+  let saved=false;try{saved=!!sessionStorage.getItem(KEY)}catch{}
+  return '<section class="v4-welcome v2-create-welcome"><div class="v4-welcome-copy"><span class="v4-welcome-tag">VELORYZ / CREATE</span><h1>Make your next<br>idea real.</h1><p>Build a clear project brief, explore design directions and understand your investment before speaking with our team.</p><div class="v2-create-start-actions"><button type="button" class="v4-primary v4-start" data-v4-action="start">Start your project <span aria-hidden="true">→</span></button>'+(saved?'<button type="button" class="v4-resume" data-v4-action="resume">Resume your draft ↗</button>':'')+'</div><p class="v4-r20-session-note">No account required. Your draft stays in this browser session until you submit.</p><div class="v2-create-return"><h2>Already working with us?</h2><a href="/client/">Open your client workspace ↗</a><a href="/support/">Get support ↗</a></div></div><aside class="v2-create-overview"><span class="v4-kicker">THE PROCESS</span><h2>From idea to brief.</h2><ol>'+groups.map(([title,desc],i)=>'<li><span>'+String(i+1).padStart(2,'0')+'</span><div><strong>'+title+'</strong><p>'+desc+'</p></div></li>').join('')+'</ol><div class="v2-create-note">Your estimate is indicative. Our team confirms final scope and pricing in writing.</div></aside></section>';
  }
  function successScreen(){
   const code=escape(finished?.reference||'—'),email=escape(data.email||'your email');
@@ -504,13 +502,13 @@
  }
  function app(){
   const welcome=active==='welcome',success=active==='success',index=at()+1,total=flow().length;
-  return '<div class="v4-root">'+header()+
+  return '<div class="v4-root v2-create" data-v2-stage="'+escape(active)+'">'+header()+
    (welcome?welcomeScreen():success?successScreen():
-     '<section class="v4-question-view"><div class="v4-question-wrap"><div class="v4-side-number" aria-hidden="true">'+String(index).padStart(2,'0')+' / '+String(total).padStart(2,'0')+'</div>'+
-      '<div class="v4-question-inner" id="v4-question-body">'+view(active)+
+     '<section class="v4-question-view"><div class="v4-question-wrap"><aside id="v4-ai-slot" aria-label="Project AI workspace"></aside>'+
+      '<div class="v4-question-inner" id="v4-question-body"><div class="v2-step-caption">'+escape(meta(active)[0])+' <span>Question '+index+' of '+total+'</span></div>'+view(active)+
       '<p id="v4-error" class="v4-error" role="alert" '+(error?'':'hidden')+'>'+escape(error)+'</p>'+
       '<p id="v4-notice" class="v4-notice" role="status" '+(inlineNotice?'':'hidden')+'>'+escape(inlineNotice)+'</p></div></div></section>')+
-   '<div id="v4-ai-slot"></div></div>';
+   ((welcome||success)?'<div id="v4-ai-slot" class="v2-ai-landing-slot"></div>':'')+'</div>';
  }
  function render(){
   const target=document.querySelector('.v4-root');
