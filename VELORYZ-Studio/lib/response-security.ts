@@ -49,7 +49,8 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
   headers['X-VELORYZ-QC-Release']='visual-layout-20261123-r7';
   headers['X-VELORYZ-Homepage-Release']='v2-alpha2-benchmark-20261126';
  }
- html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+'</head>');
+ const v2Assets=!privatePage&&status===200?(referenceMenu?'<link rel="stylesheet" href="/v2-home-warm.css?v=20261126-v2"><script defer src="/v2-home-warm.js?v=20261126-v2"></script>':'<link rel="stylesheet" href="/v2-workspaces.css?v=20261126-v2">'):'';
+ html=html.replace('</head>','<link rel="stylesheet" href="/make-project.css"><link rel="stylesheet" href="/chat-experience.css">'+silkUiAssets+editorialAssets+menuAssets+qcAssets+v2Assets+'</head>');
  // Version first-party UI resources so a regular browser cannot combine old cached CSS with new JavaScript.
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-chat-spice-20261121"`);
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});
