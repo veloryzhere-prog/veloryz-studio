@@ -1,0 +1,1499 @@
+{
+  "method": "Distinct successfully extracted pages, six observable content/link signals per site. Absence in limited extraction is not a defect. No pixel, animation, or speed claims.",
+  "attempted": 130,
+  "usable": 117,
+  "stats": [
+    {
+      "name": "clear-description",
+      "observed": 115,
+      "notObserved": 2
+    },
+    {
+      "name": "heading-visible-in-extract",
+      "observed": 88,
+      "notObserved": 29
+    },
+    {
+      "name": "work-navigation",
+      "observed": 40,
+      "notObserved": 77
+    },
+    {
+      "name": "contact-navigation",
+      "observed": 35,
+      "notObserved": 82
+    },
+    {
+      "name": "product-discovery",
+      "observed": 20,
+      "notObserved": 97
+    },
+    {
+      "name": "knowledge-navigation",
+      "observed": 18,
+      "notObserved": 99
+    }
+  ],
+  "rows": [
+    {
+      "url": "https://locomotive.ca/en",
+      "title": "Locomotive | Montreal web agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://lusion.co/",
+      "title": "Lusion - Award Winning 3D and Interactive Web Studio",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://studiodumbar.com/",
+      "title": "Home",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://obys.agency/",
+      "title": "Obys Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://unseen.co/",
+      "title": "Unseen Studio® – Brand, Digital & Motion",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://bruno-simon.com/",
+      "title": "Bruno Simon",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://immersive-g.com/",
+      "title": "Immersive Garden",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://linear.app/",
+      "title": "Linear – The system for product development",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.framer.com/marketplace/templates/",
+      "title": "Website Templates — Framer Marketplace",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.typeform.com/",
+      "title": "Form Builder with AI Automation | Typeform",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.mintlify.com/",
+      "title": "Mintlify - The documentation platform for agents",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://vercel.com/geist/introduction",
+      "title": "Geist",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.monodesk.com/",
+      "title": "MonoDesk: All-in-One Workspace for Freelance Creatives",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.notion.com/",
+      "title": "A shared brain for your team and agents. | Notion",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://stripe.com",
+      "title": "Stripe | Financial Infrastructure to Grow Your Revenue",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.figma.com/",
+      "title": "Figma: The collaborative canvas for design, code, and AI",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.raycast.com/",
+      "title": "Raycast - Your shortcut to everything",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.pentagram.com/",
+      "title": "Pentagram — The world’s largest independent design consultancy",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.instrument.com/",
+      "title": "Instrument | Redefining brands and experiences | Instrument",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://ustwo.com/",
+      "title": "ustwo | Digital Product Studio",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://work.co/",
+      "title": "Work & Co | Digital Product Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://fantasy.co/",
+      "title": "Fantasy | AI-Native Digital Product Design Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.hugeinc.com/",
+      "title": "Huge.",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://rga.com/",
+      "title": "R/GA | We design intelligent brand systems that help businesses get ahead.",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.akqa.com/",
+      "title": "AKQA | Frontier Agency for Design, Innovation and AI - AKQA",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.ideo.com/",
+      "title": "IDEO : Human-centered design",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.frog.co/",
+      "title": "frog | Your reinvention and experience partner",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.basicagency.com/",
+      "title": "BASIC/DEPT® | Digital Branding & Product Design Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://madebyon.com/",
+      "title": "Made by ON – Creative technology for launch, optimisation and scale",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://wearecollins.com/",
+      "title": "COLLINS",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.wolffolins.com/",
+      "title": "Global Brand Consultancy — Wolff Olins",
+      "signals": {
+        "clear-description": false,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://koto.com/",
+      "title": "Koto, an international creative agency building impactful brands",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.design.studio/",
+      "title": "DesignStudio is now Further",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://landor.com",
+      "title": "Landor",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://movingbrands.com/",
+      "title": "Moving Brands",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://raggededge.com/",
+      "title": "Ragged Edge. A global branding agency proudly based in London.",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.motherdesign.com/",
+      "title": "Mother Design | Brand Strategy and Design",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.apple.com/",
+      "title": "Apple",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.airbnb.com/",
+      "title": "Airbnb | Vacation rentals, cabins, beach houses, & more",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.shopify.com/",
+      "title": "Shopify: The All-in-One Commerce Platform for Businesses - Shopify",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://webflow.com/",
+      "title": "Webflow: The agentic web platform for modern businesses",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.squarespace.com/",
+      "title": "Website Builder – Easily Create Your Own Website — Squarespace",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.wix.com/",
+      "title": "Wix.com - The platform trusted by millions of businesses",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://cargo.site",
+      "title": "Cargo",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.behance.net/",
+      "title": "Showcase, Discover, and Hire Creatives :: Behance",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://dribbble.com/",
+      "title": "Dribbble - Discover the World’s Top Designers & Creative Professionals",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://superhuman.com",
+      "title": "Superhuman: Docs, Mail, and AI That Work Everywhere",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": true,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.dropbox.com/",
+      "title": "Dropbox: Secure cloud storage, file sharing, and more",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://slack.com/",
+      "title": "Slack | AI Work Platform & Productivity Tools",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://asana.com",
+      "title": "Asana: The OS for human-agent teams",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://monday.com/",
+      "title": "The AI Workspace for People & Agents | monday.com",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://clickup.com",
+      "title": "ClickUp™ | Maximize productivity • Software, AI, and humans converge",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.atlassian.com",
+      "title": "Collaboration for Software, IT & Business Teams",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://trello.com/",
+      "title": "Capture, organize, and tackle your to-dos from anywhere",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://basecamp.com/",
+      "title": "Basecamp",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.awwwards.com/",
+      "title": "Awwwards - Website Awards - Best Web Design Trends",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.cssdesignawards.com/",
+      "title": "CSS Design Awards - Website Awards - Best Web Design Inspiration - CSS Awards",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.siteinspire.com/",
+      "title": "Best Website Design Inspiration | Siteinspire",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://onepagelove.com/",
+      "title": "One Page Love | Website Inspiration, Sections, Fonts & Templates",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://land-book.com/",
+      "title": "Landbook - website design inspiration gallery",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.lapa.ninja/",
+      "title": "Landing Page Design Examples: 7,300+ Best Landing Pages | Lapa Ninja",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://mobbin.com/",
+      "title": "Mobbin — UI & UX design inspiration for mobile & web apps",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://pageflows.com/",
+      "title": "UI/UX Design Inspiration & User Flows from Top Apps — Page Flows",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://curated.design/",
+      "title": "Web design inspiration from real, live websites — Curated",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://vercel.com/",
+      "title": "Agentic Infrastructure - Vercel",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.netlify.com/",
+      "title": "Where apps come to life | Netlify",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.cloudflare.com/",
+      "title": "Cloudflare: Build for the agent era",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://supabase.com/",
+      "title": "Supabase | The Postgres Development Platform",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://nextjs.org/",
+      "title": "Next.js by Vercel - The React Framework",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://tailwindcss.com/",
+      "title": "Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://motion.dev",
+      "title": "Motion (prev Framer Motion): JavaScript & React animation library",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://gsap.com/",
+      "title": "Homepage",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://lenis.dev/",
+      "title": "Lenis – Smooth Scroll",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.nike.com/",
+      "title": "Nike. Just Do It",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.adidas.com/us",
+      "title": "Sneakers and Activewear | adidas US",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://www.patagonia.com/home/",
+      "title": "Patagonia Outdoor Clothing & Gear",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.allbirds.com/",
+      "title": "The World’s Most Comfortable Shoes",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.aesop.com/",
+      "title": "Aesop USA | Formulations for Skin, Hair & Body",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.muji.com/jp/ja/store",
+      "title": "無印良品ネットストア",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.ikea.com/",
+      "title": "Hej! Welcome to IKEA Global",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.sonos.com/en-us/home",
+      "title": "Sonos Black Friday 2026 | Deals on Speakers & Soundbars",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.bang-olufsen.com/en/us",
+      "title": "Bang & Olufsen - High-end Headphones, Speakers, and Televisions",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://nothing.tech/",
+      "title": "Nothing | UK",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.gitbook.com/",
+      "title": " GitBook | The documentation platform for humans and AI",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://readme.com/",
+      "title": "ReadMe · Developer-friendly API documentation",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://docs.github.com/en",
+      "title": "GitHub.com Help Documentation",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/",
+      "title": "MDN Web Docs",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://developers.cloudflare.com/",
+      "title": "Cloudflare Developer Docs",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://supabase.com/docs",
+      "title": "Supabase Docs",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": true
+      }
+    },
+    {
+      "url": "https://docs.stripe.com/",
+      "title": "Documentation",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.intercom.com/",
+      "title": "Intercom | A complete system for human and AI customer service",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.zendesk.com",
+      "title": "AI-Powered Customer Service Platform | Zendesk",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": true,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://front.com/",
+      "title": "Front | Customer service platform, powered by AI",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.stinkstudios.com/",
+      "title": "Stink Studios",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.monks.com/",
+      "title": "Monks",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.b-reel.com/",
+      "title": "B-REEL",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.dept.global/",
+      "title": "The Growth Invention Company | Tech, Marketing, AI Solutions | DEPT®",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://unit9.com/",
+      "title": "UNIT9 — Experiential & Production Studio",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://hellomonday.com/",
+      "title": "Hello Monday",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.northkingdom.com/",
+      "title": "North Kingdom",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.giantant.ca/",
+      "title": "Giant Ant",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://buck.co/",
+      "title": "BUCK",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.ordinaryfolk.co/",
+      "title": "Ordinary Folk – Motion Design & Animation Studio, Vancouver",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://futuredeluxe.com/",
+      "title": "FutureDeluxe",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.dia.studio/",
+      "title": "DIA Studio",
+      "signals": {
+        "clear-description": false,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://panoply.co.uk/",
+      "title": "PANOPLY   -   Creative Studio   -   Beauty, Purpose",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://territorystudio.com/",
+      "title": "Homepage - Territory Studio",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.buildinamsterdam.com/",
+      "title": "Build in Amsterdam",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.codeandtheory.com/",
+      "title": "Code and Theory",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://madebyshape.co.uk",
+      "title": "Web Design Manchester | Web Design Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.metalab.com/",
+      "title": "Metalab | We make interfaces",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://clay.global",
+      "title": "Clay | UX Design & Branding Agency",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.ramotion.com/",
+      "title": "Digital Product Firm - Design Agency | Ramotion",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": true,
+        "contact-navigation": true,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.nngroup.com/",
+      "title": "Nielsen Norman Group:  UX Training, Consulting, & Research",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://baymard.com/",
+      "title": "Ecommerce UX Research & Best Practices – Baymard",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.smashingmagazine.com/",
+      "title": "Smashing Magazine — For Web Designers And Developers",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": true,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    },
+    {
+      "url": "https://www.ibm.com/design/language/",
+      "title": "IBM Design Language",
+      "signals": {
+        "clear-description": true,
+        "heading-visible-in-extract": false,
+        "work-navigation": false,
+        "contact-navigation": false,
+        "product-discovery": false,
+        "knowledge-navigation": false
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "url": "https://www.active-theory.com/",
+      "status": "content retrieved",
+      "title": "Google"
+    },
+    {
+      "url": "https://bureaucratik.com/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.resn.com/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.readymag.com/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.height.app/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.godly.website/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.astro.build/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.jam3.com/",
+      "status": "content retrieved",
+      "title": "Monks"
+    },
+    {
+      "url": "https://www.manvsmachine.co.uk/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.field.io/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.uxdesign.cc/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.nike.design/",
+      "status": "not retrieved"
+    },
+    {
+      "url": "https://www.designsystem.digital.gov/",
+      "status": "not retrieved"
+    }
+  ]
+}
