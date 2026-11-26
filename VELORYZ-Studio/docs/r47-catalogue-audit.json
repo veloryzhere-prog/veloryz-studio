@@ -1,0 +1,998 @@
+{
+  "catalogueCount": 110,
+  "interactive": 11,
+  "visual": 96,
+  "noImage": 3,
+  "records": [
+    {
+      "id": "os-template-libraries-cento-100-websites",
+      "source": "https://github.com/koative/cento",
+      "recordedLicense": "MIT (repo claim)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-uiuxlabz-120-sites",
+      "source": "https://github.com/uiuxlabz/uiuxlabz",
+      "recordedLicense": "MIT (repo claim)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-colorlib-bootstrap-templates",
+      "source": "https://github.com/ColorlibHQ/bootstrap-templates",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-freeframe-templates",
+      "source": "https://github.com/empeeryal/freeframe-templates",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-novpix-free-html-templates",
+      "source": "https://github.com/Novpix/free-html-templates",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-8b-site-template-collection",
+      "source": "https://github.com/8bsite",
+      "recordedLicense": "MIT on template repos",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": false,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-start-bootstrap-agency",
+      "source": "https://github.com/StartBootstrap/startbootstrap-agency",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-start-bootstrap-freelancer",
+      "source": "https://github.com/StartBootstrap/startbootstrap-freelancer",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-bcms-starters",
+      "source": "https://github.com/bcms/starters",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-template-libraries-170-html-site-collection",
+      "source": "https://github.com/dawidolko/Website-Templates",
+      "recordedLicense": "PER ITEM REVIEW",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-vercel-commerce",
+      "source": "https://github.com/vercel/commerce",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-shopify-hydrogen",
+      "source": "https://github.com/Shopify/hydrogen",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-medusa-commerce-platform",
+      "source": "https://github.com/medusajs/medusa",
+      "recordedLicense": "MIT (core; review packages)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-medusa-b2b-starter",
+      "source": "https://github.com/medusajs/b2b-starter",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-spree-storefront",
+      "source": "https://github.com/spree/storefront",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-spree-commerce",
+      "source": "https://github.com/spree/spree",
+      "recordedLicense": "BSD-3-Clause",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-vendure-storefront",
+      "source": "https://github.com/vendurehq/storefront",
+      "recordedLicense": "MIT (front-end)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-vendure-next-starter",
+      "source": "https://github.com/vendurehq/nextjs-starter-vendure",
+      "recordedLicense": "MIT (front-end)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-bagisto",
+      "source": "https://github.com/bagisto/bagisto",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-the-front-kit-starter",
+      "source": "https://github.com/thefrontkit/nextjs-ecommerce-starter",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-nextfaster-ecommerce",
+      "source": "https://github.com/ethanniser/NextFaster",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-epic-ecommerce-next-starter",
+      "source": "https://github.com/Epic-Design-Labs/nextjs-ecommerce-starter",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-commerce-and-b2b-saleor-storefront",
+      "source": "https://github.com/saleor/storefront",
+      "recordedLicense": "VERIFY CURRENT LICENSE",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-grocergo",
+      "source": "https://github.com/Lucasdota/GrocerGo",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-next-grocery",
+      "source": "https://github.com/alexnguyennz/grocery",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-organicfarm-multivendor",
+      "source": "https://github.com/Fouzia-Oreen/OrganicFarm_MultiVendor-Grocery-Ecommerce",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-open-food-network",
+      "source": "https://github.com/openfoodfoundation/openfoodnetwork",
+      "recordedLicense": "AGPL-3.0",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-nextorders-food",
+      "source": "https://github.com/nextorders/food",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-meal-mart",
+      "source": "https://github.com/design-sparx/meal-mart",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-hangry",
+      "source": "https://github.com/aayushai/Hangry",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-react-food-ordering",
+      "source": "https://github.com/windsuzu/react-food-ordering",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-next-restaurant-app",
+      "source": "https://github.com/blackslashcreative/next-restaurant-app",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-8b-restaurant-site",
+      "source": "https://github.com/8bsite/restaurant-website-template",
+      "recordedLicense": "MIT (HTML; third-party separate)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-grocery-and-delivery-grilli-restaurant",
+      "source": "https://github.com/codewithsadee/grilli",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-logistics-and-transport-the-mixly-logistics",
+      "source": "https://github.com/themixlyweb/nextjs-logistics-website-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-logistics-and-transport-astroflow",
+      "source": "https://github.com/sudeep2003/AstroFlow",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-logistics-and-transport-warp-tools",
+      "source": "https://github.com/wearewarp/warp-tools",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-project-management-plane",
+      "source": "https://github.com/makeplane/plane",
+      "recordedLicense": "AGPL-3.0",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-project-management-wekan",
+      "source": "https://github.com/wekan/wekan",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-project-management-vikunja",
+      "source": "https://github.com/go-vikunja/vikunja",
+      "recordedLicense": "AGPL-3.0-or-later",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-project-management-appflowy",
+      "source": "https://github.com/AppFlowy-IO/AppFlowy",
+      "recordedLicense": "AGPL-3.0",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-project-management-taiga-front",
+      "source": "https://github.com/taigaio/taiga-front",
+      "recordedLicense": "AGPL-3.0",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-refine",
+      "source": "https://github.com/refinedev/refine",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-react-admin",
+      "source": "https://github.com/marmelab/react-admin",
+      "recordedLicense": "MIT (core)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-tabler",
+      "source": "https://github.com/tabler/tabler",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-coreui-free-react-admin",
+      "source": "https://github.com/coreui/coreui-free-react-admin-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-adminlte",
+      "source": "https://github.com/ColorlibHQ/AdminLTE",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-next-js-saas-starter",
+      "source": "https://github.com/nextjs/saas-starter",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-ixartz-saas-boilerplate",
+      "source": "https://github.com/ixartz/SaaS-Boilerplate",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-ixartz-landing-starter",
+      "source": "https://github.com/ixartz/Next-JS-Landing-Page-Starter-Template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-lumen-cinematic-ai-saas",
+      "source": "https://github.com/MiddleSugar7000/lumen-saas-landing-page-template",
+      "recordedLicense": "MIT (HTML; check dependencies)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-volt-arc-product-landing",
+      "source": "https://github.com/MiddleSugar7000/volt-arc-landing-page-template",
+      "recordedLicense": "MIT (HTML; check dependencies)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-motion-saas-landing",
+      "source": "https://github.com/karthikmudunuri/saas-landing-page-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-dashboards-and-saas-shadcn-fintech",
+      "source": "https://github.com/abderrahimghazali/shadcn-fintech",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-8b-creative-agency",
+      "source": "https://github.com/8bsite/creative-agency-website-template",
+      "recordedLicense": "MIT (template; scripts separate)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-8b-design-studio",
+      "source": "https://github.com/8bsite/design-studio-website-template",
+      "recordedLicense": "MIT (template; scripts separate)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-8b-architecture",
+      "source": "https://github.com/8bsite/architecture-website-template",
+      "recordedLicense": "MIT (template; scripts separate)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-8b-coworking",
+      "source": "https://github.com/8bsite/coworking-website-template",
+      "recordedLicense": "MIT (template; scripts separate)",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-svelte-gsap-site",
+      "source": "https://github.com/YusufCeng1z/svelte-gsap-template",
+      "recordedLicense": "MIT (app; GSAP separate)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-naresh-3d-portfolio",
+      "source": "https://github.com/Naresh-Khatri/3d-portfolio",
+      "recordedLicense": "MIT (template; assets verify)",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-trevsm-3d-bedroom-portfolio",
+      "source": "https://github.com/trevsm/3D-Portfolio",
+      "recordedLicense": "MIT (template; assets verify)",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-cinematic-portfolio",
+      "source": "https://github.com/5araang/Nextjs-cinematic-portfolio",
+      "recordedLicense": "MIT (template; assets verify)",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-gsap-lenis-portfolio",
+      "source": "https://github.com/aitezazdev/Portfolio",
+      "recordedLicense": "MIT (template; scripts separate)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-motion-portfolio-starter",
+      "source": "https://github.com/karthikmudunuri/portfolio-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-animated-portfolio-framer",
+      "source": "https://github.com/ikramdeveloper/animated-portfolio-framer-motion",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-portfolio-and-agencies-msrrana-animated-portfolio",
+      "source": "https://github.com/MSRRana/animated-portfolio",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-publishing-and-blogs-wren-editorial",
+      "source": "https://github.com/codewithsadee/wren",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "real-upstream-html",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-publishing-and-blogs-tailwind-next-blog",
+      "source": "https://github.com/timlrx/tailwind-nextjs-starter-blog",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-publishing-and-blogs-lonestone-astro",
+      "source": "https://github.com/lonestone/astro-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-education-and-lms-next-tailwind-e-learning",
+      "source": "https://github.com/GetNextjsTemplates/eLearning-tailwind-nextjs-free",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-education-and-lms-eduor",
+      "source": "https://github.com/TheNeovimmer/eduor",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-education-and-lms-lms-v1",
+      "source": "https://github.com/TwilightLogic/lms-v1",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-tournest",
+      "source": "https://github.com/themesine/TourNest",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-travel-agency-next",
+      "source": "https://github.com/mafzalkalwardev/travel-agency-website",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-mixly-tourism",
+      "source": "https://github.com/themixlyweb/react-tourism-website-template",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-hotel-booking",
+      "source": "https://github.com/htoann/Hotel-Booking",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-robinson",
+      "source": "https://github.com/nikcladis/robinson",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-travel-and-hotel-hotel-booking-system",
+      "source": "https://github.com/thanhhoa3514/hotel-booking-system",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-real-estate-next-real-estate",
+      "source": "https://github.com/hamidkhans651/nextjs-real-estate-project",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-real-estate-real-estate",
+      "source": "https://github.com/tumon-art/real_estate",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-real-estate-real-estate-site",
+      "source": "https://github.com/jkarelins/real-estate-site",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-jobs-and-hiring-bordful",
+      "source": "https://github.com/craftled/bordful",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-jobs-and-hiring-jobhive",
+      "source": "https://github.com/shouqatazeez/jobhive",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-nonprofit-and-community-smartergiving-nonprofit",
+      "source": "https://github.com/smartergiving/free-nonprofit-starter-website",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-nonprofit-and-community-carbonplan-site",
+      "source": "https://github.com/carbonplan/carbonplan.org",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-nonprofit-and-community-flarum",
+      "source": "https://github.com/flarum/flarum",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-nonprofit-and-community-discourse",
+      "source": "https://github.com/discourse/discourse",
+      "recordedLicense": "GPL-2.0",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-healthcare-and-forms-healthcare-dashboard",
+      "source": "https://github.com/heyyakash/healthcare",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-healthcare-and-forms-nhs-design-system-resources",
+      "source": "https://github.com/jibrel/Awesome-healthcare-UI",
+      "recordedLicense": "PER ITEM REVIEW",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-healthcare-and-forms-colorlib-html-forms",
+      "source": "https://github.com/ColorlibHQ/html-form-templates",
+      "recordedLicense": "VERIFY REPO LICENSE",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-healthcare-and-forms-colorlib-html-tables",
+      "source": "https://github.com/ColorlibHQ/html-table-templates",
+      "recordedLicense": "VERIFY REPO LICENSE",
+      "rights": "review",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-motion-framer-motion",
+      "source": "https://github.com/motiondivision/motion",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-lenis",
+      "source": "https://github.com/darkroomengineering/lenis",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-motion-primitives",
+      "source": "https://github.com/ibelick/motion-primitives",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-magic-ui",
+      "source": "https://github.com/magicuidesign/magicui",
+      "recordedLicense": "MIT (OSS core)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-shadcn-ui",
+      "source": "https://github.com/shadcn-ui/ui",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-react-three-fiber",
+      "source": "https://github.com/pmndrs/react-three-fiber",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-drei",
+      "source": "https://github.com/pmndrs/drei",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-react-spring",
+      "source": "https://github.com/pmndrs/react-spring",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-anime-js",
+      "source": "https://github.com/juliangarnier/anime",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-lottie-web",
+      "source": "https://github.com/airbnb/lottie-web",
+      "recordedLicense": "MIT",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-uiverse-galaxy",
+      "source": "https://github.com/uiverse-io/galaxy",
+      "recordedLicense": "MIT (repo)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-velora-ui",
+      "source": "https://github.com/ColorlibHQ/velora-ui",
+      "recordedLicense": "MIT (free core)",
+      "rights": "candidate",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-motion-and-ui-components-react-bits",
+      "source": "https://github.com/DavidHDev/react-bits",
+      "recordedLicense": "MIT + Commons Clause",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-anon-e-commerce",
+      "source": "https://github.com/codewithsadee/anon-ecommerce-website",
+      "recordedLicense": "NO LICENSE (as checked)",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-gamics-gaming",
+      "source": "https://github.com/codewithsadee/gamics",
+      "recordedLicense": "NO LICENSE (as checked)",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-magic-portfolio",
+      "source": "https://github.com/once-ui-system/magic-portfolio",
+      "recordedLicense": "CC BY-NC 4.0",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-cruip-landing-page",
+      "source": "https://github.com/cruip/tailwind-landing-page-template",
+      "recordedLicense": "RESTRICTED REDISTRIBUTION",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": true,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-framer-marketplace-examples",
+      "source": "https://www.framer.com/marketplace/",
+      "recordedLicense": "PER TEMPLATE TERMS",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": false,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    },
+    {
+      "id": "os-restricted-inspiration-gsap",
+      "source": "https://gsap.com/",
+      "recordedLicense": "PROPRIETARY / TERMS",
+      "rights": "restricted",
+      "preview": "catalogued",
+      "hasImage": false,
+      "reviewStatus": "pending-upstream-and-assets-review"
+    }
+  ]
+}

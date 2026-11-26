@@ -58,6 +58,8 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  html=html.replace(/(src|href)="(\/[^"?#]+\.(?:css|js))"/g,(_,attribute,path)=>`${attribute}="${path}?v=veloryz-layout-20261126-r42"`);
  // Only refresh assets changed by R45; keep other release-specific cache contracts.
  html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
+ // R47 marketplace assets are versioned separately from shared design tokens.
+ html=html.replace(/((?:src|href)="\/veloryz-open-library\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r47"');
  // Keep R46 runtime and lazy WebGL import on one cache generation.
  html=html.replace(/(src="\/(?:motion-clock|smooth-scroll|frame-cut|motion-boot|motion-3d|reference-review-loop)\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r46"');
  return new Response(html.replace(/<script\b/g,`<script nonce="${nonce}"`),{status,headers});

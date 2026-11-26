@@ -92,7 +92,7 @@ document.addEventListener('click',event=>{
   if(!['desktop','tablet','mobile'].includes(width))return;
   stage.dataset.vzDevice=width;
   document.querySelectorAll('[data-vz-device]').forEach(button=>button.setAttribute('aria-pressed',String(button===control)));
-  setStatus('Viewport: '+width+(stage.dataset.previewState==='ready'?' · interactive website':' · visual reference'));
+  setStatus('Viewport: '+width+(stage.dataset.previewState==='ready'?' · interactive website':stage.dataset.previewState==='loading'?' · checking website':' · visual reference'));
   command('report');
   return;
  }

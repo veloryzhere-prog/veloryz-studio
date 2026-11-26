@@ -6,6 +6,14 @@ const legacy=typeof previous.entries==='function'?previous.entries.bind(previous
 let imported=Array.isArray(window.VELORYZ_OPEN_DESIGNS)?window.VELORYZ_OPEN_DESIGNS:[],
 category='All',rights='All',motion='All',price='All',query='',sort='featured',page=1;
 const perPage=24;
+const saved=new Set(),compare=new Set();let onlySaved=false,previewFilter='All';
+const limit=3;
+// Explicit user shortlist only, scoped to this browser tab. No account or telemetry.
+try{for(const id of JSON.parse(sessionStorage.getItem('veloryz.market.shortlist.r47')||'[]'))if(typeof id==='string'&&/^[a-z0-9-]{2,100}$/.test(id)&&saved.size<110)saved.add(id);}catch{}
+function persistSaved(){try{sessionStorage.setItem('veloryz.market.shortlist.r47',JSON.stringify([...saved]));}catch{}}
+const referenceOnly=p=>p.rights==='restricted'||/NO LICENSE|CC BY-NC|RESTRICTED|PROPRIETARY|COMMONS CLAUSE/i.test(p.license||'');
+const previewLabel=p=>p.importStatus==='real-upstream-html'?'Interactive source':p.previewImage?'Visual reference':'No source image';
+const handoffLabel=p=>referenceOnly(p)?'Discuss an independent design':'Request a scoped build';
 let observer=null,loadStarted=false,searchTimer=0;
 const escape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const path=p=>'/design/'+encodeURIComponent(p.id)+'/';
@@ -47,13 +55,14 @@ function art(p){
 }
 function card(p,i){
  const [label,tone]=prettyStatus(p);
+ const savedHere=saved.has(p.id),compared=compare.has(p.id);
  const trust=p.rights==='candidate'?'Source candidate · verification pending':p.rights==='review'?'Source review needed':p.rights==='restricted'?'Reference only':'Confirm usage terms before delivery';
  return '<article class="vz-source-card" data-source-card data-price="'+Number(p.price||6000)+'" data-motion="'+motionLevel(p)+'" style="--source-order:'+(i%6)+'">'+art(p)+
  '<div class="vz-source-meta"><span>'+escape(p.category)+'</span><span class="vz-source-pill '+tone+'">'+escape(label)+'</span></div>'+
  '<div class="vz-source-card-body"><div class="vz-r9-card-title"><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3></div><p>'+escape(p.description||'Open the source gallery for details.')+'</p>'+
  '<div class="vz-r9-card-signals"><span><img src="/assets/brand/veloryz-mark.svg" alt="">'+escape(trust)+'</span><span>'+escape(motionLevel(p))+' motion</span><span>'+escape(p.license||'Source terms')+'</span></div>'+
  '<div class="vz-source-price"><span>VELORYZ BUILD FROM</span><strong>'+money(p.price)+'</strong></div>'+
- '<div class="vz-source-card-actions"><a href="'+path(p)+'">Details ↗</a><a href="'+path(p)+'preview/">'+(p.previewType==='real-upstream-site'?'Interactive preview':'Concept preview')+' ↗</a><a href="'+createPath(p)+'">Use this direction ↗</a></div></div></article>';
+ '<div class="vz-source-card-actions"><a href="'+path(p)+'">Details ↗</a><a href="'+path(p)+'preview/">'+(p.importStatus==='real-upstream-html'?'Interactive preview':p.previewImage?'Visual reference':'Preview availability')+' ↗</a><a href="'+createPath(p)+'">'+handoffLabel(p)+' ↗</a></div><div class="vz-r47-card-tools"><button type="button" data-r47-save="'+escape(p.id)+'" aria-pressed="'+savedHere+'">'+(savedHere?'Saved ✓':'Save design')+'</button><button type="button" data-r47-compare="'+escape(p.id)+'" aria-pressed="'+compared+'">'+(compared?'Compared ✓':'Compare')+'</button></div></div></article>';
 }
 function score(p){
  return p.importStatus==='real-upstream-html'?400:
@@ -68,7 +77,7 @@ function filtered(items){
  const res=items.filter(p=>p.sourceType!=='original-veloryz'&&(category==='All'||p.category===category)&&
   (rights==='All'||(rights==='imported'?p.importStatus==='real-upstream-html':
   rights==='original'?p.sourceType==='original-veloryz':p.rights===rights))&&
-  (motion==='All'||motionLevel(p)===motion)&&priceMatch(p)&&
+  (motion==='All'||motionLevel(p)===motion)&&priceMatch(p)&&(!onlySaved||saved.has(p.id))&&(previewFilter==='All'||previewLabel(p)===previewFilter)&&
   (!q||[p.name,p.category,p.description,p.author,p.license,p.motion].join(' ').toLowerCase().includes(q)));
  if(sort==='name')res.sort((a,b)=>a.name.localeCompare(b.name));
  else if(sort==='motion')res.sort((a,b)=>({High:4,Medium:3,Low:2,Varies:1}[motionLevel(b)]||0)-({High:4,Medium:3,Low:2,Varies:1}[motionLevel(a)]||0));
@@ -115,6 +124,11 @@ function featuredGrid(items){
   '<footer><strong>From '+money(p.price)+'</strong><a href="'+createPath(p)+'">Start with this ↗</a></footer></div></article>'
  ).join('')+'</div>';
 }
+function comparison(){
+ const chosen=entries().filter(p=>compare.has(p.id));
+ if(!chosen.length)return '<p>Select up to three designs to compare source status, motion and starting estimates.</p>';
+ return '<div class="vz-r47-compare-grid">'+chosen.map(p=>'<article><h3><a href="'+path(p)+'">'+escape(p.name)+'</a></h3><dl><dt>Starting build</dt><dd>'+money(p.price)+'</dd><dt>Category</dt><dd>'+escape(p.category)+'</dd><dt>Preview</dt><dd>'+previewLabel(p)+'</dd><dt>Motion</dt><dd>'+escape(motionLevel(p))+'</dd><dt>Recorded source license</dt><dd>'+escape(p.license||'Unverified')+'</dd><dt>Handoff</dt><dd>'+handoffLabel(p)+'</dd></dl><a href="'+createPath(p)+'">'+handoffLabel(p)+' ↗</a><button type="button" data-r47-compare="'+escape(p.id)+'" aria-pressed="true">Remove from comparison</button></article>').join('')+'</div>';
+}
 function render(){
  const items=entries(),s=stats(items),categories=['All',...new Set(items.map(p=>p.category))].sort((a,b)=>a==='All'?-1:b==='All'?1:a.localeCompare(b));
  const list=filtered(items),visible=list.slice(0,page*perPage);
@@ -133,6 +147,7 @@ function render(){
  '<label><span>Motion level</span><select data-source-motion>'+['All','High','Medium','Low','Varies'].map(v=>'<option'+(v===motion?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Starting budget (INR)</span><select data-source-price>'+['All','Under ₹15k','₹15k–₹30k','₹30k+'].map(v=>'<option'+(v===price?' selected':'')+'>'+v+'</option>').join('')+'</select></label>'+
  '<label><span>Sort</span><select data-source-sort><option value="featured"'+(sort==='featured'?' selected':'')+'>Studio featured</option><option value="price-asc"'+(sort==='price-asc'?' selected':'')+'>Price: low to high</option><option value="price-desc"'+(sort==='price-desc'?' selected':'')+'>Price: high to low</option><option value="name"'+(sort==='name'?' selected':'')+'>Name A–Z</option><option value="motion"'+(sort==='motion'?' selected':'')+'>Motion rich first</option></select></label></div>'+
+ '<div class="vz-r47-tools"><label>Preview availability <select data-r47-preview>'+['All','Interactive source','Visual reference','No source image'].map(v=>'<option'+(previewFilter===v?' selected':'')+'>'+v+'</option>').join('')+'</select></label><button type="button" data-r47-saved aria-pressed="'+onlySaved+'">Saved designs ('+saved.size+')</button><a href="#vz-r47-comparison">Compare ('+compare.size+'/'+limit+')</a></div><section class="vz-r47-comparison" id="vz-r47-comparison" aria-label="Compare design directions"><h3>Compare your directions</h3><p data-r47-message role="status" aria-live="polite"></p><div data-r47-comparison>'+comparison()+'</div><p>Estimates are for individual development projects, not a combined checkout or source-code license.</p></section>'+
  '<p class="vz-r20-price-note">Starting build estimates are shown in INR. Final scope, licensing and billing currency are confirmed before work begins.</p><div class="vz-source-filters" role="group" aria-label="Source availability and usage context">'+[
   ['All','All ('+s.total+')'],['imported','Interactive source ('+s.live+')'],['candidate','Source candidate · verification pending'],['review','Source review needed'],['restricted','Reference only']
  ].map(([value,label])=>'<button type="button" data-source-rights="'+value+'" aria-pressed="'+(rights===value)+'">'+label+'</button>').join('')+'</div>'+
@@ -171,6 +186,9 @@ function refresh(){
   more.querySelector('button').textContent='Load more designs ('+(list.length-visible.length)+' remaining) ↓';
  }else more?.remove();
  let empty=root.querySelector('.vz-source-empty');if(empty)empty.hidden=list.length!==0;
+ const compareHost=root.querySelector('[data-r47-comparison]');if(compareHost)compareHost.innerHTML=comparison();
+ const savedButton=root.querySelector('[data-r47-saved]');if(savedButton){savedButton.textContent='Saved designs ('+saved.size+')';savedButton.setAttribute('aria-pressed',String(onlySaved));}
+ const compareLink=root.querySelector('a[href="#vz-r47-comparison"]');if(compareLink)compareLink.textContent='Compare ('+compare.size+'/'+limit+')';
  animateCards(root);
 }
 function loadReviewTrust(){
@@ -185,20 +203,35 @@ function loadReviewTrust(){
 }
 function bootstrap(){
  const root=document.getElementById('vz-real-library');
- if(root){animateCards(root);loadReviewTrust();}
+ if(root){animateCards(root);loadReviewTrust();}else observer?.disconnect();
 }
 document.addEventListener('click',e=>{
+ const action=e.target.closest('[data-r47-save],[data-r47-compare],[data-r47-saved]');
+ if(action&&action.closest('#vz-real-library')){
+  e.preventDefault();const root=action.closest('#vz-real-library'),id=action.dataset.r47Save||action.dataset.r47Compare;
+  if(id&&!entries().some(p=>p.id===id))return;
+  const message=root.querySelector('[data-r47-message]');
+  if(action.hasAttribute('data-r47-saved')){onlySaved=!onlySaved;page=1;}
+  else if(action.hasAttribute('data-r47-save')){if(saved.has(id))saved.delete(id);else saved.add(id);persistSaved();}
+  else if(compare.has(id))compare.delete(id);else if(compare.size<limit)compare.add(id);else{if(message)message.textContent='Compare up to three designs. Remove one to add another.';return;}
+  const attribute=action.hasAttribute('data-r47-save')?'data-r47-save':action.hasAttribute('data-r47-compare')?'data-r47-compare':'data-r47-saved';
+  const inComparison=!!action.closest('#vz-r47-comparison');refresh();
+  if(message)message.textContent='Shortlist '+saved.size+' · comparison '+compare.size+' of '+limit+'.';
+  const scope=inComparison?root.querySelector('#vz-r47-comparison'):root.querySelector('#vz-source-grid');
+  const next=id?[...scope.querySelectorAll('['+attribute+']')].find(b=>b.getAttribute(attribute)===id):root.querySelector('[data-r47-saved]');(next||root.querySelector('[data-r47-saved]'))?.focus({preventScroll:true});return;
+ }
  const b=e.target.closest('[data-source-rights],[data-source-more],[data-source-reset]');
  if(!b||!b.closest('#vz-real-library'))return;
  e.preventDefault();
  if(b.dataset.sourceRights!==undefined){rights=b.dataset.sourceRights;page=1;document.querySelectorAll('[data-source-rights]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));refresh()}
- if(b.hasAttribute('data-source-reset')){clearTimeout(searchTimer);category=rights=motion=price='All';query='';sort='featured';page=1;const root=b.closest('#vz-real-library');for(const key of ['category','motion','price'])root.querySelector('[data-source-'+key+']').value='All';root.querySelector('[data-source-search]').value='';root.querySelector('[data-source-sort]').value='featured';root.querySelectorAll('[data-source-rights]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.sourceRights==='All')));refresh();root.querySelector('[data-source-search]').focus({preventScroll:true});}
+ if(b.hasAttribute('data-source-reset')){clearTimeout(searchTimer);category=rights=motion=price=previewFilter='All';onlySaved=false;query='';sort='featured';page=1;const preview=b.closest('#vz-real-library').querySelector('[data-r47-preview]');if(preview)preview.value='All';const root=b.closest('#vz-real-library');for(const key of ['category','motion','price'])root.querySelector('[data-source-'+key+']').value='All';root.querySelector('[data-source-search]').value='';root.querySelector('[data-source-sort]').value='featured';root.querySelectorAll('[data-source-rights]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.sourceRights==='All')));refresh();root.querySelector('[data-source-search]').focus({preventScroll:true});}
  if(b.hasAttribute('data-source-more')){const oldCount=page*perPage;page++;refresh();const next=document.querySelectorAll('#vz-source-grid .vz-source-card')[oldCount];next?.querySelector('a')?.focus({preventScroll:true});}
 });
 document.addEventListener('input',e=>{
  if(e.target.matches('[data-source-search]')){query=e.target.value.trim();page=1;clearTimeout(searchTimer);searchTimer=setTimeout(refresh,120)}
 });
 document.addEventListener('change',e=>{
+ if(e.target.matches('[data-r47-preview]')){previewFilter=e.target.value;page=1;refresh();return;}
  if(e.target.matches('[data-source-category]')){category=e.target.value;page=1;refresh()}
  if(e.target.matches('[data-source-motion]')){motion=e.target.value;page=1;refresh()}
  if(e.target.matches('[data-source-price]')){price=e.target.value;page=1;refresh()}

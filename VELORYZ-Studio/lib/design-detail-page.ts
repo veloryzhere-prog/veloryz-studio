@@ -40,8 +40,9 @@ const head=(name:string,description:string,mode:'detail'|'immersive')=>
   '<link rel="stylesheet" href="/veloryz-silk-2026.css?v=20261123-route-r5">'+
   '<script src="/veloryz-silk-2026.js?v=20261123-route-r5" defer></script>'+ 
   '<link rel="stylesheet" href="/reference-elegance-r5.css?v=20261123-editorial-r5">':'')+
- '<script src="/veloryz-design-preview.js?v=20261126-r43" defer></script></head>';
+ '<script src="/veloryz-design-preview.js?v=20261126-r47" defer></script></head>';
 const brand=()=>'<a class="vz-market-brand" href="/" aria-label="VELORYZ Studio home"><img src="/assets/brand/official/Main-Dark-Ink-Transparent.webp" width="128" height="46" alt="VELORYZ Studio" decoding="async"><span class="vz-market-brand-text">VELORYZ<small>CREATIVE & TECHNOLOGY STUDIO</small></span></a>';
+const referenceOnly=(p:DesignPreviewRecord)=>p.rights==='restricted'||/NO LICENSE|CC BY-NC|RESTRICTED|PROPRIETARY|COMMONS CLAUSE/i.test(p.license||'');
 const projectUrl=(p:DesignPreviewRecord)=>'/create/?reference='+encodeURIComponent(p.id)+'&estimate='+Math.round(p.price||6000);
 const info=(p:DesignPreviewRecord)=>({
  id:p.id,name:p.name,localSource:sourcePath(p),...publicImage(p),isRunnable:Boolean(sourcePath(p)),
@@ -121,15 +122,15 @@ export function renderDesignPreview(p:DesignPreviewRecord):string{
  '<section class="vz-market-project-hero"><div class="vz-market-project-lead"><span class="vz-market-eyebrow"><i></i> VELORYZ STUDIO / CURATED EXPERIENCE · '+esc(p.category)+'</span>'+
  '<h1>'+name+'</h1><p>'+esc(p.description)+'</p>'+
  '<div class="vz-market-hero-tags"><span>'+esc(isLive?'Interactive original-site preview':'Visual design reference')+'</span><span>Customizable with VELORYZ</span><span>Responsive project scope</span></div>'+
- '<div class="vz-market-hero-actions"><a class="vz-market-btn" href="'+url+'">View full-site preview <span>↗</span></a><a class="vz-market-textbtn" href="#vz-market-overview">Project overview ↓</a></div></div>'+
+ '<div class="vz-market-hero-actions"><a class="vz-market-btn" href="'+url+'">'+(isLive?'View interactive preview':'View source reference')+' <span>↗</span></a><a class="vz-market-textbtn" href="#vz-market-overview">Project overview ↓</a></div></div>'+
  '<aside class="vz-market-pricebox" aria-label="Starting project pricing"><span>STARTING FROM</span><div>'+price+'<small>INR</small></div><p>Estimated starting price for a VELORYZ Studio customization project.</p>'+
- '<a class="vz-market-btn" href="'+projectUrl(p)+'">Customize this design ↗</a><span class="vz-market-price-note">No payment taken here · Final scope & rights confirmed before agreement</span></aside></section>'+
+ '<p>Recorded source license: '+esc(p.license||'Unverified')+'. '+(referenceOnly(p)?'Reference only: request an independent design; reuse is not offered.':'Source and asset rights require verification before reuse.')+'</p><a href="/legal/design-notices/#'+esc(p.id)+'">Source and licensing details ↗</a><a class="vz-market-btn" href="'+projectUrl(p)+'">'+(referenceOnly(p)?'Discuss an independent design':'Request a scoped build')+' ↗</a><span class="vz-market-price-note">No payment taken here · Final scope & rights confirmed before agreement</span></aside></section>'+
  '<section class="vz-market-hero-image">'+imageHTML+'<a href="'+url+'" class="vz-market-image-play"><span>↗</span> Open immersive preview</a>'+
  '<div class="vz-market-image-credit"><span>VELORYZ DESIGN COLLECTION</span><span>PROJECT '+slug.toUpperCase()+'</span></div></section>'+
  '<section class="vz-market-editorial" id="vz-market-overview"><div class="vz-market-editorial-head"><span class="vz-market-eyebrow">01 / THE CONCEPT</span><h2>'+esc(headings[p.category]||'Build something distinctive.')+'</h2></div>'+
  '<div class="vz-market-editorial-copy"><p>'+esc(p.description)+' This design is part of a collection of real digital references selected by VELORYZ for custom website and interface projects.</p>'+
  '<div class="vz-market-specs"><div><span>Discipline</span><strong>'+esc(p.category)+'</strong></div><div><span>Experience</span><strong>'+esc(isLive?'Live interactive website':'Visual design exploration')+'</strong></div><div><span>Studio starting estimate</span><strong>'+price+'</strong></div><div><span>Delivery</span><strong>Scoped with the VELORYZ team</strong></div></div></div></section>'+
- '<section class="vz-market-preview-section" id="vz-preview"><div class="vz-market-section-heading"><div><span class="vz-market-eyebrow">02 / EXPLORE THE EXPERIENCE</span><h2>A closer look.<br><em>Every interaction.</em></h2></div><a href="'+url+'" class="vz-market-outline-btn">Launch full website preview <span>↗</span></a></div>'+
+ '<section class="vz-market-preview-section" id="vz-preview"><div class="vz-market-section-heading"><div><span class="vz-market-eyebrow">02 / EXPLORE THE EXPERIENCE</span><h2>A closer look.<br><em>Every interaction.</em></h2></div><a href="'+url+'" class="vz-market-outline-btn">'+(isLive?'Launch interactive preview':'Open visual reference')+' <span>↗</span></a></div>'+
  '<div class="vz-market-toolbar"><span class="vz-market-toolbar-title"><i></i> PREVIEW / VELORYZ</span>'+deviceControls()+
  '<a href="'+url+'" class="vz-market-preview-launch">View site in immersive mode ↗</a></div>'+
  '<div class="vz-market-stage-wrap">'+previewStage(p)+'</div>'+

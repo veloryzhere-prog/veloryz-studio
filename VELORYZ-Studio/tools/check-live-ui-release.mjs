@@ -25,7 +25,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
   ]);
   const exact=[home,creator,designPage,docsPage,designDetail].every(p=>p.status===200&&p.commit===expectedCommit&&p.body.includes('/veloryz-design-system-r45.css?v=20261126-r45'));
   const publicOK=exact&&[home,creator,designPage].every(p=>p.header===release&&p.body.includes('name="veloryz-ui-release"'));
-  const detailOK=designDetail.body.includes('/veloryz-design-preview.js?v=20261126-r43')&&docsPage.body.includes('<main');
+  const detailOK=designDetail.body.includes('/veloryz-design-preview.js?v=20261126-r47')&&docsPage.body.includes('<main');
   if(publicOK&&detailOK){
    const silkAssets=['/veloryz-silk-2026.css','/veloryz-ui-2026.css','/veloryz-silk-2026.js'];
    const pagesLinked=[home,creator,designDetail].every(page=>silkAssets.every(asset=>page.body.includes(asset+'?v=20261123-route-r5')));
@@ -47,7 +47,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
     &&home.body.includes('/reference-brand-flow-r17.js?v=20261123-header-footer-r19');
    const r20Linked=[home,creator,designPage].every(page=>page.body.includes('/veloryz-experience-r20.css?v=20261124-r29')&&page.body.includes('/veloryz-experience-r20.js?v=20261126-r42'));
    const creatorAssetsFresh=creator.body.includes('/creator-v4.css?v=20261126-v2-workspaces')&&creator.body.includes('/creator-v4.js?v=20261126-r42');
-   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-r45')
+   const r9DesignLinked=designPage.body.includes('/veloryz-open-library.css?v=20261126-r47')
     &&designPage.body.includes('/veloryz-open-library.js?v=20261126-v2-workspaces')
     &&designPage.body.includes('/external-design-library.css?v=20261123-market-r9')
     &&designPage.body.includes('/app.js?v=20261126-r42');
@@ -101,7 +101,7 @@ for(let attempt=1;attempt<=maxAttempts;attempt++){
    const r9MarketOK=actualMarketJs.status===200&&actualMarketCss.status===200
     &&actualMarketJs.body.includes('VELORYZ / CURATED DESIGN MARKET')
     &&actualMarketJs.body.includes('data-source-motion')
-    &&actualMarketJs.body.includes('data-source-price')
+    &&actualMarketJs.body.includes('data-source-price')&&actualMarketJs.body.includes('data-r47-compare')&&actualMarketJs.body.includes('data-r47-preview')
     &&actualMarketJs.body.includes("fetch('/api/reviews'")
     &&actualMarketCss.body.includes('ACTUAL DESIGN LIBRARY R9');
    const r9BrandOK=brandJs.status===200&&brandCss.status===200

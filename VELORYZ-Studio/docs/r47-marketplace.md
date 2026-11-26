@@ -1,0 +1,3 @@
+# R47 — Marketplace 3.0
+
+110 recorded references; 11 local interactive source imports. The audit JSON is a snapshot of repository metadata, not a fresh upstream license or asset availability verification. All source and media rights must be reviewed before commercial reuse. Restricted references can inform independent work only. Session shortlist and three-item comparison contain design IDs, not customer data; no remote tracking or payment is added. The Creator receives an individual direction and indicative starting build estimate, with final scope and rights reviewed by the team. No third-party license is sold by this change.
