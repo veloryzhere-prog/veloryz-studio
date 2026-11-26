@@ -52,3 +52,5 @@ button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity
 @media(prefers-reduced-motion:reduce){.cp-button,.cp-toast{transition:none!important}}
 
 .cp-refresh-button{border:1px solid #e1e3e5;border-radius:7px;background:#fff;color:#62676b;font-size:11px;font-weight:720;padding:7px 11px;white-space:nowrap}.cp-refresh-button:hover{background:#f7f8f9;color:#24272b}@media(max-width:480px){.cp-refresh-button span{display:none}.cp-refresh-button{padding:7px 10px}}
+
+.cp-ai-archive{margin:20px 0;padding:20px;border:1px solid var(--vz-ds-line,#e3dfd9);border-radius:12px;display:grid;gap:12px;overflow-wrap:anywhere}.cp-ai-archive h2{margin:0;font-size:20px}.cp-ai-archive p{margin:0;font-size:13px;line-height:1.6}.cp-ai-archive-actions{display:flex;gap:8px;flex-wrap:wrap}.cp-ai-archive button{min-height:44px;padding:9px 12px;border:1px solid var(--vz-ds-control-line,#8b8177);border-radius:8px;background:#fff;color:#211e1b}.cp-ai-archive label{font-size:13px}.cp-ai-archive input[type=file]{display:block;max-width:100%;margin:6px 0}.cp-ai-archive pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;max-height:220px;overflow:auto}

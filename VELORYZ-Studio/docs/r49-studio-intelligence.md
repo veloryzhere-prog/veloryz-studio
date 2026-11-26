@@ -7,3 +7,7 @@ Not yet implemented: genuine token streaming, private document attachments, a un
 ## Streaming completion
 
 The configured Gemini/OpenAI providers can emit actual server-sent text deltas. The public protocol forwards text only, ignores thought events, and requires a completed response before saving it. JSON reference fallback remains distinct; shared fallback models may return a full answer without streaming. Public Help/Support/Planner can attach up to 800 characters of non-confidential .txt/.md reference text, included only on send. Client assistant excludes this file control. No private file storage or account-synced transcript is introduced.
+
+## Private client archive
+
+Opt-in storage through the existing invitation-authenticated portal, scoped to the server-derived project and hashed current recipient identity. AES-GCM encryption, service-only table, explicit save/load/delete, optimistic version checks, maximum eight completed conversation messages and two 2,000-character text notes. Text notes are never injected into model prompts. Public and demo chat cannot access the archive. Client AI session memory is cleared when leaving the workspace. Archives are hidden after 30 days; automatic physical purge is not implemented. Arbitrary PDFs, images and executables are not accepted.
