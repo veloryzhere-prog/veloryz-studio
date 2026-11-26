@@ -202,7 +202,10 @@ try {
       if(row.probe.homeDesignSharp.railBlur&&row.probe.homeDesignSharp.railBlur!=='none')row.issues.push('Homepage design rail still uses backdrop blur');
 
     }
-    if(route.path!=='/client/'){
+    if(route.path==='/docs/'){
+      const knowledge=await page.evaluate(()=>({root:!!document.querySelector('.k8-shell'),skip:!!document.querySelector('.k8-skip[href="#main"]'),main:!!document.querySelector('main#main'),design:!!document.querySelector('link[href*="veloryz-design-system-r45.css"]')}));
+      if(!knowledge.root||!knowledge.skip||!knowledge.main||!knowledge.design)row.issues.push('Knowledge V8 shell, skip link or design system missing');
+    }else if(route.path!=='/client/'){
       if(!row.probe.r20Body)row.issues.push('R20 public experience body class missing');
       if(row.probe.experienceRelease!=='public-experience-20261124-r29')row.issues.push('R20 release marker missing or stale: '+row.probe.experienceRelease);
       if(!row.probe.skipLink)row.issues.push('Accessible R20 skip link missing');
@@ -213,7 +216,7 @@ try {
       row.probe.r20Home=await page.evaluate(()=>({
         primaryLinks:document.querySelectorAll('.vz-home-primary-links a').length,
         createHref:document.querySelector('.vz-hero-cta-main')?.getAttribute('href')||'',
-        moreControls:Boolean(document.querySelector('[data-vz-r20-3d-more]')),
+        moreControls:Boolean(document.querySelector('.vz-3d-controls details>summary'))&&['gentle','spin','pause','continue','left','right','front','reset'].every(action=>document.querySelector('.vz-3d-controls [data-logo-action="'+action+'"]')),
         footerCopy:document.querySelector('.footer-living-intro>p')?.textContent?.trim()||'',
         r26Indices:document.querySelectorAll('.vz-r26-section-index').length,
         r27Rail:document.querySelectorAll('.vz-r27-chapter-rail [data-r27-chapter]').length
@@ -221,28 +224,28 @@ try {
       if(row.probe.r20Home.primaryLinks<6||row.probe.r20Home.createHref!=='/create/'||!row.probe.r20Home.moreControls)row.issues.push('R20 homepage navigation/primary CTA/compact 3D controls missing');
       if(row.probe.r20Home.footerCopy.includes('Study Smarter'))row.issues.push('R22 footer still contains stale Study Smarter copy');
       if(row.probe.r20Home.r26Indices<4)row.issues.push('R26 editorial section indexing did not hydrate');
-      if(row.probe.r20Home.r27Rail<5&&(row.probe.viewport?.width||0)>1100)row.issues.push('R27 cinematic chapter rail did not hydrate');
+      if(row.probe.r20Home.r27Rail>0)row.issues.push('Retired chapter rail unexpectedly restored');
     }
     if(route.path==='/create/'){
       row.probe.r20Create=await page.evaluate(()=>({
-        roadmap:document.querySelectorAll('.v4-r20-roadmap span').length,
-        note:Boolean(document.querySelector('.v4-r20-session-note'))
+        roadmap:document.querySelectorAll('.v2-create-overview ol>li').length,
+        note:document.querySelector('.v4-r20-session-note')?.textContent.includes('browser session')===true
       }));
       if(row.probe.r20Create.roadmap!==5||!row.probe.r20Create.note)row.issues.push('R20 Project Creator roadmap/session guidance missing');
     }
     if(route.path==='/docs/'){
       row.probe.r20Docs=await page.evaluate(()=>({
-        outcomes:document.querySelectorAll('.kb-feature-grid.kb-r20-outcomes .kb-r20-outcome').length,
-        outcomeHrefs:[...document.querySelectorAll('.kb-feature-grid.kb-r20-outcomes .kb-r20-outcome')].map(a=>a.getAttribute('href')),
-        search:Boolean(document.querySelector('[data-kb-search],#docs-search'))
+        outcomes:document.querySelectorAll('.k8-grid .k8-task').length,
+        outcomeHrefs:[...document.querySelectorAll('.k8-grid .k8-task')].map(a=>new URL(a.href).pathname.replace(/\.html$|\/$/g,'')),
+        search:Boolean(document.querySelector('form[method="get"] .k8-search input[name="q"]'))
       }));
-      const expectedDocs=['/docs/overview.html','/docs/pricing.html','/docs/client-portal.html','/docs/copyright.html'];
-      if(row.probe.r20Docs.outcomes!==4||JSON.stringify(row.probe.r20Docs.outcomeHrefs)!==JSON.stringify(expectedDocs)||!row.probe.r20Docs.search)row.issues.push('R20.1 authoritative documentation outcome paths/search missing');
+      const expectedDocs=['/help/studio/getting-started','/help/studio/create-project','/docs/pricing','/docs/client-portal','/help/studio/troubleshooting','/trust'];
+      if(row.probe.r20Docs.outcomes!==6||JSON.stringify(row.probe.r20Docs.outcomeHrefs)!==JSON.stringify(expectedDocs)||!row.probe.r20Docs.search)row.issues.push('Knowledge V8 task links/search missing');
     }
     if(route.path==='/help/assistant/'||route.path==='/support/'){
       row.probe.r20Help=await page.evaluate(()=>({
-        context:Boolean(document.querySelector('.vz-r20-assistant-context')),
-        shortcuts:document.querySelectorAll('.vz-r20-assistant-actions a').length,
+        context:Boolean(document.querySelector('.vz-chat-page-head h1'))&&Boolean(document.querySelector('.vz-chat [data-vz-form]')),
+        shortcuts:[...document.querySelectorAll('.vz-chat-page-head nav a')].filter(a=>['/docs/','/contact/','/'].includes(a.getAttribute('href'))).length,
         title:document.title
       }));
       if(!row.probe.r20Help.context||row.probe.r20Help.shortcuts<3)row.issues.push('R20.2 Help/Support route identity or shortcuts missing');
@@ -328,7 +331,10 @@ try {
       }else row.issues.push('Home menu button #mb missing');
     }
     row.httpErrors=responseIssues.slice();
-    if(responseIssues.length)row.issues.push('HTTP asset errors: '+responseIssues.length);
+    const receiptErrors=responseIssues.filter(e=>new URL(e.url).pathname==='/api/privacy/consent');
+    const otherErrors=responseIssues.filter(e=>new URL(e.url).pathname!=='/api/privacy/consent');
+    if(receiptErrors.length)row.issues.push('Consent receipt service HTTP '+receiptErrors.map(e=>e.status).join(', '));
+    if(otherErrors.length)row.issues.push('HTTP asset/API errors: '+otherErrors.length);
    }catch(error){
     row.issues.push('Page capture failed: '+String(error.message||error).slice(0,350));
     try{await snapshot(page,name+'-failure.png');row.screenshots.push(name+'-failure.png');}catch{}
