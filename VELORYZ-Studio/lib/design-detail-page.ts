@@ -46,7 +46,7 @@ const projectUrl=(p:DesignPreviewRecord)=>'/create/?reference='+encodeURICompone
 const info=(p:DesignPreviewRecord)=>({
  id:p.id,name:p.name,localSource:sourcePath(p),...publicImage(p),isRunnable:Boolean(sourcePath(p)),
  fullPreviewUrl:'/design/'+p.id+'/preview/',price:p.price||6000,
- mode:p.importStatus==='real-upstream-html'?'interactive':'visual'
+ demo:https(p.liveDemo),previewKind:p.previewImageKind||'',mode:p.importStatus==='real-upstream-html'?'interactive':'visual'
 });
 const dataScript=(p:DesignPreviewRecord,mode:string)=>{
  const json=JSON.stringify({...info(p),mode}).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
