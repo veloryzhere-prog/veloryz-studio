@@ -59,9 +59,10 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  // Only refresh assets changed by R45; keep other release-specific cache contracts.
  html=html.replace(/(href="\/(?:v2-layout-repair|v2-workspaces|admin|client-portal|veloryz-open-library)\.css)(?:\?[^"]*)?"/g,'$1?v=20261126-r45"');
  // Studio OS is loaded last and only in the owner shell.
- if(html.includes('class="studio-os-r51"'))html=html.replace('</head>','<link rel="stylesheet" href="/admin-os-r51.css?v=20261126-r51-1"><link rel="stylesheet" href="/admin-dashboard-r51.css?v=20261126-r51-2"><link rel="stylesheet" href="/admin-crm-r51.css?v=20261126-r51-3"></head>');
+ if(html.includes('class="studio-os-r51"'))html=html.replace('</head>','<link rel="stylesheet" href="/admin-os-r51.css?v=20261126-r51-1"><link rel="stylesheet" href="/admin-dashboard-r51.css?v=20261126-r51-2"><link rel="stylesheet" href="/admin-crm-r51.css?v=20261126-r51-3"><link rel="stylesheet" href="/admin-finance-r51.css?v=20261126-r51-4"></head>');
  html=html.replace(/(src="\/(?:admin|admin-os-r51|admin-detail)\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r51-2"');
  html=html.replace(/(src="\/(?:admin|admin-dashboard-r51)\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r51-3"');
+ html=html.replace(/(src="\/admin-platform\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r51-4"');
  // R50 authenticated workspace and owner deliverables.
  html=html.replace(/((?:src|href)="\/(?:client-portal|admin-client)\.(?:js|css))(?:\?[^"]*)?"/g,'$1?v=20261126-r50"');
  html=html.replace(/(src="\/admin-client\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r51-3"');

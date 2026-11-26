@@ -13,6 +13,9 @@ assert(html.includes('/admin-dashboard-r51.js?v=20261126-r51-3')&&html.includes(
 for(const p of ['/admin-os-r51.js?v=20261126-r51-2','/admin-os-r51.css?v=20261126-r51-1','/admin-dashboard-r51.js?v=20261126-r51-3','/admin-dashboard-r51.css?v=20261126-r51-2','/admin-crm-r51.js?v=20261126-r51-3','/admin-crm-r51.css?v=20261126-r51-3'])assert((await get(p)).ok,'Missing admin asset '+p);
 assert(html.includes('/admin-crm-r51.js?v=20261126-r51-3')&&html.includes('/admin-crm-r51.css?v=20261126-r51-3'));
 assert([401,403].includes((await get('/api/client-portal/admin/operations-summary')).status));
+assert(html.includes('/admin-finance-r51.js?v=20261126-r51-4')&&html.includes('/admin-finance-r51.css?v=20261126-r51-4'));
+for(const path of ['/admin-finance-r51.js?v=20261126-r51-4','/admin-finance-r51.css?v=20261126-r51-4'])assert((await get(path)).ok);
+for(const path of ['/api/admin/payments?view=finance','/api/admin/payments?view=history&id=00000000-0000-4000-8000-000000000001'])assert([401,403].includes((await get(path)).status));
 const denied=await get('/api/admin/state');assert([401,403].includes(denied.status),'Owner state must remain protected');
 const home=await get('/');assert(!(await home.text()).includes('/admin-os-r51.css'),'Owner styling must not leak onto public site');
 console.log('PASS: deployed Studio OS shell, exact revision, owner-only assets and protected state. Authenticated visual QA is separate.');
