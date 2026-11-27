@@ -20,7 +20,7 @@
 .v4-root .v52-document .v4-review-row{display:grid;grid-template-columns:minmax(88px,.8fr) minmax(0,1.3fr) auto;gap:9px;align-items:start;padding:12px 0;border-bottom:1px solid #e4e8f1;font:inherit}
 .v4-root .v52-document .v4-review-row>span{font-size:11px;color:var(--v52-muted);font-weight:500;overflow-wrap:anywhere}
 .v4-root .v52-document .v4-review-row strong{font-size:12px;line-height:1.5;font-weight:600;color:var(--v52-ink);overflow-wrap:anywhere}
-.v4-root .v52-document .v4-review-row button{font:600 11px/1.4 inherit;color:var(--v52-indigo);background:none;border:0;padding:4px 2px;min-height:32px;cursor:pointer;white-space:nowrap}
+.v4-root .v52-document .v4-review-row button{font-family:inherit;font-size:11px;font-weight:600;line-height:1.4;color:var(--v52-indigo);background:none;border:0;padding:4px 2px;min-height:32px;cursor:pointer;white-space:nowrap}
 .v4-root .v52-goal{margin:16px 0 0;padding:14px;background:var(--v52-soft);border:0;border-radius:8px}
 .v4-root .v52-goal span{font-size:10px;color:var(--v52-indigo);font-weight:700}
 .v4-root .v52-goal p,.v4-root .v52-exact p{font-size:12px;line-height:1.65;color:var(--v52-ink);white-space:pre-wrap;overflow-wrap:anywhere}
