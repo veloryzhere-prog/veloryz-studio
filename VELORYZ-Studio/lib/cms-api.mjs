@@ -11,6 +11,7 @@ import { registerCreator } from './creator-registration-api-r52.mjs';
 import { listCreatorSubmissions } from './creator-intake-api-r52.mjs';
 import { identityOwner,identityVerify } from './client-identity-api-r53.mjs';
 import {kickOnboarding} from './onboarding-mail-kick-r55.mjs';
+import {commercialAdmin} from './commercial-admin-r55.mjs';
 import { onboardingAdmin } from './onboarding-admin-r55.mjs';
 import { estimateDocument } from './estimate-document-api-r54.mjs';
 
@@ -317,7 +318,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
    return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env,request.url)).state);
   }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/')){const result=await forwardClientPortal(request);if(request.method==='POST'&&new URL(request.url).pathname.replace(/\/$/,'')==='/api/client-portal/admin/accept'&&result.ok&&env.ONBOARDING_ACCESS_V1==='enabled')await kickOnboarding(env);return result;}
-  if(['/api/admin/project-submissions','/api/admin/client-identities','/api/admin/estimate-document','/api/admin/onboarding-status'].includes(new URL(request.url).pathname.replace(/\/$/,''))&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
+  if(['/api/admin/project-submissions','/api/admin/client-identities','/api/admin/estimate-document','/api/admin/onboarding-status','/api/admin/commercial-billing'].includes(new URL(request.url).pathname.replace(/\/$/,''))&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
     mutationOrigin(request);
@@ -339,6 +340,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);
+  if(path==='/api/admin/commercial-billing')return await commercialAdmin(request,env);
   if(path==='/api/admin/onboarding-status')return await onboardingAdmin(request,env);
   if(path==='/api/admin/estimate-document')return await estimateDocument(request,env);
   if(path==='/api/admin/client-identities')return await identityOwner(request,env);
