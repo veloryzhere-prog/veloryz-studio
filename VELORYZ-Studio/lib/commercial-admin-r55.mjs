@@ -11,11 +11,11 @@ async function body(req){if(req.headers.get('content-type')?.split(';')[0].trim(
 export async function commercialAdmin(request,env){
  const base=String(env.SUPABASE_URL||'').replace(/\/$/,''),key=env.SUPABASE_SERVICE_ROLE_KEY;
  if(!/^https:\/\/[a-z0-9.-]+$/i.test(base)||!key)return json({error:'Private database unavailable.'},503);
- const enabled=env.COMMERCIAL_BILLING_V1==='enabled';
+ const enabled=env.COMMERCIAL_BILLING_V1==='enabled',deliveryEnabled=enabled&&env.ONBOARDING_EMAIL_V1==='enabled';
  try{
  const p=new URL(request.url).searchParams,w=p.get('workspace')||'';if(!uuid.test(w))invalid('Invalid workspace.');
  const rpc=async(name,args)=>{const r=await fetch(base+'/rest/v1/rpc/veloryz_commercial_'+name+'_v1',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(15000),redirect:'error'});if(!r.ok)invalid('Commercial database unavailable.',503);return await r.json();};
- const read=async()=>{const d=await rpc('read',{p_workspace:w});if(d?.source!=='commercial-v1')invalid('Workspace not found.',404);return {...d,enabled};};
+ const read=async()=>{const d=await rpc('read',{p_workspace:w});if(d?.source!=='commercial-v1')invalid('Workspace not found.',404);let delivery=null;try{delivery=await rpc('mail_status',{p_workspace:w});}catch{}return {...d,enabled,deliveryEnabled,delivery};};
  if(request.method==='GET'){const d=await read();if(p.get('pdf')==='1'){if(!d.invoice||!d.quote)invalid('No billing record issued.',404);const bytes=makeCommercialPdf(d);return new Response(bytes,{headers:{'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Type':'application/pdf','Content-Disposition':'attachment; filename="'+d.invoice.invoice_code+'.pdf"'}})}return json(d);}
  if(request.method!=='POST')return json({error:'Method not allowed.'},405);
  if(!enabled)invalid('Commercial billing is not activated.',409);
@@ -24,6 +24,7 @@ export async function commercialAdmin(request,env){
  if(x.action==='approve')d=await rpc('approve',{p_workspace:w,p_amount:amount(x.amount),p_agreement:clean(x.agreement,3,250),p_scope:clean(x.scope,10,2000)});
  else if(x.action==='issue'){if(typeof x.due!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(x.due)||!Number.isFinite(Date.parse(x.due))||new Date(x.due).toISOString().slice(0,10)!==x.due)invalid('Invalid due date.');d=await rpc('issue',{p_workspace:w,p_due:x.due});}
  else if(x.action==='record'){if(typeof x.id!=='string'||!uuid.test(x.id))invalid('Invalid payment identifier.');d=await rpc('record',{p_workspace:w,p_id:x.id,p_amount:amount(x.amount),p_reference:clean(x.reference,3,160)});}
+ else if(x.action==='deliver'){if(!deliveryEnabled)invalid('Billing email delivery is not activated.',409);d=await rpc('mail_request',{p_workspace:w});if(d?.result==='ready'){try{await fetch(base+'/functions/v1/veloryz-onboarding-mail',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'X-Veloryz-Commercial':'enabled'},signal:AbortSignal.timeout(5000),redirect:'error'});}catch{/* persisted job remains pending */}}}
  else invalid('Unknown commercial action.');
  if(d?.result!=='ready'){const reasons={'conflict':'Conflicting existing record. No change made.','ineligible':'A verified, accepted workspace and required approval are needed.','legacy-payment-review':'Legacy payment records require reconciliation first.','overpayment':'Amount exceeds outstanding balance.','invalid':'Invalid commercial details.'};invalid(reasons[d?.result]||'Commercial operation unavailable.',d?.result==='invalid'?400:409);}
  return json(await read());
