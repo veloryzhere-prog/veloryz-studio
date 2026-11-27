@@ -3,8 +3,8 @@ begin;
 create table veloryz_studio.studio_access_delivery_jobs(
  id uuid primary key default gen_random_uuid(),
  workspace_id uuid not null unique references veloryz_studio.studio_pending_workspaces(id) on delete restrict,
- project_id text not null unique references veloryz_studio.studio_client_projects(id) on delete restrict,
- invite_id text not null unique references veloryz_studio.studio_client_invites(id) on delete restrict,
+ project_id text not null unique references veloryz_studio.studio_client_projects(id) on delete cascade,
+ invite_id text not null unique references veloryz_studio.studio_client_invites(id) on delete cascade,
  state text not null default 'sending' check(state in ('sending','sent','uncertain')),
  created_at timestamptz not null default now(),
  finished_at timestamptz,
