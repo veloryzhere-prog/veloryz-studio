@@ -3,14 +3,14 @@
 'use strict';
 const groups=[
  {id:'home',label:'Home',routes:['overview','action-inbox','command']},
- {id:'business',label:'Business',routes:['enquiries','submission-center','client-portal','project-operations','payments']},
+ {id:'business',label:'Business',routes:['enquiries','submission-center','client-identities','client-portal','project-operations','payments']},
  {id:'creative',label:'Creative',routes:['projects','content','catalogue','media','branding','platform']},
  {id:'growth',label:'Growth',routes:['offers','reviews']},
  {id:'intelligence',label:'Intelligence',routes:['ai-control','knowledge-ai','ai-mindset']},
  {id:'knowledge',label:'Knowledge',routes:['documentation']},
  {id:'systems',label:'Systems',routes:['health','history','settings']}
 ];
-const names={command:'Site controls',enquiries:'Enquiries & CRM','client-portal':'Client rooms','project-operations':'Project operations','submission-center':'Submission intelligence',payments:'Finance',projects:'Portfolio projects',content:'Website CMS',catalogue:'Design marketplace',branding:'Brand system',platform:'Platform pages',offers:'Campaigns',reviews:'Community', 'ai-control':'AI Intelligence','knowledge-ai':'Assistant profiles','ai-mindset':'Adviser briefs',health:'Infrastructure Flightdeck',history:'Releases & history',settings:'Settings'};
+const names={command:'Site controls',enquiries:'Enquiries & CRM','client-portal':'Client rooms','project-operations':'Project operations','submission-center':'Submission intelligence','client-identities':'Client identities',payments:'Finance',projects:'Portfolio projects',content:'Website CMS',catalogue:'Design marketplace',branding:'Brand system',platform:'Platform pages',offers:'Campaigns',reviews:'Community', 'ai-control':'AI Intelligence','knowledge-ai':'Assistant profiles','ai-mindset':'Adviser briefs',health:'Infrastructure Flightdeck',history:'Releases & history',settings:'Settings'};
 const draftRoutes=new Set(['command','projects','content','catalogue','platform','offers','branding','history','settings','ai-mindset']);
 const mode=(route,tab)=>draftRoutes.has(route)||(route==='ai-control'&&tab==='personas')?'draft':route==='overview'?'overview':'immediate';
 const groupFor=route=>groups.find(g=>g.routes.includes(route))||groups[0];
