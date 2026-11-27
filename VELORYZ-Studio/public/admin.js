@@ -555,7 +555,7 @@ function acceptanceResult(result){
   '<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>','medium');
 }
 
-function selectedEnquiry(id){const active=enquiryModalRecord;return active?.owner===workspace&&active.item.id===id&&document.querySelector('.admin-modal [data-action="enquiry-save"]')?.dataset.id===id?active.item:enquiryItems.find(x=>x.id===id);}
+function selectedEnquiry(id){const active=enquiryModalRecord;return !preview&&active?.owner===workspace&&active.item.id===id&&document.querySelector('.admin-modal [data-action="enquiry-save"]')?.dataset.id===id?active.item:null;}
 function openEnquiry(id,provided=null){
  const item=provided?.id===id&&Number.isInteger(provided.version)?provided:enquiryItems.find(x=>x.id===id);if(!item)return;
  enquiryModalRecord={owner:workspace,item};
