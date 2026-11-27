@@ -77,7 +77,7 @@ export function secureHtml(html:string,status=200,privatePage=false,forceProduct
  // Keep R46 runtime and lazy WebGL import on one cache generation.
  html=html.replace(/(src="\/(?:motion-clock|smooth-scroll|frame-cut|motion-boot|motion-3d|reference-review-loop)\.js)(?:\?[^"]*)?"/g,'$1?v=20261126-r46"');
  // R52 assets must not be rewritten to the earlier cached release.
- html=html.replace(/(src="\/(?:admin|admin-client|admin-os-r51|creator-v4)\.js)(?:\?[^"]*)?"/g,'$1?v=20261127-r52-2-9"');
+ html=html.replace(/(src="\/(?:admin|admin-client|admin-os-r51|creator-v4)\.js)(?:\?[^"]*)?"/g,'$1?v=20261127-r53"');
  if(!privatePage&&html.includes('/creator-registration-r52.js')&&headers['Content-Security-Policy']){
   headers['Content-Security-Policy']=headers['Content-Security-Policy'].replace("script-src 'self'","script-src 'self' https://challenges.cloudflare.com").replace("connect-src 'self'","connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com");
  }
