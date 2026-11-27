@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {runInNewContext,Script} from 'node:vm';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const source=read('public/admin-flightdeck-r51.js'),shell=read('lib/admin-shell.ts'),admin=read('public/admin.js');
+new Script(source);new Script(admin);
+const {evaluate,aggregate,defs}=runInNewContext(source.slice(source.indexOf('const defs='),source.indexOf('let owner='))+';({evaluate,aggregate,defs})');
+assert.equal(defs.length,14);assert.equal(aggregate({}).unknown,14);
+assert.equal(evaluate('anonymous',null,403,{}).state,'pass');
+assert.equal(evaluate('anonymous',null,200,{}).state,'fail');
+assert.equal(evaluate('anonymous',null,302,{}).state,'warn');
+assert.equal(evaluate('ai',{configured:true},200,{}).state,'config');
+assert.equal(evaluate('config',{database:'Supabase',storage:'Supabase',password:true},200,{}).state,'config');
+assert.equal(evaluate('backend',{ok:false},200,{}).state,'fail');
+assert.equal(evaluate('edge',null,200,{type:'text/html'}).state,'pass');
+assert.equal(evaluate('asset',null,200,{type:'text/html'}).state,'fail');
+assert.equal(evaluate('history',{items:[]},200,{}).state,'pass');
+assert.equal(evaluate('owner',{state:{},draftVersion:0,publishedVersion:0},200,{}).state,'pass');
+assert.equal(evaluate('quality',{ok:false,issues:[{severity:'error'}]},200,{}).state,'warn');
+assert.equal(evaluate('cms',{state:{},version:3},200,{}).revision,3);
+assert.equal(evaluate('media',{items:[]},200,{}).state,'pass');
+assert.equal(evaluate('docs',{items:[]},200,{}).state,'pass');
+assert.equal(aggregate({edge:{state:'fail'}}).criticalFailure,true);
+const handlers={},window={},workspace={publishedVersion:4,draftVersion:7,dirty:false,hasDraft:true},el={outerHTML:''};
+const document={addEventListener:(n,f)=>handlers[n]=f,activeElement:null,getElementById:()=>el,querySelectorAll:()=>[]};
+const calls=[];
+const fetch=async(path,opts)=>{
+ calls.push({path,opts});let status=200,body={},type='application/json';
+ if(path==='/')type='text/html';
+ else if(path==='/api/health')body={ok:true};
+ else if(path==='/api/site')body={state:{},version:4};
+ else if(path==='/api/admin/state'){if(opts.credentials==='omit')status=401;else body={state:{},draftVersion:7,publishedVersion:4};}
+ else if(path==='/api/admin/connections')body={database:'Supabase',storage:'Supabase Storage',password:true,ai:{status:'not_checked'}};
+ else if(path==='/api/admin/media')body={items:[]};
+ else if(path.endsWith('.webp'))type='image/webp';
+ else if(path.endsWith('.mp4'))type='video/mp4';
+ else if(path.endsWith('/settings')||path.endsWith('/delivery'))body={configured:true};
+ else if(path.endsWith('/quality'))body={ok:true,issues:[]};
+ else if(path.endsWith('/history'))body={items:[{id:'test',revision:3,summary:'Last release',created_at:'2026-11-26T00:00:00Z'}]};
+ else if(path.endsWith('docs-source'))body={items:[]};
+ return {ok:status===200,status,headers:{get:k=>k==='content-type'?type:k==='x-veloryz-release'?'R51.11':null},body:{cancel:async()=>{}},json:async()=>body};
+};
+runInNewContext(source,{window,document,workspace,section:'health',preview:false,fetch,performance:{now:()=>100},AbortSignal:{timeout:()=>null}});
+assert.match(window.VeloryzFlightdeck.page(),/Awaiting first observation/);
+await handlers.click({target:{closest:s=>s==='[data-fd-run]'?{}:null}});
+assert.equal(calls.length,14);assert.ok(calls.every(x=>x.opts.method==='GET'));
+assert.equal(calls.filter(x=>x.path==='/api/admin/state'&&x.opts.credentials==='omit').length,1);
+assert.match(el.outerHTML,/14<span> \/ 14/);
+assert.match(el.outerHTML,/Observed checks completed/);
+for(const [id,label] of [['services','Service ledger'],['security','Security evidence'],['releases','Last release'],['recovery','Release acceptance checklist'],['overview','Observation samples']]){
+ await handlers.click({target:{closest:s=>s==='[data-fd-tab]'?{dataset:{fdTab:id}}:null}});
+ assert.ok(el.outerHTML.includes(label),id);
+}
+assert.match(shell,/admin-flightdeck-r51\.js\?v=20261127-r51-11/);
+assert.match(admin,/if\(window\.VeloryzFlightdeck\)return window\.VeloryzFlightdeck\.page\(\)/);
+assert.match(read('scripts/run-framework.mjs'),/release:"R51\.11"/);
+console.log('R51.11 Flightdeck response classification, all 14 mocked GET probes, five rendered views and release integration passed.');
