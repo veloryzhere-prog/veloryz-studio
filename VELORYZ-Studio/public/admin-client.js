@@ -171,6 +171,7 @@ async function cpLoad(selected=null){
   if(!Array.isArray(result.projects))throw Error('The client directory response was incomplete.');
   cpProjects=result.projects;
   const available=cpProjects.some(p=>p.id===desired)||!!(desired&&result.workspace?.project?.id===desired);
+  if(desired&&!available)throw Error('The requested private workspace was not returned. Select another project or retry.');
   cpSelected=available?desired:(cpProjects[0]?.id||'');
   cpWorkspace=available&&result.workspace?result.workspace:null;
   if(available&&cpWorkspace?.project&&!cpProjects.some(p=>p.id===desired))cpProjects=[cpWorkspace.project,...cpProjects];
@@ -255,7 +256,7 @@ function cpInvitation(data){
   '<button class="admin-button secondary" data-action="close-modal">Close</button>','medium');
 }
 function cpImportedEnquiry(id){
- const item=typeof enquiryItems!=='undefined'?enquiryItems.find(i=>i.id===id):null;
+ const item=typeof selectedEnquiry==='function'?selectedEnquiry(id):null;
  if(!item)return;
  const fields=typeof parseCreatorV3==='function'?parseCreatorV3(item.message):null;
  const category=fields?.Project||'Client project',starter=fields?.Template||'';
