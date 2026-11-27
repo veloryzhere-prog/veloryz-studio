@@ -20,10 +20,11 @@ function cpBadge(status){return '<span class="cpm-badge cpm-status-'+cpE(status|
 function cpAvatar(name){return '<span class="cpm-avatar" aria-hidden="true">'+cpE(String(name||'?').split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase())+'</span>';}
 function cpMatches(){
  const q=cpSearch.toLowerCase().trim();
- return cpProjects.filter(p=>(cpFilter==='all'||p.status===cpFilter)&&(!q||[p.title,p.client_name,p.client_email,p.phase,p.status].some(v=>String(v||'').toLowerCase().includes(q))));
+ return cpProjects.filter(p=>(cpFilter==='all'||p.status===cpFilter)&&(!q||[p.title,p.client_name,p.client_email,p.phase,p.status,p.request_reference,p.id].some(v=>String(v||'').toLowerCase().includes(q))));
 }
 function cpDirectoryCards(){
  const projects=cpMatches();
+ if(window.VeloryzClientRooms)return window.VeloryzClientRooms.directoryRows(projects,cpSelected,cpNewProject);
  if(!projects.length)return '<div class="cpm-empty-directory"><strong>No clients found</strong><p>Try a different search or status, or create your first client workspace.</p><button type="button" class="cpm-mini-link" data-cpm="clear-search">Clear filters</button></div>';
  return projects.map(p=>'<button type="button" class="cpm-client-row '+(cpSelected===p.id&&!cpNewProject?'is-active':'')+'" data-cpm="select" data-id="'+cpE(p.id)+'" aria-current="'+(cpSelected===p.id&&!cpNewProject?'true':'false')+'">'+cpAvatar(p.client_name)+'<span class="cpm-client-info"><strong>'+cpE(p.client_name)+'</strong><small>'+cpE(p.title)+'</small><span>'+cpBadge(p.status)+'<i>'+cpE(Number(p.progress||0))+'%</i></span></span><span class="cpm-row-arrow">›</span></button>').join('');
 }
@@ -132,6 +133,7 @@ function cpMessages(){
  '<div class="cpm-reply-templates" aria-label="Quick project message starters"><button data-cpm-template="update" type="button">Progress update</button><button data-cpm-template="review" type="button">Request feedback</button><button data-cpm-template="handover" type="button">Handover note</button></div><form data-cpm-form="message" class="cpm-message-form"><label for="cpm-message-text">New message to your client</label><textarea id="cpm-message-text" name="body" required maxlength="2000" minlength="2" rows="4" placeholder="Share an update, ask a question or leave a useful note…"></textarea><div><small>Messages save directly in this private thread. Gmail sends a notification if configured; message contents stay in the portal.</small><button class="admin-button" type="submit">Send message ↗</button></div></form></section>';
 }
 function cpDetail(){
+ if(window.VeloryzClientRooms)return window.VeloryzClientRooms.detail();
  if(cpEditMode==='project')return cpEditor(cpNewProject?(cpNewDraft||{}):(cpWorkspace?.project||{}));
  if(cpEditMode==='item')return cpItemEditor(cpEditingItem?(cpWorkspace?.items||[]).find(i=>i.id===cpEditingItem)||{}:{});
  const p=cpWorkspace?.project;
@@ -143,6 +145,7 @@ function cpDetail(){
  '<div class="cpm-tab-content">'+(cpTab==='overview'?cpOverview(p):cpTab==='messages'?cpMessages():cpItems(cpTab))+'</div>';
 }
 function clientPortalAdmin(){
+ if(window.VeloryzClientRooms)return window.VeloryzClientRooms.page();
  return '<div class="cpm-shell">'+(window.VeloryzClientOperations?.clientHeader()||heading('Private workspace / Client management','Manage your clients','Find a client, make an update and send an invitation—everything in one organized place. Changes here save directly to the private portal.','<div class="cpm-heading-actions"><a href="#/enquiries" class="admin-button secondary">Project requests ↗</a><button type="button" class="admin-button" data-cpm="new">+ New client</button></div>'))+
  (cpError?'<section class="cpm-error" role="alert"><strong>Client directory connection failed — project count not verified.</strong><p>'+cpE(cpError)+'</p><p>Your existing client workspaces are not deleted. Reload after the backend has recovered.</p><button class="admin-button secondary" data-cpm="reload">Retry loading clients ↻</button><a class="admin-button secondary" href="#/enquiries">Open project requests ↗</a></section>':!cpLoaded?'<div class="cpm-loading" role="status">Opening your client directory…</div>':
  cpSummaryNumbers()+(window.VeloryzCRM?.clientSwitcher(cpProjects)||'')+cpDeliveryPill()+
@@ -154,7 +157,8 @@ function clientPortalAdmin(){
  '<section id="cpm-detail" class="cpm-detail">'+cpDetail()+'</section></div>')+'</div>';
 }
 async function cpLoad(selected=null){
- const seq=++cpSequence;
+ if(preview)return;
+ const seq=++cpSequence,session=workspace;
  cpLoading=true;cpError='';
  const desired=selected===null?cpSelected:selected;
  cpEmailEvents=[];cpMailAuditState='loading';
@@ -162,34 +166,36 @@ async function cpLoad(selected=null){
   const work=cpReq('/projects'+(desired?'?id='+encodeURIComponent(desired):''));
   const delivery=!cpDeliveryLoaded?cpReq('/delivery').then(data=>({ok:true,data}),error=>({ok:false,error})):Promise.resolve({ok:true,data:cpDelivery});
   const [result,emailResult]=await Promise.all([work,delivery]);
-  if(seq!==cpSequence)return;
+  if(seq!==cpSequence||workspace!==session)return;
   if(emailResult.ok){cpDelivery=emailResult.data;cpDeliveryLoaded=true;cpDeliveryError='';}else{cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'};cpDeliveryError=String(emailResult.error?.message||'Connection unavailable');cpDeliveryLoaded=false;}
-  cpProjects=result.projects||[];
+  if(!Array.isArray(result.projects))throw Error('The client directory response was incomplete.');
+  cpProjects=result.projects;
   const available=cpProjects.some(p=>p.id===desired)||!!(desired&&result.workspace?.project?.id===desired);
   cpSelected=available?desired:(cpProjects[0]?.id||'');
   cpWorkspace=available&&result.workspace?result.workspace:null;
   if(available&&cpWorkspace?.project&&!cpProjects.some(p=>p.id===desired))cpProjects=[cpWorkspace.project,...cpProjects];
   if(cpSelected&&!cpWorkspace){
    const detail=await cpReq('/projects?id='+encodeURIComponent(cpSelected));
-   if(seq!==cpSequence)return;
+   if(seq!==cpSequence||workspace!==session)return;
    cpWorkspace=detail.workspace||null;
   }
+  if(cpSelected&&cpWorkspace?.project?.id!==cpSelected)throw Error('The selected workspace response did not match the requested project.');
   cpLoaded=true;
   if(!cpSelected)cpMailAuditState='idle';
   if(section==='client-portal')render();
   if(cpSelected)void cpRefreshMailEvents();
  }catch(e){
-  if(seq!==cpSequence)return;
+  if(seq!==cpSequence||workspace!==session)return;
   cpLoaded=true;cpError=String(e.message||'The client directory request failed.');cpDeliveryLoaded=false;cpDeliveryError=cpError;cpDelivery={configured:null,provider:'Gmail SMTP · TLS 465'};cpWorkspace=null;
   if(section==='client-portal')render();
  }finally{if(seq===cpSequence)cpLoading=false;}
 }
 function cpSetTab(tab){
- if(!['overview','milestone','file','approval','messages'].includes(tab))return;
+ if(!['overview','milestone','file','approval','messages','access'].includes(tab)||cpBusy||cpLoading)return;
  cpTab=tab;cpEditMode='';
- if(tab==='messages'&&cpSelected&&!cpBusy){cpReq('/messages/read',{method:'POST',body:JSON.stringify({project_id:cpSelected})}).then(()=>{if(cpWorkspace?.messages)cpWorkspace.messages.forEach(m=>{if(m.sender==='client'&&!m.read_at)m.read_at=new Date().toISOString();});}).catch(()=>{});}
+ if(tab==='messages'&&cpSelected&&!cpBusy&&!preview){const id=cpSelected,seq=cpSequence,session=workspace;cpReq('/messages/read',{method:'POST',body:JSON.stringify({project_id:id})}).then(()=>{if(cpSelected!==id||cpSequence!==seq||workspace!==session)return;if(cpWorkspace?.messages)cpWorkspace.messages.forEach(m=>{if(m.sender==='client'&&!m.read_at)m.read_at=new Date().toISOString();});}).catch(()=>{});}
  const detail=document.getElementById('cpm-detail');
- if(detail)detail.innerHTML=cpDetail();
+ if(detail){detail.innerHTML=cpDetail();detail.querySelector('[data-cpm="tab"][data-tab="'+tab+'"]')?.focus({preventScroll:true});}
 }
 function cpEditItem(type,id=''){
  cpItemType=type;
@@ -276,10 +282,12 @@ document.addEventListener('click',async e=>{
  const copy=e.target.closest('[data-cpm-copy]');if(copy){await cpCopyFromInput(copy.dataset.cpmCopy);return;}
  const b=e.target.closest('[data-cpm]');if(!b)return;
  const action=b.dataset.cpm;
+ if(preview){toast('Private client actions require an owner session.');return;}
  if(action==='from-enquiry'){cpImportedEnquiry(b.dataset.id);return;}
  if(action==='refresh-mail'){cpDeliveryLoaded=false;cpDeliveryError='';await cpLoad(cpSelected);return;}
  if(action==='test-email'){if(cpDelivery.configured===false){toast('The active function does not detect the Gmail credential. Recheck after configuring the secret.');return;}b.disabled=true;try{const result=await cpReq('/test-email',{method:'POST',body:'{}'});toast(result.message||'Gmail connection test accepted by SMTP.');}catch(error){toast('Gmail test failed: '+error.message);}finally{b.disabled=false;}return;}
  if(section!=='client-portal')return;
+ if(cpBusy||cpLoading)return;
  if(action==='tab'){cpSetTab(b.dataset.tab);return;}
  if(action==='clear-search'){cpSearch='';cpFilter='all';const s=document.getElementById('cpm-search'),f=document.getElementById('cpm-status-filter');if(s)s.value='';if(f)f.value='all';cpRefreshDirectory();return;}
  if(action==='new'){window.VeloryzCRM?.openDirectory();cpNewProject=true;cpNewDraft=null;cpEditMode='project';cpEditingItem='';const detail=document.getElementById('cpm-detail');if(detail)detail.innerHTML=cpDetail();else {cpLoaded=true;render();}return;}
@@ -356,7 +364,7 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('submit',async e=>{
  const form=e.target;if(!form.matches('[data-cpm-form]'))return;
- e.preventDefault();if(cpBusy||!form.reportValidity())return;
+ e.preventDefault();if(preview||section!=='client-portal'||cpBusy||cpLoading||!form.reportValidity())return;
  const button=e.submitter||form.querySelector('[type="submit"]');cpBusy=true;if(button)button.disabled=true;
  try{
   const v=Object.fromEntries(new FormData(form));
@@ -399,12 +407,13 @@ document.addEventListener('submit',async e=>{
 
 /* Private owner refresh: read-only polling while the conversation editor is idle. */
 setInterval(async()=>{
- if(section!=='client-portal'||!cpSelected||!cpLoaded||cpBusy||cpLoading||cpEditMode||document.hidden)return;
+ if(preview||section!=='client-portal'||cpTab!=='messages'||!cpSelected||!cpLoaded||cpBusy||cpLoading||cpEditMode||document.hidden)return;
+ if(document.getElementById('cpm-message-text')?.value.trim())return;
  if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
- const selected=cpSelected;
+ const selected=cpSelected,seq=cpSequence,session=workspace;
  try{
   const latest=await cpReq('/projects?id='+encodeURIComponent(selected));
-  if(section!=='client-portal'||selected!==cpSelected||!latest.workspace)return;
+  if(section!=='client-portal'||cpTab!=='messages'||selected!==cpSelected||seq!==cpSequence||workspace!==session||cpBusy||cpLoading||cpEditMode||document.hidden||document.getElementById('cpm-message-text')?.value.trim()||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]')||latest.workspace?.project?.id!==selected)return;
   const before=cpWorkspace?.messages?.at(-1)?.id||'';
   const after=latest.workspace.messages?.at(-1)?.id||'';
   const changed=before!==after||latest.workspace.project?.updated_at!==cpWorkspace?.project?.updated_at;
