@@ -140,7 +140,7 @@ function update(el){
  if(!docs.edits)docs.edits={};
  const base=current||{title:source.title,summary:source.summary,markdown:source.markdown,status:source.status,visible:true};
  base[el.dataset.dkField]=el.type==='checkbox'?el.checked:el.value;docs.edits[selected]=base;
- if(el.dataset.dkField==='markdown'){epoch++;diagnostic=null;checking=false;const box=document.getElementById('dk-check-result');if(box)box.innerHTML=checkMarkup();}
+ if(el.dataset.dkField==='markdown'){epoch++;diagnostic=null;checking=false;const box=document.getElementById('dk-check-result');if(box)box.innerHTML=checkMarkup();const check=document.querySelector('[data-dk-check]');if(check)check.disabled=false;}
  markDirty();const q=document.getElementById('dk-quality');if(q)q.innerHTML=quality();refreshList();const reset=document.querySelector('[data-dk-reset]');if(reset)reset.disabled=false;
 }
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='dk-search'){query=t.value;page=0;refreshList();}else if(t.matches('[data-dk-field]')&&!['checkbox','select-one'].includes(t.type))update(t);});
