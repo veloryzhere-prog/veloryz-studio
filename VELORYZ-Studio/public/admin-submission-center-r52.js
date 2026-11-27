@@ -11,7 +11,7 @@ const fields=m=>{const f=Object.create(null);if(!creatorHint(m))return f;for(con
 const queryMatch=(rows,q,type)=>rows.filter(r=>(type==='all'||(type==='creator'?creatorHint(r.message):!creatorHint(r.message)))&&(!q||[r.reference,r.name,r.email,r.company,r.service,r.message].some(v=>String(v||'').toLowerCase().includes(q.toLowerCase()))));
 const button=(attrs,content,disabled=false,primary=false)=>'<button type="button" class="si-button '+(primary?'si-primary':'')+'" '+attrs+(disabled?' disabled':'')+'>'+content+'</button>';
 let owner=null,source='legacy',rows=[],total=null,pageIndex=0,filter='all',type='all',search='',selected='',activity=null,activityError='',busy=false,error='',loaded=false,seq=0,actSeq=0;
-function reset(){if(owner===workspace)return;owner=workspace;source='legacy';rows=[];total=null;pageIndex=0;filter='all';type='all';search='';selected='';activity=null;activityError='';busy=false;error='';loaded=false;seq++;actSeq++;}
+function reset(){if(owner===workspace&&!preview)return;owner=workspace;source='legacy';rows=[];total=null;pageIndex=0;filter='all';type='all';search='';selected='';activity=null;activityError='';busy=false;error='';loaded=false;seq++;actSeq++;}
 function visible(){return source==='legacy'?queryMatch(rows,search.trim(),type):rows;}
 function current(){return visible().find(r=>r.id===selected);}
 function refresh(){if(section!=='submission-center'||workspace!==owner)return;const el=document.getElementById('si-root');if(el)el.outerHTML=markup();}
