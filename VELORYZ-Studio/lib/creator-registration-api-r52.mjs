@@ -1,5 +1,6 @@
 // R52.2 staged adapter. Never enable without configured bot protection, trusted Worker routing and staging verification.
 import {readSubmissionEnvelope,calculateQuote,fingerprint,invalid} from './creator-registration-r52.mjs';
+import {kickOnboarding} from './onboarding-mail-kick-r55.mjs';
 const json=(v,status=200)=>Response.json(v,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 async function digest(v){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return Array.from(new Uint8Array(bytes),x=>x.toString(16).padStart(2,'0')).join('');}
 function summary(s,q){
@@ -48,10 +49,10 @@ export async function registerCreator(request,env,getPublished){
   const previous=await rpc(null);
   if(previous?.result!=='not-found'){
    if(previous?.result==='created')invalid('Unexpected registration response.',503);
-   return receipt(previous);
+   const result=receipt(previous);await kickOnboarding(env);return result;
   }
   await verifyCreatorChallenge(challengeToken,env,network);
   const q=calculateQuote(submission,await getPublished());
-  return receipt(await rpc(q));
+  const result=receipt(await rpc(q));await kickOnboarding(env);return result;
  }catch(error){const status=[400,409,413,415,429,503].includes(error?.status)?error.status:503;return json({error:status<500?error.message:'Registration is temporarily unavailable. Retry safely.'},status);}
 }
