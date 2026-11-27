@@ -6,14 +6,14 @@ function summary(s,q){
  const b=s.brief,lines=['PROJECT CREATOR V4','Project: '+b.category,'Template: '+(b.template||b.external||'Custom'),'Visual style: '+b.style,'Pages / screens: '+b.pages,'Features: '+b.features.join(', '),'Materials: '+b.assets.join(', '),'Budget preference: INR '+b.budgetPreference,'Indicative range: INR '+q.lowPaise/100+' - '+q.highPaise/100,'Timeline: '+b.timeline,'Priority: '+b.priority,'Goal: '+b.goal,'Structured original brief retained. Pending review; no payment due.'];
  return lines.join('\n').slice(0,2000);
 }
-export async function verifyCreatorChallenge(token,env,network,requestId){
+export async function verifyCreatorChallenge(token,env,network){
  const secret=env.CREATOR_TURNSTILE_SECRET;
  const hostname=env.CREATOR_TURNSTILE_HOSTNAME;
  if(!secret||typeof hostname!=='string'||!hostname)invalid('Registration verification is unavailable.',503);
  if(!token)invalid('Complete the security verification and try again.',400);
  let result;
  try{
-  const response=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret,response:token,remoteip:network,idempotency_key:requestId}),signal:AbortSignal.timeout(10000),redirect:'error'});
+  const response=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret,response:token,remoteip:network,idempotency_key:crypto.randomUUID()}),signal:AbortSignal.timeout(10000),redirect:'error'});
   if(!response.ok)throw Error('Challenge unavailable');
   result=await response.json();
  }catch{invalid('Security verification is temporarily unavailable.',503);}
@@ -50,7 +50,7 @@ export async function registerCreator(request,env,getPublished){
    if(previous?.result==='created')invalid('Unexpected registration response.',503);
    return receipt(previous);
   }
-  await verifyCreatorChallenge(challengeToken,env,network,submission.requestId);
+  await verifyCreatorChallenge(challengeToken,env,network);
   const q=calculateQuote(submission,await getPublished());
   return receipt(await rpc(q));
  }catch(error){const status=[400,409,413,415,429,503].includes(error?.status)?error.status:503;return json({error:status<500?error.message:'Registration is temporarily unavailable. Retry safely.'},status);}
