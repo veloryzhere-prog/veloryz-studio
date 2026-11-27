@@ -283,7 +283,13 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   // R52.2 registration is explicitly gated; legacy enquiry and hosted routes are unchanged.
   if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions'){
    if(request.method==='POST')mutationOrigin(request);
-   return await registerCreator(request,env,()=>getPublished(env));
+   return await registerCreator(request,env,async()=>{
+    const direct=studioEnvironment(env);
+    if(!direct.__studioSupabase||!direct.DB)fail('Registration pricing source is unavailable.',503);
+    const row=await direct.DB.prepare('SELECT published,published_version FROM cms_state WHERE id=1').first();
+    if(!row||!Number.isInteger(row.published_version))fail('Registration pricing source is unavailable.',503);
+    return {state:upgrade(JSON.parse(row.published)),version:row.published_version};
+   });
   }
   if(new URL(request.url).pathname.startsWith('/api/reviews'))return await forwardReviews(request);
    if(new URL(request.url).pathname==='/api/privacy/consent')return await forwardPrivacyReceipt(request);
@@ -297,6 +303,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
    return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env,request.url)).state);
   }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
+  if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/admin/project-submissions'&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
     mutationOrigin(request);
