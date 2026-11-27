@@ -1,0 +1,13 @@
+Replace only /access invitation redemption in existing portal Edge Function.
+
+  const found=await db("consumeInvite",now,await sha(code),now);
+  if(!found.length)fail("This invitation is invalid or expired.",401);
+  const t=secret(),exp=new Date(Date.now()+7*86400000).toISOString();
+  await db("addSession",crypto.randomUUID(),found[0].project_id,await sha(t),exp,"",now);
+
+WITH
+
+  const t=secret();
+  const activation=await fetch(BASE+"/rest/v1/rpc/veloryz_access_redeem_v1",{method:"POST",headers:{"Content-Type":"application/json",apikey:KEY,Authorization:"Bearer "+KEY},body:JSON.stringify({p_hash:await sha(code),p_session_hash:await sha(t)}),signal:AbortSignal.timeout(15000),redirect:"error"});
+  if(!activation.ok)fail("Client access is temporarily unavailable. Please retry.",503);
+  if((await activation.json())?.result!=="activated")fail("This invitation is invalid or expired.",401);
