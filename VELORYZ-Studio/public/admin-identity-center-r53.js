@@ -3,7 +3,7 @@
 'use strict';
 const e=v=>E(v??''),route='client-identities',base='/api/admin/client-identities';
 let owner=null,seq=0,busy=false,loaded=false,error='',rows=[],total=null,pageIndex=0,q='',selected='',projectPage=0,detail=null;
-function reset(){if(owner===workspace)return;owner=workspace;seq++;busy=false;loaded=false;error='';rows=[];total=null;pageIndex=0;q='';selected='';projectPage=0;detail=null;}
+function reset(){if(owner===workspace&&!preview)return;owner=workspace;seq++;busy=false;loaded=false;error='';rows=[];total=null;pageIndex=0;q='';selected='';projectPage=0;detail=null;}
 const still=(s,o)=>s===seq&&o===workspace&&section===route&&!preview;
 const button=(attr,title,disabled=false,primary=false)=>'<button type="button" class="si-button '+(primary?'si-primary':'')+'" '+attr+(disabled?' disabled':'')+'>'+title+'</button>';
 const fact=(key,value)=>'<div><dt>'+e(key)+'</dt><dd>'+e(value??'—')+'</dd></div>';
@@ -14,12 +14,12 @@ async function load(){
  try{const d=await api(base+'?q='+encodeURIComponent(q)+'&page='+pageIndex+'&client='+encodeURIComponent(selected)+'&projectPage='+projectPage,{signal:AbortSignal.timeout(18000)});
  if(!still(s,o))return;if(d.source!=='identity-v1'||!Array.isArray(d.items)||!Number.isSafeInteger(d.total))throw Error('Incomplete identity directory.');
  rows=d.items;total=d.total;detail=d.detail;loaded=true;
- }catch(err){if(still(s,o)){error='Identity service unavailable or not enabled. '+String(err.message||'');rows=[];total=null;loaded=false;}}
+ }catch(err){if(still(s,o)){error=err.status===401?'Owner session expired. Reopen the admin workspace.':err.status===403?'Owner access is required.':err.status===503?'Client identity service is not activated or cannot reach its private database. The legacy request inbox is still available.':'Could not load the private identity directory.';rows=[];total=null;loaded=false;}}
  finally{if(s===seq&&o===workspace){busy=false;refresh();}}
 }
 const current=()=>rows.find(r=>r.id===selected);
 function projectMarkup(){
- if(!detail)return '<section class="si-panel"><h2>Select a client identity</h2><p>Inspect verification status, permanent identifiers and associated projects.</p></section>';
+ if(preview||!detail)return '<section class="si-panel"><h2>Select a client identity</h2><p>Inspect verification status, permanent identifiers and associated projects.</p></section>';
  const r=current(),projects=Array.isArray(detail.projects)?detail.projects:[];
  return '<section class="si-panel"><span class="si-kicker">PERMANENT CLIENT PROFILE</span><h2>'+e(r?.name_at_registration||'Client profile')+'</h2><dl class="si-facts">'+fact('Client code',r?.client_code)+fact('Registered recipient',r?.email_at_registration)+fact('Email possession',r?.identity_status==='verified'?'Verified':'Not verified')+fact('Verified at',r?.verified_at)+fact('Linked identities',detail.member_count)+fact('Projects in group',detail.project_total)+'</dl><div class="si-actions">'+button('data-id-issue','Prepare verification email ↗',busy||!r||r.identity_status!=='unverified',true)+button('data-id-group','Link verified identity',busy||!r||r.identity_status!=='verified'||r.primary_id!==r.id)+'</div><p class="si-note">Grouping preserves permanent IDs and original project relationships. No login access is shared across rooms.</p></section><section class="si-panel"><span class="si-kicker">PROJECT LIFECYCLE</span><h3>Associated workspaces</h3>'+projects.map((p,i)=>'<div class="si-panel"><span class="si-kicker">'+e(labels[p.lifecycle]||'Unknown')+'</span><h3>'+e(p.title||'Registered project')+'</h3><dl class="si-facts">'+fact('Permanent project code',p.project_code)+fact('Request reference',p.reference)+fact('Delivery status',p.delivery_status)+fact('Registered',p.created_at)+'</dl>'+button('data-id-estimate="'+i+'"','Download registration estimate PDF ↓',busy)+(p.lifecycle==='accepted'?button('data-id-room="'+i+'"','Open verified Client Room ↗',busy):'<p class="si-note">No active delivery room confirmed. Review the original request in Submission Intelligence.</p>')+'</div>').join('')+(!projects.length?'<p>No associated workspaces returned.</p>':'')+'<div class="si-pages">'+button('data-id-project-page="-1"','← Previous projects',busy||projectPage===0)+button('data-id-project-page="1"','More projects →',busy||(projectPage+1)*25>=detail.project_total)+'</div></section>';
 }
@@ -51,7 +51,7 @@ async function downloadEstimate(p){
  try{
  const r=await fetch('/api/admin/estimate-document?workspace='+encodeURIComponent(p.id),{method:'POST',credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(25000)});
  if(!still(s,o))return;
- if(!r.ok||!r.headers.get('content-type')?.startsWith('application/pdf'))throw Error('Estimate is unavailable or not enabled.');
+ if(!r.ok){const out=await r.json().catch(()=>({}));throw Error(r.status===401?'Owner session expired. Sign in again.':r.status===403?'Owner access required.':out.error||'Estimate is unavailable.');}if(!r.headers.get('content-type')?.startsWith('application/pdf'))throw Error('Invalid document response. No file downloaded.');
  const b=await r.blob();if(!still(s,o))return;
  const name=r.headers.get('content-disposition')?.match(/filename="(VZ-EST-[A-F0-9]{32}\.pdf)"/)?.[1]||'VELORYZ-registration-estimate.pdf';
  const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
