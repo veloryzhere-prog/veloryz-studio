@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const client=read('public/admin-client.js'),rooms=read('public/admin-client-rooms-r52.js'),shell=read('lib/admin-shell.ts'),admin=read('public/admin.js');
+const mock="const window={},document={addEventListener(){},getElementById(){return null},querySelector(){return null}};const E=x=>String(x??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));const icon=n=>'<svg aria-hidden=\"true\"></svg>';let workspace={},preview=false,section='client-portal';const setInterval=()=>0,toast=()=>{};";
+const run=String.raw`
+const a={id:'p1',title:'<unsafe> & website',client_name:'Sample Client',client_email:'client@example.test',request_reference:'VZ-EXAMPLE',phase:'Design',status:'in-progress',progress:42,due_date:'2026-12-20',next_step:'Review design',summary:'Sample brief'};
+const b={...a,id:'p2',client_name:'Other client',request_reference:'VZ-OTHER',status:'launched'};
+cpProjects=[a,b];cpSelected='p1';cpLoaded=true;cpWorkspace={project:a,items:[{id:'m1',type:'milestone',state:'done',title:'Discovery',details:'Done',due_date:'2026-11-22'},{id:'a1',type:'approval',state:'waiting',title:'Approve direction'},{id:'f1',type:'file',state:'done',title:'Brief'}],messages:[{id:'msg1',sender:'client',body:'Hello',created_at:'2026-11-25'}]};cpDelivery={configured:true};cpMailAuditState='ready';cpEmailEvents=[{kind:'invitation',state:'sent',recipient:'client@example.test'}];
+let html=clientPortalAdmin();
+assert(html.includes('cr-layout')&&html.includes('cr-inspector')&&html.includes('cr-directory'),'three panels');
+assert(html.includes('&lt;unsafe&gt;')&&!html.includes('<unsafe>'),'escape');
+assert(html.includes('1 / 1')&&html.includes('Awaiting approval'),'counts');
+assert(cpMatches().length===2,'all records');cpSearch='VZ-OTHER';assert(cpMatches()[0].id==='p2'&&cpMatches().length===1,'reference search');cpSearch='';
+const expected={overview:'data-cpm-form="quick"',milestone:'data-cpm="starter-plan"',file:'data-cpm-form="private-file"',approval:'Review requests',messages:'data-cpm-form="message"',access:'data-cpm="invite"'};
+for(const [t,marker] of Object.entries(expected)){cpTab=t;html=cpDetail();assert(html.includes(marker),'tab '+t);}
+assert(html.includes('data-cpm="send-summary"')&&html.includes('Automatic invoice & onboarding')&&html.includes('client@example.test'),'access controls');
+cpMailAuditState='error';assert(cpDetail().includes('Delivery history unavailable'),'failed history');
+cpEditMode='project';assert(cpDetail().includes('data-cpm-form="project"'),'project editor');
+cpEditMode='item';cpItemType='milestone';assert(cpDetail().includes('data-cpm-form="item"'),'item editor');cpEditMode='';
+cpSelected='p2';assert(!cpDetail().includes('client@example.test')&&cpDetail().includes('Select a workspace'),'mismatch isolation');
+cpError='bad';assert(clientPortalAdmin().includes('Client directory unavailable'),'error');
+cpError='';cpLoaded=false;assert(clientPortalAdmin().includes('Opening private client directory'),'loading');
+preview=true;assert(clientPortalAdmin().includes('Private client data is not fetched')&&!clientPortalAdmin().includes('cr-directory-list'),'preview isolation');
+`;
+new Function('assert',mock+'\n'+client+'\n'+rooms+'\n'+run)(assert.ok);
+assert.match(shell,/admin-client-rooms-r52\.js\?v=20261127-r52-1-1/);
+assert.match(shell,/admin-client-rooms-r52\.css\?v=20261127-r52-1-1/);
+assert.match(admin,/location\.pathname\.replace/);
+console.log('Client Rooms six-tab rendering, real form integration and privacy state checks passed.');
