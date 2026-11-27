@@ -9,6 +9,7 @@ import {boundedBody,rateLimit} from './studio-platform.mjs';
 import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
 import { registerCreator } from './creator-registration-api-r52.mjs';
 import { listCreatorSubmissions } from './creator-intake-api-r52.mjs';
+import { identityOwner,identityVerify } from './client-identity-api-r53.mjs';
 
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const now=()=>new Date().toISOString();
@@ -280,6 +281,7 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/client-identity/verify'){if(request.method==='POST')mutationOrigin(request);return await identityVerify(request,env);}
   // Public capability contract: never reveal a secret, never advertise a partially configured engine.
   if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions/config'){
    if(request.method!=='GET')return json({error:'Method not allowed.'},405);
@@ -312,7 +314,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
    return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env,request.url)).state);
   }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
-  if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/admin/project-submissions'&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
+  if(['/api/admin/project-submissions','/api/admin/client-identities'].includes(new URL(request.url).pathname.replace(/\/$/,''))&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
     mutationOrigin(request);
@@ -334,6 +336,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);
+  if(path==='/api/admin/client-identities')return await identityOwner(request,env);
   if(path==='/api/admin/project-submissions')return await listCreatorSubmissions(request,env);
   await ensureState(env);
   if(path==='/api/admin/quality'&&request.method==='GET'){const state=await stateResponse(env,user);return json(auditStudioContent(state.state));}
