@@ -141,6 +141,7 @@ function aiMindsetPage(){
 }
 
 function healthPage(){
+ if(window.VeloryzFlightdeck)return window.VeloryzFlightdeck.page();
  return heading('Operations & reliability','System diagnostics','Run real owner-authorized checks for the database, media storage and AI setup, plus the current site’s video files. No checks are run until you request them.')+
  '<section class="ad-diagnostics-console" aria-label="Service and media checks"><div class="ad-diagnostics-heading"><div><span class="ad-kicker">REAL RESPONSES / NO SIMULATED STATUSES</span><h2>Know what actually works.</h2><p>Inspect this deployed site rather than assuming a GitHub merge has appeared in production. These checks are read-only and will never send an AI prompt, upload a file or modify a client record.</p></div><button type="button" class="admin-button" data-action="run-health">Run all checks ↻</button></div>'+
  '<div id="ad-diagnostics-results" class="ad-diagnostics-results" role="status" aria-live="polite">'+
