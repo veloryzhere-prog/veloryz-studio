@@ -4,7 +4,7 @@ create function public.veloryz_list_creator_v1(p_status text,p_query text,p_page
 returns jsonb language sql stable security invoker set search_path=pg_catalog as $$
  with matching as (
   select e.id,e.reference,e.name,e.email,e.phone,e.company,e.status,e.budget,e.created_at,
-   e.service,e.message,s.brief,s.quote,s.brief->'brief'->>'category' as category,
+   e.service,e.message,e.version,e.notes,e.preferred_date,e.preferred_time,s.brief,s.quote,s.brief->'brief'->>'category' as category,
    e.acceptance_status,e.accepted_project_id
   from veloryz_studio.studio_creator_submissions s
   join veloryz_studio.studio_enquiries e on e.id=s.request_id
