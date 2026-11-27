@@ -58,11 +58,14 @@ async function send(data,legacy){
  if(mode==='structured'){
   // Retry without a challenge first; committed records can be recovered even if the widget is unavailable.
   if(old){response=await post('');if(response.r.ok&&response.out.ok===true){}else if(response.r.status===400&&/security verification/i.test(response.out.error||'')){response=null;}else throw Error(response.out.error||'The previous registration could not be confirmed. Retry safely.');}
-  if(!response){cfg=cfg||await config();if(cfg.mode!=='structured')throw Error('The original registration service is unavailable. No duplicate request was sent.');const token=await challenge(cfg.sitekey);persist({mode,body});response=await post(token);}
- }else{persist({mode,body});response=await post('');}
- const {r,out}=response,expected='VZ-SUB-'+body.requestId.replaceAll('-','').toUpperCase();
+  if(!response){cfg=cfg||await config();if(cfg.mode!=='structured')throw Error('The original registration service is unavailable. No duplicate request was sent.');const token=await challenge(cfg.sitekey);persist({mode,body,category:old?.category||data.category});response=await post(token);}
+ }else{persist({mode,body,category:old?.category||data.category});response=await post('');}
+ const {r,out}=response;
+ // A definite first-attempt validation/rate-limit rejection did not commit. Allow correction.
+ if(!old&&!r.ok&&[400,413,415,429].includes(r.status))clear();
+ const expected='VZ-SUB-'+body.requestId.replaceAll('-','').toUpperCase();
  if(!r.ok||out.ok!==true||typeof out.reference!=='string'||(mode==='structured'?out.reference!==expected:!/^VZ-[A-Z0-9-]{6,40}$/i.test(out.reference)))throw Error(out.error||'The studio did not confirm your request. Retry safely.');
- clear();return {...out,mode,submittedEmail:mode==='structured'?body.contact.email:body.email,submittedCategory:mode==='structured'?body.brief.category:null};
+ clear();return {...out,mode,submittedEmail:mode==='structured'?body.contact.email:body.email,submittedCategory:mode==='structured'?body.brief.category:old?.category||data.category};
 }
 window.VeloryzRegistrationTransport={send,payload,pending};
 })();
