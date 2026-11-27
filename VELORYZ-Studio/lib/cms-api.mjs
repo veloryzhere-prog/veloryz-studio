@@ -11,6 +11,7 @@ import { registerCreator } from './creator-registration-api-r52.mjs';
 import { listCreatorSubmissions } from './creator-intake-api-r52.mjs';
 import { identityOwner,identityVerify } from './client-identity-api-r53.mjs';
 import {kickOnboarding} from './onboarding-mail-kick-r55.mjs';
+import {businessOverview} from './business-overview-r56.mjs';
 import {commercialAdmin} from './commercial-admin-r55.mjs';
 import { onboardingAdmin } from './onboarding-admin-r55.mjs';
 import { estimateDocument } from './estimate-document-api-r54.mjs';
@@ -340,6 +341,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);
+  if(path==='/api/admin/business-overview')return await businessOverview(request,env);
   if(path==='/api/admin/commercial-billing')return await commercialAdmin(request,env);
   if(path==='/api/admin/onboarding-status')return await onboardingAdmin(request,env);
   if(path==='/api/admin/estimate-document')return await estimateDocument(request,env);
