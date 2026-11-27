@@ -27,7 +27,7 @@ export function makeEstimatePdf(d){
  const rect=(x,y,w,h,c)=>commands.push(c+' rg '+x+' '+y+' '+w+' '+h+' re f');
  const txt=(v,x,y,size=10,b=false,c=ink)=>commands.push('BT /'+(b?'F2':'F1')+' '+size+' Tf '+c+' rg 1 0 0 1 '+x+' '+y+' Tm '+pdfstr(safe(v))+' Tj ET');
  const wrapped=(v,max)=>{const str=safe(v)||'See original registration data';let a=[],line='';for(const word of str.split(' ')){for(let i=0;i<word.length;i+=max){const w=word.slice(i,i+max);if(line&&(line+' '+w).length>max){a.push(line);line='';}line+=(line?' ':'')+w;}}if(line)a.push(line);return a;};
- const block=(label,v)=>{txt(label,40,y,8,true,indigo);y-=14;for(const line of wrapped(v,78)){if(y<90){end();start('Estimate / continued');}txt(line,40,y,10);y-=14;}y-=7;};
+ const block=(label,v)=>{if(y<130){end();start('Estimate / continued');}txt(label,40,y,8,true,indigo);y-=14;for(const line of wrapped(v,50)){if(y<90){end();start('Estimate / continued');}txt(line,40,y,10);y-=14;}y-=7;};
  const link=(label,url,x,w)=>{rect(x,40,w,25,indigo);txt(label,x+9,49,9,true,'1 1 1');annotations.push(add('<< /Type /Annot /Subtype /Link /Rect ['+x+' 40 '+(x+w)+' 65] /Border [0 0 0] /A << /S /URI /URI '+pdfstr(url)+' >> >>'));};
  function start(title){commands=[];annotations=[];rect(0,744,595,98,navy);rect(0,741,595,3,'0.875 0.376 0.612');const w=48,h=w*dim.h/dim.w;commands.push('q '+w+' 0 0 '+h+' 40 '+(780-h/2)+' cm /Logo Do Q');txt('VELORYZ STUDIO',102,791,22,true,'1 1 1');txt('REGISTRATION / COMMERCIAL PLANNING',103,774,9,true,'0.87 0.90 1');txt(title,40,710,24,true);txt('INDICATIVE ESTIMATE  |  NOT A TAX INVOICE',40,690,9,true,indigo);y=664;}
  function end(){link('Client portal','https://veloryz.online/client/',40,115);link('Client guide','https://veloryz.online/docs/client-portal.html',166,115);link('Support','https://veloryz.online/support/',292,100);txt('VELORYZ  /  veloryz.online  /  Page '+(pageIds.length+1),40,22,8,false,muted);const stream=commands.join('\n');const content=add('<< /Length '+stream.length+' >>\nstream\n'+stream+'\nendstream');pageIds.push(add('<< /Type /Page /Parent '+ref(pages)+' /MediaBox [0 0 595 842] /Resources << /Font << /F1 '+ref(regular)+' /F2 '+ref(bold)+' >> /XObject << /Logo '+ref(im)+' >> >> /Contents '+ref(content)+' /Annots ['+annotations.map(ref).join(' ')+'] >>'));}
@@ -36,12 +36,13 @@ export function makeEstimatePdf(d){
  block('REGISTRATION REFERENCE',s.reference);block('CLIENT ID',s.client_code);block('PROJECT ID',s.project_code);
  block('PREPARED FOR',s.contact.name+' / '+s.contact.email+(s.contact.company?' / '+s.contact.company:''));
  block('PROJECT',s.project.category+' / '+String(s.project.pages||'To review')+' pages / '+String(s.project.timeline||'To review'));
+ if(y<220){end();start('Planning estimate / continued');}
  rect(40,y-76,515,76,navy);txt('INDICATIVE PLANNING RANGE',54,y-18,9,true,'0.87 0.90 1');txt(money(q.lowPaise)+' - '+money(q.highPaise),54,y-43,18,true,'1 1 1');txt('Payment due now: INR 0.00',54,y-61,10,true,'1 1 1');y-=94;
- for(const line of wrapped('Planning only. Final scope, third-party fees, licences, hosting and applicable taxes require written approval. No payment is requested.',90)){txt(line,40,y,9,false,muted);y-=13;}
+ for(const line of wrapped('Planning only. Final scope, third-party fees, licences, hosting and applicable taxes require written approval. No payment is requested.',55)){txt(line,40,y,9,false,muted);y-=13;}
  txt('Full original Unicode snapshot attached to this PDF. Visible text uses Latin-safe rendering.',40,y-13,8,false,muted);
  end();start('Scope & cost allowances');
  txt('ITEM / PLANNING ALLOWANCE',40,y,9,true,indigo);txt('AMOUNT',415,y,9,true,indigo);y-=18;
- const item=(label,amount)=>{if(y<112){end();start('Scope & cost allowances / continued');}rect(40,y-7,515,21,soft);txt(safe(label).slice(0,55),48,y,10);txt(money(amount),415,y,10,true);y-=25;};
+ const item=(label,amount)=>{if(y<112){end();start('Scope & cost allowances / continued');}rect(40,y-7,515,21,soft);txt(safe(label).slice(0,35),48,y,10);txt(money(amount),415,y,10,true);y-=25;};
  for(const l of q.lines)item(l.label,l.amountPaise);item('Lower planning estimate',q.lowPaise);item('Scope contingency',q.contingencyPaise);item('Upper planning estimate',q.highPaise);
  if(y<170){end();start('Project objective');}
  block('PROJECT OBJECTIVE',s.project.goal);block('PRICING VERSION',String(q.pricingVersion||'Not recorded')+' / published revision '+String(q.publishedRevision??'Not recorded'));
