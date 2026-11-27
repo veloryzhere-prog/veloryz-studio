@@ -10,6 +10,7 @@ import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
 import { registerCreator } from './creator-registration-api-r52.mjs';
 import { listCreatorSubmissions } from './creator-intake-api-r52.mjs';
 import { identityOwner,identityVerify } from './client-identity-api-r53.mjs';
+import { estimateDocument } from './estimate-document-api-r54.mjs';
 
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const now=()=>new Date().toISOString();
@@ -314,7 +315,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
    return await projectCreatorAi(request,studioEnvironment(env),(await getPublished(env,request.url)).state);
   }
   if(new URL(request.url).pathname.startsWith('/api/client-portal/'))return await forwardClientPortal(request);
-  if(['/api/admin/project-submissions','/api/admin/client-identities'].includes(new URL(request.url).pathname.replace(/\/$/,''))&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
+  if(['/api/admin/project-submissions','/api/admin/client-identities','/api/admin/estimate-document'].includes(new URL(request.url).pathname.replace(/\/$/,''))&&usesHostedBackend(env,request.url))return json({error:'Structured registration directory requires the configured private runtime.'},503);
   if(usesHostedBackend(env,request.url)){
    if(env.AI && request.method==='POST' && new URL(request.url).pathname==='/api/adviser'){
     mutationOrigin(request);
@@ -336,6 +337,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);
+  if(path==='/api/admin/estimate-document')return await estimateDocument(request,env);
   if(path==='/api/admin/client-identities')return await identityOwner(request,env);
   if(path==='/api/admin/project-submissions')return await listCreatorSubmissions(request,env);
   await ensureState(env);
