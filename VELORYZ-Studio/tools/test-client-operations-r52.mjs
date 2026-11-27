@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {runInNewContext,Script} from 'node:vm';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const code=read('public/admin-client-operations-r52.js'),admin=read('public/admin.js'),client=read('public/admin-client.js'),shell=read('lib/admin-shell.ts');
+new Script(code);new Script(admin);new Script(client);
+const f=runInNewContext(code.slice(code.indexOf('const stages='),code.indexOf('let owner='))+';({findProjects,summarize,linked,due,progress})');
+const a={id:'a',title:'Design',client_name:'Client',status:'in-progress',due_date:'2026-11-26',request_reference:'VZ-A',progress:200},b={...a,id:'b',status:'launched'};
+assert.equal(f.progress(a),100);
+assert.equal(f.summarize([a,b],Date.parse('2026-11-27T03:00:00Z')).overdue,1);
+assert.equal(f.findProjects([a,b],'design','launched')[0].id,'b');
+assert.equal(f.linked({reference:'VZ-A'},[a]).id,'a');
+assert.equal(f.linked({reference:'unknown'},[a]),undefined);
+assert.match(admin,/'project-operations':\(\)=>window\.VeloryzClientOperations/);
+assert.match(shell,/admin-client-operations-r52\.js\?v=20261127-r52-1/);
+assert.match(client,/cpSelected!==projectId\|\|workspace!==session/);
+assert.match(code,/AUTOMATION BLUEPRINT \/ NOT ENABLED/);
+console.log('R52.1 project filtering, progress, reference linking and integration contract passed.');
