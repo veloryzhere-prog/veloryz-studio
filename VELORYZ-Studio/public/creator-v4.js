@@ -97,7 +97,7 @@
  'Admin dashboard':['Management users',['Team admin only','Small team','Multiple roles','Not sure']],
  'Multilingual support':['Languages',['Two','Three or four','Five+','Not sure']]
  };
- const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,pageNames:['Home','About','Services','Contact'],features:['Content management','SEO foundations'],answers:{},assets:[],technologies:[],motion:'02 · Refined',timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',businessName:'',industry:'',businessStage:'',businessDescription:'',audience:'',name:'',email:'',phone:'',company:'',preferredContact:'Email',notes:'',consent:false,reference:'',referenceLikes:[],external:'',referenceId:'',referenceRights:'',requestId:'',promoRequested:false,briefMode:'detailed',referenceId:'',referenceRights:'',extraReferences:'',materialLink:''});
+ const initial=()=>({category:'Business',template:'studio',style:'Minimal',palette:'Warm ivory',pages:4,pageNames:['Home','About','Services','Contact'],features:['Content management','SEO foundations'],answers:{},assets:[],technologies:[],technicalNotes:'',motion:'02 · Refined',timeline:'Within 2–3 months',budget:55000,priority:'Balanced quality and speed',goal:'',businessName:'',industry:'',businessStage:'',businessDescription:'',audience:'',name:'',email:'',phone:'',company:'',preferredContact:'Email',notes:'',consent:false,reference:'',referenceLikes:[],external:'',referenceId:'',referenceRights:'',requestId:'',promoRequested:false,briefMode:'detailed',referenceId:'',referenceRights:'',extraReferences:'',materialLink:''});
  const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const clean=s=>String(s??'').replace(/[<>\x00-\x1f]/g,' ').trim();
  const money=n=>'₹'+Math.round(Number(n)||0).toLocaleString('en-IN');
@@ -248,8 +248,8 @@
   if(id==='reference'&&((data.reference&&!safeURL(data.reference))||str(data.extraReferences).split(/\r?\n/).filter(x=>x.trim()).length>3||str(data.extraReferences).split(/\r?\n/).some(x=>x.trim()&&!safeURL(x))))return show('Use valid HTTP or HTTPS links, up to three additional references.');
   if(id==='assets'&&data.materialLink&&!safeURL(data.materialLink))return show('Enter a valid HTTP or HTTPS link to materials, or leave it empty.');
   if(id==='goal'&&str(data.goal).trim().length<10)return show('Write at least 10 characters about what you want to achieve.');
-  if(id==='name'&&str(data.name).trim().length<2)return show('Enter your name so we know who to contact.');
-  if(id==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str(data.email).trim()))return show('Enter a valid email address for your project updates.');
+  if(id==='name'&&(str(data.name).trim().length<2||str(data.name).trim().length>100))return show('Enter your name so we know who to contact.');
+  if(id==='email'&&(str(data.email).trim().length>180||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str(data.email).trim())))return show('Enter a valid email address for your project updates.');
   if(id==='email'&&data.phone&&(!/^\+?[0-9 ()-]{8,20}$/.test(str(data.phone).trim())||!/^\d{8,15}$/.test(str(data.phone).replace(/\D/g,''))))return show('Use a valid phone number with country code, or leave it blank.');
   if(id==='review'&&!data.consent)return show('Please confirm consent before sending this project request.');
   return true;
@@ -429,7 +429,7 @@
   const name=id==='name',value=name?data.name:data.email;
   return sectionTitle('06 / ABOUT YOU',name?'What should we call you?':'Where should we send your project proposal?',name?'Our project team will use this name when discussing your brief.':'Add the best contact details for the Studio’s project review.')+
    '<label class="v4-simple-field"><span>'+ (name?'YOUR NAME':'EMAIL ADDRESS')+' <i>*</i></span><input id="v4-entry" type="'+(name?'text':'email')+'" data-v4-field="'+id+'" value="'+escape(value)+'" '+(name?'autocomplete="name" maxlength="100"':'autocomplete="email" maxlength="180"')+' required placeholder="'+(name?'Your full name':'you@example.com')+'"></label>'+
-   (!name?'<div class="v4-contact-grid"><label class="v4-field"><span>BUSINESS NAME</span><input data-v4-field="company" value="'+escape(data.company)+'" maxlength="120" autocomplete="organization" placeholder="Optional"></label><label class="v4-field"><span>PHONE / WHATSAPP</span><input data-v4-field="phone" value="'+escape(data.phone)+'" maxlength="40" autocomplete="tel" placeholder="+91…"></label></div><div class="v4-chip-field"><span>PREFERRED CONTACT</span><div>'+['Email','WhatsApp','Phone'].map(item=>'<button type="button" data-v4-choice-field="preferredContact" data-value="'+item+'" class="'+(data.preferredContact===item?'is-selected':'')+'" aria-pressed="'+(data.preferredContact===item)+'">'+item+'</button>').join('')+'</div></div><label class="v4-field v4-tech-notes"><span>OPTIONAL NOTES</span><textarea data-v4-field="notes" maxlength="500" rows="3" placeholder="Anything else the Studio should know before reviewing your project.">'+escape(data.notes)+'</textarea></label>':'')+
+   (!name?'<div class="v4-contact-grid"><label class="v4-field"><span>BUSINESS NAME</span><input data-v4-field="company" value="'+escape(data.company)+'" maxlength="120" autocomplete="organization" placeholder="Optional"></label><label class="v4-field"><span>PHONE / WHATSAPP</span><input data-v4-field="phone" value="'+escape(data.phone)+'" maxlength="20" autocomplete="tel" placeholder="+91…"></label></div><div class="v4-chip-field"><span>PREFERRED CONTACT</span><div>'+['Email','WhatsApp','Phone'].map(item=>'<button type="button" data-v4-choice-field="preferredContact" data-value="'+item+'" class="'+(data.preferredContact===item?'is-selected':'')+'" aria-pressed="'+(data.preferredContact===item)+'">'+item+'</button>').join('')+'</div></div><label class="v4-field v4-tech-notes"><span>OPTIONAL NOTES</span><textarea data-v4-field="notes" maxlength="500" rows="3" placeholder="Anything else the Studio should know before reviewing your project.">'+escape(data.notes)+'</textarea></label>':'')+
    '<p class="v4-small-note">'+(name?'Only a couple of details left.':'Your project reference appears immediately after submission. An invitation or activation code is separate and is sent only when the team creates your private workspace.')+'</p>';
  }
  function brief(){
@@ -577,7 +577,7 @@
   const marker='\n[Additional details remain in your editable brief; discuss with the Studio.]';
   return content.length<=2000?content:content.slice(0,2000-marker.length).trimEnd()+marker;
  }
- const portableKeys=['category','template','style','palette','pages','pageNames','features','answers','assets','technologies','motion','timeline','budget','priority','goal','reference','referenceLikes','referenceId','extraReferences','materialLink','briefMode'];
+ const portableKeys=['category','template','style','palette','pages','pageNames','features','answers','assets','technologies','technicalNotes','motion','timeline','budget','priority','goal','reference','referenceLikes','referenceId','extraReferences','materialLink','briefMode'];
  function exportDraft(){
   const draft=Object.fromEntries(portableKeys.map(k=>[k,data[k]]));
   const blob=new Blob([JSON.stringify({format:'veloryz-project-brief',version:1,draft},null,2)],{type:'application/json'});
@@ -589,7 +589,7 @@
    const obj=JSON.parse(await file.text()),raw=obj.draft;
    if(!obj||obj.format!=='veloryz-project-brief'||obj.version!==1||!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Choose a VELORYZ editable brief file.');
    const fresh=initial(),allowed={...fresh};
-   for(const k of portableKeys){if(typeof fresh[k]==='string'&&typeof raw[k]==='string')allowed[k]=raw[k].slice(0,k==='extraReferences'?1050:k==='goal'?1000:350);}
+   for(const k of portableKeys){if(typeof fresh[k]==='string'&&typeof raw[k]==='string')allowed[k]=raw[k].slice(0,k==='extraReferences'?1050:k==='goal'?1000:k==='technicalNotes'?500:350);}
    allowed.category=categories.includes(allowed.category)?allowed.category:fresh.category;
    allowed.style=styles.some(([s])=>s===allowed.style)?allowed.style:fresh.style;
    allowed.template=presets.some(p=>p.id===allowed.template)?allowed.template:'';
@@ -654,7 +654,7 @@
   if(action==='pdf')return proposal();
   if(action==='submit')return submit();
   if(action==='restart'){
-   const fresh=initial();Object.assign(data,fresh,{answers:{},features:[],assets:[],requestId:''});
+   const fresh=initial();for(const key of Object.keys(data))delete data[key];Object.assign(data,fresh,{answers:{},features:[],assets:[],requestId:''});
    finished=null;reviewVisited=false;sync();return route('welcome');
   }
   if(action==='copy'){const reference=finished?.reference;if(reference&&navigator.clipboard?.writeText)navigator.clipboard.writeText(reference).then(()=>toast('Copied.')).catch(()=>toast('Please select and copy the reference.'));return;}
@@ -695,7 +695,7 @@
   if(b.hasAttribute('data-v4-search')){search=b.value;refreshLibrary();return;}
   if(b.hasAttribute('data-v4-field')){
    const field=b.dataset.v4Field;
-   const limits={goal:1000,businessDescription:700,technicalNotes:500,notes:500,audience:240,extraReferences:1050,materialLink:350,phone:20};
+   const limits={name:100,email:180,company:120,businessName:160,industry:160,goal:1000,businessDescription:700,technicalNotes:500,notes:500,audience:240,extraReferences:1050,materialLink:350,phone:20};
    data[field]=b.value.slice(0,limits[field]||200);
    data.requestId='';sync();error='';
    if(field==='goal'){const el=document.getElementById('v4-goal-length');if(el)el.textContent=b.value.length+' / 1000';}
