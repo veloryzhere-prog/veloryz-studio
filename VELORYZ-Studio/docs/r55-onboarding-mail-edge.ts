@@ -1,3 +1,4 @@
+import {makeCommercialPdf} from './commercial-pdf-r55.mjs';
 import {sendGmailMail,mailIsConfigured} from './gmail-lifecycle.ts';
 import {makeEstimatePdf} from './estimate-pdf-r54.mjs';
 const hex=(bytes:Uint8Array)=>Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
@@ -49,11 +50,28 @@ async function processAccess(){
  }catch{}
  try{await accessRpc('finish',{p_job:j.id,p_state:state,p_message:message});}catch{}
 }
+async function processCommercial(){
+ const call=async(name:string,args:unknown)=>{
+  const r=await fetch(base+'/rest/v1/rpc/veloryz_commercial_mail_'+name+'_v1',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(15000),redirect:'error'});
+  if(!r.ok)throw Error('Commercial delivery unavailable');return await r.json();
+ };
+ const j=await call('claim',{});if(j?.result!=='claimed')return;
+ let state='uncertain',message='';
+ try{
+  const d=j.document,to=j.recipient;
+  if(typeof to!=='string'||!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(to)||to.length>180||d?.quote?.snapshot?.email!==to)throw Error('Invalid recipient');
+  const bytes=makeCommercialPdf(d);
+  const outcome=await sendGmailMail({to,subject:'VELORYZ - approved project billing statement',text:'Your studio-approved commercial billing statement is attached. It reflects recorded receipts at generation. Please contact the studio to confirm payment instructions. This is not a tax invoice or gateway receipt.',html:html('Your project billing statement','<p>Your approved billing statement is attached as a private PDF.</p><p>Reference: '+e(d.invoice.invoice_code)+'</p><p>Please contact the studio to confirm payment instructions. The statement is not a tax invoice or gateway receipt.</p>'),attachments:[{filename:d.invoice.invoice_code+'.pdf',bytes,contentType:'application/pdf'}]});
+  if(outcome?.status==='sent'){state='sent';message=String(outcome.provider_message_id||'').slice(0,180);}
+ }catch{}
+ try{await call('finish',{p_job:j.id,p_state:state,p_message:message});}catch{}
+}
 Deno.serve((request)=>{
  if(!key||!eq(request.headers.get('authorization')||'','Bearer '+key))return json({error:'Unauthorized'},401);
  if(request.method==='GET')return json({ok:true,configured:mailIsConfigured()});
  if(request.method!=='POST')return json({error:'Method not allowed'},405);
  if(!mailIsConfigured())return json({error:'Mail transport not configured'},503);
+ if(request.headers.get('x-veloryz-commercial')==='enabled'){EdgeRuntime.waitUntil(processCommercial().catch(()=>{}));return json({ok:true,status:'queued-for-processing'},202);}
  EdgeRuntime.waitUntil(processOne().catch(()=>{}));
  if(request.headers.get('x-veloryz-access')==='enabled')EdgeRuntime.waitUntil(processAccess().catch(()=>{}));
  return json({ok:true,status:'queued-for-processing'},202);
