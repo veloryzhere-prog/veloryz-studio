@@ -26,6 +26,7 @@
     "test:project-ai": "node tools/test-project-ai.mjs",
     "build:docs": "node tools/build-docs.mjs",
     "test:docs": "node tools/test-docs-hub.mjs",
+    "test:r51:flightdeck": "node tools/test-admin-flightdeck-r51.mjs",
     "build:scroll": "node scripts/build-scroll.mjs",
     "build:templates": "node scripts/build-template-gallery.mjs && node scripts/build-template-kits.mjs",
     "test:v2:foundation": "node --test tools/test-v2-foundation.mjs",
