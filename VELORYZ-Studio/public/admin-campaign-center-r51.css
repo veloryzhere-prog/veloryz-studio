@@ -1,0 +1,20 @@
+/* R51.9 — owner campaign console only; public motion CSS unchanged. */
+.studio-os-r51 .cm-console{min-width:0}
+.studio-os-r51 .cm-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:16px 0}
+.studio-os-r51 .cm-stats>div,.studio-os-r51 .cm-placements>article{min-width:0;padding:16px;border:1px solid #dde1e8;border-radius:10px;background:#f9fafc}
+.studio-os-r51 .cm-stats small,.studio-os-r51 .cm-muted{font-size:12px;line-height:1.6;color:#505a68;overflow-wrap:anywhere}
+.studio-os-r51 .cm-stats strong{display:block;font-size:28px;letter-spacing:-.03em;font-weight:650;font-variant-numeric:tabular-nums}
+.studio-os-r51 .cm-placements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.studio-os-r51 .cm-placements h3,.studio-os-r51 .cm-row h3,.studio-os-r51 .cm-coverage h3{font-size:15px;font-weight:650;line-height:1.4;margin:0 0 8px;overflow-wrap:anywhere}
+.studio-os-r51 .cm-placements p,.studio-os-r51 .cm-row p,.studio-os-r51 .cm-coverage p{font-size:13px;line-height:1.6;margin:8px 0;overflow-wrap:anywhere}
+.studio-os-r51 .cm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+.studio-os-r51 .cm-list{display:grid;gap:10px}
+.studio-os-r51 .cm-row{border:1px solid #dde1e8;border-radius:10px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}
+.studio-os-r51 .cm-row-main{min-width:0}
+.studio-os-r51 .cm-row .cm-actions{grid-column:1/-1}
+.studio-os-r51 .cm-status{font-size:12px;font-weight:600;color:#354052}
+.studio-os-r51 .cm-warning{color:#8a3f15;background:#fff3e6;border-radius:5px;padding:8px}
+.studio-os-r51 .cm-coverage{border-top:1px solid #dde1e8;margin-top:14px;padding-top:14px}
+.studio-os-r51 .cm-console button:focus-visible,.studio-os-r51 .cm-console a:focus-visible{outline:2px solid #4c50bf;outline-offset:3px}
+@media(max-width:800px){.studio-os-r51 .cm-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:540px){.studio-os-r51 .cm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.studio-os-r51 .cm-placements,.studio-os-r51 .cm-row{grid-template-columns:1fr}.studio-os-r51 .cm-stats>div,.studio-os-r51 .cm-row{padding:12px}}
