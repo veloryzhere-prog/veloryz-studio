@@ -1,4 +1,5 @@
 'use strict';
+let enquiryModalRecord=null;
 let enquiryItems=[],enquiryTotal=0,enquiryPage=0,enquiryFilter='all',enquiryLoaded=false,enquiryLoading=false,enquiryError='',enquirySequence=0;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const escapeHTML=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -302,6 +303,7 @@ function showModal(title,description,content,footer='',size=''){
  document.body.style.overflow='hidden';$('#admin-root').inert=true;requestAnimationFrame(()=>$('.admin-modal').focus({preventScroll:true}));
 }
 function closeModal(){
+ enquiryModalRecord=null;
  $$('.admin-modal video').forEach(v=>v.pause());$('#admin-modal').innerHTML='';
  if(modalStack.length){const old=modalStack.pop();$('#admin-modal').append(old.element);modalFocus=old.focus;if(old.active?.isConnected)old.active.focus({preventScroll:true});return;}
  document.body.style.overflow='';$('#admin-root').inert=false;if(modalFocus?.isConnected)modalFocus.focus({preventScroll:true});editorDirty=false;
@@ -427,7 +429,7 @@ document.addEventListener('click',async event=>{
   }
   if(action==='enquiry-accept'){
    if(preview){toast('This needs the live signed-in owner workspace.');return;}
-   const request=enquiryItems.find(x=>x.id===id);
+   const request=selectedEnquiry(id);
    if(!request)return;
    if(!confirm('Accept the project request for '+request.name+'?\n\nThis creates the private client workspace and prepares the one-page order PDF. NO emails will be sent now. You will send the detailed project summary and separate invitation with two individual buttons in Client Management.'))return;
    button.disabled=true;button.textContent='Accepting project & preparing order…';
@@ -439,7 +441,7 @@ document.addEventListener('click',async event=>{
    }finally{button.disabled=false;}
    return;
   }
-  if(action==='enquiry-save'){if(preview){toast('Read-only design preview.');return;}const item=enquiryItems.find(x=>x.id===id);button.disabled=true;try{await api('/api/admin/enquiries/'+id,{method:'PUT',body:JSON.stringify({status:$('#enquiry-status').value,notes:$('#enquiry-notes').value,version:item.version})});closeModal();enquiryLoaded=false;render();toast('Enquiry updated. Send your reply using your contact app.');}finally{button.disabled=false;}return;}
+  if(action==='enquiry-save'){if(preview){toast('Read-only design preview.');return;}const item=selectedEnquiry(id);if(!item)return;button.disabled=true;try{await api('/api/admin/enquiries/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify({status:$('#enquiry-status').value,notes:$('#enquiry-notes').value,version:item.version})});closeModal();enquiryLoaded=false;render();toast('Enquiry updated. Send your reply using your contact app.');}finally{button.disabled=false;}return;}
   if(action==='content-audit'){
    if(preview){toast('The content review requires the owner workspace.');return;}
    const report=await api('/api/admin/quality');
@@ -512,7 +514,7 @@ function requestNeedsFollowup(item){
 }
 function enquiriesPage(){if(window.VeloryzCRM)return window.VeloryzCRM.enquiries({items:enquiryItems,total:enquiryTotal,page:enquiryPage,filter:enquiryFilter,loaded:enquiryLoaded,error:enquiryError,loading:enquiryLoading});return `${heading('Studio operations','Project console','Review design requests, project briefs, customer details and payment discussions.')}<section class="admin-panel"><div class="panel-header"><div><h2>Customer requests</h2><p>Confidential requests, accessible only in the authorized studio workspace. New requests older than 12 hours are marked for follow-up.</p></div><button class="admin-button secondary" data-action="enquiry-refresh">Refresh ↻</button></div><div class="enquiry-toolbar"><label for="enquiry-filter">Show requests</label><select id="enquiry-filter">${['all','new','contacted','confirmed','closed'].map(status=>`<option ${status===enquiryFilter?'selected':''} value="${status}">${status==='all'?'All requests':status[0].toUpperCase()+status.slice(1)}</option>`).join('')}</select><span>${enquiryTotal} request${enquiryTotal===1?'':'s'}</span></div>${enquiryError?`<p class="enquiry-empty" role="alert">${E(enquiryError)} Use Refresh to retry.</p>`:!enquiryLoaded?'<p class="enquiry-empty" role="status">Loading your conversations…</p>':!enquiryItems.length?'<p class="enquiry-empty">A little quiet, for now. New consultation requests will appear here.</p>':`<div class="enquiry-list">${enquiryItems.map(item=>`<button class="enquiry-row" data-action="enquiry-open" data-id="${E(item.id)}"><span class="enquiry-avatar">${E(item.name.slice(0,1))}</span><span class="enquiry-person"><strong>${E(item.name)}</strong><small>${E(item.service)}</small></span><span class="enquiry-schedule">${E(item.preferred_date||item.reference)}<small>${E(item.preferred_time?item.preferred_time+' · IST':item.email)}</small></span><span class="pill ${item.status==='closed'?'gray':''}">${requestNeedsFollowup(item)?'Follow up · 12h+':E(item.status)}</span><span class="enquiry-arrow">↗</span></button>`).join('')}</div>`}<div class="enquiry-pagination"><button class="admin-button secondary" data-action="enquiry-page" data-id="-1" ${enquiryPage===0?'disabled':''}>← Previous</button><span>Page ${enquiryPage+1}</span><button class="admin-button secondary" data-action="enquiry-page" data-id="1" ${(enquiryPage+1)*25>=enquiryTotal?'disabled':''}>Next →</button></div></section>`;}
 function parseCreatorV3(message){
- if(!/^PROJECT CREATOR V[34](?:\n|$)/.test(String(message||'')))return null;
+ if(!/^PROJECT CREATOR V[345](?:\n|$)/.test(String(message||'')))return null;
  const fields=Object.create(null);
  for(const line of String(message).split('\n').slice(1,35)){
   const at=line.indexOf(': ');if(at<1)continue;
@@ -553,8 +555,10 @@ function acceptanceResult(result){
   '<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>','medium');
 }
 
-function openEnquiry(id){
- const item=enquiryItems.find(x=>x.id===id);if(!item)return;
+function selectedEnquiry(id){const active=enquiryModalRecord;return active?.owner===workspace&&active.item.id===id&&document.querySelector('.admin-modal [data-action="enquiry-save"]')?.dataset.id===id?active.item:enquiryItems.find(x=>x.id===id);}
+function openEnquiry(id,provided=null){
+ const item=provided?.id===id&&Number.isInteger(provided.version)?provided:enquiryItems.find(x=>x.id===id);if(!item)return;
+ enquiryModalRecord={owner:workspace,item};
  const subject=(item.status==='confirmed'?'Consultation confirmation':'Your studio enquiry')+' · '+item.reference;
  const message=`Hi ${item.name},\n\nThank you for your enquiry (${item.reference}).\nPreferred consultation: ${item.preferred_date}, ${item.preferred_time} IST.\n\n${item.status==='confirmed'?'Your consultation time is confirmed.':'Let’s discuss the next step for your project.'}\n\nVELORYZ Studio`;
  const email='mailto:'+encodeURIComponent(item.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
