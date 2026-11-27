@@ -32,7 +32,7 @@ async function openRoom(record,structured){
 }
 function panel(p){
  if(!p.request_reference)return '';
- return '<section class="cr-panel"><span class="cr-label">ORIGINAL SUBMISSION</span><h3>Registration & estimate</h3><p>Check the immutable registration linked to this project. Legacy enquiries do not have a verified estimate snapshot.</p><button type="button" class="cr-button" data-r52-original>Inspect original registration ↗</button><a class="cr-button" href="#/submission-center">Submission intelligence ↗</a></section>';
+ return '<section class="cr-panel"><span class="cr-label">ORIGINAL SUBMISSION</span><h3>Registration & estimate</h3><p>Check the immutable registration linked to this project. Legacy enquiries do not have a verified estimate snapshot.</p><button type="button" class="cr-button" data-r52-original>Inspect original registration ↗</button><a class="cr-button" href="#/submission-center">Submission intelligence ↗</a><a class="cr-button" href="#/client-identities">Client identities ↗</a></section>';
 }
 async function inspect(p){
  if(preview||!workspace||!p?.request_reference||cpBusy||cpLoading)return;
