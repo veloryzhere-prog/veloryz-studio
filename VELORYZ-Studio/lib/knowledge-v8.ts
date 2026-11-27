@@ -1,5 +1,7 @@
 import releaseBuild from './release-build.json';
 import articles from './knowledge-v8-articles.json';
+import legacyProjectDocs from '../public/docs-library.json';
+import legacyStudioDocs from '../public/studio-docs-catalog.json';
 import {renderHtmlDocument} from './docs-server-html';
 type Article = (typeof articles)[number];
 type Edit = {visible?:boolean;title?:string;summary?:string;markdown?:string};
@@ -11,6 +13,30 @@ const publicPaths=new Set(['/','/create','/book','/contact','/support','/help/as
 const alias=new Map(articles.flatMap(a=>[[normalize(a.path),normalize(a.path)],[normalize(a.reader),normalize(a.path)]] as [string,string][]));
 export const knowledgeRoutes:Record<string,string>=Object.fromEntries([...articles.map(a=>[normalize(a.path),a.title]),...collections.map(c=>[c[0],c[1]]),['/trust','Trust centre']]);
 const indexPaths=new Set(collections.map(c=>c[0]));
+
+/** Owner editor reads the same article body selected by the public renderer. */
+export function documentationSource(requested:string|null){
+ const entries=new Map<string,{id:string;path:string;title:string;summary:string;category:string;markdown:string;status:string;renderer:string}>();
+ for(const d of legacyProjectDocs.documents){
+  const path='/docs/'+d.id;
+  entries.set(path,{id:d.id,path,title:d.label,summary:d.description,category:d.category||'Service guides',markdown:d.markdown,status:'guide',renderer:'legacy'});
+ }
+ for(const d of legacyStudioDocs.articles){
+  const path=normalize(d.path);
+  if(!indexPaths.has(path)&&!entries.has(path))entries.set(path,{id:d.id,path,title:d.title,summary:d.summary,category:d.category,markdown:d.markdown,status:['reviewed','draft'].includes(d.status)?d.status:'guide',renderer:'legacy'});
+ }
+ for(const a of articles){
+  const path=normalize(a.path);
+  if(!indexPaths.has(path))entries.set(path,{id:a.id,path,title:a.title,summary:a.task,category:a.category,markdown:a.body,status:'draft',renderer:'knowledge-v8'});
+ }
+ if(requested!==null){
+  const path=normalize(requested);
+  const record=entries.get(path);
+  return record?{...record,canonical:knowledgeCanonical(path)}:null;
+ }
+ return {items:[...entries.values()].map(({markdown,...row})=>({...row,canonical:knowledgeCanonical(row.path),length:markdown.length})),collections:[...indexPaths].map(path=>({path,canonical:knowledgeCanonical(path)})),overrideLimit:180};
+}
+
 export const knowledgeCanonical=(p:string)=>indexPaths.has(p)?p+'/index.html':p.startsWith('/docs/')||p.startsWith('/help/studio/')?p+'.html':p;
 const href=(p:string,hi=false)=>{
  const [raw,fragment]=p.split('#',2);const clean=normalize(raw),target=alias.get(clean)||clean;
