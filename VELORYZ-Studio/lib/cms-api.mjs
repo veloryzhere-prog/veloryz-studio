@@ -8,6 +8,7 @@ import {aiSettingsMetadata,saveAiSettings} from './ai-settings.mjs';
 import {boundedBody,rateLimit} from './studio-platform.mjs';
 import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
 import { registerCreator } from './creator-registration-api-r52.mjs';
+import { listCreatorSubmissions } from './creator-intake-api-r52.mjs';
 
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const now=()=>new Date().toISOString();
@@ -317,6 +318,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   if(path==='/api/admin/unlock'&&request.method==='POST')return await unlockAdmin(request,env,user);
   if(path==='/api/admin/lock'&&request.method==='POST')return lockAdmin();
   if(!await passwordSession(request,env,user))return json({error:'Enter the studio password to unlock your workspace.',passwordRequired:true},401);
+  if(path==='/api/admin/project-submissions')return await listCreatorSubmissions(request,env);
   await ensureState(env);
   if(path==='/api/admin/quality'&&request.method==='GET'){const state=await stateResponse(env,user);return json(auditStudioContent(state.state));}
   if(path==='/api/admin/connections'&&request.method==='GET')return json({database:env.STUDIO_DATABASE==='supabase'?'Supabase / isolated studio schema':'Cloudflare D1',storage:env.STUDIO_STORAGE_BUCKET?'Supabase Storage':'Cloudflare R2',ai:await aiConnection(env),password:!!env.ADMIN_PASSWORD_HASH,payments:'provider-links'});
