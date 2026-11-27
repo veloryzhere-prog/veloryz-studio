@@ -286,6 +286,7 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  if(['/api/registration-receipt/verify','/api/registration-receipt/status'].includes(new URL(request.url).pathname.replace(/\/$/,''))){if(request.method==='POST')mutationOrigin(request);return await forwardStudioRequest(request);}
   if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/client-identity/verify'){if(request.method==='POST')mutationOrigin(request);return await identityVerify(request,env);}
   // Public capability contract: never reveal a secret, never advertise a partially configured engine.
   if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions/config'){
@@ -331,7 +332,7 @@ export async function handleApi(request,env,defaultLoginMode='chatgpt'){
   env=studioEnvironment(env);
   const path=new URL(request.url).pathname.replace(/\/$/,'');
   if(path==='/api/site'&&request.method==='GET'){const data=await getPublished(env);return json({...data,activeOffers:activeOffers(data.state)});}
-  if(path==='/api/enquiries'&&request.method==='POST'){mutationOrigin(request);return await submitEnquiry(request,env,(await getPublished(env)).state);}
+  if(path==='/api/enquiries'&&request.method==='POST'){mutationOrigin(request);const result=await submitEnquiry(request,env,(await getPublished(env)).state);if(result.ok&&env.SUPABASE_SERVICE_ROLE_KEY){try{const d=await result.clone().json();if(d.ok===true&&/^VZ-[A-F0-9]{12}$/.test(d.reference||''))await fetch(hostedBackend+'/api/registration-receipt/kick?reference='+encodeURIComponent(d.reference),{method:'POST',headers:{Authorization:'Bearer '+env.SUPABASE_SERVICE_ROLE_KEY},signal:AbortSignal.timeout(4000),redirect:'error'});}catch{}}return result;}
   if(path==='/api/platform'&&request.method==='GET'){const ai=await aiConnection(env);return json({aiConfigured:ai.configured,aiAvailable:ai.status==='live',aiProviderLabel:'VELORYZ Studio AI',guideAvailable:false,paymentMode:'studio-discussion'});}
   if(path==='/api/adviser'&&request.method==='POST'){mutationOrigin(request);return await adviserChat(request,env,(await getPublished(env)).state);}
   if(path==='/api/payment-request'&&request.method==='GET')return await paymentApi(request,env,path);
