@@ -280,6 +280,15 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  // Public capability contract: never reveal a secret, never advertise a partially configured engine.
+  if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions/config'){
+   if(request.method!=='GET')return json({error:'Method not allowed.'},405);
+   if(env.CREATOR_REGISTRATION_V1!=='enabled')return json({contractVersion:1,mode:'legacy'});
+   const sitekey=env.CREATOR_TURNSTILE_SITE_KEY;
+   const hostname=new URL(request.url).hostname;
+   if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!env.CREATOR_TURNSTILE_SECRET||!sitekey||env.CREATOR_TURNSTILE_HOSTNAME!==hostname)return json({contractVersion:1,mode:'unavailable'},503);
+   return json({contractVersion:1,mode:'structured',sitekey});
+  }
   // R52.2 registration is explicitly gated; legacy enquiry and hosted routes are unchanged.
   if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions'){
    if(request.method==='POST')mutationOrigin(request);
