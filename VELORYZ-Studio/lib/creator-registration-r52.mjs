@@ -60,11 +60,15 @@ export function calculateQuote(submission,published){
  return {pricingVersion:PRICING_VERSION,publishedRevision:published.version,currency:'INR',kind:'indicative-estimate',status:'pending-review',source,referenceStatus,rules:rule,lines,lowPaise,highPaise,contingencyPaise:highPaise-lowPaise,reviewItems,promotionRequested:b.promoRequested,promotionApplied:false,taxesIncluded:false,amountDuePaise:0,notes:['Final scope, third-party fees, hosting, licenses and applicable taxes require review.','No payment is requested.','Marketplace references not present in the trusted published catalogue require manual price and rights review.']};
 }
 export async function fingerprint(submission){const bytes=new TextEncoder().encode(JSON.stringify(submission));const digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,'0')).join('');}
-export async function readSubmission(request){
- if(!request.headers.get('content-type')?.toLowerCase().includes('application/json'))invalid('Send JSON.',415);
+export async function readSubmissionEnvelope(request){
+ if(request.headers.get('content-type')?.split(';')[0].trim().toLowerCase()!=='application/json')invalid('Send JSON.',415);
  const reader=request.body?.getReader();if(!reader)invalid('The submission is empty.');const chunks=[];let size=0;
- try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>32768){await reader.cancel();invalid('Keep the structured brief below 32 KB.',413);}chunks.push(value);}}finally{reader.releaseLock();}
+ try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>32768){try{await reader.cancel();}catch{}invalid('Keep the structured brief below 32 KB.',413);}chunks.push(value);}}finally{reader.releaseLock();}
  const buffer=new Uint8Array(size);let offset=0;for(const chunk of chunks){buffer.set(chunk,offset);offset+=chunk.length;}
  let parsed;try{parsed=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(buffer));}catch{invalid('The submission could not be read.');}
- return normalizeSubmission(parsed);
+ const submission=normalizeSubmission(parsed);
+ const challengeToken=parsed.challengeToken;
+ if(challengeToken!==undefined&&(typeof challengeToken!=='string'||challengeToken.length>2048))invalid('Invalid verification token.');
+ return {submission,challengeToken:challengeToken||''};
 }
+export async function readSubmission(request){return (await readSubmissionEnvelope(request)).submission;}
