@@ -32,11 +32,29 @@ async function processOne(){
  }catch{/* no PII or secrets in logs */}
  try{await rpc('finish',{p_job:j.id,p_state:state,p_message:id});}catch{/* sending remains visibly unresolved; never blindly resend */}
 }
+async function processAccess(){
+ const raw=hex(crypto.getRandomValues(new Uint8Array(16))),hash=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw))));
+ const accessRpc=async(name:string,args:unknown)=>{
+  const r=await fetch(base+'/rest/v1/rpc/veloryz_access_'+name+'_v1',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:AbortSignal.timeout(15000),redirect:'error'});
+  if(!r.ok)throw Error('Access service unavailable');return await r.json();
+ };
+ const j=await accessRpc('claim',{p_hash:hash});if(j?.result!=='claimed')return;
+ let state='uncertain',message='';
+ try{
+  const to=j.recipient;if(typeof to!=='string'||!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(to)||to.length>180||j.project?.client_email!==to)throw Error('Invalid recipient');
+  const code='VZ-'+raw.toUpperCase().match(/.{4}/g)!.join('-');
+  const url='https://veloryz.online/client/#invite='+encodeURIComponent(code);
+  const outcome=await sendGmailMail({to,subject:'VELORYZ - your private client room invitation',text:'Your verified and accepted project is ready for access. Open '+url+'\n\nOne-time invitation code: '+code+'\nExpires: '+j.expires_at+'\nDo not share this code.',html:html('Your private Client Room','<p>Your verified project has been accepted by the studio. You can now open your private workspace.</p><p><a href="'+e(url)+'" style="background:#3349a6;color:white;padding:12px 18px;display:inline-block;border-radius:6px;text-decoration:none">Activate Client Room</a></p><p>One-time code: <strong>'+e(code)+'</strong></p><p>Expires: '+e(j.expires_at)+'. Do not forward or share this code.</p>')});
+  if(outcome?.status==='sent'){state='sent';message=String(outcome.provider_message_id||'').slice(0,180);}
+ }catch{}
+ try{await accessRpc('finish',{p_job:j.id,p_state:state,p_message:message});}catch{}
+}
 Deno.serve((request)=>{
  if(!key||!eq(request.headers.get('authorization')||'','Bearer '+key))return json({error:'Unauthorized'},401);
  if(request.method==='GET')return json({ok:true,configured:mailIsConfigured()});
  if(request.method!=='POST')return json({error:'Method not allowed'},405);
  if(!mailIsConfigured())return json({error:'Mail transport not configured'},503);
  EdgeRuntime.waitUntil(processOne().catch(()=>{}));
+ if(request.headers.get('x-veloryz-access')==='enabled')EdgeRuntime.waitUntil(processAccess().catch(()=>{}));
  return json({ok:true,status:'queued-for-processing'},202);
 });
