@@ -37,12 +37,7 @@ begin
  or jsonb_typeof(b) is distinct from 'object'
  or jsonb_typeof(contact) is distinct from 'object'
  or coalesce(contact->>'email','')='' or coalesce(contact->>'name','')=''
- or p_summary is null or length(p_summary)>2000 or length(p_summary)<10
- or p_quote->>'currency' is distinct from 'INR'
- or p_quote->>'status' is distinct from 'pending-review'
- or p_quote->>'kind' is distinct from 'indicative-estimate'
- or p_quote->>'amountDuePaise' is distinct from '0'
- or octet_length(p_submission::text)>65536 or octet_length(p_quote::text)>65536
+ or octet_length(p_submission::text)>65536
  then return jsonb_build_object('result','invalid'); end if;
  -- Serialize repeats and rate checks on this endpoint only. All calls acquire locks in same order.
  perform pg_advisory_xact_lock(hashtextextended('vz-creator-id:'||rid,0));
@@ -52,6 +47,15 @@ begin
   return jsonb_build_object('result','replayed','reference',prior.reference,'status','pending-review','estimate',prior.quote);
  end if;
  if exists(select 1 from veloryz_studio.studio_enquiries where id=rid) then return jsonb_build_object('result','conflict'); end if;
+ -- Replay-only probe uses a null quote. It cannot insert an enquiry.
+ if p_quote is null then return jsonb_build_object('result','not-found'); end if;
+ if p_summary is null or length(p_summary)>2000 or length(p_summary)<10
+ or p_quote->>'currency' is distinct from 'INR'
+ or p_quote->>'status' is distinct from 'pending-review'
+ or p_quote->>'kind' is distinct from 'indicative-estimate'
+ or p_quote->>'amountDuePaise' is distinct from '0'
+ or octet_length(p_quote::text)>65536
+ then return jsonb_build_object('result','invalid'); end if;
  select published_version into current_revision from veloryz_studio.cms_state where id=1 for share;
  if current_revision is null or current_revision::text is distinct from p_quote->>'publishedRevision' then return jsonb_build_object('result','price-changed'); end if;
  perform pg_advisory_xact_lock(hashtextextended('vz-creator-email:'||p_rate_key,0));
