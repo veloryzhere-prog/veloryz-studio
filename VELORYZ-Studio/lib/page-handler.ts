@@ -3,7 +3,7 @@ import siteShell from './site-shell';
 import claudeReferenceShell from './claude-reference-shell';
 import {renderIndexableBody} from './search-index-content';
 import {renderHtmlDocument} from './docs-server-html';
-import {knowledgeResponse,knowledgeRoutes,knowledgeCanonical} from './knowledge-v8';
+import {knowledgeResponse,knowledgeRoutes,knowledgeCanonical,documentationSource} from './knowledge-v8';
 import clientPortalShell from './client-portal-shell';
 import adminShell from './admin-shell';
 import {findDesignPreview,renderDesignPreview,renderDesignFullPreview} from './design-detail-page';
@@ -26,6 +26,15 @@ const htmlDocumentPath=(p:string)=>{
 const serialise = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
 export async function GET(request: Request) {
  const path=new URL(request.url).pathname;
+ // Source inventory is deployment-local even when the owner state API is hosted separately.
+ if(path==='/admin/docs-source'){
+  const headers={'Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow','X-Content-Type-Options':'nosniff'};
+  const owner=await handleApi(new Request(new URL('/api/admin/state',request.url),{headers:request.headers}),env,'password');
+  if(!owner.ok)return Response.json({error:'Owner session required.'},{status:owner.status===401||owner.status===403?owner.status:503,headers});
+  const result=documentationSource(new URL(request.url).searchParams.get('path'));
+  return result?Response.json(result,{headers}):Response.json({error:'Article source not found.'},{status:404,headers});
+ }
+
  const draftViews:Record<string,string>={home:'/',classic:'/',studio:'/studio/',services:'/services/',team:'/teamjob/',book:'/book/',developers:'/developers/',payments:'/payments/'};
  const draftView=(path==='/admin/preview'||path==='/admin/preview/')?(new URL(request.url).searchParams.get('view')||'home'):'';
  let draftData:any=null;
