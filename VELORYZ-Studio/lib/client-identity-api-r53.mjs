@@ -1,4 +1,5 @@
 // R52.3: service-only identity RPC adapter. Owner routes must pass existing authorization first.
+import {kickOnboarding} from './onboarding-mail-kick-r55.mjs';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const hex=b=>Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');
@@ -52,6 +53,6 @@ export async function identityVerify(request,env){
  try{const x=await body(request);if(typeof x.token!=='string'||!/^[0-9a-f]{64}$/.test(x.token))fail('The verification link is invalid or expired.');
   const d=await rpc(env,'redeem',{p_hash:await hash(x.token)});
   if(d?.result!=='verified')fail('The verification link is invalid or expired.');
-  return json({ok:true,status:'verified'});
+  await kickOnboarding(env);return json({ok:true,status:'verified'});
  }catch(e){return error(e);}
 }
