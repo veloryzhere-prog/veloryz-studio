@@ -150,7 +150,7 @@ document.addEventListener('click',e=>{
  const pg=e.target.closest('[data-dk-page]');if(pg){page=Math.max(0,page+Number(pg.dataset.dkPage));refreshList();return;}
  if(e.target.closest('[data-dk-retry]')){error='';load();mount();return;}
  if(e.target.closest('[data-dk-reset]')&&source&&window.confirm('Remove this article override from the current website draft and restore renderer source?')){delete settings().edits[selected];epoch++;diagnostic=null;checking=false;markDirty();mountEditor();refreshList();return;}
- if(e.target.closest('[data-dk-preview]')&&source){const a=effective(source,edits()[selected]);showModal('Draft text preview',a.title,'<p>'+esc(a.summary)+'</p><pre class="dk-text-preview">'+esc(a.markdown)+'</pre><p>Plain-text preview; not the exact public renderer.</p>','<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>');return;}
+ if(e.target.closest('[data-dk-preview]')&&source){const a=effective(source,edits()[selected]);showModal('Draft text preview',esc(a.title),'<p>'+esc(a.summary)+'</p><pre class="dk-text-preview">'+esc(a.markdown)+'</pre><p>Plain-text preview; not the exact public renderer.</p>','<button type="button" class="admin-button secondary" data-action="close-modal">Close</button>');return;}
  if(e.target.closest('[data-dk-check]'))checkLinks();
  if(e.target.closest('[data-dk-published]'))checkPublished();
 });
