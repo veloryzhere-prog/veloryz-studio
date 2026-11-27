@@ -36,12 +36,7 @@ begin
  or jsonb_typeof(b) is distinct from 'object'
  or jsonb_typeof(contact) is distinct from 'object'
  or coalesce(contact->>'email','')='' or coalesce(contact->>'name','')=''
- or p_summary is null or length(p_summary)>2000 or length(p_summary)<10
- or p_quote->>'currency' is distinct from 'INR'
- or p_quote->>'status' is distinct from 'pending-review'
- or p_quote->>'kind' is distinct from 'indicative-estimate'
- or p_quote->>'amountDuePaise' is distinct from '0'
- or octet_length(p_submission::text)>65536 or octet_length(p_quote::text)>65536
+ or octet_length(p_submission::text)>65536
  then return jsonb_build_object('result','invalid'); end if;
  -- Serialize repeats and rate checks on this endpoint only. All calls acquire locks in same order.
  perform pg_advisory_xact_lock(hashtextextended('vz-creator-id:'||rid,0));
@@ -51,6 +46,15 @@ begin
   return jsonb_build_object('result','replayed','reference',prior.reference,'status','pending-review','estimate',prior.quote);
  end if;
  if exists(select 1 from pg_temp.studio_enquiries where id=rid) then return jsonb_build_object('result','conflict'); end if;
+ -- Replay-only probe uses a null quote. It cannot insert an enquiry.
+ if p_quote is null then return jsonb_build_object('result','not-found'); end if;
+ if p_summary is null or length(p_summary)>2000 or length(p_summary)<10
+ or p_quote->>'currency' is distinct from 'INR'
+ or p_quote->>'status' is distinct from 'pending-review'
+ or p_quote->>'kind' is distinct from 'indicative-estimate'
+ or p_quote->>'amountDuePaise' is distinct from '0'
+ or octet_length(p_quote::text)>65536
+ then return jsonb_build_object('result','invalid'); end if;
  select published_version into current_revision from pg_temp.cms_state where id=1 for share;
  if current_revision is null or current_revision::text is distinct from p_quote->>'publishedRevision' then return jsonb_build_object('result','price-changed'); end if;
  perform pg_advisory_xact_lock(hashtextextended('vz-creator-email:'||p_rate_key,0));
@@ -70,15 +74,17 @@ begin
  return jsonb_build_object('result','created','reference',ref,'status','pending-review','estimate',p_quote);
 end;
 $$;
-
 do $test$
 declare s jsonb:='{"contractVersion":1,"intent":"create-project","requestId":"c162bb72-2d79-44da-bc7f-7bf073b62930","consent":true,"contact":{"name":"Synthetic test","email":"synthetic@example.test"},"brief":{"budgetPreference":6000}}';
 q jsonb:='{"currency":"INR","status":"pending-review","kind":"indicative-estimate","amountDuePaise":0,"publishedRevision":12,"lowPaise":1000000}';
 r jsonb; n integer; i integer;
 begin
+r:=pg_temp.veloryz_register_creator_v1(s,null,repeat('a',64),repeat('b',64),repeat('c',64),null);
+if r->>'result' is distinct from 'not-found' then raise exception 'probe should not insert';end if;
+if exists(select 1 from pg_temp.studio_enquiries) then raise exception 'probe wrote an enquiry';end if;
 r:=pg_temp.veloryz_register_creator_v1(s,q,repeat('a',64),repeat('b',64),repeat('c',64),'Synthetic test only');
 if r->>'result' is distinct from 'created' then raise exception 'creation failed %',r;end if;
-r:=pg_temp.veloryz_register_creator_v1(s,q||'{"publishedRevision":99,"lowPaise":9}',repeat('a',64),repeat('b',64),repeat('c',64),'Synthetic test only');
+r:=pg_temp.veloryz_register_creator_v1(s,null,repeat('a',64),repeat('b',64),repeat('c',64),null);
 if r->>'result' is distinct from 'replayed' or r->'estimate'->>'lowPaise' is distinct from '1000000' then raise exception 'replay failed %',r;end if;
 r:=pg_temp.veloryz_register_creator_v1(s,q,repeat('d',64),repeat('b',64),repeat('c',64),'Synthetic test only');
 if r->>'result' is distinct from 'conflict' then raise exception 'conflict failed';end if;
@@ -93,6 +99,15 @@ r:=pg_temp.veloryz_register_creator_v1(s,q||'{"publishedRevision":99}',repeat('a
 if r->>'result' is distinct from 'price-changed' then raise exception 'price revision failed';end if;
 r:=pg_temp.veloryz_register_creator_v1(s||'{"consent":false}',q,repeat('a',64),repeat('e',64),repeat('f',64),'Synthetic test only');
 if r->>'result' is distinct from 'invalid' then raise exception 'consent failed';end if;
+-- Force a failure in the second insert and verify subtransaction rollback.
+s:=jsonb_set(s,'{requestId}','"c162bb72-2d79-44da-bc7f-7bf073b62939"');
+alter table pg_temp.studio_creator_submissions add constraint synthetic_failure check(request_id<>'c162bb72-2d79-44da-bc7f-7bf073b62939');
+begin
+ perform pg_temp.veloryz_register_creator_v1(s,q,repeat('a',64),repeat('e',64),repeat('f',64),'Synthetic test only');
+ raise exception 'expected snapshot failure';
+exception when check_violation then null;
+end;
+if exists(select 1 from pg_temp.studio_enquiries where id=s->>'requestId') then raise exception 'partial enquiry survived';end if;
 select count(*) into n from pg_temp.studio_enquiries;if n<>3 then raise exception 'enquiry count %',n;end if;
 select count(*) into n from pg_temp.studio_creator_submissions;if n<>3 then raise exception 'snapshot count %',n;end if;
 end;$test$;
