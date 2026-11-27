@@ -15,7 +15,8 @@ export async function onboardingAdmin(request,env){
   if(!r.ok)throw Error('Database unavailable');const d=await r.json();
   if(d?.source!=='onboarding-status-v1'||!d.counts||!Array.isArray(d.jobs))throw Error('Invalid status');
   let transport='unverified';try{const t=await fetch(edge,{headers,signal:AbortSignal.timeout(5000),redirect:'error'});if(t.ok){const x=await t.json();if(x.ok===true)transport=x.configured===true?'configured':x.configured===false?'not-configured':'unverified';}}catch{}
-  return reply({...d,enabled,accessEnabled,transport});
+  let access=null;try{const a=await fetch(base+'/rest/v1/rpc/veloryz_access_status_v1',{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(6000),redirect:'error'});if(a.ok){const x=await a.json();if(x&&['eligible','sending','stalled','sent','uncertain'].every(k=>Number.isSafeInteger(x[k])&&x[k]>=0))access=x;}}catch{}
+  return reply({...d,enabled,accessEnabled,transport,access});
  }
  if(request.method!=='POST')return reply({error:'Method not allowed.'},405);
  if(!enabled)return reply({error:'Automatic onboarding is not activated.'},409);
