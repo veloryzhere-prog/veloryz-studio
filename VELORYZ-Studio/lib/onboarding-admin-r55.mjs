@@ -5,6 +5,7 @@ export async function onboardingAdmin(request,env){
  if(!/^https:\/\/[a-z0-9.-]+$/i.test(base)||!key)return reply({error:'Private database is unavailable.'},503);
  const headers={apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'};
  const enabled=env.ONBOARDING_EMAIL_V1==='enabled'&&env.CREATOR_REGISTRATION_V1==='enabled'&&env.CLIENT_IDENTITY_V1==='enabled'&&env.ESTIMATE_DOCUMENTS_V1==='enabled';
+ const accessEnabled=enabled&&env.ONBOARDING_ACCESS_V1==='enabled';
  const edge=base+'/functions/v1/veloryz-onboarding-mail';
  try{
  if(request.method==='GET'){
@@ -14,11 +15,11 @@ export async function onboardingAdmin(request,env){
   if(!r.ok)throw Error('Database unavailable');const d=await r.json();
   if(d?.source!=='onboarding-status-v1'||!d.counts||!Array.isArray(d.jobs))throw Error('Invalid status');
   let transport='unverified';try{const t=await fetch(edge,{headers,signal:AbortSignal.timeout(5000),redirect:'error'});if(t.ok){const x=await t.json();if(x.ok===true)transport=x.configured===true?'configured':x.configured===false?'not-configured':'unverified';}}catch{}
-  return reply({...d,enabled,transport});
+  return reply({...d,enabled,accessEnabled,transport});
  }
  if(request.method!=='POST')return reply({error:'Method not allowed.'},405);
  if(!enabled)return reply({error:'Automatic onboarding is not activated.'},409);
- const r=await fetch(edge,{method:'POST',headers,signal:AbortSignal.timeout(7000),redirect:'error'});
+ const r=await fetch(edge,{method:'POST',headers:{...headers,...(accessEnabled?{'X-Veloryz-Access':'enabled'}:{})},signal:AbortSignal.timeout(7000),redirect:'error'});
  if(r.status!==202)return reply({error:'Mail processor did not accept the wake-up.'},503);
  return reply({ok:true,status:'processing-requested'},202);
  }catch{return reply({error:'Onboarding service unavailable.'},503);}
