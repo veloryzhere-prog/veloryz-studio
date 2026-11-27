@@ -36,8 +36,9 @@ const ctx=vm.createContext({
  TextEncoder,TextDecoder,setTimeout,clearTimeout,queueMicrotask,
  crypto:{randomUUID:()=> 'c162bb72-2d79-44da-bc7f-7bf073b62933'},
  navigator:{clipboard:{writeText:async()=>{}}},
- AbortController,
+ AbortController,AbortSignal,
  fetch:async(url,options)=>{
+  if(url==='/api/project-submissions/config')return {ok:true,json:async()=>({contractVersion:1,mode:'legacy'})};
   assert.equal(url,'/api/enquiries');
   fetchCount++;request=JSON.parse(options.body);
   return {ok:true,json:async()=>({ok:true,reference:'VZ-EXAMPLE-123'})};
@@ -46,6 +47,7 @@ const ctx=vm.createContext({
 vm.runInContext(read('planner-model.js'),ctx);
 ctx.window.VeloryzPlanner=ctx.VeloryzPlanner;
 vm.runInContext('let projectBrief=VeloryzPlanner.normalize(),chosenDesign=null;let createPage=()=>"";',ctx);
+vm.runInContext(read('creator-registration-r52.js'),ctx);
 vm.runInContext(read('creator-v4.js'),ctx);
 const creator=ctx.window.VeloryzCreatorV4;
 assert.equal(creator.templateCount,12);
