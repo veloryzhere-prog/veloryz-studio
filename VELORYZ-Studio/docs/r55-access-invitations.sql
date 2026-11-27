@@ -18,6 +18,7 @@ grant update(state,finished_at,provider_message_id) on table veloryz_studio.stud
 create function veloryz_studio.lock_client_invitation_v1()
 returns trigger language plpgsql security invoker set search_path=pg_catalog as $$
 begin
+ perform 1 from veloryz_studio.studio_client_projects where id=new.project_id for update;
  perform pg_advisory_xact_lock(hashtextextended('vz-access:'||new.project_id,0));
  -- If a manual replacement arrives after an automatic invitation, retire that code.
  -- Does not revoke existing sessions; legacy replacement manages its own session policy.
