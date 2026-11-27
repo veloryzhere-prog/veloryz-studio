@@ -7,6 +7,7 @@ import { passwordSession,unlockAdmin,lockAdmin,adviserChat,paymentApi,aiConnecti
 import {aiSettingsMetadata,saveAiSettings} from './ai-settings.mjs';
 import {boundedBody,rateLimit} from './studio-platform.mjs';
 import { submitEnquiry,enquiryAdmin } from './enquiries.mjs';
+import { registerCreator } from './creator-registration-api-r52.mjs';
 
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const now=()=>new Date().toISOString();
@@ -278,6 +279,11 @@ const videoTypes=new Set(['video/mp4','video/webm']);
 function fileSignature(bytes,type){const x=new Uint8Array(bytes),ascii=(a,b)=>String.fromCharCode(...x.slice(a,b));if(type==='image/png')return ascii(1,4)==='PNG';if(type==='image/jpeg')return x[0]===255&&x[1]===216&&x[2]===255;if(type==='image/gif')return ascii(0,4)==='GIF8';if(type==='image/webp')return ascii(0,4)==='RIFF'&&ascii(8,12)==='WEBP';if(type==='image/avif')return ascii(4,8)==='ftyp'&&/avif|avis/.test(ascii(8,32));if(type==='video/mp4')return ascii(4,8)==='ftyp';if(type==='video/webm')return x[0]===0x1a&&x[1]===0x45&&x[2]===0xdf&&x[3]===0xa3;return false;}
 export async function handleApi(request,env,defaultLoginMode='chatgpt'){
  try{
+  // R52.2 registration is explicitly gated; legacy enquiry and hosted routes are unchanged.
+  if(new URL(request.url).pathname.replace(/\/$/,'')==='/api/project-submissions'){
+   if(request.method==='POST')mutationOrigin(request);
+   return await registerCreator(request,env,()=>getPublished(env));
+  }
   if(new URL(request.url).pathname.startsWith('/api/reviews'))return await forwardReviews(request);
    if(new URL(request.url).pathname==='/api/privacy/consent')return await forwardPrivacyReceipt(request);
   // Dedicated four-role Knowledge AI API: server-only credentials and owner-guarded settings.
